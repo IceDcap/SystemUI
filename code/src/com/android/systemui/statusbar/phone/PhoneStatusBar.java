@@ -933,6 +933,21 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 				clearNotifications(NotificationType.OTHER);
 			}
 		});
+    	final ImageView hideButton = (ImageView)mOtherHeader.findViewById(R.id.hide);
+    	hideButton.setVisibility(View.VISIBLE);
+    	hideButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				mShowOther = !mShowOther;
+				if (mShowOther == true) {
+					hideButton.setImageDrawable(mContext.getDrawable(R.drawable.gn_arrow_down));
+				} else {
+					hideButton.setImageDrawable(mContext.getDrawable(R.drawable.gn_arrow_right));
+				}
+				updateNotifications();
+			}
+		});
+    	
     }
     
 	private void clearNotifications(NotificationType type) {
@@ -941,7 +956,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         // animate-swipe all dismissable notifications, then animate the shade closed
         int numChildren = mStackScroller.getChildCount();
-
+        final int size = targetList.size();
+        
         final ArrayList<View> viewsToHide = new ArrayList<View>(numChildren);
         for (int i = 0; i < numChildren; i++) {
             final View child = mStackScroller.getChildAt(i);
@@ -963,6 +979,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             return;
         }
 
+        if (type == NotificationType.OTHER) {
+        	if (size == viewsToHide.size()) {
+        		mShowOther = false;
+        	}
+        }
         performDismissAllAnimations(viewsToHide);
 //        mHandler.sendEmptyMessage(MSG_UPDATE_NOTIFICATION_HEADER);
 	}
@@ -1194,6 +1215,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 mHandler.removeCallbacks(mShowSearchPanel);
                 awakenDreams();
             break;
+            default:
+            	break;
         }
         return false;
         }
@@ -1527,11 +1550,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 		} else {
 			mOtherHeader.setVisibility(View.VISIBLE);
 			ImageView button = (ImageView)mOtherHeader.findViewById(R.id.clear);
-			button.setVisibility(other ? View.VISIBLE : View.GONE);
+			// TMP Bugs:let's clear button show always in other header. 
+			//button.setVisibility(other ? View.VISIBLE : View.GONE);
 			Log.v(TAG, "has clearable other notification? "+other);
 		}
     }
     
+    private boolean mShowOther = false;
 	private void gnUpdateNotificationShade() {
 		if (mStackScroller == null)
 			return;
@@ -1589,10 +1614,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 			}
 			// GIONEE <wujj> <2015-02-14> Modify for CR01445765 end
 			if (importantView.contains(child) ||
-					otherView.contains(child) ||
+//					otherView.contains(child) ||
 					onGoingView.contains(child)) {
 				continue;
 			}
+			if (mShowOther == true && otherView.contains(child))
+				continue;
 			if (child instanceof ExpandableNotificationRow) {
 				toRemove.add(child);
 			}
@@ -1627,11 +1654,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 			}
 		}
 
-		// Add other notification view to mStackScroller
-		for (int i = 0; i < OTHER; i++) {
-			View v = otherView.get(i);
-			if (v.getParent() == null) {
-				mStackScroller.addView(v);
+		if (mShowOther == true) {
+			// Add other notification view to mStackScroller
+			for (int i = 0; i < OTHER; i++) {
+				View v = otherView.get(i);
+				if (v.getParent() == null) {
+					mStackScroller.addView(v);
+				}
 			}
 		}
 
@@ -1677,15 +1706,17 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 				continue;
 			}
 
-			// adjust other notifications
-			if ((j >= (ONGOING + IMPORTANT) && j < N)) {
-				int otherIndex = j - (ONGOING + IMPORTANT);
-				if (child == otherView.get(otherIndex)) {
+			if (mShowOther) {
+				// adjust other notifications
+				if ((j >= (ONGOING + IMPORTANT) && j < N)) {
+					int otherIndex = j - (ONGOING + IMPORTANT);
+					if (child == otherView.get(otherIndex)) {
+						j++;
+						continue;
+					}
+					mStackScroller.changeViewPosition(otherView.get(otherIndex), i);
 					j++;
-					continue;
 				}
-				mStackScroller.changeViewPosition(otherView.get(otherIndex), i);
-				j++;
 			}
 		}
 
@@ -1700,7 +1731,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 					} else {
 						mStackScroller.changeViewPosition(mImportantHeader, i);
 					}
-				} else if (OTHER > 0 && v == otherView.get(0)) {
+				} else if (mShowOther && OTHER > 0 && v == otherView.get(0)) {
 					mOtherHeader.setVisibility(View.VISIBLE);
 					if (i > 0) {
 						mStackScroller.changeViewPosition(mOtherHeader, i-1);
@@ -1710,6 +1741,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 					break;
 				}
 			}
+		}
+		
+		// If other header should show here, then let it appears on the last of mStackScroller
+		if (!mShowOther && OTHER > 0) {
+			mOtherHeader.setVisibility(View.VISIBLE);
+			mStackScroller.changeViewPosition(mOtherHeader, mStackScroller.getChildCount() - 1);
+//			mStackScroller.changeViewPosition(mOtherHeader, IMPORTANT+2);
 		}
 		// Step 6
 		updateRowStates();
