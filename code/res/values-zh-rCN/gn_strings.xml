@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    
+    <!-- Control center quick setting -->
+    <string name="gn_qs_data_connect">数据连接</string>
+    <string name="gn_qs_vibrate">振动</string>
+    <string name="gn_qs_voice">声音</string>
+    <string name="gn_qs_alarm">闹钟</string>
+    <string name="gn_qs_location">位置信息</string>
+    <string name="gn_qs_rotation">转屏</string>
+    <string name="gn_qs_screen_shot">区域截屏</string>
+    <string name="gn_qs_navi_launcher">Amigo经典桌面</string>
+    <string name="gn_qs_power">极致省电</string>
+    
+    <!-- Control center shotcut -->
+    <string name="gn_sc_calculator">计算器</string>
+    <string name="gn_sc_torch">手电筒</string>
+    <string name="gn_sc_camera">相机</string>
+    <string name="gn_sc_fake_call">虚拟来电</string>
+
+    <!-- Control center shotcut camera -->
+    <string name="gn_camera_blind_shoot_success" >拍照成功</string>
+    <string name="gn_camera_blind_shoot_open" >点击可查看您的图片</string>
+
+    <!-- Control center shotcut fake call -->
+    <string name="gn_fc_cancel_phone">取消来电</string>
+    <string name="gn_fc_decline">"拒绝"</string>
+    <string name="gn_fc_answer">"接听"</string>
+    <string name="gn_fc_send_sms">"发送短信"</string>
+    <string name="gn_fc_response_sms">下滑短信回复</string>
+    <string name="gn_fc_contact">联系人</string>
+    <string name="gn_fc_record">录音</string>
+    <string name="gn_fc_add">添加</string>
+    <string name="gn_fc_mute">静音</string>
+    <string name="gn_fc_hold">保持</string>
+    <string name="gn_fc_note">便签</string>
+    <string name="gn_fc_incall">通话中</string>
+    <string name="gn_fc_unknown">未知号码</string>
+    <string name="gn_fc_calling">来电</string>
+    <string name="gn_fc_call_tip">"秒"</string>
+    <string-array name="gn_fc_caller">
+        <item>王师傅</item>
+        <item>李总</item>
+        <item>领导</item>
+    </string-array>
+    <string-array name="content">
+        <item>你的东西已经修好了，快点来取吧。</item>
+        <item>那份文件我还没收到呢，你尽快给我发一下。</item>
+        <item>老公~~屋里有蟑螂~~~我怕~~你什么时候回来陪我啊~~</item>
+    </string-array>
+    
+    <string name="important">重要</string>
+    <string name="other">其他</string>
+    <string name="notification_sort">通知分类</string>
+    <string name="notification_sort_hint">通知分类说明</string>
+    <string name="set_as_important">开启为重要通知</string>
+    <string name="set_as_other">关闭为其它通知</string>
+    <string name="entry_notification_sort">进入通知分类</string>
+    <string name="important_notification">重要通知</string>
+    <string name="other_notification">其它通知</string>
+    <string name="lock_screen_important_hint">1、锁屏也能看到，查看、操作更方便</string>
+    <string name="status_bar_important_hint">2、通知栏里会展现重要通知图标</string>
+    <string name="notify_types_important_hint">3、有声音、振动和LED灯提醒</string>
+    <string name="lock_screen_other_hint">1、只在通知中心出现，做个低调的通知</string>
+    <string name="status_bar_other_hint">2、状态栏里都以“...”作为提醒</string>
+    <string name="notify_types_other_hint">3、无声音、振动和LED灯提醒</string>
+    <string name="networkspeed_flow_kbytes"><xliff:g id="KBYTES">%.2f</xliff:g>K/s</string>
+    <string name="networkspeed_flow_mbytes"><xliff:g id="MBYTES">%.2f</xliff:g>M/s</string>
+    <string name="networkspeed_flow_gbytes"><xliff:g id="GBYTES">%.2f</xliff:g>G/s</string>
+
+    <!-- USB Notification msg -->
+    <string name="gn_usb_notification_title">已连接USB</string>
+    <string name="gn_usb_notification_message">触摸可显示其他USB选项</string>
+    <string name="gn_mtp_notification_title">已作为媒体设备连接</string>
+    <string name="gn_ptp_notification_title">已作为相机连接</string>
+         
+    <string name="gn_usb_storage_content">在电脑上编辑手机存储内容</string>
+    <string name="gn_open_debug_mode">临时开启USB调试</string>
+    <string name="gn_debug_mode_message">开启后可启用电脑同步管理工具</string>
+    <string name="gn_adb_warning_title">临时开启USB调试</string>
+    <string name="gn_adb_warning_message">将临时启用USB调试,允许PC端管理软件在您的计算机和设备之间复制数据，安装程序。</string>
+    
+    <string name="gn_ptp_title">看图片</string>
+    <string name="gn_ptp_summary">仅在电脑上查看手机图片</string>
+    <string name="gn_usb_title">传文件</string>
+    <string name="gn_charge_title">仅充电</string>
+    <string name="gn_usb_connection">USB连接</string>
+    <string name="gn_usb_switch_info">正在加载，请不要拔出数据线</string>
+    
+    <string name="mtp_help">MTP帮助</string>
+    <string name="mtp_help_summary">可以通过电脑访问手机文件</string>
+    <string name="mtp_indication">无法通过电脑正常访问手机存储设备?\n请选择当前您电脑的操作系统:</string>
+    <string name="mtp_winxp_name">Windows XP及以下版本</string>
+    <string name="mtp_winvista_name">Windows Vista及以上版本</string>
+    <string name="mtp_linux">Linux</string>
+    <string name="mtp_linux_ubuntu">Linux(以Ubuntu为例)</string>
+    <string name="cancel">取消</string>
+    <string name="next">下一步</string>
+    <string name="finish">完成</string>
+    <string name="mtp_winxp_help_step1">1.电脑系统为Windows XP及以下版本时,需要手动安装此驱动程序。</string>
+    <string name="mtp_winxp_help_step2">2.请使用你的电脑下载并安装驱动程序。</string>
+    <string name="mtp_driver_name">UsbDriverSetup</string>
+    <string name="mtp_driver_download_url">下载地址:</string>
+    <string name="mtp_winxp_help_step3">电脑会弹出硬件向导, 请根据引导完成安装。</string>
+    <string name="mtp_winxp_install_finish">我已成功安装此驱动程序</string>
+    <string name="mtp_win_install_success">电脑出现GiONEE手机存储设备,表明你已成功安装此驱动程序,可传输文件了。</string>
+    <string name="mtp_winxp_help_nonresponds">如果你的电脑没有任何响应,可尝试以下方法:</string>
+    <string name="mtp_win_fail_step1">·断开手机与电脑间的USB,重新连接。</string>
+    <string name="mtp_winxp_reinstall_driver">·重新<Data><![CDATA[ <u><b><font color="#ff0000">安装驱动程序</font></b></u> ]]></Data>。</string>
+    <string name="mtp_winvista_help_hint">电脑系统为Windows Vista及以上版本时,电脑会出现GiONEE便携媒体播放器。</string>
+    <string name="linux_hint">如果你的电脑没有任何响应,可尝试以下方法:\n1.第一次使用MTP设备需安装以下软件:
+        \nsudo apt-get install mtpfs libfuse-dev libmad0-dev\n\n2.建立挂载点\nsudo mkdir /media/mtp\n\n
+        3.修改权限\nsudo chmod 775 /media/mtp\n\n4.挂载MTP设备\nsudo mtpfs -o allow_other /media/mtp
+        \n挂载完成后可用文件浏览器查看文件,也可用命令传输文件,如:\ncp abc.mp4 /media/mtp/Movies/\n\n
+        5.卸载设备\nsudo umount /media/mtp</string>
+
+    <string name="select_shot">区域截屏</string>
+    <string name="exit">退出</string>
+    <string name="save">保存</string>
+    <string name="hover">锚点</string>
+    <string name="tuya">标注</string>
+    <string name="saving">正在保存…</string>
+    <string name="saved">保存完成</string>
+    <string name="share">分享</string>
+    
+    <string name="never_show">不提示此应用</string>
+    
+    <!-- Message shown in dialog when user is attempting to set the music volume above the recommended maximum level for headphones -->
+    <string name="gn_safe_media_volume_warning">"要将音量调高到推荐水平以上吗？\n\n长时间保持高音量可能会损伤听力。"</string>
+    
+    <!-- OTG Notification Meassge -->
+    <string name="gn_usb_storage_checking_title">正在准备USB存储设备</string>
+    <string name="gn_usb_storage_checking_mesage">正在检查是否有错误</string>
+    <string name="gn_remove_otg">安全移除</string>
+    <string name="gn_usb_storage_ready_title">USB存储设备已连接</string>
+    <string name="gn_usb_storage_ready_message">点击进入文件管理</string>
+    <string name="gn_usb_storage_unmounted">可拔出USB存储设备</string>
+    
+    <!-- Recent APP -->
+    <string name="gn_memory_available">%1$s可用 | %2$s</string>
+    <string name="gn_recent_app_notice">长按即可设置允许后台运行的应用</string>
+    <string name="gn_memory_saved">已成功释放%1$s内存</string>
+    <string name="gn_status_bar_no_recent_apps">最近没有用过任何应用</string>
+    
+    <!-- Low Battery Notification -->
+    <string name="gn_powersaver" >省电管理</string>
+    
+    <string name="no_service">无服务</string>
+    <string name="no_card">未插卡</string>
+</resources>

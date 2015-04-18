@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<array name="gn_fc_3way_targets">
+        <item>@drawable/gn_fc_decline</item>
+        <item>@null</item>
+         <item>@drawable/gn_fc_answer</item>
+        <item>@drawable/gn_fc_text</item>
+    </array>
+    
+    <array name="gn_fc_3way_target_descriptions">
+        <item>@string/gn_fc_decline</item>
+         <item>@null</item>
+        <item>@string/gn_fc_answer</item>
+        <item>@string/gn_fc_send_sms</item>
+    </array>
+    
+    <array name="gn_fc_3way_direction_descriptions">
+       <item>@*android:string/description_direction_right</item>
+       <item>@*android:string/description_direction_up</item>
+       <item>@*android:string/description_direction_left</item>
+       <item>@null</item>
+    </array>
+
+</resources>

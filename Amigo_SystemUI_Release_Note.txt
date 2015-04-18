@@ -1,0 +1,38 @@
+==================
+Build Notes
+==================
+1.版本目的:
+Bugfix
+2.功能变更:
+无
+3.重点测试的问题:
+CR01457650
+设置：通知中心-通知分类，点击右上角的问号按钮进入通知分类说明界面，该界面右上角的问号按钮点击无作用，应该去掉 必现
+CR01455791
+系统界面：连接USB，点击状态栏USB选项无作用【随机】1/10
+CR01451169
+按home键退出，定屏5秒后出现com.android.systemui进程无响应，按确定后恢复正常
+CR01456654
+【monkey】：随机，system.ui error：java.lang.IndexOutOfBoundsException，一次
+4.应用数据库是否改变:
+No
+
+==================
+Release Location
+==================
+/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.be.zip
+
+==================
+CR List
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01425613      Opened     wujj       合入Android 5.0通知中心代码
+CR01451169      Resolved   guozj      【品质压力】清除log再开启，按home键退出，定屏5秒后出现com.android.systemui进程无响应，按确定后恢复正常【3/10】
+CR01455791      Coded      wujj       系统界面：连接USB，点击状态栏USB选项无作用【随机】1/10
+CR01456154      Coded      huangwt    控制中心：打开控制中心-点击虚拟来电-倒计时时间到，挂断（接听）来电，铃声响起，不会跟着挂断或接听而停止（附LOG，视频）
+CR01456654      Resolved   wujj       【monkey】：随机，system.ui error：java.lang.IndexOutOfBoundsException，一次
+CR01457650      Coded      wujj       设置：通知中心-通知分类，点击右上角的问号按钮进入通知分类说明界面，该界面右上角的问号按钮点击无作用，应该去掉 必现
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.be
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.bd
+Code difference: svn diff -r 4397:4372 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+

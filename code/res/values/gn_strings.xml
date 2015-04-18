@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    
+    <!-- Control center quick setting -->
+    <string name="gn_qs_data_connect">Data connection</string>
+    <string name="gn_qs_vibrate">Vibrate</string>
+    <string name="gn_qs_voice">Voice</string>
+    <string name="gn_qs_alarm">Alarm</string>
+    <string name="gn_qs_location">Location</string>
+    <string name="gn_qs_rotation">Rotate screen</string>
+    <string name="gn_qs_screen_shot">Regional screenshots</string>
+    <string name="gn_qs_navi_launcher">Amigo classic launcher</string>
+    <string name="gn_qs_power">Extreme mode</string>
+    
+    <!-- Control center shotcut -->
+    <string name="gn_sc_calculator">Calculator</string>
+    <string name="gn_sc_torch">Torch</string>
+    <string name="gn_sc_camera">Camera</string>
+    <string name="gn_sc_fake_call">FakeCall</string>
+
+    <!-- Control center shotcut camera -->
+    <string name="gn_camera_blind_shoot_success" >Shoot success</string>
+    <string name="gn_camera_blind_shoot_open" >Click to view your picture</string>
+	
+    <!-- Control center shotcut fake call -->
+    <string name="gn_fc_cancel_phone">Cancel the call</string>
+    <string name="gn_fc_decline">"decline"</string>
+    <string name="gn_fc_answer">"answer"</string>
+    <string name="gn_fc_send_sms">"send sms"</string>
+    <string name="gn_fc_response_sms">SMS reply</string>
+    <string name="gn_fc_contact">Contacts</string>
+    <string name="gn_fc_record">Audio record</string>
+    <string name="gn_fc_add">Add</string>
+    <string name="gn_fc_mute">Mute on</string>
+    <string name="gn_fc_hold">Hold</string>
+    <string name="gn_fc_note">Note</string>
+    <string name="gn_fc_incall">In call</string>
+    <string name="gn_fc_unknown">Unknown</string>
+    <string name="gn_fc_calling">Incoming call</string>
+    <string name="gn_fc_call_tip">"second"</string>
+    <string-array name="gn_fc_caller">
+        <item>Mike</item>
+        <item>Boss</item>
+        <item>Jim</item>
+    </string-array>
+    <string-array name="content">
+        <item>Your stuff has been repaired,please hurry to take it.</item>
+        <item>I haven\'t received the document,please send me as soon as possible.</item>
+        <item>My darling, what time will you come back with me?</item>
+    </string-array>
+    
+    <string name="important">Important</string>
+    <string name="other">Other</string>
+    <string name="notification_sort">Sort notifications</string>
+    <string name="notification_sort_hint">Sort help</string>
+    <string name="set_as_important">Set as important type</string>
+    <string name="set_as_other">Set as other type</string>
+    <string name="entry_notification_sort">Entry notification sort view</string>
+    <string name="important_notification">Important notification</string>
+    <string name="other_notification">Other notification</string>
+    <string name="lock_screen_important_hint">1.Show on lock screen</string>
+    <string name="status_bar_important_hint">2.Icon will show on status bar</string>
+    <string name="notify_types_important_hint">3.Notify by sound, vibrate and LED light</string>
+    <string name="lock_screen_other_hint">1.Only show in notification center</string>
+    <string name="status_bar_other_hint">2.Notified as ... in status bar</string>
+    <string name="notify_types_other_hint">3.Notify by no sound, vibrate or LED light</string>
+    <string name="networkspeed_flow_kbytes"><xliff:g id="KBYTES">%.2f</xliff:g>K/s</string>
+    <string name="networkspeed_flow_mbytes"><xliff:g id="MBYTES">%.2f</xliff:g>M/s</string>
+    <string name="networkspeed_flow_gbytes"><xliff:g id="GBYTES">%.2f</xliff:g>G/s</string>
+    
+    <!-- USB Notification msg -->
+    <string name="gn_usb_notification_title">Connected to a USB</string>
+    <string name="gn_usb_notification_message">Touch for other USB options</string>
+    <string name="gn_mtp_notification_title">Connected as a media device</string>
+    <string name="gn_ptp_notification_title">Connected as a camera</string>
+    <string name="gn_usb_storage_content">Accessing files on this device.</string>
+
+    <string name="gn_open_debug_mode">Interim USB debugging</string>
+    <string name="gn_debug_mode_message">Debug mode when USB is connected</string>
+    <string name="gn_ptp_title">View photos</string>
+    <string name="gn_ptp_summary">Browse photos on PC only</string>
+    <string name="gn_usb_title">File copy</string>
+    <string name="gn_charge_title">Charge only</string>
+    <string name="gn_usb_connection">USB connection</string>
+    <string name="gn_usb_switch_info">Loading,please do not pull out USB line</string>
+    <string name="gn_adb_warning_title">Temporarily turn on USB debugging</string>
+    <string name="gn_adb_warning_message">Temporarily enable USB debugging,Allows the PC client management software to copy data between your computer and device, the installer</string>
+    
+    <string name="mtp_help">MTP help</string>
+    <string name="mtp_help_summary">Access files on phone through PC</string>
+    <string name="mtp_indication">Cannot access files through PC?\nPlease check the following list according to your PC OS:</string>
+    <string name="mtp_winxp_name">Windows XP or lower version</string>
+    <string name="mtp_winvista_name">Win7 or higher version</string>
+    <string name="mtp_linux">Linux</string>
+    <string name="mtp_linux_ubuntu">Linux(Ubuntu)</string>
+    <string name="cancel">Cancel</string>
+    <string name="next">Next</string>
+    <string name="finish">Finish</string>
+    <string name="mtp_winxp_help_step1">1.Need to install the following driver manually when your PC OS\'s version is Windows XP or lower:</string>
+    <string name="mtp_winxp_help_step2">2.Please download and install the driver on your PC.</string>
+    <string name="mtp_driver_name">UsbDriverSetup</string>
+    <string name="mtp_driver_download_url">Web site:</string>
+    <string name="mtp_winxp_help_step3">Please follow the guide to finish installation.</string>
+    <string name="mtp_winxp_install_finish">I have installed the driver</string>
+    <string name="mtp_win_install_success">The driver has been installed successfully if the GiONEE device shows on your PC.Then enjoy file transforing.</string>
+    <string name="mtp_winxp_help_nonresponds">You can try as following if your PC has none responds:</string>
+    <string name="mtp_win_fail_step1">·Reconnect your phone with USB.</string>
+    <string name="mtp_winxp_reinstall_driver">Re-install <Data><![CDATA[ <u><b><font color="#ff0000">the driver</font></b></u> ]]></Data>.</string>
+    <string name="mtp_winvista_help_hint">GiONEE Media player will show on your PC when its version is Windows vista or higher.</string>
+    <string name="linux_hint">Do as following:\n1.Install tools for the first time:
+        \nsudo apt-get install mtpfs libfuse-dev libmad0-dev\n\n2.Create mount point:\nsudo mkdir /media/mtp\n\n
+        3.Modify permission:\nsudo chmod 775 /media/mtp\n\n4.Mount MTP device:\nsudo mtpfs -o allow_other /media/mtp
+        \nThen you can access files in file broswer, or transport file by command, such as:\ncp abc.mp4 /media/mtp/Movies/\n\n
+        5.Umount device:\nsudo umount /media/mtp</string>
+    <string name="select_shot">Select shot</string>
+    <string name="exit">Exit</string>
+    <string name="save">Save</string>
+    <string name="hover">Hover</string>
+    <string name="tuya">Annotate</string>
+    <string name="saving">Saving…</string>
+    <string name="saved">Saved</string>
+    <string name="share">Share</string>
+    
+    <string name="never_show">Not show this APP</string>
+
+    <!-- Message shown in dialog when user is attempting to set the music volume above the recommended maximum level for headphones -->
+    <string name="gn_safe_media_volume_warning" >"Raise volume above recommended level?\n\nListening at high volume for long periods may damage your hearing."</string>
+    
+    <!-- OTG Notification Meassge -->
+    <string name="gn_usb_storage_checking_title">Preparing USB storage</string>
+    <string name="gn_usb_storage_checking_mesage">Checking for errors.</string>
+    <string name="gn_remove_otg">Remove</string>
+    <string name="gn_usb_storage_ready_title">USB storage connected</string>
+    <string name="gn_usb_storage_ready_message">Click to FileManager</string>
+    <string name="gn_usb_storage_unmounted">Please remove USB storage!</string>
+    
+    <!-- Recent APP -->
+    <string name="gn_memory_available">%1$s Available | %2$s</string>
+    <string name="gn_recent_app_notice">Long press setup application that could running in the background</string>
+    <string name="gn_memory_saved">%1$s Memory Saved</string>
+    <string name="gn_status_bar_no_recent_apps">No app used recently</string>
+    
+    <!-- Low Battery Notification -->
+    <string name="gn_powersaver" >Power Saver</string>
+    
+    <string name="no_service">no service</string>
+    <string name="no_card">No card</string>
+
+</resources>
