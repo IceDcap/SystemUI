@@ -974,10 +974,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             }
         }
         
-        if (viewsToHide.isEmpty()) {
-            animateCollapsePanels(CommandQueue.FLAG_EXCLUDE_NONE);
-            return;
-        }
+//        if (viewsToHide.isEmpty()) {
+//            animateCollapsePanels(CommandQueue.FLAG_EXCLUDE_NONE);
+//            return;
+//        }
 
         if (type == NotificationType.OTHER) {
         	if (size == viewsToHide.size()) {
@@ -1747,7 +1747,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 		if (!mShowOther && OTHER > 0) {
 			mOtherHeader.setVisibility(View.VISIBLE);
 			mStackScroller.changeViewPosition(mOtherHeader, mStackScroller.getChildCount() - 1);
-//			mStackScroller.changeViewPosition(mOtherHeader, IMPORTANT+2);
+			final ImageView hideButton = (ImageView) mOtherHeader.findViewById(R.id.hide);
+			hideButton.setImageDrawable(mContext.getDrawable(R.drawable.gn_arrow_right));
 		}
 		// Step 6
 		updateRowStates();
