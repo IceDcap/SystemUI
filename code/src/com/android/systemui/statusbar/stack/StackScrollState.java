@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.android.systemui.R;
+import com.android.systemui.gionee.nc.ui.GnNotificationLevelHeader;
 import com.android.systemui.statusbar.EmptyShadeView;
 import com.android.systemui.statusbar.ExpandableView;
 
@@ -132,7 +133,11 @@ public class StackScrollState {
                     child.setTranslationY(newYTranslation);
                 }
 
-                // apply zTranslation
+                // If Child View is notificationLevel, move it to the top of list
+                if (child instanceof GnNotificationLevelHeader) {
+                	Log.v("StackScrollState", "Child view is GnNotificationLevelHeader");
+                	newZTranslation = 24.0f;
+                }
                 if (zTranslation != newZTranslation) {
                     child.setTranslationZ(newZTranslation);
                 }
