@@ -1666,7 +1666,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 					// This will cause all other notifications not adding to mStackScroller,
 					// in this case other header will gone
 					Log.v(TAG, "View's Parent:"+v.getParent());
-					if (v.getParent() instanceof ViewGroup) {
+					if(v.getParent() instanceof NotificationStackScrollLayout) {
+						Log.v(TAG, "Child is instanceof NotificationStackScrollLayout");
+						// TODO: if v's parent is NotificationStackScrollLayout, do nothing
+					} else if (v.getParent() instanceof ViewGroup) {
 						try {
 							Log.v(TAG, "try to cast to ViewGroup ");
 							((ViewGroup)v.getParent()).removeView(v);
@@ -1674,9 +1677,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 						} catch (Exception e) {
 							Log.v(TAG, "cast to ViewGroup exception");
 						}
-					} else if(v.getParent() instanceof NotificationStackScrollLayout) {
-						Log.v(TAG, "Child is instanceof NotificationStackScrollLayout");
-						// TODO: if v's parent is NotificationStackScrollLayout, do nothing
 					}
 				}
 			}
