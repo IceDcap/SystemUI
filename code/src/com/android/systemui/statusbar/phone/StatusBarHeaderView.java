@@ -264,6 +264,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     	mDateCollapsed.setVisibility(View.VISIBLE);
     	mDateExpanded.setVisibility(View.VISIBLE);
         mSettingsButton.setVisibility(View.VISIBLE);
+        mMultiUserSwitch.setVisibility(View.GONE);
     }
 
     private void updateAvatarScale() {
