@@ -1614,7 +1614,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 			}
 			// GIONEE <wujj> <2015-02-14> Modify for CR01445765 end
 			if (importantView.contains(child) ||
-//					otherView.contains(child) ||
+					//otherView.contains(child) ||
 					onGoingView.contains(child)) {
 				continue;
 			}
@@ -1660,6 +1660,24 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 				View v = otherView.get(i);
 				if (v.getParent() == null) {
 					mStackScroller.addView(v);
+				} else {
+					// Notice: if user show & hide other notifications too frequently,
+					// v's parent will not be null, and it's parent will not be mStackScroller.
+					// This will cause all other notifications not adding to mStackScroller,
+					// in this case other header will gone
+					Log.v(TAG, "View's Parent:"+v.getParent());
+					if (v.getParent() instanceof ViewGroup) {
+						try {
+							Log.v(TAG, "try to cast to ViewGroup ");
+							((ViewGroup)v.getParent()).removeView(v);
+							mStackScroller.addView(v);
+						} catch (Exception e) {
+							Log.v(TAG, "cast to ViewGroup exception");
+						}
+					} else if(v.getParent() instanceof NotificationStackScrollLayout) {
+						Log.v(TAG, "Child is instanceof NotificationStackScrollLayout");
+						// TODO: if v's parent is NotificationStackScrollLayout, do nothing
+					}
 				}
 			}
 		}
