@@ -176,7 +176,7 @@ public abstract class PanelView extends FrameLayout {
 
     public PanelView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mFlingAnimationUtils = new FlingAnimationUtils(context, 0.6f);
+        mFlingAnimationUtils = new FlingAnimationUtils(context, 0.2f);
         mFastOutSlowInInterpolator =
                 AnimationUtils.loadInterpolator(context, android.R.interpolator.fast_out_slow_in);
         mLinearOutSlowInInterpolator =

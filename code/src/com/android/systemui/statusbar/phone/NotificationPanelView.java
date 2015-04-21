@@ -1713,6 +1713,7 @@ public class NotificationPanelView extends PanelView implements
     		}
 		}
 		*/
+    	canvas.drawColor(0xF2181818);
         super.dispatchDraw(canvas);
         if (DEBUG) {
             Paint p = new Paint();
