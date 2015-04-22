@@ -92,7 +92,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     private QSPanel mQSPanel;
 
 
-    private final Rect mClipBounds = new Rect();
+    //private final Rect mClipBounds = new Rect();
 
     private boolean mCaptureValues;
     private final LayoutValues mCollapsedValues = new LayoutValues();
@@ -127,22 +127,22 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
             @Override
             public void onLayoutChange(View v, int left, int top, int right,
                     int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                if ((right - left) != (oldRight - oldLeft)) {
-                    // width changed, update clipping
-                    setClipping(getHeight());
-                }
+//                if ((right - left) != (oldRight - oldLeft)) {
+//                    // width changed, update clipping
+//                    setClipping(getHeight());
+//                }
                 boolean rtl = getLayoutDirection() == LAYOUT_DIRECTION_RTL;
                 mTime.setPivotX(rtl ? mTime.getWidth() : 0);
                 mTime.setPivotY(mTime.getBaseline());
                 updateAmPmTranslation();
             }
         });
-        setOutlineProvider(new ViewOutlineProvider() {
-            @Override
-            public void getOutline(View view, Outline outline) {
-                outline.setRect(mClipBounds);
-            }
-        });
+//        setOutlineProvider(new ViewOutlineProvider() {
+//            @Override
+//            public void getOutline(View view, Outline outline) {
+//                outline.setRect(mClipBounds);
+//            }
+//        });
         requestCaptureValues();
     }
 
@@ -332,14 +332,14 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
             t = 0f;
         }
         mCurrentT = t;
-        float height = mCollapsedHeight + t * (mExpandedHeight - mCollapsedHeight);
+/*        float height = mCollapsedHeight + t * (mExpandedHeight - mCollapsedHeight);
         if (height < mCollapsedHeight) {
             height = mCollapsedHeight;
         }
         if (height > mExpandedHeight) {
             height = mExpandedHeight;
         }
-        setClipping(height);
+        setClipping(height);*/
         updateLayoutValues(t);
     }
 
@@ -351,11 +351,11 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         applyLayoutValues(mCurrentValues);
     }
 
-    private void setClipping(float height) {
-        mClipBounds.set(getPaddingLeft(), 0, getWidth() - getPaddingRight(), (int) height);
-        setClipBounds(mClipBounds);
-        invalidateOutline();
-    }
+//    private void setClipping(float height) {
+//        mClipBounds.set(getPaddingLeft(), 0, getWidth() - getPaddingRight(), (int) height);
+//        setClipBounds(mClipBounds);
+//        invalidateOutline();
+//    }
 
     public void setUserInfoController(UserInfoController userInfoController) {
         userInfoController.addListener(new UserInfoController.OnUserInfoChangedListener() {
