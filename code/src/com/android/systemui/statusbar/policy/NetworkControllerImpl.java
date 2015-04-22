@@ -78,7 +78,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
     static final String TAG = "NetworkController";
     static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
     // additional diagnostics, but not logspew
-    static final boolean CHATTY =  Log.isLoggable(TAG + ".Chat", Log.DEBUG);
+    static final boolean CHATTY = true;//Log.isLoggable(TAG + ".Chat", Log.DEBUG);
     // Save the previous SignalController.States of all SignalControllers for dumps.
     static final boolean RECORD_HISTORY = true;
     // If RECORD_HISTORY how many to save, must be a power of 2.
@@ -387,7 +387,8 @@ public class NetworkControllerImpl extends BroadcastReceiver
         } else if (action.equals(TelephonyIntents.ACTION_DEFAULT_VOICE_SUBSCRIPTION_CHANGED)) {
             // We are using different subs now, we might be able to make calls.
             recalculateEmergency();
-        } else if (action.equals(TelephonyIntents.ACTION_DEFAULT_DATA_SUBSCRIPTION_CHANGED)) {
+        } else if (action.equals(TelephonyIntents.ACTION_DEFAULT_DATA_SUBSCRIPTION_CHANGED)
+        		|| action.equals(TelephonyIntents.SPN_STRINGS_UPDATED_ACTION)) {
             // Notify every MobileSignalController so they can know whether they are the
             // data sim or not.
             for (MobileSignalController controller : mMobileSignalControllers.values()) {
