@@ -17,7 +17,7 @@ import android.view.SurfaceControl;
 import android.view.WindowManager;
 
 public class GnBlurHelper {
-    /*
+    
     protected static final String TAG = "GnBlurHelper";
     
     public final static float ZOOM_FRAC = 16.0f;
@@ -172,5 +172,5 @@ public class GnBlurHelper {
         }
         return 0f;
     }
-    */
+    
 }

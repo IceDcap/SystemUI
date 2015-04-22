@@ -1013,4 +1013,8 @@ public abstract class PanelView extends FrameLayout {
      * @return the height of the clear all button, in pixels
      */
     protected abstract int getClearAllHeight();
+	// GIONEE <wujj> <2015-03-12> optimize code begin
+	public void updateBackground() {
+	}
+	// GIONEE <wujj> <2015-03-12> optimize code begin
 }

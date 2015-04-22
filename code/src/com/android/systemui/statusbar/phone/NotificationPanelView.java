@@ -27,6 +27,7 @@ import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.os.Handler;
@@ -1697,23 +1698,24 @@ public class NotificationPanelView extends PanelView implements
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
-    	/*
-    	synchronized (GnBlurHelper.LOCK) {
-    		if (GnBlurHelper.mBlur != null && !GnBlurHelper.mBlur.isRecycled()) {
-    			int bitMapWidth = GnBlurHelper.mBlur.getWidth();
-    			int panelWidth = getWidth();
-    			int panelHeight = getHeight();
-				Rect src = new Rect(0, 0, bitMapWidth, panelHeight);
-				Rect dst = new Rect(0, 0, panelWidth, panelHeight);
-
-    			Paint paint = new Paint();
-    			paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OVER));
-    			canvas.drawBitmap(GnBlurHelper.mBlur, src, dst, paint);
-    			canvas.drawColor(0x7F181818);
-    		}
-		}
-		*/
-    	canvas.drawColor(0xF2181818);
+    	if (mBar.isHighconfigDevice()) {
+	    	synchronized (GnBlurHelper.LOCK) {
+	    		if (GnBlurHelper.mBlur != null && !GnBlurHelper.mBlur.isRecycled()) {
+	    			int bitMapWidth = GnBlurHelper.mBlur.getWidth();
+	    			int panelWidth = getWidth();
+	    			int panelHeight = getHeight();
+					Rect src = new Rect(0, 0, bitMapWidth, panelHeight);
+					Rect dst = new Rect(0, 0, panelWidth, panelHeight);
+	
+	    			Paint paint = new Paint();
+	    			paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OVER));
+	    			canvas.drawBitmap(GnBlurHelper.mBlur, src, dst, paint);
+	    			canvas.drawColor(0x7F181818);
+	    		}
+			}
+    	} else {
+    		canvas.drawColor(0xF2181818);
+    	}
         super.dispatchDraw(canvas);
         if (DEBUG) {
             Paint p = new Paint();

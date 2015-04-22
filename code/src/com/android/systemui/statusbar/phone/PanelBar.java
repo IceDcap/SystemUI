@@ -26,6 +26,9 @@ import android.widget.FrameLayout;
 
 import java.util.ArrayList;
 
+import com.android.systemui.gionee.GnBlurHelper;
+import com.android.systemui.gionee.GnUtil;
+
 public class PanelBar extends FrameLayout {
     public static final boolean DEBUG = true;
     public static final String TAG = PanelBar.class.getSimpleName();
@@ -45,6 +48,7 @@ public class PanelBar extends FrameLayout {
     private boolean mTracking;
 
     float mPanelExpandedFractionSum;
+    private final boolean mIsHighDevice;
 
     public void go(int state) {
         if (DEBUG) LOG("go state: %d -> %d", mState, state);
@@ -66,6 +70,10 @@ public class PanelBar extends FrameLayout {
     
     public PanelBar(Context context, AttributeSet attrs) {
         super(context, attrs);
+        mIsHighDevice = GnUtil.isHighDevice(context);
+        if (mIsHighDevice) {
+        	GnBlurHelper.addCallbacks(mCallback);
+        }
     }
 
     @Override
@@ -151,6 +159,9 @@ public class PanelBar extends FrameLayout {
     public void startOpeningPanel(PanelView panel) {
         if (DEBUG) LOG("startOpeningPanel: " + panel);
         mTouchingPanel = panel;
+        if (isHighconfigDevice()) {
+        	createBlurBg(getContext());
+        }
         mPanelHolder.setSelectedPanel(mTouchingPanel);
         for (PanelView pv : mPanels) {
             if (pv != panel) {
@@ -159,6 +170,25 @@ public class PanelBar extends FrameLayout {
         }
     }
 
+    public void createBlurBg(Context context) {
+    	GnBlurHelper.getBlurHelper().createBlurBg(context);
+    }
+    
+    
+    GnBlurHelper.Callback mCallback = new GnBlurHelper.Callback() {
+		
+		@Override
+		public void completeBlur() {
+			if (mTouchingPanel != null) {
+				mTouchingPanel.updateBackground();
+			}
+		}
+	};
+	
+	public boolean isHighconfigDevice() {
+		return mIsHighDevice;
+	}
+	
     /**
      * @param panel the panel which changed its expansion state
      * @param frac the fraction from the expansion in [0, 1]
