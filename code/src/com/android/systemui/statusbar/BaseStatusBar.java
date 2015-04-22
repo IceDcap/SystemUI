@@ -899,7 +899,10 @@ public abstract class BaseStatusBar extends SystemUI implements
         final View settingsButton = guts.findViewById(R.id.notification_inspect_item);
         final View appSettingsButton
                 = guts.findViewById(R.id.notification_inspect_app_provided_settings);
-        boolean isSystemNotification = mGnNotificationService.isUidSystem(appUid) || "android".equals(pkg);
+        boolean isSystemNotification = mGnNotificationService.isUidSystem(appUid) ||
+        								"android".equals(pkg) ||
+        								"com.android.systemui".equals(pkg);
+        Log.v(TAG, "sbn = "+sbn+" isSystemNotification?"+isSystemNotification);
         if (appUid >= 0 && !isSystemNotification) {
             final int appUidF = appUid;
             settingsButton.setOnClickListener(new View.OnClickListener() {
