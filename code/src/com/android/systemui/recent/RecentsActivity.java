@@ -19,22 +19,56 @@ package com.android.systemui.recent;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.WallpaperManager;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.RemoteException;
 import android.os.UserHandle;
+import android.provider.CalendarContract.Instances;
+import android.util.Log;
+import android.view.IWindowManager;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManagerGlobal;
+import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.WindowManager;
+import android.widget.FrameLayout.LayoutParams;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.systemui.R;
+import com.android.systemui.SwipeHelper;
 import com.android.systemui.statusbar.StatusBarPanel;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.util.List;
 
-public class RecentsActivity extends Activity {
+import com.android.internal.util.MemInfoReader;
+
+import android.text.format.Formatter;
+import android.app.ActivityManager;
+import android.app.ActivityManager.MemoryInfo;
+
+public class RecentsActivity extends Activity implements OnClickListener , OnLongClickListener {
+	
+	private static final String TAG = "RecentsActivity";
+	
     public static final String TOGGLE_RECENTS_INTENT = "com.android.systemui.recent.action.TOGGLE_RECENTS";
     public static final String PRELOAD_INTENT = "com.android.systemui.recent.action.PRELOAD";
     public static final String CANCEL_PRELOAD_INTENT = "com.android.systemui.recent.CANCEL_PRELOAD";
@@ -43,11 +77,35 @@ public class RecentsActivity extends Activity {
     public static final String PRELOAD_PERMISSION = "com.android.systemui.recent.permission.PRELOAD";
     public static final String WAITING_FOR_WINDOW_ANIMATION_PARAM = "com.android.systemui.recent.WAITING_FOR_WINDOW_ANIMATION";
     private static final String WAS_SHOWING = "was_showing";
+    private static final String WHITE_LIST_MANAGER = "com.gionee.softmanager.action.WHITE_LIST_MANAGER";
+	private static final String PROCESS_WHITE_LIST = "content://com.gionee.systemmanager.oneclean/whitelist";
 
     private RecentsPanelView mRecentsPanel;
     private IntentFilter mIntentFilter;
     private boolean mShowing;
     private boolean mForeground;
+    private RelativeLayout mRecentReleaseLayout;
+    private ImageView mRecentAppClearView;
+    private GnScanView mGnScanView;
+    private Context mContext;
+    private TextView mMemoryInfo;
+    private TextView mClearNotice;
+    private static final int MSG_STOP_PROCESS_DONE = 0;
+    private static final int MSG_SCAN = 1;
+    private static final int MSG_START_CLEAR = 2;
+    private static final int MSG_STOP_CLEAR = 3;
+    private Thread mThread;
+    private ActivityManager mAm;
+    private ActivityManager.MemoryInfo mMemInfo = new MemoryInfo();
+    private long mMemoryUsed = 0;
+    private static boolean mIsClearBtnLongPress = false;
+
+    private final static String BLUR_IMAGE_FILE = "/data/misc/gionee/";
+    
+    private float mMemPercent = 0;
+    private int mPreAngle = 0;
+    private int mAngle = 0;
+    private int mStopTime = 0;
 
     private BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
         @Override
@@ -79,7 +137,7 @@ public class RecentsActivity extends Activity {
             if (action == MotionEvent.ACTION_OUTSIDE
                     || (action == MotionEvent.ACTION_DOWN
                     && !mPanel.isInContentArea((int) ev.getX(), (int) ev.getY()))) {
-                dismissAndGoHome();
+                //dismissAndGoHome();
                 return true;
             }
             return false;
@@ -99,17 +157,43 @@ public class RecentsActivity extends Activity {
     public void onStop() {
         mShowing = false;
         if (mRecentsPanel != null) {
+        	mRecentsPanel.show(false);
             mRecentsPanel.onUiHidden();
         }
         super.onStop();
+        finish();
     }
 
+    private Bitmap getBlurBitmap () {
+        Log.d(TAG, "getBlur start!");
+        InputStream fis = null;
+        try {
+            fis = new FileInputStream(BLUR_IMAGE_FILE + "blur");
+            return BitmapFactory.decodeStream(fis);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            if (fis != null){
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                fis = null;
+            }
+        }
+    }
+    
     private void updateWallpaperVisibility(boolean visible) {
-        int wpflags = visible ? WindowManager.LayoutParams.FLAG_SHOW_WALLPAPER : 0;
+/*        int wpflags = visible ? WindowManager.LayoutParams.FLAG_SHOW_WALLPAPER : 0;
         int curflags = getWindow().getAttributes().flags
                 & WindowManager.LayoutParams.FLAG_SHOW_WALLPAPER;
         if (wpflags != curflags) {
             getWindow().setFlags(wpflags, WindowManager.LayoutParams.FLAG_SHOW_WALLPAPER);
+        }*/
+        if (visible) {
+            mRecentsPanel.setBackgroundDrawable(new BitmapDrawable(getBlurBitmap()));
         }
     }
 
@@ -125,6 +209,7 @@ public class RecentsActivity extends Activity {
         } else {
             updateWallpaperVisibility(true);
         }
+        getProcessWhiteList();
         mShowing = true;
         if (mRecentsPanel != null) {
             // Call and refresh the recent tasks list in case we didn't preload tasks
@@ -138,6 +223,11 @@ public class RecentsActivity extends Activity {
     @Override
     public void onResume() {
         mForeground = true;
+        updateMemoryInfo();
+        mRecentsPanel.updateRecentAppLockState();
+        if (mIsClearBtnLongPress) {
+			mClearNotice.setVisibility(View.GONE);
+		}
         super.onResume();
     }
 
@@ -162,13 +252,16 @@ public class RecentsActivity extends Activity {
             final ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
 
             final List<ActivityManager.RecentTaskInfo> recentTasks =
+                    am.getRecentTasks(2, ActivityManager.RECENT_IGNORE_UNAVAILABLE);
+/*            final List<ActivityManager.RecentTaskInfo> recentTasks =
                     am.getRecentTasks(2,
                             ActivityManager.RECENT_WITH_EXCLUDED |
                             ActivityManager.RECENT_IGNORE_UNAVAILABLE |
-                            ActivityManager.RECENT_INCLUDE_PROFILES);
+                            ActivityManager.RECENT_INCLUDE_PROFILES);*/
             if (recentTasks.size() > 1 &&
                     mRecentsPanel.simulateClick(recentTasks.get(1).persistentId)) {
                 // recents panel will take care of calling show(false) through simulateClick
+                finish();
                 return;
             }
             mRecentsPanel.show(false);
@@ -178,14 +271,23 @@ public class RecentsActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mContext = this;
+        mAm = ( ActivityManager ) mContext.getApplicationContext().getSystemService(
+                Context.ACTIVITY_SERVICE);
         getWindow().addPrivateFlags(
                 WindowManager.LayoutParams.PRIVATE_FLAG_INHERIT_TRANSLUCENT_DECOR);
         setContentView(R.layout.status_bar_recent_panel);
         mRecentsPanel = (RecentsPanelView) findViewById(R.id.recents_root);
         mRecentsPanel.setOnTouchListener(new TouchOutsideListener(mRecentsPanel));
-        mRecentsPanel.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        mRecentReleaseLayout = (RelativeLayout) mRecentsPanel.findViewById(R.id.recent_release_layout);
+        mRecentAppClearView = (ImageView) mRecentsPanel.findViewById(R.id.recent_app_clear);
+        mGnScanView = (GnScanView) mRecentsPanel.findViewById(R.id.gn_san_view);
+        mMemoryInfo = (TextView) mRecentsPanel.findViewById(R.id.memory_status);
+        mClearNotice = (TextView) mRecentsPanel.findViewById(R.id.recent_notice);
+        /*mRecentsPanel.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);*/
+        mRecentsPanel.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
 
         final RecentTasksLoader recentTasksLoader = RecentTasksLoader.getInstance(this);
         recentTasksLoader.setRecentsPanel(mRecentsPanel, mRecentsPanel);
@@ -200,7 +302,34 @@ public class RecentsActivity extends Activity {
         mIntentFilter.addAction(CLOSE_RECENTS_INTENT);
         mIntentFilter.addAction(WINDOW_ANIMATION_START_INTENT);
         registerReceiver(mIntentReceiver, mIntentFilter);
+        
+        LayoutParams lp = (LayoutParams) mRecentReleaseLayout.getLayoutParams();
+        if (hasNavigationBar()) {
+            lp.setMargins(0, 0, 0, 0);
+        } else {
+            int navigationBarH = mContext.getResources().getDimensionPixelSize(
+                    com.android.internal.R.dimen.navigation_bar_height);
+            lp.setMargins(0, 0, 0, navigationBarH);
+        }
+        mRecentReleaseLayout.setLayoutParams(lp);
+        
+        mRecentAppClearView.setOnClickListener(this);
+        mRecentAppClearView.setOnLongClickListener(this);
+        
+        mMemoryUsed = getMemoryAvailable();
+        SwipeHelper.setRecentsAcitivtyContext(this);
         super.onCreate(savedInstanceState);
+    }
+
+    private boolean hasNavigationBar() {
+        boolean hasNavigationBar = true;
+        try {
+            IWindowManager mWindowManagerService = WindowManagerGlobal.getWindowManagerService();
+            hasNavigationBar = mWindowManagerService.hasNavigationBar();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return hasNavigationBar;
     }
 
     @Override
@@ -210,6 +339,7 @@ public class RecentsActivity extends Activity {
 
     @Override
     protected void onDestroy() {
+        mHandler.removeMessages(MSG_STOP_CLEAR);
         RecentTasksLoader.getInstance(this).setRecentsPanel(null, mRecentsPanel);
         unregisterReceiver(mIntentReceiver);
         super.onDestroy();
@@ -245,4 +375,237 @@ public class RecentsActivity extends Activity {
     boolean isActivityShowing() {
          return mShowing;
     }
+
+	@Override
+	public boolean onLongClick(View v) {
+		Intent whiteListIntent = new Intent(WHITE_LIST_MANAGER);
+		whiteListIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+		try {
+			finish();
+			startActivity(whiteListIntent);
+		} catch (ActivityNotFoundException e) {
+			Log.d(TAG," Oops, activity of com.gionee.softmanager.action.WHITE_LIST_MANAGER not found");
+		}
+		mIsClearBtnLongPress = true;
+		if (mIsClearBtnLongPress) {
+			mClearNotice.setVisibility(View.GONE);
+		}
+		return true;
+	}
+
+    @Override
+    public void onClick(View v) {
+        mStopTime = 10;
+        mHandler.removeMessages(MSG_SCAN);
+        mHandler.sendEmptyMessage(MSG_START_CLEAR);
+        mRecentsPanel.clearRecentApps();
+        showMemorySaved();
+    }
+
+	private Handler mHandler = new Handler() {
+
+		@Override
+        public void handleMessage(Message msg) {
+		    
+            switch (msg.what) {
+                case MSG_SCAN:
+                    scanView(msg.what);
+                    break;
+                case MSG_START_CLEAR:
+                    startScanView();
+                    break;
+                case MSG_STOP_CLEAR:
+                    stopScanView();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void scanView(int what) {
+            int currentAngel = mGnScanView.getAngle();
+            int angel = currentAngel;
+            Log.d(TAG, "angel = " + angel + " mAngle = " + mAngle);
+            
+            if (Math.abs(currentAngel + mAngle) < 5) {
+                mHandler.removeMessages(what);
+                return;
+            } else if (currentAngel > -mAngle) {
+                angel -= 5;
+            } else {
+                angel += 5;
+            }
+            
+            mGnScanView.setAngle(angel);
+            
+            mHandler.removeMessages(what);
+            mHandler.sendEmptyMessageDelayed(what, 10);
+        }
+        
+        private void startScanView() {
+            int currentstartAngle = mGnScanView.getStartAngle();
+            int startAngle = currentstartAngle % 360 + 15;
+            
+            mGnScanView.setAngle(startAngle, mAngle);
+            
+            mHandler.removeMessages(MSG_START_CLEAR);
+            mHandler.sendEmptyMessageDelayed(MSG_START_CLEAR, 10);
+        }
+        
+        private void stopScanView() {
+            int currentstartAngle = mGnScanView.getStartAngle() + 10;
+            int startAngle = currentstartAngle % 360;
+            
+            Log.d(TAG, "mAngle = " + mAngle + "  mPreAngle = " + mPreAngle);
+            if (mPreAngle > mAngle) {
+                mPreAngle -= 5;
+            }
+            mGnScanView.setAngle(startAngle, mPreAngle);
+            
+            if (mStopTime < 30) {
+                mStopTime += 1;
+            }
+            
+            int stopAngle = 0;
+            if (mAngle > GnScanView.START_ANGLE) {
+                stopAngle = mAngle;
+            } else {
+                stopAngle = GnScanView.START_ANGLE - mAngle;
+            }
+            
+            Log.d(TAG, "startAngle = " + startAngle + " stopAngle = " + stopAngle + " mStopTime = " + mStopTime);
+            
+            if (Math.abs(startAngle - stopAngle) <= 5 && mStopTime >= 30) {
+                mHandler.removeMessages(MSG_STOP_CLEAR);
+                
+                String memoryInfo = String.format(
+                        mContext.getResources().getString(R.string.gn_memory_available), 
+                        formatMemory(getMemoryAvailable()),
+                        formatMemory(getPhoneRamMemory()));
+                mMemoryInfo.setText(memoryInfo);
+
+                long memorySavedSize = (getMemoryAvailable() > mMemoryUsed) ? (getMemoryAvailable() - mMemoryUsed)
+                        : (mMemoryUsed - getMemoryAvailable());
+                String memorySaved = String.format(
+                        mContext.getResources().getString(R.string.gn_memory_saved),
+                        formatMemory(memorySavedSize));
+                Toast.makeText(mContext, memorySaved, Toast.LENGTH_SHORT).show();
+                
+                finish();
+                return;
+            }
+            
+            mHandler.removeMessages(MSG_STOP_CLEAR);
+            mHandler.sendEmptyMessageDelayed(MSG_STOP_CLEAR, mStopTime);
+        }
+        
+	};
+	
+	public void updateMemoryInfo() {
+        String memoryInfo = String.format(
+        		mContext.getResources().getString(R.string.gn_memory_available), 
+                formatMemory(getMemoryAvailable()),
+                formatMemory(getPhoneRamMemory()));
+        mMemoryInfo.setText(memoryInfo);
+        
+        mAngle = calculateAngle();
+        mHandler.sendEmptyMessage(MSG_SCAN);
+    }
+	
+	private void showMemorySaved() {
+	    mPreAngle = mAngle;
+		mMemoryUsed = getMemoryAvailable();
+		Handler handler = new Handler();
+		handler.postDelayed(new Runnable() {
+			
+			@Override
+			public void run() {
+		        mAngle = calculateAngle();
+		        
+		        mHandler.removeMessages(MSG_START_CLEAR);
+		        mHandler.sendEmptyMessage(MSG_STOP_CLEAR);
+			}
+		}, 2000);
+	}
+
+    private int calculateAngle() {
+        mMemPercent = (float)(getPhoneRamMemory() - getMemoryAvailable()) / (float)getPhoneRamMemory();
+        return (int) (360 * mMemPercent);
+    }
+	
+	private long getMemoryAvailable() {
+		mAm.getMemoryInfo(mMemInfo);
+        return mMemInfo.availMem;
+	}
+	
+	public String formatMemory(long size) {
+        long sizeM = size / 1024 / 1024;
+
+        if (((float)sizeM / 1024.0f) - 1.1 >= 0.0) {
+            float sizeG =  ((float)sizeM / 1024.0f);
+            return String.format("%.1fG", sizeG);
+        }
+
+        return "" + sizeM + "M";
+    }
+	
+	public long getPhoneRamMemory() {
+        MemInfoReader memInfoReader = new MemInfoReader();
+        memInfoReader.readMemInfo();
+        long totalSize = memInfoReader.getTotalSize();
+        totalSize = translateCapacity(totalSize);
+		
+        return totalSize;
+    }
+	
+    private long translateCapacity(long capacity) {
+        long result = capacity;
+        if (capacity < 67108864L) {
+            result = 67108864L;
+        } else if (capacity < 134217728L) {
+            result = 134217728L;
+        } else if (capacity < 268435456L) {
+            result = 268435456L;
+        } else if (capacity < 536870912L) {
+            result = 536870912L;
+        } else if (capacity < 1073741824L) {
+            result = 1073741824L;
+        } else if (capacity < 1610612736L) {
+			result = 1610612736L;
+        } else if (capacity < 2147483648L) {
+            result = 2147483648L;
+        } else if (capacity < 3221225472L) {
+            result = 3221225472L;
+        } else if (capacity < 4294967296L) {
+            result = 4294967296L;
+        } else if (capacity < 8589934592L) {
+            result = 8589934592L;
+        } else if (capacity < 17179869184L) {
+            result = 17179869184L;
+        } else if (capacity < 32000000000L) {
+            result = 34359738368L;
+        }
+        return result;
+    }
+    
+    private void getProcessWhiteList() {
+    	Cursor cursor = null;
+    	try {
+			cursor = getContentResolver().query(Uri.parse(PROCESS_WHITE_LIST), null, null, null, null);
+    		if (cursor != null && mRecentsPanel != null) {
+    			mRecentsPanel.clearLockApp();
+    			while(cursor.moveToNext()) {
+    				mRecentsPanel.saveLockAppName(cursor.getString(0));
+    			}
+    			mRecentsPanel.commitWhiteList();
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			Log.d(TAG, " Exception = " + e);
+		} finally {
+			if(cursor != null) {
+				cursor.close();
+			}
+		}
+	}
 }

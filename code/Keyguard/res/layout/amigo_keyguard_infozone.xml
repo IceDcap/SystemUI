@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view xmlns:android="http://schemas.android.com/apk/res/android"
+    class="com.amigo.navi.keyguard.infozone.AmigoKeyguardInfoZone"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/kg_infozone_fixed_panel_height" >
+
+</view>

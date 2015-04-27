@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <com.amigo.navi.keyguard.AmigoKeyguardPage
+        
+        android:id="@+id/amigo_keyguard_page"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+        
+        <!-- <com.gionee.navi.keyguard.amigo.KWDragLayer
+            android:id="@+id/kw_drag_layer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true" >
+            
+            <com.gionee.navi.keyguard.amigo.KWWorkspace
+                android:id="@+id/kw_workspace"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="@dimen/kg_kw_workspace_margin_bottom">
+                
+               <com.gionee.navi.keyguard.amigo.fanfan.KWLeftCellLayout
+                    android:id="@+id/left_celllayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+               
+              <com.gionee.navi.keyguard.amigo.widget.KWMainCellLayout
+                    android:id="@+id/main_celllayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+              
+            </com.gionee.navi.keyguard.amigo.KWWorkspace>
+            
+            place page indicator at the bottom of drag layer
+                 because drag layer is a FrameLayout, we should compute
+                 top margin in src code
+                 
+            <com.gionee.navi.keyguard.amigo.widgetview.PagerIndicator
+                android:visibility="invisible"
+                android:id="@+id/paged_view_indicator"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/pager_indicator_height"
+                android:layout_marginBottom="@dimen/pager_indicator_margin_bottom"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                 />
+            android:background="@drawable/kw_indicator_bg"
+            
+        </com.gionee.navi.keyguard.amigo.KWDragLayer> -->
+        
+         <include layout="@layout/amigo_keyguard_infozone"
+            android:id="@+id/amigo_infozone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true" 
+            android:layout_marginBottom="@dimen/kg_infozone_margin_bottom"/> 
+        
+    </com.amigo.navi.keyguard.AmigoKeyguardPage>
+
+</merge>

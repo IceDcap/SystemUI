@@ -1695,8 +1695,10 @@ public abstract class BaseStatusBar extends SystemUI implements
             if (visibleToUser) {
                 // Only stop blinking, vibrating, ringing when the user went into the shade
                 // manually (SHADE or SHADE_LOCKED).
-                boolean clearNotificationEffects =
-                        (mState == StatusBarState.SHADE || mState == StatusBarState.SHADE_LOCKED);
+            	//jiating modify for keyguard begin
+                boolean clearNotificationEffects =true;
+                        //(mState == StatusBarState.SHADE || mState == StatusBarState.SHADE_LOCKED);
+              //jiating modify for keyguard end
                 mBarService.onPanelRevealed(clearNotificationEffects);
             } else {
                 mBarService.onPanelHidden();
@@ -1786,7 +1788,9 @@ public abstract class BaseStatusBar extends SystemUI implements
         final int N = activeNotifications.size();
 
         int visibleNotifications = 0;
-        boolean onKeyguard = mState == StatusBarState.KEYGUARD;
+      //jiating modify for keyguard begin
+        boolean onKeyguard =false;// mState == StatusBarState.KEYGUARD;
+      //jiating modify for keyguard end
         for (int i = 0; i < N; i++) {
             NotificationData.Entry entry = activeNotifications.get(i);
             if (onKeyguard) {

@@ -45,6 +45,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:importantForAccessibility="no" />
+    
+     <!-- jingyn modify  for  keyguard begin -->
+
+    <com.amigo.navi.keyguard.KeyguardViewHost
+        android:id="@+id/keyguardViewHost"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:visibility="gone"/>
+    
+    <!-- jingyn modify  for  keyguard end -->
 
     <include layout="@layout/status_bar"
         android:layout_width="match_parent"

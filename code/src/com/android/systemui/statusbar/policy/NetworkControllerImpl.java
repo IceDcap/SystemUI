@@ -76,7 +76,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
         implements NetworkController, DemoMode {
     // debug
     static final String TAG = "NetworkController";
-    static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    static final boolean DEBUG = true;//Log.isLoggable(TAG, Log.DEBUG);
     // additional diagnostics, but not logspew
     static final boolean CHATTY = true;//Log.isLoggable(TAG + ".Chat", Log.DEBUG);
     // Save the previous SignalController.States of all SignalControllers for dumps.
@@ -845,7 +845,8 @@ public class NetworkControllerImpl extends BroadcastReceiver
             // WiFi only has one state.
             mCurrentState.iconGroup = mLastState.iconGroup = new IconGroup(
                     "Wi-Fi Icons",
-                    WifiIcons.WIFI_SIGNAL_STRENGTH,
+                    //WifiIcons.WIFI_SIGNAL_STRENGTH,
+                    WifiIcons.WIFI_SIGNAL_STRENGTH_INOUT,
                     WifiIcons.QS_WIFI_SIGNAL_STRENGTH,
                     AccessibilityContentDescriptions.WIFI_CONNECTION_STRENGTH,
                     WifiIcons.WIFI_NO_NETWORK,
@@ -879,7 +880,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
 
             int signalClustersLength = mSignalClusters.size();
             for (int i = 0; i < signalClustersLength; i++) {
-                mSignalClusters.get(i).setWifiIndicators(wifiVisible, getCurrentIconId(),
+                mSignalClusters.get(i).setWifiIndicators(wifiVisible, getCurrentWifiIconId(),
                         contentDescription);
             }
         }
@@ -1147,8 +1148,8 @@ public class NetworkControllerImpl extends BroadcastReceiver
             mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_UMTS, TelephonyIcons.THREE_G);
 
             if (!mConfig.showAtLeast3G) {
-                mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_UNKNOWN,
-                        TelephonyIcons.UNKNOWN);
+                mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_UNKNOWN,TelephonyIcons.G
+                        /*TelephonyIcons.UNKNOWN*/);//while we cannot getDataNetworkType from ServiceState, take G as default
                 mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_EDGE, TelephonyIcons.E);
                 mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_CDMA, TelephonyIcons.ONE_X);
                 mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_1xRTT, TelephonyIcons.ONE_X);
@@ -1185,31 +1186,13 @@ public class NetworkControllerImpl extends BroadcastReceiver
         @Override
         public void notifyListeners() {
             MobileIconGroup icons = getIcons();
-
+            int typeIcon = icons.mDataType;//showDataIcon ? icons.mDataType : 0;
             String contentDescription = getStringIfExists(getContentDescription());
             String dataContentDescription = getStringIfExists(icons.mDataContentDescription);
 
             boolean showDataIcon = mCurrentState.dataConnected && mCurrentState.inetForNetwork != 0
                     || mCurrentState.iconGroup == TelephonyIcons.ROAMING;
 
-            // Only send data sim callbacks to QS.
-            if (mCurrentState.dataSim) {
-                int qsTypeIcon = showDataIcon ? icons.mQsDataType[mCurrentState.inetForNetwork] : 0;
-                int length = mSignalsChangedCallbacks.size();
-                for (int i = 0; i < length; i++) {
-                    mSignalsChangedCallbacks.get(i).onMobileDataSignalChanged(mCurrentState.enabled
-                            && !mCurrentState.isEmergency,
-                            getQsCurrentIconId(), contentDescription,
-                            qsTypeIcon,
-                            mCurrentState.dataConnected && mCurrentState.activityIn,
-                            mCurrentState.dataConnected && mCurrentState.activityOut,
-                            dataContentDescription,
-                            mCurrentState.isEmergency ? null : mCurrentState.networkName,
-                            // Only wide if actually showing something.
-                            icons.mIsWide && qsTypeIcon != 0);
-                }
-            }
-            int typeIcon = showDataIcon ? icons.mDataType : 0;
             int signalClustersLength = mSignalClusters.size();
             for (int i = 0; i < signalClustersLength; i++) {
                 mSignalClusters.get(i).setMobileDataIndicators(
@@ -1222,6 +1205,62 @@ public class NetworkControllerImpl extends BroadcastReceiver
                         icons.mIsWide && typeIcon != 0,
                         mSubscriptionInfo.getSubscriptionId());
             }
+            // Only send data sim callbacks to QS.
+            if (mCurrentState.dataSim) {
+                int qsTypeIcon = showDataIcon ? icons.mQsDataType[mCurrentState.inetForNetwork] : 0;
+                int networkTypeIcon = showDataIcon ? icons.mNetworkDataType : 0;
+                int mobileInOutIcon = R.drawable.gn_stat_sys_signal_inout_null;
+                int length = mSignalsChangedCallbacks.size();
+                for (int i = 0; i < length; i++) {
+                    mSignalsChangedCallbacks.get(i).onMobileDataSignalChanged(mCurrentState.enabled
+                            && !mCurrentState.isEmergency,
+                            getQsCurrentIconId(), contentDescription,
+                            qsTypeIcon,
+                            mCurrentState.dataConnected && mCurrentState.activityIn,
+                            mCurrentState.dataConnected && mCurrentState.activityOut,
+                            dataContentDescription,
+                            mCurrentState.isEmergency ? null : mCurrentState.networkName,
+                            // Only wide if actually showing something.
+                            icons.mIsWide && qsTypeIcon != 0);
+                    
+                }
+                for(int i = 0; i< signalClustersLength; i++) {
+                	mSignalClusters.get(i).setNetworkType(networkTypeIcon, mSubscriptionInfo.getSubscriptionId());
+                	if(mCurrentState.dataConnected) {
+                		if(mCurrentState.activityIn) {
+                			mobileInOutIcon = R.drawable.gn_stat_sys_signal_in;
+                		} else if(mCurrentState.activityOut) {
+                			mobileInOutIcon = R.drawable.gn_stat_sys_signal_out;
+						} else {
+							mobileInOutIcon = R.drawable.gn_stat_sys_signal_inout_null;
+						}
+                	} else {
+						mobileInOutIcon = 0;
+					}
+                	mSignalClusters.get(i).setMobileInout(mCurrentState.dataConnected, mobileInOutIcon, mSubscriptionInfo.getSubscriptionId());
+                }
+            } else {
+                int networkTypeIcon = 0;
+                int mobileInOutIcon = 0;
+                int length = mSignalsChangedCallbacks.size();
+
+                for(int i = 0; i< signalClustersLength; i++) {
+                	mSignalClusters.get(i).setNetworkType(networkTypeIcon, mSubscriptionInfo.getSubscriptionId());
+                	if(mCurrentState.dataConnected) {
+                		if(mCurrentState.activityIn) {
+                			mobileInOutIcon = R.drawable.gn_stat_sys_signal_in;
+                		} else if(mCurrentState.activityOut) {
+                			mobileInOutIcon = R.drawable.gn_stat_sys_signal_out;
+						} else {
+							mobileInOutIcon = R.drawable.gn_stat_sys_signal_inout_null;
+						}
+                	} else {
+						mobileInOutIcon = 0;
+					}
+                	mSignalClusters.get(i).setMobileInout(mCurrentState.dataConnected, mobileInOutIcon, mSubscriptionInfo.getSubscriptionId());
+                }
+            
+			}
         }
 
         @Override
@@ -1435,17 +1474,19 @@ public class NetworkControllerImpl extends BroadcastReceiver
             final int mDataType;
             final boolean mIsWide;
             final int[] mQsDataType;
+            final int mNetworkDataType;
 
             public MobileIconGroup(String name, int[][] sbIcons, int[][] qsIcons, int[] contentDesc,
                     int sbNullState, int qsNullState, int sbDiscState, int qsDiscState,
                     int discContentDesc, int dataContentDesc, int dataType, boolean isWide,
-                    int[] qsDataType) {
+                    int sbDataType, int[] qsDataType) {
                 super(name, sbIcons, qsIcons, contentDesc, sbNullState, qsNullState, sbDiscState,
                         qsDiscState, discContentDesc);
                 mDataContentDescription = dataContentDesc;
                 mDataType = dataType;
-                mIsWide = isWide;
                 mQsDataType = qsDataType;
+                mIsWide = isWide;
+                mNetworkDataType = sbDataType;
             }
         }
 
@@ -1608,6 +1649,22 @@ public class NetworkControllerImpl extends BroadcastReceiver
                 return getIcons().mSbNullState;
             }
         }
+        
+        public int getCurrentWifiIconId() {
+			if(mCurrentState.connected) {
+				if(mCurrentState.activityIn && mCurrentState.activityOut) {
+					return WifiIcons.WIFI_SIGNAL_STRENGTH_INOUT[mCurrentState.level][3];
+				} else if (mCurrentState.activityIn) {
+					return WifiIcons.WIFI_SIGNAL_STRENGTH_INOUT[mCurrentState.level][1];
+				} else if (mCurrentState.activityOut) {
+					return WifiIcons.WIFI_SIGNAL_STRENGTH_INOUT[mCurrentState.level][2];
+				} else {
+					return WifiIcons.WIFI_SIGNAL_STRENGTH_INOUT[mCurrentState.level][0];
+				}
+			} else {
+				return 0;
+			}
+		}
 
         /**
          * Gets the content description id for the signal based on current state of connected and
@@ -1791,6 +1848,8 @@ public class NetworkControllerImpl extends BroadcastReceiver
         void setNoSims(boolean show);
 
         void setIsAirplaneMode(boolean is, int airplaneIcon, int contentDescription);
+        void setNetworkType(int networkType, int subId);
+        void setMobileInout(boolean visible, int mobileInOut, int subId);
     }
 
     public interface EmergencyListener {

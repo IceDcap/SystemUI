@@ -17,6 +17,7 @@
 package com.android.systemui.statusbar.phone;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.Choreographer;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -65,26 +66,27 @@ public class KeyguardBouncer {
             // case we are already showing and the current security method changed.
             mKeyguardView.showPrimarySecurityScreen();
         }
-        if (mRoot.getVisibility() == View.VISIBLE || mShowingSoon) {
-            return;
-        }
+//        if (mRoot.getVisibility() == View.VISIBLE || mShowingSoon) {
+//            return;
+//        }
 
         // Try to dismiss the Keyguard. If no security pattern is set, this will dismiss the whole
         // Keyguard. If we need to authenticate, show the bouncer.
-        if (!mKeyguardView.dismiss()) {
+        Log.d("jing_test", "show  mKeyguardView.dismiss(): "+mKeyguardView.dismiss());
+//        if (!mKeyguardView.dismiss()) {
             mShowingSoon = true;
 
             // Split up the work over multiple frames.
             mChoreographer.postCallbackDelayed(Choreographer.CALLBACK_ANIMATION, mShowRunnable,
                     null, 16);
-        }
+//        }
     }
 
     private final Runnable mShowRunnable = new Runnable() {
         @Override
         public void run() {
             mRoot.setVisibility(View.VISIBLE);
-            mKeyguardView.onResume();
+//            mKeyguardView.onResume();
             mKeyguardView.startAppearAnimation();
             mShowingSoon = false;
             mKeyguardView.sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
@@ -174,7 +176,7 @@ public class KeyguardBouncer {
         mKeyguardView = (KeyguardViewBase) mRoot.findViewById(R.id.keyguard_host_view);
         mKeyguardView.setLockPatternUtils(mLockPatternUtils);
         mKeyguardView.setViewMediatorCallback(mCallback);
-        mContainer.addView(mRoot, mContainer.getChildCount());
+//        mContainer.addView(mRoot, mContainer.getChildCount());
         mRoot.setVisibility(View.INVISIBLE);
         mRoot.setSystemUiVisibility(View.STATUS_BAR_DISABLE_HOME);
     }
@@ -228,7 +230,7 @@ public class KeyguardBouncer {
             // We need to show it in case it is secure. If not, it will get dismissed in any case.
             mRoot.setVisibility(View.VISIBLE);
             mKeyguardView.requestFocus();
-            mKeyguardView.onResume();
+//            mKeyguardView.onResume();
             return true;
         } else {
             return false;

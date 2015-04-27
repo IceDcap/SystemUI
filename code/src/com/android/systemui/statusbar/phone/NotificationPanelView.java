@@ -303,13 +303,14 @@ public class NotificationPanelView extends PanelView implements
     private void positionClockAndNotifications() {
         boolean animate = mNotificationStackScroller.isAddOrRemoveAnimationPending();
         int stackScrollerPadding;
-        if (mStatusBarState != StatusBarState.KEYGUARD) {
+        //jiating modify for keyguard begin
+//        if (mStatusBarState != StatusBarState.KEYGUARD) {
             int bottom = mHeader.getCollapsedHeight();
-            stackScrollerPadding = mStatusBarState == StatusBarState.SHADE
-                    ? bottom + mQsPeekHeight + mNotificationTopPadding
-                    : mKeyguardStatusBar.getHeight() + mNotificationTopPadding;
+            stackScrollerPadding =/* mStatusBarState == StatusBarState.SHADE
+                    ? */bottom + mQsPeekHeight + mNotificationTopPadding;
+                   // : mKeyguardStatusBar.getHeight() + mNotificationTopPadding;
             mTopPaddingAdjustment = 0;
-        } else {
+       /* } else {
             mClockPositionAlgorithm.setup(
                     mStatusBar.getMaxKeyguardNotifications(),
                     getMaxPanelHeight(),
@@ -327,7 +328,8 @@ public class NotificationPanelView extends PanelView implements
             updateClock(mClockPositionResult.clockAlpha, mClockPositionResult.clockScale);
             stackScrollerPadding = mClockPositionResult.stackScrollerPadding;
             mTopPaddingAdjustment = mClockPositionResult.stackScrollerPaddingAdjustment;
-        }
+        }*/
+            //jiating modify for keyguard end
         mNotificationStackScroller.setIntrinsicPadding(stackScrollerPadding);
         requestScrollerTopPaddingUpdate(animate);
     }
@@ -530,7 +532,9 @@ public class NotificationPanelView extends PanelView implements
     }
 
     private boolean isBelowFalsingThreshold() {
-        return !mQsTouchAboveFalsingThreshold && mStatusBarState == StatusBarState.KEYGUARD;
+    	//jiating modify for keyguard begin
+        return false;/*!mQsTouchAboveFalsingThreshold; && mStatusBarState == StatusBarState.KEYGUARD*/
+        //jiating modify for keyguard end
     }
 
     private float getQsExpansionFraction() {
@@ -544,10 +548,13 @@ public class NotificationPanelView extends PanelView implements
             return false;
         }
         resetDownStates(event);
-        if ((!mIsExpanding || mHintAnimationRunning)
+      //jiating modify for keyguard begin
+        /*if ((!mIsExpanding || mHintAnimationRunning)
+                && !mQsExpanded
                 && mStatusBar.getBarState() != StatusBarState.SHADE) {
             mAfforanceHelper.onTouchEvent(event);
-        }
+        }*/
+     //jiating modify for keyguard end
         if (mOnlyAffordanceInThisMotion) {
             return true;
         }
@@ -581,7 +588,9 @@ public class NotificationPanelView extends PanelView implements
 
     @Override
     protected boolean hasConflictingGestures() {
-        return mStatusBar.getBarState() != StatusBarState.SHADE;
+    	   //jiating modify for keyguard begin
+        return false;//mStatusBar.getBarState() != StatusBarState.SHADE;
+          //jiating modify for keyguard end
     }
 
     private void onQsTouch(MotionEvent event) {
@@ -711,9 +720,11 @@ public class NotificationPanelView extends PanelView implements
 
     public void setBarState(int statusBarState, boolean keyguardFadingAway,
             boolean goingToFullShade) {
-        boolean keyguardShowing = statusBarState == StatusBarState.KEYGUARD
-                || statusBarState == StatusBarState.SHADE_LOCKED;
-        if (!mKeyguardShowing && keyguardShowing) {
+    	   //jiating modify for keyguard begin
+        boolean keyguardShowing =false; /*statusBarState == StatusBarState.KEYGUARD
+                || statusBarState == StatusBarState.SHADE_LOCKED;*/
+ 
+      /*  if (!mKeyguardShowing && keyguardShowing) {
             setQsTranslation(mQsExpansionHeight);
             mHeader.setTranslationY(0f);
         }
@@ -724,7 +735,8 @@ public class NotificationPanelView extends PanelView implements
         } else {
             mKeyguardStatusBar.setAlpha(1f);
             mKeyguardStatusBar.setVisibility(keyguardShowing ? View.VISIBLE : View.INVISIBLE);
-        }
+        }*/
+      //jiating modify for keygurad end
         mStatusBarState = statusBarState;
         mKeyguardShowing = keyguardShowing;
         updateQsState();
@@ -827,7 +839,8 @@ public class NotificationPanelView extends PanelView implements
 
     private void setKeyguardBottomAreaVisibility(int statusBarState,
             boolean goingToFullShade) {
-        if (goingToFullShade) {
+    	   //jiating modify for keyguard begin
+        /*if (goingToFullShade) {
             mKeyguardBottomArea.animate().cancel();
             mKeyguardBottomArea.animate()
                     .alpha(0f)
@@ -845,12 +858,14 @@ public class NotificationPanelView extends PanelView implements
             mKeyguardBottomArea.animate().cancel();
             mKeyguardBottomArea.setVisibility(View.GONE);
             mKeyguardBottomArea.setAlpha(1f);
-        }
+        }*/
+    	   //jiating modify for keyguard end
     }
 
     private void setKeyguardStatusViewVisibility(int statusBarState, boolean keyguardFadingAway,
             boolean goingToFullShade) {
-        if ((!keyguardFadingAway && mStatusBarState == StatusBarState.KEYGUARD
+    	   //jiating modify for keyguard begin
+       /* if ((!keyguardFadingAway && mStatusBarState == StatusBarState.KEYGUARD
                 && statusBarState != StatusBarState.KEYGUARD) || goingToFullShade) {
             mKeyguardStatusView.animate().cancel();
             mKeyguardStatusViewAnimating = true;
@@ -888,15 +903,18 @@ public class NotificationPanelView extends PanelView implements
             mKeyguardStatusViewAnimating = false;
             mKeyguardStatusView.setVisibility(View.GONE);
             mKeyguardStatusView.setAlpha(1f);
-        }
+        }*/
+    	   //jiating modify for keyguard end
     }
 
     private void updateQsState() {
         boolean expandVisually = mStackScrollerOverscrolling;
         mHeader.setVisibility((!mKeyguardShowing) ? View.VISIBLE : View.INVISIBLE);
         mHeader.setExpanded(mKeyguardShowing);
-        mNotificationStackScroller.setScrollingEnabled(
-                mStatusBarState != StatusBarState.KEYGUARD);
+        //jiating modify for keyguard begin
+        mNotificationStackScroller.setScrollingEnabled(true
+                /*mStatusBarState != StatusBarState.KEYGUARD &&*/);
+       //jiating modify for keyguard end
         mScrollView.setTouchEnabled(false);
         updateEmptyShadeView();
     }
@@ -926,11 +944,13 @@ public class NotificationPanelView extends PanelView implements
     }
 
     private String getKeyguardOrLockScreenString() {
-        if (mStatusBarState == StatusBarState.KEYGUARD) {
+    	   //jiating modify for keyguard begin
+       /* if (mStatusBarState == StatusBarState.KEYGUARD) {
             return getContext().getString(R.string.accessibility_desc_lock_screen);
-        } else {
+        } else {*/
             return getContext().getString(R.string.accessibility_desc_notification_shade);
-        }
+//        }
+            //jiating modify for keyguard end
     }
 
     private void updateNotificationScrim(float height) {
@@ -964,9 +984,11 @@ public class NotificationPanelView extends PanelView implements
                     - mClockPositionResult.stackScrollerPaddingAdjustment
                     - mNotificationTopPadding;
             int maxQs = getTempQsMaxExpansion();
-            int max = mStatusBarState == StatusBarState.KEYGUARD
+            //jiating modify for keyguard begin
+            int max = /*mStatusBarState == StatusBarState.KEYGUARD
                     ? Math.max(maxNotifications, maxQs)
-                    : maxQs;
+                    :*/ maxQs;
+            //jiating modify for keyguard end
             return (int) interpolate(getExpandedFraction(),
                     mQsMinExpansionHeight, max);
         } else if (mKeyguardShowing && mScrollYOverride == -1) {
@@ -1062,17 +1084,18 @@ public class NotificationPanelView extends PanelView implements
         return false;
     }
 
+  //jiating modify for keyguard begin
     @Override
     protected boolean isScrolledToBottom() {
-		return mStatusBar.getBarState() == StatusBarState.KEYGUARD
-				|| mNotificationStackScroller.isScrolledToBottom();
+		return /*mStatusBar.getBarState() == StatusBarState.KEYGUARD
+                    ||*/mNotificationStackScroller.isScrolledToBottom();
     }
 
     @Override
     protected int getMaxPanelHeight() {
         int min = mStatusBarMinHeight;
-        if (mStatusBar.getBarState() != StatusBarState.KEYGUARD
-                && mNotificationStackScroller.getNotGoneChildCount() == 0) {
+        if (/*mStatusBar.getBarState() != StatusBarState.KEYGUARD
+                &&*/ mNotificationStackScroller.getNotGoneChildCount() == 0) {
             int minHeight = (int) ((mQsMinExpansionHeight + getOverExpansionAmount())
                     * HEADER_RUBBERBAND_FACTOR);
             min = Math.max(min, minHeight);
@@ -1081,6 +1104,7 @@ public class NotificationPanelView extends PanelView implements
         maxHeight = Math.max(maxHeight, min);
         return maxHeight;
     }
+      //jiating modify for keyguard end
 
     @Override
     protected void onHeightUpdated(float expandedHeight) {
@@ -1132,11 +1156,13 @@ public class NotificationPanelView extends PanelView implements
         }
         int maxQsHeight = mQsMaxExpansionHeight;
 
+      //jiating modify for keyguard begin
         float totalHeight = Math.max(
                 maxQsHeight + mNotificationStackScroller.getNotificationTopPadding(),
-                mStatusBarState == StatusBarState.KEYGUARD
+               /* mStatusBarState == StatusBarState.KEYGUARD
                         ? mClockPositionResult.stackScrollerPadding - mTopPaddingAdjustment
-                        : 0)
+                        :*/ 0)
+       //jiating modify for keyguard end
                 + notificationHeight;
         if (totalHeight > mNotificationStackScroller.getHeight()) {
             float fullyCollapsedHeight = maxQsHeight
@@ -1181,7 +1207,8 @@ public class NotificationPanelView extends PanelView implements
     }
 
     private void updateUnlockIcon() {
-        if (mStatusBar.getBarState() == StatusBarState.KEYGUARD
+//jiating modify for keyguard begin
+        /*if (mStatusBar.getBarState() == StatusBarState.KEYGUARD
                 || mStatusBar.getBarState() == StatusBarState.SHADE_LOCKED) {
             boolean active = getMaxPanelHeight() - getExpandedHeight() > mUnlockMoveDistance;
             KeyguardAffordanceView lockIcon = mKeyguardBottomArea.getLockIcon();
@@ -1196,8 +1223,10 @@ public class NotificationPanelView extends PanelView implements
                         mFastOutLinearInterpolator);
             }
             mUnlockIconActive = active;
-        }
+        }*/
+    	//jiating modify for keyguard end
     }
+
 
     //Update Navigator bar's background
     private void updateNavigatorBarBackground() {
@@ -1265,12 +1294,14 @@ public class NotificationPanelView extends PanelView implements
      * Hides the header when notifications are colliding with it.
      */
     private void updateHeader() {
-        if (mStatusBar.getBarState() == StatusBarState.KEYGUARD
+    	//jiating modify for keyguard begin
+       /* if (mStatusBar.getBarState() == StatusBarState.KEYGUARD
                 || mStatusBar.getBarState() == StatusBarState.SHADE_LOCKED) {
             updateHeaderKeyguard();
-        } else {
+        } else {*/
             updateHeaderShade();
-        }
+//        }
+       //jiating modify for keyguard end
 
     }
 
@@ -1282,10 +1313,12 @@ public class NotificationPanelView extends PanelView implements
     }
 
     private float getHeaderTranslation() {
-        if (mStatusBar.getBarState() == StatusBarState.KEYGUARD
+    	//jiating modify for keyguard begin
+     /*   if (mStatusBar.getBarState() == StatusBarState.KEYGUARD
                 || mStatusBar.getBarState() == StatusBarState.SHADE_LOCKED) {
             return 0;
-        }
+        }*/
+    	//jiating modify for keyguard end
         if (mNotificationStackScroller.getNotGoneChildCount() == 0) {
             if (mExpandedHeight / HEADER_RUBBERBAND_FACTOR >= mQsMinExpansionHeight) {
                 return 0;
@@ -1298,19 +1331,21 @@ public class NotificationPanelView extends PanelView implements
 
     private void updateHeaderKeyguard() {
         float alphaNotifications;
-        if (mStatusBar.getBarState() == StatusBarState.KEYGUARD) {
+      //jiating modify for keyguard begin
+        /*if (mStatusBar.getBarState() == StatusBarState.KEYGUARD) {
 
             // When on Keyguard, we hide the header as soon as the top card of the notification
             // stack scroller is close enough (collision distance) to the bottom of the header.
             alphaNotifications = getNotificationsTopY()
                     /
                     (mKeyguardStatusBar.getHeight() + mNotificationsHeaderCollideDistance);
-        } else {
+        } else {*/
 
             // In SHADE_LOCKED, the top card is already really close to the header. Hide it as
             // soon as we start translating the stack.
             alphaNotifications = getNotificationsTopY() / mKeyguardStatusBar.getHeight();
-        }
+//        }
+          //jiating modify for keyguard end
         alphaNotifications = MathUtils.constrain(alphaNotifications, 0, 1);
         alphaNotifications = (float) Math.pow(alphaNotifications, 0.75);
         float alphaQsExpansion = 1 - Math.min(1, getQsExpansionFraction() * 2);
@@ -1360,7 +1395,8 @@ public class NotificationPanelView extends PanelView implements
 
     @Override
     protected void setOverExpansion(float overExpansion, boolean isPixels) {
-        if (mStatusBar.getBarState() != StatusBarState.KEYGUARD) {
+      //jiating modify for keyguard begin
+//        if (mStatusBar.getBarState() != StatusBarState.KEYGUARD) {
             mNotificationStackScroller.setOnHeightChangedListener(null);
             if (isPixels) {
                 mNotificationStackScroller.setOverScrolledPixels(
@@ -1370,16 +1406,19 @@ public class NotificationPanelView extends PanelView implements
                         overExpansion, true /* onTop */, false /* animate */);
             }
             mNotificationStackScroller.setOnHeightChangedListener(this);
-        }
+//        }
+          //jiating modify for keyguard end
     }
 
     @Override
     protected void onTrackingStarted() {
         super.onTrackingStarted();
-        if (mStatusBar.getBarState() == StatusBarState.KEYGUARD
+          //jiating modify for keyguard begin
+      /*  if (mStatusBar.getBarState() == StatusBarState.KEYGUARD
                 || mStatusBar.getBarState() == StatusBarState.SHADE_LOCKED) {
             mAfforanceHelper.animateHideLeftRightIcon();
-        }
+        }*/
+      //jiating modify for keyguard end
     }
 
     @Override
@@ -1389,18 +1428,20 @@ public class NotificationPanelView extends PanelView implements
             mNotificationStackScroller.setOverScrolledPixels(
                     0.0f, true /* onTop */, true /* animate */);
         }
-        if (expand && (mStatusBar.getBarState() == StatusBarState.KEYGUARD
+      //jiating modify for keyguard begin
+        /*if (expand && (mStatusBar.getBarState() == StatusBarState.KEYGUARD
                 || mStatusBar.getBarState() == StatusBarState.SHADE_LOCKED)) {
             if (!mHintAnimationRunning) {
                 mAfforanceHelper.reset(true);
             }
-        }
-        if (!expand && (mStatusBar.getBarState() == StatusBarState.KEYGUARD
+        }*/
+        /*if (!expand && (mStatusBar.getBarState() == StatusBarState.KEYGUARD
                 || mStatusBar.getBarState() == StatusBarState.SHADE_LOCKED)) {
             KeyguardAffordanceView lockIcon = mKeyguardBottomArea.getLockIcon();
             lockIcon.setImageAlpha(0.0f, true, 100, mFastOutLinearInterpolator, null);
             lockIcon.setImageScale(2.0f, true, 100, mFastOutLinearInterpolator);
-        }
+        }*/
+      //jiating modify for keyguard end
     }
 
     @Override

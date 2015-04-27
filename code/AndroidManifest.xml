@@ -369,6 +369,11 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.amigo.navi.keyguard.skylight.SkylightActivity"
+            android:excludeFromRecents="true"
+            android:theme="@android:style/Theme.Light" >
+        </activity>
 
         <!-- Doze with notifications, run in main sysui process for every user  -->
         <service

@@ -62,8 +62,8 @@ public class StatusBarIconView extends AnimatedImageView {
         // We do not resize and scale system icons (on the right), only notification icons (on the
         // left).
         if (notification != null) {
-            final int outerBounds = res.getDimensionPixelSize(R.dimen.status_bar_icon_size);
-            final int imageBounds = res.getDimensionPixelSize(R.dimen.status_bar_icon_drawing_size);
+            final int outerBounds = res.getDimensionPixelSize(R.dimen.gn_status_bar_icon_size);
+            final int imageBounds = res.getDimensionPixelSize(R.dimen.gn_status_bar_icon_drawing_size);
             final float scale = (float)imageBounds / (float)outerBounds;
             setScaleX(scale);
             setScaleY(scale);
@@ -80,8 +80,8 @@ public class StatusBarIconView extends AnimatedImageView {
     public StatusBarIconView(Context context, AttributeSet attrs) {
         super(context, attrs);
         final Resources res = context.getResources();
-        final int outerBounds = res.getDimensionPixelSize(R.dimen.status_bar_icon_size);
-        final int imageBounds = res.getDimensionPixelSize(R.dimen.status_bar_icon_drawing_size);
+        final int outerBounds = res.getDimensionPixelSize(R.dimen.gn_status_bar_icon_size);
+        final int imageBounds = res.getDimensionPixelSize(R.dimen.gn_status_bar_icon_drawing_size);
         final float scale = (float)imageBounds / (float)outerBounds;
         setScaleX(scale);
         setScaleY(scale);
@@ -91,12 +91,10 @@ public class StatusBarIconView extends AnimatedImageView {
         if (a == b) {
             return true;
         }
-        if (a == null && b != null) {
+        if (a == null || b == null) {
             return false;
         }
-        if (a != null && b == null) {
-            return false;
-        }
+        
         return a.equals(b);
     }
 

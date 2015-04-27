@@ -46,12 +46,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
 
 public class RecentTasksLoader implements View.OnTouchListener {
     static final String TAG = "RecentTasksLoader";
     static final boolean DEBUG = PhoneStatusBar.DEBUG || false;
 
-    private static final int DISPLAY_TASKS = 20;
+    private static final int DISPLAY_TASKS = 16;
     private static final int MAX_TASKS = DISPLAY_TASKS + 1; // allow extra for non-apps
 
     private Context mContext;
@@ -140,7 +141,9 @@ public class RecentTasksLoader implements View.OnTouchListener {
     }
 
     public void remove(TaskDescription td) {
-        mLoadedTasks.remove(td);
+        if (mLoadedTasks != null) {
+            mLoadedTasks.remove(td);
+        }
     }
 
     public boolean isFirstScreenful() {
@@ -295,6 +298,7 @@ public class RecentTasksLoader implements View.OnTouchListener {
 
 
     private void cancelLoadingThumbnailsAndIcons() {
+    	mState = State.CANCELLED;
         if (mRecentsPanel != null && mRecentsPanel.isShowing()) {
             return;
         }
@@ -312,7 +316,6 @@ public class RecentTasksLoader implements View.OnTouchListener {
             mRecentsPanel.onTaskLoadingCancelled();
         }
         mFirstScreenful = false;
-        mState = State.CANCELLED;
     }
 
     private void clearFirstTask() {
@@ -380,10 +383,10 @@ public class RecentTasksLoader implements View.OnTouchListener {
         final ActivityManager am = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
 
         final List<ActivityManager.RecentTaskInfo> recentTasks = am.getRecentTasksForUser(1,
-                ActivityManager.RECENT_IGNORE_UNAVAILABLE | ActivityManager.RECENT_INCLUDE_PROFILES,
+                ActivityManager.RECENT_IGNORE_UNAVAILABLE, 
                 UserHandle.CURRENT.getIdentifier());
         TaskDescription item = null;
-        if (recentTasks.size() > 0) {
+        if (recentTasks != null && recentTasks.size() > 0) {
             ActivityManager.RecentTaskInfo recentInfo = recentTasks.get(0);
 
             Intent intent = new Intent(recentInfo.baseIntent);
@@ -411,6 +414,28 @@ public class RecentTasksLoader implements View.OnTouchListener {
             return item;
         }
         return null;
+    }
+    
+    public boolean loadFromHome() {
+        final ActivityManager am = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
+
+        final List<ActivityManager.RecentTaskInfo> recentTasks = am.getRecentTasks(2,
+                ActivityManager.RECENT_IGNORE_UNAVAILABLE);
+        if (recentTasks.size() > 1) {
+            ActivityManager.RecentTaskInfo recentInfo = recentTasks.get(1);
+
+            Intent intent = new Intent(recentInfo.baseIntent);
+            if (recentInfo.origActivity != null) {
+                intent.setComponent(recentInfo.origActivity);
+            }
+
+            // Don't load the current home activity.
+            if (isCurrentHomeActivity(intent.getComponent(), null)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void loadTasksInBackground() {
@@ -453,8 +478,7 @@ public class RecentTasksLoader implements View.OnTouchListener {
                 mContext.getSystemService(Context.ACTIVITY_SERVICE);
 
                 final List<ActivityManager.RecentTaskInfo> recentTasks =
-                        am.getRecentTasks(MAX_TASKS, ActivityManager.RECENT_IGNORE_UNAVAILABLE
-                        | ActivityManager.RECENT_INCLUDE_PROFILES);
+                        am.getRecentTasks(MAX_TASKS, ActivityManager.RECENT_IGNORE_UNAVAILABLE);
                 int numTasks = recentTasks.size();
                 ActivityInfo homeInfo = new Intent(Intent.ACTION_MAIN)
                         .addCategory(Intent.CATEGORY_HOME).resolveActivityInfo(pm, 0);
@@ -483,6 +507,11 @@ public class RecentTasksLoader implements View.OnTouchListener {
                     // Don't load ourselves
                     if (intent.getComponent().getPackageName().equals(mContext.getPackageName())) {
                         continue;
+                    }
+                    
+                    // Don't load activity with flag Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
+                    if((recentInfo.baseIntent.getFlags() & Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS) == Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS) {
+                    	continue;
                     }
 
                     TaskDescription item = createTaskDescription(recentInfo.id,
@@ -529,7 +558,12 @@ public class RecentTasksLoader implements View.OnTouchListener {
                 return null;
             }
         };
-        mTaskLoader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        
+        try {
+            mTaskLoader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        } catch (RejectedExecutionException e) {
+            e.printStackTrace();
+        }
         loadThumbnailsAndIconsInBackground(tasksWaitingForThumbnails);
     }
 
@@ -581,6 +615,63 @@ public class RecentTasksLoader implements View.OnTouchListener {
                 return null;
             }
         };
-        mThumbnailLoader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        
+        try {
+            mThumbnailLoader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        } catch (RejectedExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public int getTasksCount() {
+        final int origPri = Process.getThreadPriority(Process.myTid());
+        Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
+        final PackageManager pm = mContext.getPackageManager();
+        final ActivityManager am = (ActivityManager) mContext
+                .getSystemService(Context.ACTIVITY_SERVICE);
+
+        final List<ActivityManager.RecentTaskInfo> recentTasks = am.getRecentTasks(MAX_TASKS,
+                ActivityManager.RECENT_IGNORE_UNAVAILABLE);
+        int numTasks = recentTasks.size();
+        ActivityInfo homeInfo = new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME)
+                .resolveActivityInfo(pm, 0);
+
+        boolean firstScreenful = true;
+        int index = 0;
+        // skip the first task - assume it's either the home screen or the
+        // current activity.
+        final int first = 0;
+        for (int i = first; i < numTasks && (index < MAX_TASKS); ++i) {
+            final ActivityManager.RecentTaskInfo recentInfo = recentTasks.get(i);
+
+            Intent intent = new Intent(recentInfo.baseIntent);
+            if (recentInfo.origActivity != null) {
+                intent.setComponent(recentInfo.origActivity);
+            }
+
+            // Don't load the current home activity.
+            if (isCurrentHomeActivity(intent.getComponent(), homeInfo)) {
+                continue;
+            }
+
+            // Don't load ourselves
+            if (intent.getComponent().getPackageName().equals(mContext.getPackageName())) {
+                continue;
+            }
+
+            TaskDescription item = createTaskDescription(recentInfo.id, recentInfo.persistentId,
+                    recentInfo.baseIntent, recentInfo.origActivity, recentInfo.description,
+                    recentInfo.userId);
+
+            if (item != null) {
+                ++index;
+                if (index > 1) {
+                    break;
+                }
+            }
+        }
+
+        Process.setThreadPriority(origPri);
+        return index;
     }
 }

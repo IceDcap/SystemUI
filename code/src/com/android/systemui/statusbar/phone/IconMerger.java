@@ -16,9 +16,12 @@
 
 package com.android.systemui.statusbar.phone;
 
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.LinearLayout;
 
 import com.android.systemui.R;
@@ -28,21 +31,32 @@ public class IconMerger extends LinearLayout {
     private static final boolean DEBUG = false;
 
     private int mIconSize;
-    private View mMoreView;
+    //private View mMoreView;
+    private View mMoreDotView;
+	private static long lastTime = System.currentTimeMillis();
+    ValueAnimator animator;
+    private boolean mShouldAnimat = false;
 
     public IconMerger(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         mIconSize = context.getResources().getDimensionPixelSize(
-                R.dimen.status_bar_icon_size);
+                R.dimen.gn_status_bar_icon_size);
 
         if (DEBUG) {
             setBackgroundColor(0x800099FF);
         }
     }
 
-    public void setOverflowIndicator(View v) {
-        mMoreView = v;
+    public void setOverflowIndicator(View dot) {
+        //mMoreView = more;
+        mMoreDotView = dot;
+        
+        animator = ObjectAnimator.ofFloat(mMoreDotView, "alpha", 1, 0, 1);
+        animator.setStartDelay(100);
+        animator.setDuration(500);
+        //animator.setRepeatCount(1);
+        animator.setInterpolator(new AccelerateInterpolator());
     }
 
     @Override
@@ -60,24 +74,61 @@ public class IconMerger extends LinearLayout {
     }
 
     private void checkOverflow(int width) {
-        if (mMoreView == null) return;
+        /*if (mMoreDotView == null) return;
 
         final int N = getChildCount();
         int visibleChildren = 0;
         for (int i=0; i<N; i++) {
             if (getChildAt(i).getVisibility() != GONE) visibleChildren++;
         }
-        final boolean overflowShown = (mMoreView.getVisibility() == View.VISIBLE);
+        final boolean overflowShown = (mMoreDotView.getVisibility() == View.VISIBLE);
         // let's assume we have one more slot if the more icon is already showing
         if (overflowShown) visibleChildren --;
-        final boolean moreRequired = visibleChildren * mIconSize > width;
+        final boolean moreRequired = N * mIconSize > width;
         if (moreRequired != overflowShown) {
             post(new Runnable() {
                 @Override
                 public void run() {
-                    mMoreView.setVisibility(moreRequired ? View.VISIBLE : View.GONE);
+                    //mMoreView.setVisibility(moreRequired ? View.VISIBLE : View.GONE);
+                    mMoreDotView.setVisibility(moreRequired ? View.VISIBLE : View.GONE);
+                    mMoreDotView.animate()
+                    .alpha(1f)
+                    .setDuration(250)
+                    .setInterpolator(new AccelerateInterpolator(2.0f))
+                    .setListener(moreRequired ? null : new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator _a) {
+                        	mMoreDotView.setVisibility(View.GONE);
+                        }
+                    })
+                    .start();
                 }
             });
-        }
+        }*/
+    }
+    
+    // GIONEE <wujj> <2015-03-17> Modify for CR01455032 begin
+    public void setMoreDotAnimator(boolean shouldAnim) {
+    	mShouldAnimat = shouldAnim;
+    }
+    // GIONEE <wujj> <2015-03-17> Modify for CR01455032 end
+    
+    public void setMoreDotVisibility(boolean visible) {
+		mMoreDotView.setVisibility(visible ? View.VISIBLE : View.GONE);
+		if (animator.isStarted() || !mShouldAnimat) {
+		    return;
+		}
+		setMoreDotAnimate();
+	}
+    
+    private void setMoreDotAnimate() {
+    	long curTime =  System.currentTimeMillis();
+    	if (curTime - lastTime < 1500) {
+    	    return;
+    	}
+    	
+    	lastTime = curTime;
+    	mMoreDotView.setAlpha(0);
+        animator.start();
     }
 }

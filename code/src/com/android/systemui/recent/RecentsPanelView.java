@@ -29,6 +29,8 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -67,6 +69,7 @@ import com.android.systemui.statusbar.StatusBarPanel;
 import com.android.systemui.statusbar.phone.PhoneStatusBar;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 
 public class RecentsPanelView extends FrameLayout implements OnItemClickListener, RecentsCallback,
         StatusBarPanel, Animator.AnimatorListener {
@@ -87,11 +90,18 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
 
     private RecentTasksLoader mRecentTasksLoader;
     private ArrayList<TaskDescription> mRecentTaskDescriptions;
+    private ArrayList<TaskDescription> mTaskDescriptionList = new ArrayList<TaskDescription>();
     private TaskDescriptionAdapter mListAdapter;
     private int mThumbnailWidth;
     private boolean mFitThumbnailToXY;
     private int mRecentItemLayoutId;
     private boolean mHighEndGfx;
+    
+    private Editor mWhiteListEditor;
+    private SharedPreferences mWhiteListPreferences;
+
+    private final static String LOCK_APP_NAME_FILE = "lock";
+    private final static String PACKAGE_NAME = "packageName";
 
     public static interface RecentsScrollView {
         public int numItemsInOneScreenful();
@@ -101,6 +111,7 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
         public View findViewForTask(int persistentTaskId);
         public void drawFadedEdges(Canvas c, int left, int right, int top, int bottom);
         public void setOnScrollListener(Runnable listener);
+        public void clearRecentApps();
     }
 
     private final class OnLongClickDelegate implements View.OnLongClickListener {
@@ -110,6 +121,71 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
         }
         public boolean onLongClick(View v) {
             return mOtherView.performLongClick();
+        }
+    }
+
+    public void saveLockAppName(String packageName) {
+    	if(mWhiteListPreferences == null) {
+    		mWhiteListPreferences = getContext()
+    				.getSharedPreferences(LOCK_APP_NAME_FILE, Context.MODE_PRIVATE);
+    	}
+    	
+    	if(mWhiteListEditor == null) {
+    		mWhiteListEditor = mWhiteListPreferences.edit();  
+    	}
+        mWhiteListEditor.putString(packageName, PACKAGE_NAME);
+        //mWhiteListEditor.commit();
+    }
+
+	public void commitWhiteList() {
+		if(mWhiteListPreferences == null) {
+    		mWhiteListPreferences = getContext()
+    				.getSharedPreferences(LOCK_APP_NAME_FILE, Context.MODE_PRIVATE);
+    	}
+    	
+    	if(mWhiteListEditor == null) {
+    		mWhiteListEditor = mWhiteListPreferences.edit();  
+    	}
+		mWhiteListEditor.commit();
+	}
+    
+    public void clearLockApp() {
+    	if(mWhiteListPreferences == null) {
+    		mWhiteListPreferences = getContext()
+    				.getSharedPreferences(LOCK_APP_NAME_FILE, Context.MODE_PRIVATE);
+    	}
+    	
+    	if(mWhiteListEditor == null) {
+    		mWhiteListEditor = mWhiteListPreferences.edit();  
+    	}
+		mWhiteListEditor.clear();
+		mWhiteListEditor.commit();
+	}
+    
+    private void removeLockAppName (String packageName) {
+    	if(mWhiteListPreferences == null) {
+    		mWhiteListPreferences = getContext()
+    				.getSharedPreferences(LOCK_APP_NAME_FILE, Context.MODE_PRIVATE);
+    	}
+    	
+    	if(mWhiteListEditor == null) {
+    		mWhiteListEditor = mWhiteListPreferences.edit();  
+    	}         
+        if (mWhiteListPreferences.contains(packageName)) {
+        	mWhiteListEditor.remove(packageName);
+        	mWhiteListEditor.commit();
+        }
+    }
+    
+    private boolean isLockAppName (String packageName) {
+    	if(mWhiteListPreferences == null) {
+    		mWhiteListPreferences = getContext()
+    				.getSharedPreferences(LOCK_APP_NAME_FILE, Context.MODE_PRIVATE);
+    	}
+        if (mWhiteListPreferences.contains(packageName)) {
+            return true;
+        }else {
+            return false;
         }
     }
 
@@ -123,7 +199,24 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
         View calloutLine;
         TaskDescription taskDescription;
         boolean loadedThumbnailAndIcon;
+        ImageView lockView;
+        boolean isLockApp;
     }
+    
+    // Gionee <hunagwt> <2015-3-14> add for CR01453589 begin
+    private boolean isInitialized(ViewHolder v) {
+        return v != null
+                && v.thumbnailView != null
+                && v.thumbnailViewImage != null
+                && v.thumbnailViewDrawable != null
+                && v.iconView != null
+                && v.labelView != null
+                && v.descriptionView != null
+                && v.calloutLine != null
+                && v.taskDescription != null
+                && v.lockView != null;
+    }
+    // Gionee <hunagwt> <2015-3-14> add for CR01453589 end
 
     /* package */ final class TaskDescriptionAdapter extends BaseAdapter {
         private LayoutInflater mInflater;
@@ -159,6 +252,8 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
             holder.calloutLine = convertView.findViewById(R.id.recents_callout_line);
             holder.descriptionView = (TextView) convertView.findViewById(R.id.app_description);
 
+            holder.lockView = (ImageView) convertView.findViewById(R.id.app_lock);
+            
             convertView.setTag(holder);
             return convertView;
         }
@@ -179,7 +274,8 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
             holder.loadedThumbnailAndIcon = td.isLoaded();
             if (td.isLoaded()) {
                 updateThumbnail(holder, td.getThumbnail(), true, false);
-                updateIcon(holder, td.getIcon(), true, false);
+                //updateIcon(holder, td.getIcon(), true, false);
+                updateLock(holder, isLockAppName(td.packageName), false);
             }
             if (index == 0) {
                 if (mAnimateIconOfFirstTask) {
@@ -230,29 +326,35 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
         public void recycleView(View v) {
             ViewHolder holder = (ViewHolder) v.getTag();
             updateThumbnail(holder, mRecentTasksLoader.getDefaultThumbnail(), false, false);
-            holder.iconView.setImageDrawable(mRecentTasksLoader.getDefaultIcon());
-            holder.iconView.setVisibility(INVISIBLE);
-            holder.iconView.animate().cancel();
-            holder.labelView.setText(null);
-            holder.labelView.animate().cancel();
-            holder.thumbnailView.setContentDescription(null);
-            holder.thumbnailView.setTag(null);
-            holder.thumbnailView.setOnLongClickListener(null);
-            holder.thumbnailView.setVisibility(INVISIBLE);
-            holder.iconView.setAlpha(1f);
-            holder.iconView.setTranslationX(0f);
-            holder.iconView.setTranslationY(0f);
-            holder.labelView.setAlpha(1f);
-            holder.labelView.setTranslationX(0f);
-            holder.labelView.setTranslationY(0f);
-            if (holder.calloutLine != null) {
-                holder.calloutLine.setAlpha(1f);
-                holder.calloutLine.setTranslationX(0f);
-                holder.calloutLine.setTranslationY(0f);
-                holder.calloutLine.animate().cancel();
+            if(holder.iconView != null 
+            		&& holder.labelView != null 
+            		&& holder.thumbnailView != null 
+            		&& holder.calloutLine != null) {
+            	holder.iconView.setImageDrawable(mRecentTasksLoader.getDefaultIcon());
+            	holder.iconView.setVisibility(INVISIBLE);
+            	holder.iconView.animate().cancel();
+            	holder.labelView.setText(null);
+            	holder.labelView.animate().cancel();
+            	holder.thumbnailView.setContentDescription(null);
+            	holder.thumbnailView.setTag(null);
+            	holder.thumbnailView.setOnLongClickListener(null);
+            	holder.thumbnailView.setVisibility(INVISIBLE);
+            	holder.iconView.setAlpha(1f);
+            	holder.iconView.setTranslationX(0f);
+            	holder.iconView.setTranslationY(0f);
+            	holder.labelView.setAlpha(1f);
+            	holder.labelView.setTranslationX(0f);
+            	holder.labelView.setTranslationY(0f);
+            	holder.calloutLine.setAlpha(1f);
+            	holder.calloutLine.setTranslationX(0f);
+            	holder.calloutLine.setTranslationY(0f);
+            	holder.calloutLine.animate().cancel();
+            	holder.taskDescription = null;
+            	holder.loadedThumbnailAndIcon = false;
+            	holder.lockView.setVisibility(INVISIBLE);
+            	holder.lockView.animate().cancel();
             }
-            holder.taskDescription = null;
-            holder.loadedThumbnailAndIcon = false;
+            //holder.isLockApp = false;
         }
     }
 
@@ -425,7 +527,7 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
 
     public void updateValuesFromResources() {
         final Resources res = getContext().getResources();
-        mThumbnailWidth = Math.round(res.getDimension(R.dimen.status_bar_recents_thumbnail_width));
+        mThumbnailWidth = Math.round(res.getDimension(com.android.internal.R.dimen.thumbnail_width));
         mFitThumbnailToXY = res.getBoolean(R.bool.config_recents_thumbnail_image_fits_to_xy);
     }
 
@@ -470,14 +572,30 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
 
     private void updateIcon(ViewHolder h, Drawable icon, boolean show, boolean anim) {
         if (icon != null) {
+            h.iconView.setVisibility(View.GONE);
             h.iconView.setImageDrawable(icon);
             if (show && h.iconView.getVisibility() != View.VISIBLE) {
                 if (anim) {
                     h.iconView.setAnimation(
                             AnimationUtils.loadAnimation(getContext(), R.anim.recent_appear));
                 }
-                h.iconView.setVisibility(View.VISIBLE);
+                h.iconView.setVisibility(View.GONE/*View.VISIBLE*/);
             }
+        }
+    }
+
+    public void updateLock(ViewHolder h, boolean lock, boolean anim) {
+        if (h != null) {
+        	if(lock && h.lockView != null) {
+        		h.lockView.setImageDrawable(getContext().getResources()
+        				.getDrawable(R.drawable.gn_app_lock));
+        		h.lockView.setVisibility(View.VISIBLE);
+        		if (anim) {
+        			h.iconView.setAnimation(
+        					AnimationUtils.loadAnimation(getContext(), R.anim.recent_appear));
+        		}
+        	}
+        	h.isLockApp = lock;
         }
     }
 
@@ -527,13 +645,16 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
                     View v = container.getChildAt(i);
                     if (v.getTag() instanceof ViewHolder) {
                         ViewHolder h = (ViewHolder)v.getTag();
-                        if (!h.loadedThumbnailAndIcon && h.taskDescription == td) {
+                        // Gionee <hunagwt> <2015-3-14> modify for CR01453589 begin
+                        if (!h.loadedThumbnailAndIcon && h.taskDescription == td && isInitialized(h)) {
+                            // Gionee <hunagwt> <2015-3-14> modify for CR01453589 end
                             // only fade in the thumbnail if recents is already visible-- we
                             // show it immediately otherwise
                             //boolean animateShow = mShowing &&
                             //    mRecentsContainer.getAlpha() > ViewConfiguration.ALPHA_THRESHOLD;
                             boolean animateShow = false;
-                            updateIcon(h, td.getIcon(), true, animateShow);
+                            updateLock(h, isLockAppName(td.packageName), animateShow);
+                            //updateIcon(h, td.getIcon(), true, animateShow);
                             updateThumbnail(h, td.getThumbnail(), true, animateShow);
                             h.loadedThumbnailAndIcon = true;
                         }
@@ -543,6 +664,22 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
         }
         showIfReady();
     }
+    
+    public void updateRecentAppLockState() {
+		if(mRecentsContainer != null) {
+			ViewGroup container = (ViewGroup) mRecentsContainer;
+			if(container instanceof RecentsScrollView) {
+				container = (ViewGroup) container.findViewById(R.id.recents_linear_layout);
+			}
+			for(int i = container.getChildCount(); i >= 0; i--) {
+				View view = container.getChildAt(i);
+				if(view != null && view.getTag() instanceof ViewHolder) {
+					ViewHolder holder = (ViewHolder) view.getTag();
+					updateLock(holder, isLockAppName(holder.taskDescription.packageName), true);
+				}
+			}
+		}
+	}
 
     private void animateInIconOfFirstTask() {
         if (mItemToAnimateInWhenWindowAnimationIsFinished != null &&
@@ -681,6 +818,7 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
             // This is an active task; it should just go to the foreground.
             am.moveTaskToFront(ad.taskId, ActivityManager.MOVE_TASK_WITH_HOME,
                     opts);
+            Log.v(TAG, "Move Task To Front for " + ad.taskId);
         } else {
             Intent intent = ad.intent;
             intent.addFlags(Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY
@@ -706,22 +844,28 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
     }
 
     public void handleSwipe(View view) {
-        TaskDescription ad = ((ViewHolder) view.getTag()).taskDescription;
+        final TaskDescription ad = ((ViewHolder) view.getTag()).taskDescription;
         if (ad == null) {
             Log.v(TAG, "Not able to find activity description for swiped task; view=" + view +
                     " tag=" + view.getTag());
             return;
         }
         if (DEBUG) Log.v(TAG, "Jettison " + ad.getLabel());
-        mRecentTaskDescriptions.remove(ad);
-        mRecentTasksLoader.remove(ad);
-
-        // Handled by widget containers to enable LayoutTransitions properly
-        // mListAdapter.notifyDataSetChanged();
-
-        if (mRecentTaskDescriptions.size() == 0) {
-            dismissAndGoBack();
+        
+        // Gionee <huangwt> <20150209> modify for CR01447164 begin
+        if (mRecentTaskDescriptions != null) {
+            
+            mRecentTaskDescriptions.remove(ad);
+            
+            if (mRecentTaskDescriptions.size() == 0) {
+                dismissAndGoBack();
+            }
         }
+        
+        if (mRecentTasksLoader != null) {
+            mRecentTasksLoader.remove(ad);
+        }
+        // Gionee <huangwt> <20150209> modify for CR01447164 end
 
         // Currently, either direction means the same thing, so ignore direction and remove
         // the task.
@@ -729,6 +873,7 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
                 getContext().getSystemService(Context.ACTIVITY_SERVICE);
         if (am != null) {
             am.removeTask(ad.persistentTaskId);
+            am.forceStopPackage(ad.packageName);
 
             // Accessibility feedback
             setContentDescription(
@@ -736,6 +881,64 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
             sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_SELECTED);
             setContentDescription(null);
         }
+    }
+    
+    public void clearTaskDescription() {
+        mTaskDescriptionList.clear();
+    }
+    
+    public void removeTaskDescription(View view) {
+        final TaskDescription ad = ((ViewHolder) view.getTag()).taskDescription;
+        if (ad == null) {
+            Log.v(TAG, "Not able to find activity description for swiped task; view=" + view +
+                    " tag=" + view.getTag());
+            return;
+        }
+        
+        if (DEBUG) Log.v(TAG, "Jettison " + ad.getLabel());
+        
+        mTaskDescriptionList.add(ad);
+        
+        // Gionee <huangwt> <20150209> modify for CR01447164 begin
+        if (mRecentTaskDescriptions != null) {
+            mRecentTaskDescriptions.remove(ad);
+        }
+        
+        if (mRecentTasksLoader != null) {
+            mRecentTasksLoader.remove(ad);
+        }
+        // Gionee <huangwt> <20150209> modify for CR01447164 end
+
+    }
+    
+    public void removeTask() {
+        // Currently, either direction means the same thing, so ignore direction and remove
+        // the task.
+        new Thread(new Runnable() {
+            
+            @Override
+            public void run() {
+                final ActivityManager am = (ActivityManager)
+                        getContext().getSystemService(Context.ACTIVITY_SERVICE);
+                
+                try {
+                    for (TaskDescription ad : mTaskDescriptionList) {
+                        if (am != null) {
+                            am.removeTask(ad.persistentTaskId);
+                            am.forceStopPackage(ad.packageName);
+
+                            // Accessibility feedback
+                            setContentDescription(getContext().getString(
+                                    R.string.accessibility_recents_item_dismissed, ad.getLabel()));
+                            sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_SELECTED);
+                            setContentDescription(null);
+                        }
+                    }
+                } catch (ConcurrentModificationException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     private void startApplicationDetailsActivity(String packageName, int userId) {
@@ -810,4 +1013,11 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
         }
         mRecentsContainer.drawFadedEdges(canvas, left, right, top, bottom);
     }
+    
+    public void clearRecentApps() {
+		if(mRecentsContainer != null) {
+			mRecentsContainer.clearRecentApps();
+		}
+	}
+
 }

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <!-- NaviKeyguard begin -->
+
+
+    <!-- infozone start -->
+
+    <string name="sunday">星期天</string>
+    <string name="monday">星期一</string>
+    <string name="tuesday">星期二</string>
+    <string name="wednesday">星期三</string>
+    <string name="thursday">星期四</string>
+    <string name="friday">星期五</string>
+    <string name="saturday">星期六</string>
+
+    <!-- infozone end -->
+
+
+    <!-- keyguard strings begin -->
+
+    <string name="new_widget41_time_am">上\n午</string>
+    <string name="new_widget41_time_pm">下\n午</string>
+    <string name="new_widget41_nodata">无法获取天气信息</string>
+    <string name="message_unknow">未知</string>
+    <string name="skylight_sunday">星期天</string>
+    <string name="skylight_monday">星期一</string>
+    <string name="skylight_tuesday">星期二</string>
+    <string name="skylight_wednesday">星期三</string>
+    <string name="skylight_thursday">星期四</string>
+    <string name="skylignt_friday">星期五</string>
+    <string name="skylight_saturday">星期六</string>
+
+    <!-- keyguard strings end -->
+
+
+    <!-- charge start -->
+    <string name="amigo_keyguard_charged">"充电完毕"</string>
+    <string name="amigo_keyguard_indication_charging_time" msgid="1757251776872835768">"充电中 <xliff:g id="CHARGING_TIME_LEFT">%s</xliff:g>后充满"</string>
+    <string name="amigo_keyguard_plugged_in" msgid="8117572000639998388">"充电中"</string>
+    <string name="amigo_keyguard_plugged_in_percent">"充电中 <xliff:g id="number">%d</xliff:g><xliff:g id="percent">%%"</xliff:g></string>
+    <string name="amigo_keyguard_low_battery">"连接您的充电器"</string>
+    <!-- charge end -->
+
+
+    <!-- mobile operator strings -->
+    <string name="cucc">中国联通</string>
+    <string name="ctcc">中国电信</string>
+    <string name="cmcc">中国移动</string>
+    <string name="cmcc_3g">中国移动3G</string>
+    <string name="cmcc_4g">中国移动4G</string>
+    <string name="no_sim_card">未插卡</string>
+    <string name="no_service">无服务</string>
+    <!-- mobile operator strings -->
+
+
+    <!-- notification add start -->
+    <string name="status_bar_notification_inspect_item_title">"通知设置"</string>
+    <string name="accessibility_remove_notification">"清除通知"</string>
+    <string name="notification_hidden_text">"内容已隐藏"</string>
+    <string name="accessibility_notification_dismissed">"已关闭通知"</string>
+    <string name="notification_tap_again">"再次点击即可打开"</string>
+    <!-- notification add end -->
+
+    <string name="keyguard_simple_number_cancel">"取消"</string>
+    <string name="keyguard_simple_number_delete">"删除"</string>
+    <string name="save_password_label">"确认"</string>
+    <string name="ignore_password_label">"忽略"</string>
+    <!-- NaviKeyguard end -->
+
+    <string name="kg_wrong_password_onetime">"密码错误，还可以再输入<xliff:g id="NUMBER">%d</xliff:g>次"</string>
+
+</resources>

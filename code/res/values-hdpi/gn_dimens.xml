@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Width of nofitification label in notification sort page -->
+    <dimen name="notification_label_width">150dp</dimen>
+    <!-- Width of seperate in notification sort page -->
+    <dimen name="notification_seperate_width">30dp</dimen>
+    <!-- Padding for notification sort list -->
+    <dimen name="notification_item_padding">16dp</dimen>
+    
+    <dimen name="gn_cc_handle_height">30dp</dimen>
+    <dimen name="gn_cc_handle_height_land">20dp</dimen>
+    
+    <dimen name="gn_qs_tile_height">68dp</dimen>
+    <dimen name="gn_qs_tile_width">54dp</dimen>
+    <dimen name="gn_qs_tile_icon_size">54dp</dimen>
+    <dimen name="gn_qs_tile_text_size">10sp</dimen>
+    <dimen name="gn_qs_panel_padding">16dp</dimen>
+    <dimen name="gn_qs_panel_padding_left">18dp</dimen>
+    <dimen name="gn_qs_panel_padding_left_land">56dp</dimen>
+    <dimen name="gn_qs_tile_padding_top">20dp</dimen>
+    <dimen name="gn_qs_tile_padding_top_land">10dp</dimen>
+    <dimen name="gn_qs_tile_padding_top_large_text">4dp</dimen>
+    <dimen name="gn_qs_tile_padding_below_icon">12dp</dimen>
+    <dimen name="gn_qs_tile_padding_bottom">16dp</dimen>
+    <dimen name="gn_qs_tile_setting_padding_top">3dp</dimen>
+    <dimen name="gn_qs_brightness_padding_top">27dp</dimen>
+    <dimen name="gn_qs_brightness_padding_top_land">7dp</dimen>
+    <dimen name="gn_qs_brightness_padding_bottom">7dp</dimen>
+    <dimen name="gn_qs_brightness_padding_bottom_land">0dp</dimen>
+    <dimen name="gn_qs_brightness_padding_right">16dp</dimen>
+    
+    <dimen name="gn_sc_panel_padding_top">10dp</dimen>
+    <dimen name="gn_sc_panel_padding_left">8dp</dimen>
+    <dimen name="gn_sc_panel_padding_left_land">16dp</dimen>
+    <dimen name="gn_sc_tile_text_padding_top">12dp</dimen>
+    
+    <!-- Snap shot button field -->
+    <dimen name="gn_snapshot_button_width">124dp</dimen>
+    <dimen name="gn_snapshot_button_height">64dp</dimen>
+    <dimen name="gn_snapshot_button_padding_right">15dp</dimen>
+    <dimen name="gn_snapshot_button_padding_bottom">15dp</dimen>
+    
+    <!-- Recents --> 
+    <dimen name="gn_scan_strokewidth">2dp</dimen>
+    <dimen name="gn_scan_innercircle">22dp</dimen>
+</resources>

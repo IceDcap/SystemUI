@@ -36,9 +36,15 @@ import android.widget.ScrollView;
 import com.android.systemui.R;
 import com.android.systemui.SwipeHelper;
 import com.android.systemui.recent.RecentsPanelView.TaskDescriptionAdapter;
+import com.android.systemui.recent.RecentsPanelView.ViewHolder;
 
 import java.util.HashSet;
 import java.util.Iterator;
+
+import android.app.IActivityManager;
+import android.app.ActivityManagerNative;
+import android.os.RemoteException;
+import android.os.UserHandle;
 
 public class RecentsVerticalScrollView extends ScrollView
         implements SwipeHelper.Callback, RecentsPanelView.RecentsScrollView {
@@ -53,6 +59,7 @@ public class RecentsVerticalScrollView extends ScrollView
     private HashSet<View> mRecycledViews;
     private int mNumItemsInOneScreenful;
     private Runnable mOnScrollListener;
+    private IActivityManager mAm;
 
     public RecentsVerticalScrollView(Context context, AttributeSet attrs) {
         super(context, attrs, 0);
@@ -60,6 +67,7 @@ public class RecentsVerticalScrollView extends ScrollView
 
         mFadedEdgeDrawHelper = FadedEdgeDrawHelper.create(context, attrs, this, true);
         mRecycledViews = new HashSet<View>();
+        mAm = ActivityManagerNative.getDefault();
     }
 
     public void setMinSwipeAlpha(float minAlpha) {
@@ -399,4 +407,16 @@ public class RecentsVerticalScrollView extends ScrollView
     public void setCallback(RecentsCallback callback) {
         mCallback = callback;
     }
+
+	@Override
+	public void clearRecentApps() {
+		// TODO Auto-generated method stub
+        for (int i = mLinearLayout.getChildCount(); i >= 0; i--) {
+            View item = mLinearLayout.getChildAt(i);
+            if (item.getVisibility() == View.VISIBLE) {
+                mSwipeHelper.dismissChild(item, 0f);
+            }
+        }
+	}
+
 }

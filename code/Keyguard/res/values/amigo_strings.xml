@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <!-- NaviKeyguard strings begin -->
+    <string name="new_widget41_nodata">Unknow</string>
+    <string name="time_unit_am">AM</string>
+    <string name="time_unit_pm">PM</string>
+    <string name="zzzzz_gn_navil_keyguard_accessibility_widget_reorder_end">Widget reordering ended.</string>
+    <string name="zzzzz_gn_navil_keyguard_accessibility_widget_reorder_start">Widget reordering started.</string>
+    <string name="skylight_sunday">Sun.</string>
+    <string name="skylight_monday">Mon.</string>
+    <string name="skylight_tuesday">Tues.</string>
+    <string name="skylight_wednesday">Wed.</string>
+    <string name="skylight_thursday">Thur.</string>
+    <string name="skylignt_friday">Fri.</string>
+    <string name="skylight_saturday">Sat.</string>
+    <string name="message_unknow">Unknow</string>
+    <string name="new_widget41_not_applicable" translatable="false">N/A</string>
+    <!-- NaviKeyguard strings end -->
+
+
+    <!-- infozone start -->
+    <string name="new_widget41_time_am">上\n午</string>
+    <string name="new_widget41_time_pm">下\n午</string>
+    <string name="sunday">Sunday</string>
+    <string name="monday">Monday</string>
+    <string name="tuesday">Tuesday</string>
+    <string name="wednesday">Wednesday</string>
+    <string name="thursday">Thursday</string>
+    <string name="friday">Friday</string>
+    <string name="saturday">Saturday</string>
+    <string name="January_us">Jan.</string>
+    <string name="February_us">Feb.</string>
+    <string name="March_us">Mar.</string>
+    <string name="April_us">Apr.</string>
+    <string name="May_us">May.</string>
+    <string name="June_us">Jun.</string>
+    <string name="July_us">Jul.</string>
+    <string name="August_us">Aug.</string>
+    <string name="September_us">Sep.</string>
+    <string name="October_us">Oct.</string>
+    <string name="November_us">Nov.</string>
+    <string name="December_us">Dec.</string>
+    <string name="sunday_us">Sun.</string>
+    <string name="monday_us">Mon.</string>
+    <string name="tuesday_us">Tues.</string>
+    <string name="wednesday_us">Wed.</string>
+    <string name="thursday_us">Thur.</string>
+    <string name="friday_us">Fri.</string>
+    <string name="saturday_us">Sat.</string>
+
+    <!-- infozone end -->
+
+
+    <!-- charge start -->
+    <string name="amigo_keyguard_charged">Charged</string>
+    <string name="amigo_keyguard_indication_charging_time">"Charging <xliff:g id="CHARGING_TIME_LEFT">%s</xliff:g> to be full"</string>
+    <string name="amigo_keyguard_plugged_in">Charging</string>
+    <string name="amigo_keyguard_plugged_in_percent">"Charging <xliff:g id="number">%d</xliff:g><xliff:g id="percent">%%"</xliff:g></string>
+    <string name="amigo_keyguard_low_battery">Connect your charger.</string>
+    <!-- charge end -->
+
+
+    <!-- mobile operator strings -->
+    <string name="cucc">China Unicom</string>
+    <string name="ctcc">China Telecom</string>
+    <string name="cmcc">China Mobile</string>
+    <string name="cmcc_3g">China Mobile 3G</string>
+    <string name="cmcc_4g">China Mobile 4G</string>
+    <string name="no_sim_card">No SIM Card</string>
+    <string name="no_service">No Service</string>
+    <string name="carrier_devider_text">|</string>
+
+    <!-- mobile operator strings -->
+
+
+    <!-- notification add start -->
+    <string name="status_bar_notification_inspect_item_title">Notification settings</string>
+    <!-- Content description of the button for removing a notification in the notification panel for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_remove_notification">Clear notification</string>
+    <!-- Text shown in place of notification contents when the notification is hidden on a secure lockscreen -->
+    <string name="notification_hidden_text">Contents hidden</string>
+    <!-- Content description to tell the user a notification has been removed from the notification shade -->
+    <string name="accessibility_notification_dismissed">Notification dismissed</string>
+    <!-- Shows to explain the double tap interaction with notifications: After tapping a notification on Keyguard, this will explain users to tap again to launch a notification. [CHAR LIMIT=60] -->
+    <string name="notification_tap_again">Touch again to open</string>
+    <!-- notification add end -->
+
+    <string name="keyguard_simple_number_cancel">cancel</string>
+    <string name="keyguard_simple_number_delete">delete</string>
+    <string name="save_password_label">Ok</string>
+    <string name="ignore_password_label">Skip</string>
+    <string name="kg_wrong_password_onetime">Wrong password, you can try <xliff:g id="number">%d</xliff:g> time</string>
+
+</resources>

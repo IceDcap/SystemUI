@@ -343,14 +343,16 @@ public abstract class PanelView extends FrameLayout {
                             mStatusBar.isFalsingThresholdNeeded(),
                             mStatusBar.isScreenOnComingFromTouch());
                     // Log collapse gesture if on lock screen.
-                    if (!expand && mStatusBar.getBarState() == StatusBarState.KEYGUARD) {
+                  //jiating modify for keyguard begin
+                   /* if (!expand && mStatusBar.getBarState() == StatusBarState.KEYGUARD) {
                         float displayDensity = mStatusBar.getDisplayDensity();
                         int heightDp = (int) Math.abs((y - mInitialTouchY) / displayDensity);
                         int velocityDp = (int) Math.abs(vel / displayDensity);
                         EventLogTags.writeSysuiLockscreenGesture(
                                 EventLogConstants.SYSUI_LOCKSCREEN_GESTURE_SWIPE_UP_UNLOCK,
                                 heightDp, velocityDp);
-                    }
+                    }*/
+                  //jiating modify for keyguard end
                     fling(vel, expand);
                     mUpdateFlingOnLayout = expand && mPanelClosedOnDown && !mHasLayoutedSinceDown;
                     if (mUpdateFlingOnLayout) {
@@ -932,17 +934,19 @@ public abstract class PanelView extends FrameLayout {
         if (mHintAnimationRunning) {
             return true;
         }
-        if (x < mEdgeTapAreaWidth
+      //jiating modify for keyguard begin
+     /*   if (x < mEdgeTapAreaWidth
                 && mStatusBar.getBarState() == StatusBarState.KEYGUARD) {
-            onEdgeClicked(false /* right */);
+            onEdgeClicked(false  right );
             return true;
         } else if (x > getWidth() - mEdgeTapAreaWidth
                 && mStatusBar.getBarState() == StatusBarState.KEYGUARD) {
-            onEdgeClicked(true /* right */);
+            onEdgeClicked(true  right );
             return true;
-        } else {
+        } else {*/
             return onMiddleClicked();
-        }
+//        }
+          //jiating modify for keyguard end
     }
 
     private final Runnable mPostCollapseRunnable = new Runnable() {
@@ -953,18 +957,20 @@ public abstract class PanelView extends FrameLayout {
     };
     private boolean onMiddleClicked() {
         switch (mStatusBar.getBarState()) {
+      //jiating modify for keyguard begin
             case StatusBarState.KEYGUARD:
-                if (!mDozingOnDown) {
+                /*if (!mDozingOnDown) {
                     EventLogTags.writeSysuiLockscreenGesture(
                             EventLogConstants.SYSUI_LOCKSCREEN_GESTURE_TAP_UNLOCK_HINT,
-                            0 /* lengthDp - N/A */, 0 /* velocityDp - N/A */);
+                            0  lengthDp - N/A , 0  velocityDp - N/A );
                     startUnlockHintAnimation();
                 }
-                return true;
+                return true;*/
             case StatusBarState.SHADE_LOCKED:
-                mStatusBar.goToKeyguard();
-                return true;
+//                mStatusBar.goToKeyguard();
+//                return true;
             case StatusBarState.SHADE:
+            	//jiating modify for keyguard end
             	// This gets called in the middle of the touch handling, where the state is still
             	// that we are tracking the panel. Collapse the panel after this is done.
             	if (getExpandedFraction() < 0.5f) {

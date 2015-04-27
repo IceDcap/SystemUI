@@ -26,13 +26,13 @@
     android:orientation="horizontal"
     android:paddingEnd="@dimen/signal_cluster_battery_padding"
     >
-    <ImageView
+    <!-- <ImageView
         android:id="@+id/vpn"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:paddingEnd="6dp"
         android:src="@drawable/stat_sys_vpn_ic"
-        />
+        /> -->
     <FrameLayout
         android:id="@+id/wifi_combo"
         android:layout_height="wrap_content"
@@ -46,8 +46,8 @@
     </FrameLayout>
     <View
         android:id="@+id/wifi_signal_spacer"
-        android:layout_width="4dp"
-        android:layout_height="4dp"
+        android:layout_width="3dp"
+        android:layout_height="3dp"
         android:visibility="gone"
         />
     <LinearLayout
@@ -56,16 +56,16 @@
         android:layout_width="wrap_content"
         >
     </LinearLayout>
-    <ImageView
+    <!-- <ImageView
         android:id="@+id/no_sims"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:src="@drawable/stat_sys_no_sims"
-        />
+        /> -->
     <View
         android:id="@+id/wifi_airplane_spacer"
-        android:layout_width="4dp"
-        android:layout_height="4dp"
+        android:layout_width="3dp"
+        android:layout_height="3dp"
         android:visibility="gone"
         />
     <ImageView

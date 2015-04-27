@@ -165,16 +165,19 @@ public class StatusBarWindowView extends FrameLayout {
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         boolean intercept = false;
-        if (mNotificationPanel.isFullyExpanded()
+      //jiating modify for keyguard begin
+    /*    if (mNotificationPanel.isFullyExpanded()
                 && mStackScrollLayout.getVisibility() == View.VISIBLE
                 && mService.getBarState() == StatusBarState.KEYGUARD
+                && !mService.isQsExpanded()
                 && !mService.isBouncerShowing()) {
             intercept = mDragDownHelper.onInterceptTouchEvent(ev);
             // wake up on a touch down event, if dozing
             if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
                 mService.wakeUpIfDozing(ev.getEventTime(), ev);
             }
-        }
+        }*/
+      //jiating modify for keyguard end
         if (!intercept) {
             super.onInterceptTouchEvent(ev);
         }
@@ -191,9 +194,12 @@ public class StatusBarWindowView extends FrameLayout {
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         boolean handled = false;
-        if (mService.getBarState() == StatusBarState.KEYGUARD) {
+      //jiating modify for keyguard begin
+        /*if (mService.getBarState() == StatusBarState.KEYGUARD && !mService.isQsExpanded()) {
             handled = mDragDownHelper.onTouchEvent(ev);
         }
+        */
+      //jiating modify for keyguard end
         if (!handled) {
             handled = super.onTouchEvent(ev);
         }

@@ -31,7 +31,7 @@
 
     <ImageView
         android:id="@+id/notification_lights_out"
-        android:layout_width="@dimen/status_bar_icon_size"
+        android:layout_width="@dimen/gn_status_bar_icon_size"
         android:layout_height="match_parent"
         android:paddingStart="6dip"
         android:paddingBottom="2dip"
@@ -57,24 +57,32 @@
             >
             <!-- The alpha of this area is both controlled from PhoneStatusBarTransitions and
                  PhoneStatusBar (DISABLE_NOTIFICATION_ICONS), so we need two views here. -->
-            <com.android.keyguard.AlphaOptimizedLinearLayout
+            <com.android.keyguard.AlphaOptimizedRelativeLayout
                 android:id="@+id/notification_icon_area_inner"
-                android:layout_width="match_parent"
+                android:layout_width="@dimen/gn_notification_area_width"
                 android:layout_height="match_parent"
+                android:gravity="center_vertical"
                 >
-                <com.android.systemui.statusbar.StatusBarIconView android:id="@+id/moreIcon"
+                <!-- <com.android.systemui.statusbar.StatusBarIconView android:id="@+id/moreIcon"
                     android:layout_width="@dimen/status_bar_icon_size"
                     android:layout_height="match_parent"
                     android:src="@drawable/stat_notify_more"
                     android:visibility="gone"
-                    />
+                    /> -->
                 <com.android.systemui.statusbar.phone.IconMerger android:id="@+id/notificationIcons"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_alignParentStart="true"
-                    android:gravity="center_vertical"
                     android:orientation="horizontal"/>
-            </com.android.keyguard.AlphaOptimizedLinearLayout>
+                <com.android.systemui.statusbar.StatusBarIconView android:id="@+id/moreIcon_dot"
+                    android:layout_width="@dimen/gn_status_bar_icon_size"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/gn_stat_notify_more"
+                    android:visibility="gone"
+                    android:layout_toRightOf="@id/notificationIcons"
+                    />
+
+            </com.android.keyguard.AlphaOptimizedRelativeLayout>
         </com.android.systemui.statusbar.AlphaOptimizedFrameLayout>
 
         <com.android.keyguard.AlphaOptimizedLinearLayout android:id="@+id/system_icon_area"
@@ -91,7 +99,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:singleLine="true"
-                android:paddingStart="7dp"
+                android:paddingStart="3dp"
                 android:gravity="center_vertical|start"
                 />
         </com.android.keyguard.AlphaOptimizedLinearLayout>

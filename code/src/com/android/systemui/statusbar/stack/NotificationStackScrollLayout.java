@@ -680,10 +680,12 @@ public class NotificationStackScrollLayout extends ViewGroup
         return (veto != null && veto.getVisibility() != View.GONE);
     }
 
+  //jiating modify for keyguard begin
     @Override
     public boolean isAntiFalsingNeeded() {
-        return mPhoneStatusBar.getBarState() == StatusBarState.KEYGUARD;
+        return false;//mPhoneStatusBar.getBarState() == StatusBarState.KEYGUARD;
     }
+  //jiating modify for keyguard end
 
     private void setSwipingInProgress(boolean isSwiped) {
         mSwipingInProgress = isSwiped;
@@ -1499,10 +1501,12 @@ public class NotificationStackScrollLayout extends ViewGroup
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                if (mPhoneStatusBar.getBarState() != StatusBarState.KEYGUARD && mTouchIsClick &&
+            	//jiating modify for keyguard begin
+                if (/*mPhoneStatusBar.getBarState() != StatusBarState.KEYGUARD &&*/ mTouchIsClick &&
                         isBelowLastNotification(mInitialTouchX, mInitialTouchY)) {
                     mOnEmptySpaceClickListener.onEmptySpaceClicked(mInitialTouchX, mInitialTouchY);
                 }
+              //jiating modify for keyguard end
                 break;
         }
     }

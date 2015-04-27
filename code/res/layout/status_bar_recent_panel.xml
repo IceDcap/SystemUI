@@ -33,31 +33,27 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true">
-
-        <com.android.systemui.recent.RecentsVerticalScrollView
-            android:id="@+id/recents_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="0dp"
-            android:divider="@null"
-            android:stackFromBottom="true"
-            android:fadingEdge="vertical"
+        
+        <com.android.systemui.recent.RecentsHorizontalScrollView android:id="@+id/recents_container"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:fadingEdge="horizontal"
             android:scrollbars="none"
-            android:fadingEdgeLength="@dimen/status_bar_recents_scroll_fading_edge_length"
-            android:layout_gravity="bottom|start"
-            android:clipToPadding="false"
-            android:clipChildren="false">
+            android:layout_gravity="center"
+            android:fadingEdgeLength="@dimen/status_bar_recents_scroll_fading_edge_length">
 
             <LinearLayout android:id="@+id/recents_linear_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layoutDirection="ltr"
+                android:layout_gravity="left"
+                android:orientation="horizontal"
                 android:fitsSystemWindows="true"
-                android:clipToPadding="false"
-                android:clipChildren="false">
+                android:paddingLeft="@dimen/gn_recent_linear_panding_left"
+                android:paddingRight="@dimen/gn_recent_linear_panding_left">
             </LinearLayout>
 
-        </com.android.systemui.recent.RecentsVerticalScrollView>
+        </com.android.systemui.recent.RecentsHorizontalScrollView>
 
     </FrameLayout>
 
@@ -66,5 +62,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="invisible" />
+    
+    <include layout="@layout/gn_status_bar_task_clear"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 </com.android.systemui.recent.RecentsPanelView>

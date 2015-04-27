@@ -41,7 +41,7 @@ public class SignalClusterView
         SecurityController.SecurityControllerCallback {
 
     static final String TAG = "SignalClusterView";
-    static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    static final boolean DEBUG = true;//Log.isLoggable(TAG, Log.DEBUG);
 
     NetworkControllerImpl mNC;
     SecurityController mSC;
@@ -57,7 +57,7 @@ public class SignalClusterView
     private ArrayList<PhoneState> mPhoneStates = new ArrayList<PhoneState>();
 
     ViewGroup mWifiGroup;
-    ImageView mVpn, mWifi, mAirplane, mNoSims;
+    ImageView mWifi, mAirplane;//mNoSims,mVpn;
     View mWifiAirplaneSpacer;
     View mWifiSignalSpacer;
     LinearLayout mMobileSignalGroup;
@@ -108,11 +108,11 @@ public class SignalClusterView
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
 
-        mVpn            = (ImageView) findViewById(R.id.vpn);
+        //mVpn            = (ImageView) findViewById(R.id.vpn);
         mWifiGroup      = (ViewGroup) findViewById(R.id.wifi_combo);
         mWifi           = (ImageView) findViewById(R.id.wifi_signal);
         mAirplane       = (ImageView) findViewById(R.id.airplane);
-        mNoSims         = (ImageView) findViewById(R.id.no_sims);
+        //mNoSims         = (ImageView) findViewById(R.id.no_sims);
         mWifiAirplaneSpacer =         findViewById(R.id.wifi_airplane_spacer);
         mWifiSignalSpacer =           findViewById(R.id.wifi_signal_spacer);
         mMobileSignalGroup = (LinearLayout) findViewById(R.id.mobile_signal_group);
@@ -125,7 +125,7 @@ public class SignalClusterView
 
     @Override
     protected void onDetachedFromWindow() {
-        mVpn            = null;
+        //mVpn            = null;
         mWifiGroup      = null;
         mWifi           = null;
         mAirplane       = null;
@@ -167,7 +167,6 @@ public class SignalClusterView
         state.mMobileDescription = contentDescription;
         state.mMobileTypeDescription = typeContentDescription;
         state.mIsMobileTypeIconWide = isTypeIconWide;
-
         apply();
     }
 
@@ -261,7 +260,7 @@ public class SignalClusterView
     private void apply() {
         if (mWifiGroup == null) return;
 
-        mVpn.setVisibility(mVpnVisible ? View.VISIBLE : View.GONE);
+        //mVpn.setVisibility(mVpnVisible ? View.VISIBLE : View.GONE);
         if (DEBUG) Log.d(TAG, String.format("vpn: %s", mVpnVisible ? "VISIBLE" : "GONE"));
         if (mWifiVisible) {
             mWifi.setImageResource(mWifiStrengthId);
@@ -308,7 +307,7 @@ public class SignalClusterView
             mWifiSignalSpacer.setVisibility(View.GONE);
         }
 
-        mNoSims.setVisibility(mNoSimsVisible ? View.VISIBLE : View.GONE);
+        //mNoSims.setVisibility(mNoSimsVisible ? View.VISIBLE : View.GONE);
 
         boolean anythingVisible = mNoSimsVisible || mWifiVisible || mIsAirplaneMode
                 || anyMobileVisible || mVpnVisible;
@@ -321,9 +320,15 @@ public class SignalClusterView
         private int mMobileStrengthId = 0, mMobileTypeId = 0;
         private boolean mIsMobileTypeIconWide;
         private String mMobileDescription, mMobileTypeDescription;
+        private int mNetworkTypeId;
+        private int mMobileInOutId;
+        private ViewGroup mNetworkTypeGroup;
+        private boolean mIsConnect = false;
 
         private ViewGroup mMobileGroup;
         private ImageView mMobile, mMobileType;
+        private ImageView mNetworkType, mMobileInOut, mSlotIndicator;
+        
 
         public PhoneState(int subId, Context context) {
             ViewGroup root = (ViewGroup) LayoutInflater.from(context)
@@ -336,12 +341,19 @@ public class SignalClusterView
             mMobileGroup    = root;
             mMobile         = (ImageView) root.findViewById(R.id.mobile_signal);
             mMobileType     = (ImageView) root.findViewById(R.id.mobile_type);
+            mNetworkType	= (ImageView) root.findViewById(R.id.network_type);
+            mMobileInOut	= (ImageView) root.findViewById(R.id.mobile_inout);
+            mSlotIndicator	= (ImageView) root.findViewById(R.id.mobile_slot_indicator);
+            mNetworkTypeGroup = (ViewGroup) root.findViewById(R.id.network_type_combo);
         }
 
         public boolean apply(boolean isSecondaryIcon) {
             if (mMobileVisible && !mIsAirplaneMode) {
                 mMobile.setImageResource(mMobileStrengthId);
                 mMobileType.setImageResource(mMobileTypeId);
+                mSlotIndicator.setImageResource(getSlotIndicator(isSecondaryIcon));
+                mNetworkType.setImageResource(mNetworkTypeId);
+                mMobileInOut.setImageResource(mMobileInOutId);
                 mMobileGroup.setContentDescription(mMobileTypeDescription
                         + " " + mMobileDescription);
                 mMobileGroup.setVisibility(View.VISIBLE);
@@ -370,5 +382,33 @@ public class SignalClusterView
             }
         }
     }
+    
+    private int getSlotIndicator(boolean isSecondarySlot) {
+		if (isSecondarySlot) {
+			return R.drawable.gn_sim_indicator_2;
+		} else {
+			return R.drawable.gn_sim_indicator_1;
+		}
+	}
+
+	@Override
+	public void setNetworkType(int networkType, int subId) {
+		PhoneState state = getOrInflateState(subId);
+		state.mNetworkTypeId = networkType;
+		apply();
+	}
+
+	@Override
+	public void setMobileInout(boolean visible, int mobileInOut, int subId) {
+		// TODO Auto-generated method stub
+		PhoneState state = getOrInflateState(subId);
+		state.mIsConnect = visible;
+		if(visible) {
+			state.mMobileInOutId = mobileInOut;
+		} else {
+			state.mMobileInOutId = 0;
+		}
+		apply();
+	}
 }
 

@@ -1,0 +1,62 @@
+package com.amigo.navi.keyguard.skylight;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.MotionEvent;
+
+import com.amigo.navi.keyguard.DebugLog;
+import com.amigo.navi.keyguard.KeyguardViewHost;
+import com.amigo.navi.keyguard.KeyguardViewHostManager;
+import com.android.keyguard.R ;
+
+public class SkylightActivity extends Activity {
+
+    private static final String LOG_TAG="SkylightActivity";
+    
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.skylight_activity_layout);
+        DebugLog.d(LOG_TAG, "SkylightActivity  onCreate");
+        KeyguardViewHostManager viewHostManager = KeyguardViewHostManager.getInstance();
+
+        if (SkylightUtil.getIsHallOpen(getApplicationContext())) {
+            DebugLog.d(LOG_TAG, "SkylightActivity  hallOpen finish ");
+            finish();
+        } else {
+            if (viewHostManager != null) {
+                viewHostManager.notifySkylightActivityCreated(this);
+            }
+        }
+
+    }
+    
+    
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if(event.getAction()==MotionEvent.ACTION_DOWN){
+            DebugLog.d(LOG_TAG, "SkylightActivity onTouchEvent");
+            finish();
+            overridePendingTransition(0, 0);
+        }
+        return super.onTouchEvent(event);
+    }
+    
+    @Override
+    protected void onResume() {
+        // TODO Auto-generated method stub
+        super.onResume();
+    }
+    
+    @Override
+    protected void onStop() {
+        // TODO Auto-generated method stub
+        super.onStop();
+    }
+    
+    
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+}

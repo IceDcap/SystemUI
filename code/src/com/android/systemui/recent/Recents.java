@@ -44,7 +44,7 @@ public class Recents extends SystemUI implements RecentsComponent {
     private static final boolean DEBUG = true;
 
     // Which recents to use
-    boolean mUseAlternateRecents = true;
+    boolean mUseAlternateRecents = false;//true;
     boolean mBootCompleted = false;
     static AlternateRecentsComponent sAlternateRecents;
 
@@ -122,134 +122,87 @@ public class Recents extends SystemUI implements RecentsComponent {
                     | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 
             if (firstTask == null) {
-                if (RecentsActivity.forceOpaqueBackground(mContext)) {
-                    ActivityOptions opts = ActivityOptions.makeCustomAnimation(mContext,
-                            R.anim.recents_launch_from_launcher_enter,
-                            R.anim.recents_launch_from_launcher_exit);
-                    mContext.startActivityAsUser(intent, opts.toBundle(), new UserHandle(
-                            UserHandle.USER_CURRENT));
-                } else {
-                    // The correct window animation will be applied via the activity's style
-                    mContext.startActivityAsUser(intent, new UserHandle(
-                            UserHandle.USER_CURRENT));
-                }
-
+                startRecentActivityDiractly(intent);
             } else {
-                Bitmap first = null;
-                if (firstTask.getThumbnail() instanceof BitmapDrawable) {
-                    first = ((BitmapDrawable) firstTask.getThumbnail()).getBitmap();
-                } else {
-                    first = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
-                    Drawable d = RecentTasksLoader.getInstance(mContext).getDefaultThumbnail();
-                    d.draw(new Canvas(first));
-                }
-                final Resources res = mContext.getResources();
-
-                float thumbWidth = res
-                        .getDimensionPixelSize(R.dimen.status_bar_recents_thumbnail_width);
-                float thumbHeight = res
-                        .getDimensionPixelSize(R.dimen.status_bar_recents_thumbnail_height);
-                if (first == null) {
-                    throw new RuntimeException("Recents thumbnail is null");
-                }
-                if (first.getWidth() != thumbWidth || first.getHeight() != thumbHeight) {
-                    first = Bitmap.createScaledBitmap(first, (int) thumbWidth, (int) thumbHeight,
-                            true);
-                    if (first == null) {
-                        throw new RuntimeException("Recents thumbnail is null");
-                    }
-                }
-
-
-                DisplayMetrics dm = new DisplayMetrics();
-                display.getMetrics(dm);
-                // calculate it here, but consider moving it elsewhere
-                // first, determine which orientation you're in.
-                final Configuration config = res.getConfiguration();
-                int x, y;
-
-                if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
-                    float appLabelLeftMargin = res.getDimensionPixelSize(
-                            R.dimen.status_bar_recents_app_label_left_margin);
-                    float appLabelWidth = res.getDimensionPixelSize(
-                            R.dimen.status_bar_recents_app_label_width);
-                    float thumbLeftMargin = res.getDimensionPixelSize(
-                            R.dimen.status_bar_recents_thumbnail_left_margin);
-                    float thumbBgPadding = res.getDimensionPixelSize(
-                            R.dimen.status_bar_recents_thumbnail_bg_padding);
-
-                    float width = appLabelLeftMargin +
-                            +appLabelWidth
-                            + thumbLeftMargin
-                            + thumbWidth
-                            + 2 * thumbBgPadding;
-
-                    x = (int) ((dm.widthPixels - width) / 2f + appLabelLeftMargin + appLabelWidth
-                            + thumbBgPadding + thumbLeftMargin);
-                    y = (int) (dm.heightPixels
-                            - res.getDimensionPixelSize(R.dimen.status_bar_recents_thumbnail_height)
-                            - thumbBgPadding);
-                    if (layoutDirection == View.LAYOUT_DIRECTION_RTL) {
-                        x = dm.widthPixels - x - res.getDimensionPixelSize(
-                                R.dimen.status_bar_recents_thumbnail_width);
-                    }
-
-                } else { // if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    float thumbTopMargin = res.getDimensionPixelSize(
-                            R.dimen.status_bar_recents_thumbnail_top_margin);
-                    float thumbBgPadding = res.getDimensionPixelSize(
-                            R.dimen.status_bar_recents_thumbnail_bg_padding);
-                    float textPadding = res.getDimensionPixelSize(
-                            R.dimen.status_bar_recents_text_description_padding);
-                    float labelTextSize = res.getDimensionPixelSize(
-                            R.dimen.status_bar_recents_app_label_text_size);
-                    Paint p = new Paint();
-                    p.setTextSize(labelTextSize);
-                    float labelTextHeight = p.getFontMetricsInt().bottom
-                            - p.getFontMetricsInt().top;
-                    float descriptionTextSize = res.getDimensionPixelSize(
-                            R.dimen.status_bar_recents_app_description_text_size);
-                    p.setTextSize(descriptionTextSize);
-                    float descriptionTextHeight = p.getFontMetricsInt().bottom
-                            - p.getFontMetricsInt().top;
-
-                    float statusBarHeight = res.getDimensionPixelSize(
-                            com.android.internal.R.dimen.status_bar_height);
-                    float recentsItemTopPadding = statusBarHeight;
-
-                    float height = thumbTopMargin
-                            + thumbHeight
-                            + 2 * thumbBgPadding + textPadding + labelTextHeight
-                            + recentsItemTopPadding + textPadding + descriptionTextHeight;
-                    float recentsItemRightPadding = res
-                            .getDimensionPixelSize(R.dimen.status_bar_recents_item_padding);
-                    float recentsScrollViewRightPadding = res
-                            .getDimensionPixelSize(R.dimen.status_bar_recents_right_glow_margin);
-                    x = (int) (dm.widthPixels - res
-                            .getDimensionPixelSize(R.dimen.status_bar_recents_thumbnail_width)
-                            - thumbBgPadding - recentsItemRightPadding
-                            - recentsScrollViewRightPadding);
-                    y = (int) ((dm.heightPixels - statusBarHeight - height) / 2f + thumbTopMargin
-                            + recentsItemTopPadding + thumbBgPadding + statusBarHeight);
-                }
-
-                ActivityOptions opts = ActivityOptions.makeThumbnailScaleDownAnimation(
-                        statusBarView,
-                        first, x, y,
-                        new ActivityOptions.OnAnimationStartedListener() {
-                            public void onAnimationStarted() {
-                                Intent intent =
-                                        new Intent(RecentsActivity.WINDOW_ANIMATION_START_INTENT);
-                                intent.setPackage("com.android.systemui");
-                                sendBroadcastSafely(intent);
-                            }
-                        });
-                intent.putExtra(RecentsActivity.WAITING_FOR_WINDOW_ANIMATION_PARAM, true);
-                startActivitySafely(intent, opts.toBundle());
+                startRecentActivityByAnim(display, statusBarView, firstTask, intent);
             }
         } catch (ActivityNotFoundException e) {
             Log.e(TAG, "Failed to launch RecentAppsIntent", e);
         }
+    }
+
+    private void startRecentActivityDiractly(Intent intent) {
+        if (RecentsActivity.forceOpaqueBackground(mContext)) {
+            ActivityOptions opts = ActivityOptions.makeCustomAnimation(mContext,
+                    R.anim.recents_launch_from_launcher_enter,
+                    R.anim.recents_launch_from_launcher_exit);
+            mContext.startActivityAsUser(intent, opts.toBundle(), new UserHandle(
+                    UserHandle.USER_CURRENT));
+        } else {
+            // The correct window animation will be applied via the activity's style
+            mContext.startActivityAsUser(intent, new UserHandle(
+                    UserHandle.USER_CURRENT));
+        }
+    }
+
+    private void startRecentActivityByAnim(Display display, View statusBarView,
+            TaskDescription firstTask, Intent intent) {
+        Log.d(TAG, "go to recents panel from = " + firstTask.packageName);
+        Bitmap first = null;
+        if (firstTask.getThumbnail() instanceof BitmapDrawable) {
+            first = ((BitmapDrawable) firstTask.getThumbnail()).getBitmap();
+        } else {
+            first = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
+            Drawable d = RecentTasksLoader.getInstance(mContext).getDefaultThumbnail();
+            d.draw(new Canvas(first));
+        }
+        
+        final Resources res = mContext.getResources();
+        float thumbWidth = res
+                .getDimensionPixelSize(com.android.internal.R.dimen.thumbnail_width);
+        float thumbHeight = res
+                .getDimensionPixelSize(com.android.internal.R.dimen.thumbnail_height);
+        if (first == null) {
+            throw new RuntimeException("Recents thumbnail is null");
+        }
+        if (first.getWidth() != thumbWidth || first.getHeight() != thumbHeight) {
+            first = Bitmap.createScaledBitmap(first, (int) thumbWidth, (int) thumbHeight,
+                    true);
+            if (first == null) {
+                throw new RuntimeException("Recents thumbnail is null");
+            }
+        }
+
+        int x, y;
+        int statusBarHeight = res.getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height);
+        int thumbTopMargin = res.getDimensionPixelSize(R.dimen.gn_recent_thumbnail_margin_top);
+        int thumbPaddingLeft = res.getDimensionPixelSize(R.dimen.gn_recent_thumbnail_padding_left);
+        DisplayMetrics dm = new DisplayMetrics();
+        display.getMetrics(dm);
+
+        int count = RecentTasksLoader.getInstance(mContext).getTasksCount();
+        if (count > 1) {
+            x = (int) ((int) ((dm.widthPixels - thumbWidth) / 2f) - thumbWidth - thumbPaddingLeft * 2);
+        } else {
+            x = (int) ((dm.widthPixels - thumbWidth) / 2f);
+        }
+        y = thumbTopMargin + statusBarHeight;
+        
+        ActivityOptions opts = ActivityOptions.makeThumbnailScaleDownAnimation(
+                statusBarView,
+                first, x, y,
+                new ActivityOptions.OnAnimationStartedListener() {
+                    public void onAnimationStarted() {
+                        Intent intent =
+                                new Intent(RecentsActivity.WINDOW_ANIMATION_START_INTENT);
+                        intent.setPackage("com.android.systemui");
+                        //sendBroadcastSafely(intent);
+                        mContext.sendBroadcastAsUser(intent, new UserHandle(UserHandle.USER_CURRENT));
+                    }
+                });
+        intent.putExtra(RecentsActivity.WAITING_FOR_WINDOW_ANIMATION_PARAM, true);
+        //startActivitySafely(intent, opts.toBundle());
+        mContext.startActivityAsUser(intent, opts.toBundle(), new UserHandle(UserHandle.USER_CURRENT));
     }
 
     @Override

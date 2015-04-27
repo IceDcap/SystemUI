@@ -17,20 +17,52 @@
 ** limitations under the License.
 */
 -->
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/mobile_combo"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    >
-    <ImageView
-        android:id="@+id/mobile_signal"
-        android:layout_height="wrap_content"
+    android:layout_height="wrap_content" >
+
+    <FrameLayout
+        android:id="@+id/network_type_combo"
         android:layout_width="wrap_content"
-        />
-    <ImageView
-        android:id="@+id/mobile_type"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:id="@+id/network_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:id="@+id/mobile_inout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom" />
+    </FrameLayout>
+
+    <FrameLayout
         android:layout_width="wrap_content"
-        />
-</FrameLayout>
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/network_type_combo"
+        android:layout_gravity="center_vertical" >
+
+        <ImageView
+            android:id="@+id/mobile_signal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:id="@+id/mobile_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:id="@+id/mobile_slot_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:layout_gravity="end|bottom" />
+    </FrameLayout>
+
+</RelativeLayout>
