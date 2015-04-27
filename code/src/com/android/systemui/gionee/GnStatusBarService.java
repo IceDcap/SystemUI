@@ -16,8 +16,10 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 import android.view.MotionEvent;
+
 import com.android.internal.statusbar.IGnStatusBar;
 import com.android.systemui.SystemUIApplication;
+import com.android.systemui.gionee.nc.GnNotificationService;
 import com.android.systemui.statusbar.phone.PhoneStatusBar;
 
 public class GnStatusBarService extends Service {
@@ -108,7 +110,7 @@ public class GnStatusBarService extends Service {
         
         @Override
         public void onNotificationPriorityChanged(java.lang.String pkgName, int priority) throws android.os.RemoteException {
-            
+        	GnNotificationService.getService(null).refreshChangeList(pkgName, priority);
         }
         
         public void showSimIndicator(String businessType) {
