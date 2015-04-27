@@ -16,6 +16,7 @@
 
 package com.android.systemui;
 
+import amigo.changecolors.ChameleonColorManager;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -39,6 +40,8 @@ public class BootReceiver extends BroadcastReceiver {
                 Intent loadavg = new Intent(context, com.android.systemui.LoadAverageService.class);
                 context.startService(loadavg);
             }
+            Context appContext = context.getApplicationContext();
+            ChameleonColorManager.getInstance().register(appContext, false);
         } catch (Exception e) {
             Log.e(TAG, "Can't start load average service", e);
         }

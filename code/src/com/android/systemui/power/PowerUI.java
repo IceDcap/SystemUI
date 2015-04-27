@@ -30,12 +30,16 @@ import android.os.UserHandle;
 import android.provider.Settings;
 import android.util.Log;
 import android.util.Slog;
-
+import com.android.systemui.R;
 import com.android.systemui.SystemUI;
+import com.android.systemui.gionee.nc.GnNotificationService;
+import com.android.systemui.statusbar.NotificationData;
+import com.android.systemui.statusbar.NotificationData.Entry;
 import com.android.systemui.statusbar.phone.PhoneStatusBar;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class PowerUI extends SystemUI {
@@ -56,11 +60,12 @@ public class PowerUI extends SystemUI {
     private final int[] mLowBatteryReminderLevels = new int[2];
 
     private long mScreenOffTime = -1;
+    private GnNotificationService mNotificationService = null;
 
     public void start() {
         mPowerManager = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
         mScreenOffTime = mPowerManager.isScreenOn() ? -1 : SystemClock.elapsedRealtime();
-        mWarnings = new PowerNotificationWarnings(mContext, getComponent(PhoneStatusBar.class));
+        mWarnings = new GnPowerNotificationWarnings(mContext, getComponent(PhoneStatusBar.class));
 
         ContentObserver obs = new ContentObserver(mHandler) {
             @Override
@@ -81,9 +86,12 @@ public class PowerUI extends SystemUI {
     }
 
     void updateBatteryWarningLevels() {
-        int critLevel = mContext.getResources().getInteger(
-                com.android.internal.R.integer.config_criticalBatteryWarningLevel);
-
+		// GIONEE <wujj> <2015-03-19> modify for CR01455754 begin
+		// int critLevel = mContext.getResources().getInteger(
+		// 					com.android.internal.R.integer.config_criticalBatteryWarningLevel);
+		int critLevel = mContext.getResources().getInteger(
+				R.integer.gn_critical_battery_warning_level);
+		// GIONEE <wujj> <2015-03-19> modify for CR01455754 end
         final ContentResolver resolver = mContext.getContentResolver();
         int defWarnLevel = mContext.getResources().getInteger(
                 com.android.internal.R.integer.config_lowBatteryWarningLevel);
@@ -167,6 +175,11 @@ public class PowerUI extends SystemUI {
 
                 int oldBucket = findBatteryLevelBucket(oldBatteryLevel);
                 int bucket = findBatteryLevelBucket(mBatteryLevel);
+                
+                // GIONEE <wujj> <2015-03-19> modify for CR01455754 begin
+                mState.level = mBatteryLevel;
+                mState.updateState();
+                // GIONEE <wujj> <2015-03-19> modify for CR01455754 end
 
                 if (DEBUG) {
                     Slog.d(TAG, "buckets   ....." + mLowBatteryAlertCloseLevel
@@ -198,11 +211,17 @@ public class PowerUI extends SystemUI {
                         && bucket < 0) {
                     // only play SFX when the dialog comes up or the bucket changes
                     final boolean playSound = bucket != oldBucket || oldPlugged;
-                    mWarnings.showLowBatteryWarning(playSound);
+                    // GIONEE <wujj> <2015-03-19> modify for CR01455754 begin
+                    if (mState.shouldNotify() || oldPlugged) {
+                    	mWarnings.showLowBatteryWarning(playSound);
+                    }
+                    // GIONEE <wujj> <2015-03-19> modify for CR01455754 end
                 } else if (plugged || (bucket > oldBucket && bucket > 0)) {
                     mWarnings.dismissLowBatteryWarning();
                 } else {
-                    mWarnings.updateLowBatteryWarning();
+                	if (isLowBatteryShowing()) {
+                		mWarnings.updateLowBatteryWarning();
+                	}
                 }
             } else if (Intent.ACTION_SCREEN_OFF.equals(action)) {
                 mScreenOffTime = SystemClock.elapsedRealtime();
@@ -261,5 +280,51 @@ public class PowerUI extends SystemUI {
         void dump(PrintWriter pw);
         void userSwitched();
     }
+    
+    // GIONEE <wujj> <2015-03-19> modify for CR01455754 begin
+    /** Low battery shows in the following case:
+     * 1). Battery level is 15% or %4 when power is not plugged
+     * 2). Battery level is below 15% when old state is plugged
+     * */
+    boolean isLowBatteryShowing() {
+    	if (mNotificationService == null) {
+    		mNotificationService = GnNotificationService.getService(null);
+    	}
+    	NotificationData notificationData = mNotificationService.getNotificationData();
+    	if (notificationData != null) {
+	    	ArrayList<Entry> activeNotifications = notificationData.getActiveNotifications();
+	    	final int N = activeNotifications.size();
+	    	for(int i = 0; i< N; i++) {
+	    		Entry entry = activeNotifications.get(i);
+	    		String tag = entry.notification.getTag();
+	    		if ("low_battery".equals(tag)) {
+	    			return true;
+	    		}
+	    	}
+    	}
+    	return false;
+    }
+    
+    final private State mState = new State();
+    class State {
+    	int level = 100;
+    	boolean isNotified =false;
+    	
+    	boolean shouldNotify() {
+    		boolean notify = false;
+    		if ((level == 15 || level == 4) && !isNotified) {
+    			notify = true;
+    			isNotified = notify;
+    		}
+    		return notify;
+    	}
+    	
+    	void updateState() {
+    		if ((level != 15 && level != 4) ) {
+    			isNotified = false;
+    		}
+    	}
+    }
+    // GIONEE <wujj> <2015-03-19> modify for CR01455754 end
 }
 

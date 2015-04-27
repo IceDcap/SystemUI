@@ -19,9 +19,14 @@ package com.android.systemui.usb;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
+import android.hardware.usb.UsbManager;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -35,7 +40,8 @@ import com.android.systemui.SystemUI;
 
 public class StorageNotification extends SystemUI {
     private static final String TAG = "StorageNotification";
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
+    private static final boolean GN_USB_SUPPORT = true;
 
     private static final boolean POP_UMS_ACTIVITY_ON_CONNECT = true;
 
@@ -62,6 +68,26 @@ public class StorageNotification extends SystemUI {
     private StorageManager mStorageManager;
 
     private Handler        mAsyncEventHandler;
+    
+    StorageNotificationEventListener mStorageEventlistener;
+    private boolean mUsbDeviceConnect = false;
+    /**
+     * A broadcast receiver is used to monitor usb state changes.
+     * Why  StorageNotificationEventListener cannot work correctlly?
+     * */
+    private BroadcastReceiver mUsbStateReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			String action = intent.getAction();
+			
+			if (UsbManager.ACTION_USB_STATE.equals(action)) {
+				mUsbDeviceConnect = intent.getBooleanExtra(UsbManager.USB_CONNECTED, false);
+				boolean isConnected = mStorageManager.isUsbMassStorageConnected();
+				Log.v(TAG, "isConnected = " + isConnected + " mUsbDeviceConnect = " + mUsbDeviceConnect);
+				mStorageEventlistener.onUsbMassStorageConnectionChanged(isConnected);
+			}
+		}
+    };
 
     private class StorageNotificationEventListener extends StorageEventListener {
         public void onUsbMassStorageConnectionChanged(final boolean connected) {
@@ -94,11 +120,36 @@ public class StorageNotification extends SystemUI {
         thr.start();
         mAsyncEventHandler = new Handler(thr.getLooper());
 
-        StorageNotificationEventListener listener = new StorageNotificationEventListener();
-        listener.onUsbMassStorageConnectionChanged(connected);
-        mStorageManager.registerListener(listener);
+        if (GN_USB_SUPPORT && isFirstBoot()) {
+        	setToMtpByDefault();
+        }
+        
+        mStorageEventlistener = new StorageNotificationEventListener();
+        mStorageEventlistener.onUsbMassStorageConnectionChanged(connected);
+        mStorageManager.registerListener(mStorageEventlistener);
+        
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(UsbManager.ACTION_USB_STATE);
+        mContext.registerReceiver(mUsbStateReceiver, filter);
     }
 
+	private boolean isFirstBoot() {
+		SharedPreferences preferences = mContext.getSharedPreferences("first_boot", Context.MODE_PRIVATE);
+		boolean isFirstBoot = preferences.getBoolean("boot_flag", true);
+		Log.v(TAG, "isFirstBoot = " + isFirstBoot);
+		return isFirstBoot;
+	}
+
+	private void setToMtpByDefault() {
+		UsbManager usbManager = (UsbManager) mContext.getSystemService(Context.USB_SERVICE);
+		StringBuilder builder = new StringBuilder();
+		builder.append(UsbManager.USB_FUNCTION_MTP);
+		builder.append(",");
+		builder.append(UsbManager.USB_FUNCTION_MASS_STORAGE);
+		String targetFunction = builder.toString();
+		usbManager.setCurrentFunction(targetFunction, true);
+	}
+    
     private void onUsbMassStorageConnectionChangedAsync(boolean connected) {
         mUmsAvailable = connected;
         /*
@@ -250,17 +301,20 @@ public class StorageNotification extends SystemUI {
      * Update the state of the USB mass storage notification
      */
     void updateUsbMassStorageNotification(boolean available) {
-
-        if (available) {
+        if (available || mUsbDeviceConnect) {
             Intent intent = new Intent();
-            intent.setClass(mContext, com.android.systemui.usb.UsbStorageActivity.class);
+            if (GN_USB_SUPPORT) {
+            	intent.setClass(mContext, com.android.systemui.usb.GnUsbStorageActivity.class);
+            } else {
+            	intent.setClass(mContext, com.android.systemui.usb.UsbStorageActivity.class);
+            }
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
             PendingIntent pi = PendingIntent.getActivity(mContext, 0, intent, 0);
             setUsbStorageNotification(
                     com.android.internal.R.string.usb_storage_notification_title,
                     com.android.internal.R.string.usb_storage_notification_message,
-                    com.android.internal.R.drawable.stat_sys_data_usb,
+                    com.android.systemui.R.drawable.gn_stat_sys_data_usb,
                     false, true, pi);
         } else {
             setUsbStorageNotification(0, 0, 0, false, false, null);
@@ -330,16 +384,16 @@ public class StorageNotification extends SystemUI {
                 // If ADB is enabled, however, we suppress this dialog (under the assumption that a
                 // developer (a) knows how to enable UMS, and (b) is probably using USB to install
                 // builds or use adb commands.
-                mUsbStorageNotification.fullScreenIntent = pi;
+            	//Modify by GIONEE
+                //mUsbStorageNotification.fullScreenIntent = pi;
             }
         }
 
         final int notificationId = mUsbStorageNotification.icon;
         if (visible) {
-            notificationManager.notifyAsUser(null, notificationId, mUsbStorageNotification,
-                    UserHandle.ALL);
+            notificationManager.notifyAsUser(null, notificationId, mUsbStorageNotification, UserHandle.CURRENT);
         } else {
-            notificationManager.cancelAsUser(null, notificationId, UserHandle.ALL);
+            notificationManager.cancelAsUser(null, notificationId, UserHandle.CURRENT);
         }
     }
 

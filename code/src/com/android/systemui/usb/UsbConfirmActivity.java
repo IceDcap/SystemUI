@@ -52,7 +52,7 @@ public class UsbConfirmActivity extends AlertActivity
     private UsbDevice mDevice;
     private UsbAccessory mAccessory;
     private ResolveInfo mResolveInfo;
-    private boolean mPermissionGranted;
+    //private boolean mPermissionGranted;
     private UsbDisconnectedReceiver mDisconnectedReceiver;
 
     @Override
@@ -147,11 +147,13 @@ public class UsbConfirmActivity extends AlertActivity
                     }
                 }
 
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.setComponent(
-                    new ComponentName(mResolveInfo.activityInfo.packageName,
-                            mResolveInfo.activityInfo.name));
-                startActivityAsUser(intent, new UserHandle(userId));
+                if(intent != null) {
+                	intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                	intent.setComponent(
+                			new ComponentName(mResolveInfo.activityInfo.packageName,
+                					mResolveInfo.activityInfo.name));
+                	startActivityAsUser(intent, new UserHandle(userId));
+                }
             } catch (Exception e) {
                 Log.e(TAG, "Unable to start activity", e);
             }

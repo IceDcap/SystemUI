@@ -46,7 +46,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.android.internal.R;
+import com.android.systemui.R;
 
 import java.util.List;
 
@@ -117,17 +117,17 @@ public class UsbStorageActivity extends Activity
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
         }
 
-        setContentView(com.android.internal.R.layout.usb_storage_activity);
+        setContentView(R.layout.usb_storage_activity);
 
-        mIcon = (ImageView) findViewById(com.android.internal.R.id.icon);
-        mBanner = (TextView) findViewById(com.android.internal.R.id.banner);
-        mMessage = (TextView) findViewById(com.android.internal.R.id.message);
+        mIcon = (ImageView) findViewById(R.id.icon);
+        mBanner = (TextView) findViewById(R.id.banner);
+        mMessage = (TextView) findViewById(R.id.message);
 
-        mMountButton = (Button) findViewById(com.android.internal.R.id.mount_button);
+        mMountButton = (Button) findViewById(R.id.mount_button);
         mMountButton.setOnClickListener(this);
-        mUnmountButton = (Button) findViewById(com.android.internal.R.id.unmount_button);
+        mUnmountButton = (Button) findViewById(R.id.unmount_button);
         mUnmountButton.setOnClickListener(this);
-        mProgressBar = (ProgressBar) findViewById(com.android.internal.R.id.progress);
+        mProgressBar = (ProgressBar) findViewById(R.id.progress);
     }
 
     @Override
@@ -150,16 +150,16 @@ public class UsbStorageActivity extends Activity
             mProgressBar.setVisibility(View.GONE);
             mUnmountButton.setVisibility(View.VISIBLE);
             mMountButton.setVisibility(View.GONE);
-            mIcon.setImageResource(com.android.internal.R.drawable.usb_android_connected);
-            mBanner.setText(com.android.internal.R.string.usb_storage_stop_title);
-            mMessage.setText(com.android.internal.R.string.usb_storage_stop_message);
+            mIcon.setImageResource(R.drawable.usb_android_connected);
+            mBanner.setText(R.string.usb_storage_stop_title);
+            mMessage.setText(R.string.usb_storage_stop_message);
         } else {
             mProgressBar.setVisibility(View.GONE);
             mUnmountButton.setVisibility(View.GONE);
             mMountButton.setVisibility(View.VISIBLE);
-            mIcon.setImageResource(com.android.internal.R.drawable.usb_android);
-            mBanner.setText(com.android.internal.R.string.usb_storage_title);
-            mMessage.setText(com.android.internal.R.string.usb_storage_message);
+            mIcon.setImageResource(R.drawable.usb_android);
+            mBanner.setText(R.string.usb_storage_title);
+            mMessage.setText(R.string.usb_storage_message);
         }
     }
 

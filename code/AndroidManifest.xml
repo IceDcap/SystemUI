@@ -142,6 +142,10 @@
             android:exported="true">
         </service>
         
+        <service android:name="com.android.systemui.usb.GnOtgService"
+            android:exported="true">
+        </service>
+        
         <!-- started from PhoneWindowManager
              TODO: Should have an android:permission attribute -->
         <service android:name=".screenshot.TakeScreenshotService"
@@ -172,6 +176,42 @@
                   android:label="@*android:string/usb_storage_activity_title"
                   android:excludeFromRecents="true">
         </activity>
+        
+        <activity
+            android:name=".usb.GnUsbStorageActivity"
+            android:excludeFromRecents="true"
+            android:screenOrientation="portrait"
+            android:theme="@amigo:style/Theme.Amigo.Light.Dialog" >
+        </activity>
+
+        <!-- <Gionee> <wujj> <2014-10-08> add for CR01393268 begin: New request to add MTP help page -->
+        <activity
+            android:name="com.android.systemui.usb.MtpHelpActivity"
+            android:excludeFromRecents="true"
+            android:label="@string/mtp_help"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/GnSettingsLightTheme" >
+            <intent-filter>
+                <action android:name="gn.intent.action.MTP_HELP" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.android.systemui.usb.MtpHelpDetailActivity"
+            android:excludeFromRecents="true"
+            android:label="@string/mtp_help"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/GnSettingsLightTheme" >
+            <intent-filter>
+                <action android:name="gn.intent.action.MTP_HELP_DETAIL" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
         <activity android:name="com.android.internal.app.ExternalMediaFormatActivity"
                 android:theme="@*android:style/Theme.Dialog.Alert"
                 android:excludeFromRecents="true">

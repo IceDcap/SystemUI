@@ -52,6 +52,18 @@ import javax.microedition.khronos.egl.EGLContext;
 import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 
+// Gionee <Amigo_Blur> <jiaoyuan> <2015-01-08> add for CR01434565 begin
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import amigo.widget.blur.AmigoBlur;
+// Gionee <Amigo_Blur> <jiaoyuan> <2015-01-08> add for CR01434565 end
+
 /**
  * Default built-in wallpaper that simply shows a static image.
  */
@@ -435,7 +447,10 @@ public class ImageWallpaper extends WallpaperService {
             } catch (OutOfMemoryError e) {
                 exception = e;
             }
-
+           
+            // Gionee <Amigo_Blur> <jiaoyuan> <2015-01-08> add for CR01434565 begin
+            makeWallpaperBlur();
+            // Gionee <Amigo_Blur> <jiaoyuan> <2015-01-08> add for CR01434565 end
             if (exception != null) {
                 mBackground = null;
                 mBackgroundWidth = -1;
@@ -753,5 +768,136 @@ public class ImageWallpaper extends WallpaperService {
                     EGL_NONE
             };
         }
-    }
+    
+
+        // Gionee <Amigo_Blur> <jiaoyuan> <2015-01-08> add for CR01434565 begin
+		private final static String BLUR_IMAGE_FILE = "/data/misc/gionee/blur";
+
+		private void setWallpaperBlur(final Bitmap background, final int iBlur) {
+			new Thread(new Runnable() {
+				public void run() {
+					AmigoBlur blur = AmigoBlur.getInstance();
+					if (null == background || background.isRecycled()) {
+						Log.d(TAG, "background == null is "
+								+ (background == null) + ",may be OutOfMemory.");
+						return;
+					}
+					blur.generateBlurBitmap(background, getResources(), iBlur,
+							new AmigoBlur.BitmapCallback() {
+								@Override
+								public void onComplete(final Bitmap completeBmp) {
+									Log.d(TAG, "completeDrawable = "
+											+ (completeBmp == null)
+											+ ",this = " + this);
+									releaseBitmap(background);
+									saveBlurBitmap(completeBmp);
+								}
+							});
+				}
+			}).start();
+		}
+
+		private Bitmap zoomInBitmap(int zoom) {
+			int width = mBackground.getWidth();
+			int height = mBackground.getHeight();
+                        //Log.d(TAG, "zoomInBitmap width :" + width + " , height : " + height);
+                        if (width < 16 || height < 16) {
+                           Log.w(TAG, "zoomInBitmap save origin Background! width or height < 16");
+                           saveBlurBitmap(mBackground);
+                           return null;
+                        }
+			float scale = scaleBitmapSize(mBackground);
+			Matrix matrix = new Matrix();
+			matrix.postScale(scale, scale);
+			Bitmap resizedBitmap = Bitmap.createBitmap(mBackground, 0, 0,
+					width, height, matrix, true);
+                        //Log.d(TAG, "zoomInBitmap resizedBitmap width :" + resizedBitmap.getWidth() + " , height : " + resizedBitmap.getHeight());
+			return resizedBitmap;
+		}
+                
+                private float scaleBitmapSize(Bitmap bitmap) {
+                        float scale = (float) 1 / 16;
+                        int scaleWidth = scaleBitmapWidthOrHeight(bitmap.getWidth());
+                        int scaleHeight = scaleBitmapWidthOrHeight(bitmap.getHeight());
+                        if (scaleWidth < 16 || scaleHeight < 16) {
+                           scale = (float) 1 / Math.max(scaleWidth, scaleHeight);
+                        }
+                        return scale;
+                }
+
+                private int scaleBitmapWidthOrHeight(int size) {
+                       return size/16;
+                }
+		private Bitmap chipBitmap(Bitmap bitmap) {
+			if (bitmap == null) {
+				return null;
+			}
+			Bitmap chipBitmap = null;
+			int width = bitmap.getWidth();
+			int height = bitmap.getHeight();
+			if (width > height) {
+				chipBitmap = Bitmap.createBitmap(bitmap, width / 3, 0,
+						width / 2, height);
+			} else {
+				chipBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height);
+			}
+			releaseBitmap(bitmap);
+			return chipBitmap;
+		}
+
+		private void saveBlurBitmap(Bitmap blur) {
+			File file = new File(BLUR_IMAGE_FILE);
+			if (file.exists()) {
+				if(!file.delete()) {
+					return;
+				}
+			}
+			try {
+				OutputStream fos = null;
+				try {
+					fos = new FileOutputStream(BLUR_IMAGE_FILE);
+					blur.compress(Bitmap.CompressFormat.PNG, 90, fos);
+				} catch (Exception e) {
+					e.printStackTrace();
+					Log.e(TAG, " ------ saveWallPaperBlur fail! ------");
+				} finally {
+					if (fos != null) {
+						fos.close();
+						fos = null;
+					}
+					releaseBitmap(blur);
+				}
+			} catch (Exception e) {
+				Log.e(TAG, " ------ saveWallPaperBlur file close fail! ------");
+			}
+			chmodFile();
+			Log.d(TAG, "save end wallpaper blur!");
+		}
+
+		private void chmodFile() {
+			try {
+				String command = "chmod 644 " + BLUR_IMAGE_FILE;
+				Log.d(TAG, "command = " + command);
+				Runtime runtime = Runtime.getRuntime();
+				runtime.exec(command);
+			} catch (IOException e) {
+				Log.d(TAG, "chmod fail!!!!:" + e.getMessage());
+			}
+		}
+
+		private void releaseBitmap(Bitmap bitmap) {
+			if (bitmap != null && !bitmap.isRecycled()) {
+				bitmap.recycle();
+				bitmap = null;
+			}
+		}
+
+		private void makeWallpaperBlur() {
+			Log.d(TAG, "save start wallpaper blur!");
+			Bitmap zoomBitmap = zoomInBitmap(16);
+			Bitmap chipBitmap = chipBitmap(zoomBitmap);
+			setWallpaperBlur(chipBitmap, 3);
+		}
+	}
+    // Gionee <Amigo_Blur> <jiaoyuan> <2015-01-08> add for CR01434565 end
 }

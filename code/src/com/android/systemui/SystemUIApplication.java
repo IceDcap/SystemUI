@@ -28,6 +28,7 @@ import android.util.Log;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.android.systemui.gionee.GnYouJu;
 /**
  * Application class for SystemUI.
  */
@@ -44,7 +45,10 @@ public class SystemUIApplication extends Application {
             com.android.systemui.recent.Recents.class,
             com.android.systemui.volume.VolumeUI.class,
             com.android.systemui.statusbar.SystemBars.class,
-            com.android.systemui.usb.StorageNotification.class,
+			//Gionee <hanbj> <20150120> modify for CR01437976 begin
+			//com.android.systemui.usb.StorageNotification.class,
+            com.android.systemui.usb.GnStorageNotification.class,
+			//Gionee <hanbj> <20150120> modify for CR01437976 end
             com.android.systemui.power.PowerUI.class,
             com.android.systemui.media.RingtonePlayer.class
     };
@@ -127,6 +131,9 @@ public class SystemUIApplication extends Application {
                 mServices[i].onBootCompleted();
             }
         }
+		// GIONEE <wujj> <2015-03-20> add for YouJu begin
+		GnYouJu.init(this);
+		// GIONEE <wujj> <2015-03-20> add for YouJu end
         mServicesStarted = true;
     }
 

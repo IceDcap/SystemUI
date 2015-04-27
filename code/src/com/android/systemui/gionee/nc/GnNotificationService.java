@@ -1,7 +1,9 @@
 package com.android.systemui.gionee.nc;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import android.app.Notification;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -11,6 +13,7 @@ import android.os.Process;
 import android.os.UserHandle;
 import android.service.notification.NotificationListenerService;
 import android.util.Log;
+
 import com.android.systemui.statusbar.BaseStatusBar;
 import com.android.systemui.statusbar.ExpandableNotificationRow;
 import com.android.systemui.statusbar.NotificationData;
@@ -34,20 +37,52 @@ public class GnNotificationService {
 	private NotificationData mNotificationData = null;
 	
     private static ArrayList<String> mOnGoingNotificationList = new ArrayList<>();
-    static {
-    	mOnGoingNotificationList.add("com.android.deskclock");
-		mOnGoingNotificationList.add("com.android.music");
-		mOnGoingNotificationList.add("com.kugou.android");
-		mOnGoingNotificationList.add("com.netease.cloudmusic");
-		mOnGoingNotificationList.add("cn.kuwo.player");
-		mOnGoingNotificationList.add("com.duomi.android");
-		mOnGoingNotificationList.add("com.tencent.qqmusic");
-		mOnGoingNotificationList.add("com.gwsoft.imusic.controller");
-		mOnGoingNotificationList.add("fm.xiami.main");
-		mOnGoingNotificationList.add("com.ting.mp3.android");
-		mOnGoingNotificationList.add("com.android.soundrecorder");
-		mOnGoingNotificationList.add("com.mediatek.fmradio");
+    
+    private static void initGnNotificationOnGoingList(){
+    	int id = findOngoingListRes();
+    	final String[] arrays = mBarService.mContext.getResources().
+    			getStringArray(id);
+    	if (arrays != null) {
+    		int len = arrays.length;
+    		for(int i=0;i<len;i++) {
+    			mOnGoingNotificationList.add(arrays[i]);
+    		}
+    	}
     }
+    
+    private static int findOngoingListRes() {
+    	int id = -1;
+    	try {
+			Field[] fields = Class.forName("gionee.R$array").getDeclaredFields();
+			for(Field field:fields) {
+				Log.v(TAG, "found field: "+ field.getName());
+				if ("zzzzz_gn_ongoing_list".equals(field.getName())) {
+					id = field.getInt(field);
+				}
+			}
+		} catch (Exception e) {
+			Log.v(TAG, e.getCause().toString());
+			id = com.android.systemui.R.array.zzzzz_gn_ongoing_list;
+		} finally {
+			Log.v(TAG, "onGoingList resource ID: "+String.format("%dx", id));
+			return id;
+		}
+    }
+//    
+//    static {
+//    	mOnGoingNotificationList.add("com.android.deskclock");
+//		mOnGoingNotificationList.add("com.android.music");
+//		mOnGoingNotificationList.add("com.kugou.android");
+//		mOnGoingNotificationList.add("com.netease.cloudmusic");
+//		mOnGoingNotificationList.add("cn.kuwo.player");
+//		mOnGoingNotificationList.add("com.duomi.android");
+//		mOnGoingNotificationList.add("com.tencent.qqmusic");
+//		mOnGoingNotificationList.add("com.gwsoft.imusic.controller");
+//		mOnGoingNotificationList.add("fm.xiami.main");
+//		mOnGoingNotificationList.add("com.ting.mp3.android");
+//		mOnGoingNotificationList.add("com.android.soundrecorder");
+//		mOnGoingNotificationList.add("com.mediatek.fmradio");
+//    }
     
 	/**
 	 * Private construct, add load data from share preference
@@ -78,8 +113,8 @@ public class GnNotificationService {
 
 		if (sInstance == null) {
 			sInstance = new GnNotificationService();
+			initGnNotificationOnGoingList();
 		}
-
 		return sInstance;
 	}
 

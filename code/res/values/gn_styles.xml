@@ -22,7 +22,8 @@
         <item name="android:colorControlHighlight">#50ff9000</item>
     </style>
     
-    <style name="GnSettingsLightTheme" parent="@android:style/Theme.Light">
+    <style name="GnSettingsLightTheme" parent="@amigo:style/Theme.Amigo.Light">
+         <item name="amigo:amigoactionBarStyle">@style/LightActionBarStyle</item>
         <item name="android:actionBarStyle">@style/GnLightActionBarStyle</item>
     </style>
 
@@ -39,19 +40,19 @@
         <item name="android:textSize">10sp</item>
     </style>
     
-
-<!--     <style name="LightActionBarStyle" parent="@android:style/Widget.Light.ActionBar.Solid.Inverse">
-    </style> -->
+    <style name="LightActionBarStyle" parent="@amigo:style/Widget.Amigo.Light.ActionBar.Solid.Inverse">
+        <item name="amigo:amigobackground">@drawable/amigo_cab_background_top_dark</item>
+    </style>
 
     <style name="GnLightActionBarStyle" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
         <item name="android:background">@drawable/amigo_cab_background_top_dark</item>
     </style>
     
-<!--     <style name="GnAlertDialogLight" parent="@android:style/Theme.Light.Dialog">
+    <style name="GnAlertDialogLight" parent="@amigo:style/Theme.Amigo.Light.Dialog">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
-    </style> -->
-
+    </style>
+    
 </resources>
