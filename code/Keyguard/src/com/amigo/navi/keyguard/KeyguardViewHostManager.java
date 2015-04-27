@@ -318,6 +318,25 @@ public class KeyguardViewHostManager {
     	}
     		
     }
+    
+    public void scrollToUnlockHeightByOther(boolean withAnim){
+    	if(mKeyguardViewHost != null){
+    		mKeyguardViewHost.scrollToUnlockHeightByOther(withAnim);
+    	}
+    }
+    
+    public boolean isAmigoHostYAtHomePostion(){
+    	if(mKeyguardViewHost != null){
+    	   return mKeyguardViewHost.isAmigoHostYAtHomePostion();
+    	}
+    	return false;
+    }
+    
+    public void unLockBySensor(){
+    	if(isShowing() && SkylightUtil.getIsHallOpen(mContext) && isAmigoHostYAtHomePostion()){
+    		scrollToUnlockHeightByOther(true);
+    	}
+    }
 
     public long getUserActivityTimeout(){
     	return mKeyguardViewHost.getUserActivityTimeout();

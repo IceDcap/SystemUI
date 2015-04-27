@@ -74,6 +74,7 @@ import com.android.systemui.statusbar.phone.StatusBarWindowManager;
 import com.amigo.navi.keyguard.AmigoKeyguardHostView;
 import com.amigo.navi.keyguard.skylight.SkylightHost;
 import com.amigo.navi.keyguard.skylight.SkylightUtil;
+import com.amigo.navi.keyguard.sensor.KeyguardSensorModule;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -638,6 +639,9 @@ public class KeyguardViewMediator extends SystemUI {
      *   {@link android.view.WindowManagerPolicy#OFF_BECAUSE_OF_TIMEOUT}.
      */
     public void onScreenTurnedOff(int why) {
+    	
+    	KeyguardSensorModule.getInstance(mContext).unRegisterListener();
+    	
         synchronized (this) {
             mScreenOn = false;
             if (DEBUG) Log.d(TAG, "onScreenTurnedOff(" + why + ")");
@@ -736,6 +740,11 @@ public class KeyguardViewMediator extends SystemUI {
      * Let's us know the screen was turned on.
      */
     public void onScreenTurnedOn(IKeyguardShowCallback callback) {
+    	
+    	if(isShowing()){
+    		KeyguardSensorModule.getInstance(mContext).registerListener();
+    	}
+    	
         synchronized (this) {
             mScreenOn = true;
             cancelDoKeyguardLaterLocked();
@@ -1058,6 +1067,10 @@ public class KeyguardViewMediator extends SystemUI {
             hideLocked();
             return;
         }
+        
+        if(mScreenOn){
+        	KeyguardSensorModule.getInstance(mContext).registerListener();
+        }
 
         if (DEBUG) Log.d(TAG, "doKeyguard: showing the lock screen");
         showLocked(options);
@@ -1181,6 +1194,8 @@ public class KeyguardViewMediator extends SystemUI {
         EventLog.writeEvent(70000, 2);
         Message msg = mHandler.obtainMessage(KEYGUARD_DONE, authenticated ? 1 : 0, wakeup ? 1 : 0);
         mHandler.sendMessage(msg);
+        
+        KeyguardSensorModule.getInstance(mContext).unRegisterListener();
     }
 
     /**

@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.amigo.navi.keyguard.AmigoKeyguardBouncer.KeyguardBouncerCallback;
+import com.amigo.navi.keyguard.sensor.KeyguardSensorModule;
 import com.amigo.navi.keyguard.util.KeyguardWidgetUtils;
 import com.android.keyguard.KeyguardHostView;
 import com.android.keyguard.ViewMediatorCallback;
@@ -142,6 +143,23 @@ public class KeyguardViewHost extends FrameLayout {
     		mAmigoKeyguardView.scrollToKeyguardPage(300);
     	}
     }
+    
+    public void scrollToUnlockHeightByOther(boolean withAnim){
+    	if(mAmigoKeyguardView != null){
+    		if(withAnim){
+    			mAmigoKeyguardView.scrollToUnlockByOther();
+    		}else{
+    			mAmigoKeyguardView.scrollToSnapshotPage();
+    		}
+    	}
+    }
+    
+	public boolean isAmigoHostYAtHomePostion() {
+		if (mAmigoKeyguardView != null) {
+			return mAmigoKeyguardView.isHostYAtHomePostion();
+		}
+		return false;
+	}
 
     @Override
     protected void onAttachedToWindow() {
