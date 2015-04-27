@@ -40,7 +40,7 @@ public class GnNotificationListenerService extends Service {
 			GnNotificationService.getService(null).refreshChangeList(pkg, priority);
 		}
 		
-		public void onSwipeFromBottom() throws android.os.RemoteException{}
+		public void onSwipeFromBottom(boolean isimmerse) throws android.os.RemoteException{}
 		public void onPointerEvent(android.view.MotionEvent event) throws android.os.RemoteException{}
 		public void showSimIndicator(java.lang.String businessType) throws android.os.RemoteException{}
 		public void hideSimIndicator() throws android.os.RemoteException{}

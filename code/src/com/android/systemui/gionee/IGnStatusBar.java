@@ -46,7 +46,9 @@ return true;
 case TRANSACTION_onSwipeFromBottom:
 {
 data.enforceInterface(DESCRIPTOR);
-this.onSwipeFromBottom();
+boolean _arg0;
+_arg0 = (0!=data.readInt());
+this.onSwipeFromBottom(_arg0);
 reply.writeNoException();
 return true;
 }
@@ -109,12 +111,13 @@ public java.lang.String getInterfaceDescriptor()
 {
 return DESCRIPTOR;
 }
-@Override public void onSwipeFromBottom() throws android.os.RemoteException
+@Override public void onSwipeFromBottom(boolean isFullScreen) throws android.os.RemoteException
 {
 android.os.Parcel _data = android.os.Parcel.obtain();
 android.os.Parcel _reply = android.os.Parcel.obtain();
 try {
 _data.writeInterfaceToken(DESCRIPTOR);
+_data.writeInt(((isFullScreen)?(1):(0)));
 mRemote.transact(Stub.TRANSACTION_onSwipeFromBottom, _data, _reply, 0);
 _reply.readException();
 }
@@ -173,13 +176,13 @@ _reply.recycle();
 _data.recycle();
 }
 }
-@Override public void onNotificationPriorityChanged(java.lang.String pkg, int priority) throws android.os.RemoteException
+@Override public void onNotificationPriorityChanged(java.lang.String pkgName, int priority) throws android.os.RemoteException
 {
 android.os.Parcel _data = android.os.Parcel.obtain();
 android.os.Parcel _reply = android.os.Parcel.obtain();
 try {
 _data.writeInterfaceToken(DESCRIPTOR);
-_data.writeString(pkg);
+_data.writeString(pkgName);
 _data.writeInt(priority);
 mRemote.transact(Stub.TRANSACTION_onNotificationPriorityChanged, _data, _reply, 0);
 _reply.readException();
@@ -196,9 +199,9 @@ static final int TRANSACTION_showSimIndicator = (android.os.IBinder.FIRST_CALL_T
 static final int TRANSACTION_hideSimIndicator = (android.os.IBinder.FIRST_CALL_TRANSACTION + 3);
 static final int TRANSACTION_onNotificationPriorityChanged = (android.os.IBinder.FIRST_CALL_TRANSACTION + 4);
 }
-public void onSwipeFromBottom() throws android.os.RemoteException;
+public void onSwipeFromBottom(boolean isFullScreen) throws android.os.RemoteException;
 public void onPointerEvent(android.view.MotionEvent event) throws android.os.RemoteException;
 public void showSimIndicator(java.lang.String businessType) throws android.os.RemoteException;
 public void hideSimIndicator() throws android.os.RemoteException;
-public void onNotificationPriorityChanged(java.lang.String pkg, int priority) throws android.os.RemoteException;
+public void onNotificationPriorityChanged(java.lang.String pkgName, int priority) throws android.os.RemoteException;
 }

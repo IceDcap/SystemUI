@@ -9,7 +9,7 @@ LOCAL_SRC_FILES := $(call all-java-files-under, src) \
 LOCAL_STATIC_JAVA_LIBRARIES := Keyguard
 LOCAL_JAVA_LIBRARIES := telephony-common
 
-LOCAL_PACKAGE_NAME := SystemUI
+LOCAL_PACKAGE_NAME := Amigo_SystemUI
 LOCAL_CERTIFICATE := platform
 LOCAL_PRIVILEGED_MODULE := true
 

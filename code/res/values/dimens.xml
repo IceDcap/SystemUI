@@ -287,7 +287,8 @@
     <dimen name="top_stack_slow_down_length">12dp</dimen>
 
     <!-- The side padding of the notifications-->
-    <dimen name="notification_side_padding">8dp</dimen>
+    <!-- Gionee hanbj modify from 8 to 10 -->
+    <dimen name="notification_side_padding">10dp</dimen>
 
     <!-- Z distance between notifications if they are in the stack -->
     <dimen name="z_distance_between_notifications">1dp</dimen>
@@ -346,7 +347,8 @@
     <dimen name="hint_chevron_circle_padding">16dp</dimen>
 
     <!-- Volume panel dialog y offset -->
-    <dimen name="volume_panel_top">0dp</dimen>
+    <!-- Gionee hanbj modify from 0 to 110 -->
+    <dimen name="volume_panel_top">110dp</dimen>
 
     <!-- Volume panel dialog width -->
     <dimen name="volume_panel_width">344dp</dimen>

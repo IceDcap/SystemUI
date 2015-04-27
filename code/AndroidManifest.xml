@@ -137,7 +137,11 @@
         <service android:name="SystemUIService"
             android:exported="true"
             />
-
+        
+        <service android:name="com.android.systemui.gionee.GnStatusBarService"
+            android:exported="true">
+        </service>
+        
         <!-- started from PhoneWindowManager
              TODO: Should have an android:permission attribute -->
         <service android:name=".screenshot.TakeScreenshotService"
@@ -374,7 +378,58 @@
             android:excludeFromRecents="true"
             android:theme="@android:style/Theme.Light" >
         </activity>
+                
+        <activity
+            android:name="com.android.systemui.gionee.cc.fakecall.GnCallingActivity"
+            android:excludeFromRecents="true"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait"
+            android:theme="@style/GnInCallScreenThemeCommon" >
+            <intent-filter>
+                <action android:name="" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.android.systemui.gionee.cc.camera.GnBlindShootActivity"
+            android:excludeFromRecents="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+        </activity>
+        <activity
+            android:name="com.android.systemui.gionee.cc.camera.GnNotificationHandleActivity"
+            android:excludeFromRecents="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+        </activity>
+        
+        <service
+            android:name="com.android.systemui.gionee.cc.service.GnShortCutServices"
+            android:exported="true" >
 
+            <!-- android:process="com.gionee.navil.shortcuttools" -->
+
+            <intent-filter>
+                <action android:name="com.android.systemui.controlcenter.service.IPhotoService" />
+            </intent-filter>
+        </service>
+        
+        <receiver android:name="com.android.systemui.gionee.cc.fakecall.GnStartTaskReciver">
+            <intent-filter>
+                <action android:name="com.android.systemui.shortcut.fakecall.START_TASK"/>
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name="com.android.systemui.screenshot.GnSnapshotActivity"
+            android:label="@string/select_shot"
+            android:launchMode="singleInstance"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="gn.intent.action.SELECT_SHOT"/>
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+	
         <!-- Doze with notifications, run in main sysui process for every user  -->
         <service
             android:name=".doze.DozeService"

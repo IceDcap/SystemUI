@@ -21,6 +21,7 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.util.AttributeSet;
 import android.util.EventLog;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
@@ -28,6 +29,7 @@ import android.view.accessibility.AccessibilityEvent;
 import com.android.systemui.EventLogTags;
 import com.android.systemui.R;
 import com.android.systemui.keyguard.KeyguardViewMediator;
+import com.android.systemui.gionee.GnUtil;
 
 public class PhoneStatusBarView extends PanelBar {
     private static final String TAG = "PhoneStatusBarView";
@@ -134,6 +136,18 @@ public class PhoneStatusBarView extends PanelBar {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        
+        if (GnUtil.getLockState() == GnUtil.STATE_LOCK_BY_CONTROLCENTER) {
+            Log.d(TAG, "return lock by cc");
+            return true;
+        }
+        
+        if (event.getAction() == MotionEvent.ACTION_DOWN 
+                && GnUtil.getLockState() == GnUtil.STATE_LOCK_UNLOCK) {
+            Log.d(TAG, "lock by nc");
+            GnUtil.setLockState(GnUtil.STATE_LOCK_BY_NOTIFICATION);
+        }
+        
         boolean barConsumedEvent = mBar.interceptTouchEvent(event);
 
         if (DEBUG_GESTURES) {

@@ -127,6 +127,10 @@ import com.android.systemui.FontSizeUtils;
 import com.android.systemui.R;
 import com.android.systemui.doze.DozeHost;
 import com.android.systemui.doze.DozeLog;
+import com.android.systemui.gionee.GnUtil;
+import com.android.systemui.gionee.cc.GnControlCenter;
+import com.android.systemui.gionee.cc.GnControlCenterView;
+import com.android.systemui.gionee.cc.GnControlCenterImmerseView;
 import com.android.systemui.gionee.nc.GnNotificationService;
 import com.android.systemui.gionee.nc.GnNotificationService.NotificationType;
 import com.android.systemui.gionee.nc.ui.GnNotificationLevelHeader;
@@ -607,6 +611,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         // in session state
 
         addNavigationBar();
+        
+        // Gionee <huangwt> <2014-12-13> add for CR01425226 begin
+        addGnContorlCenter();
+        // Gionee <huangwt> <2014-12-13> add for CR01425226 end
 
         // Lastly, call to the icon policy to install/update all the icons.
         mIconPolicy = new PhoneStatusBarPolicy(mContext, mCastController, mHotspotController);
@@ -723,6 +731,21 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         } catch (RemoteException ex) {
             // no window manager? good luck with that
         }
+        
+        // Gionee <huangwt> <2014-12-13> add for CR01425226 begin
+        // inflate contorl center
+        mGnImmerseView = (GnControlCenterImmerseView) View.inflate(mContext, R.layout.gn_control_center_immerse, null);
+        mGnImmerseView.setVisibility(View.GONE);
+
+        mGnControlCenterView = (GnControlCenterView) View.inflate(mContext, R.layout.gn_control_center, null);
+        mGnControlCenterView.setBar(this);
+        mGnControlCenterView.setVisibility(View.GONE);
+        
+        mGnControlCenter = new GnControlCenter(mContext);
+        mGnControlCenter.addControlCenter(mGnControlCenterView);
+        mGnControlCenter.addGnImmerseModeView(mGnImmerseView);
+        mGnControlCenter.setBar(this);
+        // Gionee <huangwt> <2014-12-13> add for CR01425226 end
 
         // figure out which pixel-format to use for the status bar.
         mPixelFormat = PixelFormat.OPAQUE;
@@ -1309,6 +1332,65 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         lp.windowAnimations = 0;
         return lp;
     }
+    
+    // Gionee <huangwt> <2014-12-13> add for CR01425226 begin
+    // add contorl center
+    public void addGnContorlCenter() {
+        mWindowManager.addView(mGnControlCenterView, getGnControlCenterLayoutParams(mGnControlCenterView.getLayoutParams()));
+        mWindowManager.addView(mGnImmerseView, getGnImmerseLayoutParams());
+    }
+
+    private WindowManager.LayoutParams getGnControlCenterLayoutParams(LayoutParams layoutParams) {
+        boolean opaque = false;
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
+                LayoutParams.MATCH_PARENT,
+                LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.TYPE_NAVIGATION_BAR_PANEL,
+                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
+                | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM
+                | WindowManager.LayoutParams.FLAG_SPLIT_TOUCH,
+                (opaque ? PixelFormat.OPAQUE : PixelFormat.TRANSLUCENT));
+        if (ActivityManager.isHighEndGfx()) {
+            lp.flags |= WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED;
+        }
+        lp.gravity = Gravity.BOTTOM | Gravity.START;
+        lp.setTitle("gnControlcenter");
+        lp.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_UNCHANGED
+        | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING;
+        return lp;
+    }
+    
+    private WindowManager.LayoutParams getGnImmerseLayoutParams() {
+        boolean opaque = false;
+        int width = mContext.getResources().getDimensionPixelSize(R.dimen.gn_cc_immerse_width);
+        int height = mContext.getResources().getDimensionPixelSize(R.dimen.gn_cc_immerse_height);
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
+                width,
+                height,
+                WindowManager.LayoutParams.TYPE_NAVIGATION_BAR_PANEL,
+                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
+                | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                | WindowManager.LayoutParams.FLAG_SPLIT_TOUCH
+                | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+                (opaque ? PixelFormat.OPAQUE : PixelFormat.TRANSLUCENT));
+        if (ActivityManager.isHighEndGfx()) {
+            lp.flags |= WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED;
+        }
+        lp.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
+        lp.setTitle("gnimmerse");
+        lp.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_UNCHANGED
+        | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING;
+        return lp;
+    }
+
+    public void showGnContorlCenter(boolean notImmerse) {
+        mHandler.obtainMessage(MSG_SHOW_GN_CONTORL_CENTER, notImmerse).sendToTarget();
+    }
+
+    public void onPointerEvent(MotionEvent event) {
+        mHandler.obtainMessage(MSG_EVENT_GN_CONTORL_CENTER, event).sendToTarget();
+    }
+    // Gionee <huangwt> <2014-12-13> add for CR01425226 end
 
     private void addHeadsUpView() {
         int headsUpHeight = mContext.getResources()
@@ -2582,6 +2664,16 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 case MSG_LAUNCH_TRANSITION_TIMEOUT:
                     onLaunchTransitionTimeout();
                     break;
+                    // Gionee <huangwt> <2014-12-13> add for CR01425226 begin
+                case MSG_SHOW_GN_CONTORL_CENTER:
+                    mGnControlCenter.setVisible(true, (Boolean)m.obj);
+                    break;
+                case MSG_EVENT_GN_CONTORL_CENTER:
+                    mGnControlCenter.swipingView((MotionEvent)m.obj);
+                    break;
+                default:
+                	break;
+                    // Gionee <huangwt> <2014-12-13> add for CR01425226 end
             }
         }
     }
@@ -2641,6 +2733,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mWaitingForKeyguardExit = false;
         disable(mDisabledUnmodified, !force /* animate */);
         setInteracting(StatusBarManager.WINDOW_STATUS_BAR, true);
+        
+        if (GnUtil.getLockState() == GnUtil.STATE_LOCK_UNLOCK) {
+            Log.d(TAG, "makeExpandedVisible  lock by nc");
+            GnUtil.setLockState(GnUtil.STATE_LOCK_BY_NOTIFICATION);
+        }
     }
 
     public void animateCollapsePanels() {
@@ -2826,6 +2923,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (!mStatusBarKeyguardViewManager.isShowing()) {
             WindowManagerGlobal.getInstance().trimMemory(ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN);
         }
+        
+        // Gionee <huangwt> <2015-4-16> add for CR01463046 begin
+        Log.d(TAG, "makeExpandedInvisible unlock by nc");
+        GnUtil.setLockState(GnUtil.STATE_LOCK_UNLOCK);
+        // Gionee <huangwt> <2015-4-16> add for CR01463046 end
     }
 
     public boolean interceptTouchEvent(MotionEvent event) {
@@ -3625,6 +3727,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
      * meantime, just update the things that we know change.
      */
     void updateResources() {
+        if (mGnControlCenterView != null) {
+            mGnControlCenterView.updateResources();
+        }
+
         loadDimens();
         mLinearOutSlowIn = AnimationUtils.loadInterpolator(
                 mContext, android.R.interpolator.linear_out_slow_in);
@@ -4753,28 +4859,29 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     case MSG_STOP_DOZING:
                         handleStopDozing();
                         break;
+                     default:
+                        break;
                 }
             }
         }
     }
 
-    //jiating modify for keyguard begin
-	public KeyguardViewHost getmKeyguardViewHost() {
-		return mKeyguardViewHost;
-	}
+    // jiating modify for keyguard begin
+    public KeyguardViewHost getmKeyguardViewHost() {
+        return mKeyguardViewHost;
+    }
 
-	public void setmKeyguardViewHost(KeyguardViewHost mKeyguardViewHost) {
-		this.mKeyguardViewHost = mKeyguardViewHost;
-	}
-	
-	public void gotoBouncer(){
-		setBarState(StatusBarState.SHADE_LOCKED);
+    public void setmKeyguardViewHost(KeyguardViewHost mKeyguardViewHost) {
+        this.mKeyguardViewHost = mKeyguardViewHost;
+    }
+
+    public void gotoBouncer() {
+        setBarState(StatusBarState.SHADE_LOCKED);
         updateKeyguardState(false /* goingToFullShade */, false /* fromShadeLocked */);
-	}
-	
-	//jiating modify for keyguard end
+    }
+    // jiating modify for keyguard end
     
-    
-    
-    
+    public boolean isKeyguardShowing() {
+        return mStatusBarKeyguardViewManager.isShowing();
+    }
 }

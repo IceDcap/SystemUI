@@ -13,6 +13,8 @@
 # limitations under the License.
 #
 
+ifeq ("no","yes")
+
 LOCAL_PATH:= $(call my-dir)
 include $(CLEAR_VARS)
 
@@ -27,3 +29,5 @@ LOCAL_PRIVILEGED_MODULE := true
 # LOCAL_PROGUARD_FLAG_FILES := proguard.flags
 
 include $(BUILD_PACKAGE)
+
+endif

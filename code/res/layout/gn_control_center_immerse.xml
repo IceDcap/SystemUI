@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.android.systemui.gionee.cc.GnControlCenterImmerseView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/contorl_center"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/transparent" >
+
+    <ImageView
+        android:id="@+id/immerse_arrow"
+        android:layout_width="@dimen/gn_cc_immerse_width"
+        android:layout_height="@dimen/gn_cc_immerse_height"
+        android:layout_gravity="bottom|center_horizontal"
+        android:background="@drawable/gn_ic_cc_immerse_bg"
+        android:scaleType="center"
+        android:src="@drawable/gn_ic_cc_immerse_arrow" />
+
+</com.android.systemui.gionee.cc.GnControlCenterImmerseView>

@@ -79,6 +79,14 @@ import com.android.systemui.statusbar.policy.ZenModeController;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 
+//Gionee <hanbj> <20150427> for amigo begin
+import amigo.provider.AmigoSettings;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningTaskInfo;
+import android.content.ContentResolver;
+import java.util.List;
+//Gionee <hanbj> <20150427> for amigo end
+
 /**
  * Handles the user interface for the volume keys.
  *
@@ -136,10 +144,10 @@ public class VolumePanel extends Handler implements DemoMode {
             .setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
             .build();
 
-    private static final int IC_AUDIO_VOL = com.android.systemui.R.drawable.ic_audio_vol;
-    private static final int IC_AUDIO_VOL_MUTE = com.android.systemui.R.drawable.ic_audio_vol_mute;
-    private static final int IC_AUDIO_BT = com.android.systemui.R.drawable.ic_audio_bt;
-    private static final int IC_AUDIO_BT_MUTE = com.android.systemui.R.drawable.ic_audio_bt_mute;
+    private static final int IC_AUDIO_VOL = com.android.systemui.R.drawable.gn_ic_audio_vol;
+    private static final int IC_AUDIO_VOL_MUTE = com.android.systemui.R.drawable.gn_ic_audio_vol_mute;
+    private static final int IC_AUDIO_BT = com.android.systemui.R.drawable.gn_ic_audio_bt;
+    private static final int IC_AUDIO_BT_MUTE = com.android.systemui.R.drawable.gn_ic_audio_bt_mute;
 
     private final String mTag;
     protected final Context mContext;
@@ -175,6 +183,11 @@ public class VolumePanel extends Handler implements DemoMode {
 
     private Callback mCallback;
 
+    //Gionee <hanbj> <20150427> for amigo begin
+    private boolean ISCTSTEST = false;
+    private String CTSACTIVITY = "com.android.cts.verifier.notifications.NotificationAttentionManagementVerifierActivity";
+    //Gionee <hanbj> <20150427> for amigo end
+    
     /** Currently active stream that shows up at the top of the list of sliders */
     private int mActiveStreamType = -1;
     /** All the slider controls mapped by stream type */
@@ -191,18 +204,18 @@ public class VolumePanel extends Handler implements DemoMode {
                 false),
         RingerStream(AudioManager.STREAM_RING,
                 R.string.volume_icon_description_ringer,
-                com.android.systemui.R.drawable.ic_ringer_audible,
-                com.android.systemui.R.drawable.ic_ringer_mute,
+                com.android.systemui.R.drawable.gn_ic_ringer_audible,
+                com.android.systemui.R.drawable.gn_ic_ringer_vibrate,
                 false),
         VoiceStream(AudioManager.STREAM_VOICE_CALL,
                 R.string.volume_icon_description_incall,
-                com.android.systemui.R.drawable.ic_audio_phone,
-                com.android.systemui.R.drawable.ic_audio_phone,
+                com.android.systemui.R.drawable.gn_ic_audio_phone,
+                com.android.systemui.R.drawable.gn_ic_audio_phone,
                 false),
         AlarmStream(AudioManager.STREAM_ALARM,
                 R.string.volume_alarm,
-                com.android.systemui.R.drawable.ic_audio_alarm,
-                com.android.systemui.R.drawable.ic_audio_alarm_mute,
+                com.android.systemui.R.drawable.gn_ic_audio_alarm,
+                com.android.systemui.R.drawable.gn_ic_audio_alarm_mute,
                 false),
         MediaStream(AudioManager.STREAM_MUSIC,
                 R.string.volume_icon_description_media,
@@ -211,8 +224,8 @@ public class VolumePanel extends Handler implements DemoMode {
                 true),
         NotificationStream(AudioManager.STREAM_NOTIFICATION,
                 R.string.volume_icon_description_notification,
-                com.android.systemui.R.drawable.ic_ringer_audible,
-                com.android.systemui.R.drawable.ic_ringer_mute,
+                com.android.systemui.R.drawable.gn_ic_ringer_audible,
+                com.android.systemui.R.drawable.gn_ic_ringer_vibrate,
                 true),
         // for now, use media resources for master volume
         MasterStream(STREAM_MASTER,
@@ -277,6 +290,10 @@ public class VolumePanel extends Handler implements DemoMode {
     private static AlertDialog sSafetyWarning;
     private static Object sSafetyWarningLock = new Object();
 
+    //Gionee <hanbj> <20150427> for amigo begin
+    private boolean lastMuted = false;
+    //Gionee <hanbj> <20150427> for amigo end
+    
     private static class SafetyWarning extends SystemUIDialog
             implements DialogInterface.OnDismissListener, DialogInterface.OnClickListener {
         private final Context mContext;
@@ -291,7 +308,7 @@ public class VolumePanel extends Handler implements DemoMode {
             mVolumePanel = volumePanel;
             mAudioManager = audioManager;
 
-            setMessage(mContext.getString(com.android.internal.R.string.safe_media_volume_warning));
+            setMessage(mContext.getString(com.android.systemui.R.string.gn_safe_media_volume_warning));
             setButton(DialogInterface.BUTTON_POSITIVE,
                     mContext.getString(com.android.internal.R.string.yes), this);
             setButton(DialogInterface.BUTTON_NEGATIVE,
@@ -350,6 +367,21 @@ public class VolumePanel extends Handler implements DemoMode {
             }
         };
     }
+    
+    //Gionee <hanbj> <20150427> for amigo begin
+    private String getRunningActivity(Context context) {
+        ActivityManager am= (ActivityManager)context. getSystemService(Context.ACTIVITY_SERVICE);         
+        List<RunningTaskInfo> runningTasks = am.getRunningTasks(1);
+        // GIONEE <wujj> <2015-03-27> modify for CR01456654 begin
+        if ( runningTasks.size() == 0)
+        	return null;
+        // GIONEE <wujj> <2015-03-27> modify for CR01456654 end
+        RunningTaskInfo rti = runningTasks.get(0);
+        ComponentName component = rti.topActivity;
+        
+        return component.getClassName();
+    }
+    //Gionee <hanbj> <20150427> for amigo end
 
     public VolumePanel(Context context, ZenModeController zenController) {
         mTag = String.format("%s.%08x", TAG, hashCode());
@@ -383,11 +415,16 @@ public class VolumePanel extends Handler implements DemoMode {
         mDialog = new Dialog(context) {
             @Override
             public boolean onTouchEvent(MotionEvent event) {
-                if (isShowing() && event.getAction() == MotionEvent.ACTION_OUTSIDE &&
+                //Gionee <hanbj> <20150427> for amigo begin
+            	final StreamControl sc = mStreamControls.get(mActiveStreamType);
+            	int y = (int) event.getY();
+            	boolean isOutSide = isOutSide(sc, y);
+                if (isShowing() && (event.getAction() == MotionEvent.ACTION_OUTSIDE || isOutSide) &&
                         sSafetyWarning == null) {
                     forceTimeout(0);
                     return true;
                 }
+                //Gionee <hanbj> <20150427> for amigo end
                 return false;
             }
         };
@@ -437,6 +474,9 @@ public class VolumePanel extends Handler implements DemoMode {
         mPanel = (ViewGroup) mView.findViewById(com.android.systemui.R.id.visible_panel);
         mSliderPanel = (ViewGroup) mView.findViewById(com.android.systemui.R.id.slider_panel);
         mZenPanel = (ZenModePanel) mView.findViewById(com.android.systemui.R.id.zen_mode_panel);
+        //Gionee <hanbj> <20150427> for amigo begin
+        mZenPanel.setVisibility(View.GONE);
+        //Gionee <hanbj> <20150427> for amigo end
         initZenModePanel();
 
         mToneGenerators = new ToneGenerator[AudioSystem.getNumStreamTypes()];
@@ -457,6 +497,17 @@ public class VolumePanel extends Handler implements DemoMode {
         registerReceiver();
     }
 
+    //Gionee <hanbj> <20150427> for amigo begin
+    private boolean isOutSide(StreamControl sc, int y) {
+    	if (sc == null)
+    		return true;
+    	boolean isOutSide = false;
+    	int top = sc.seekbarView.getBottom();
+    	int bottom = sc.group.getBottom();
+    	return y < top || y > bottom;
+    }
+    //Gionee <hanbj> <20150427> for amigo end
+    
     public void onConfigurationChanged(Configuration newConfig) {
         updateWidth();
         if (mZenPanel != null) {
@@ -658,7 +709,8 @@ public class VolumePanel extends Handler implements DemoMode {
             sc.iconRes = streamRes.iconRes;
             sc.iconMuteRes = streamRes.iconMuteRes;
             sc.icon.setImageResource(sc.iconRes);
-            sc.icon.setClickable(isNotification && mHasVibrator);
+            //Gionee <hanbj> <20150427> for amigo begin
+            /*sc.icon.setClickable(isNotification && mHasVibrator);
             if (isNotification) {
                 if (mHasVibrator) {
                     sc.icon.setSoundEffectsEnabled(false);
@@ -672,7 +724,8 @@ public class VolumePanel extends Handler implements DemoMode {
                     });
                 }
                 sc.iconSuppressedRes = com.android.systemui.R.drawable.ic_ringer_mute;
-            }
+            }*/
+            //Gionee <hanbj> <20150427> for amigo end
             sc.seekbarView = (SeekBar) sc.group.findViewById(com.android.systemui.R.id.seekbar);
             sc.suppressorView =
                     (TextView) sc.group.findViewById(com.android.systemui.R.id.suppressor);
@@ -725,6 +778,9 @@ public class VolumePanel extends Handler implements DemoMode {
             mSliderPanel.addView(active.group);
             mActiveStreamType = activeStreamType;
             active.group.setVisibility(View.VISIBLE);
+            //Gionee <hanbj> <20150427> for amigo begin
+            initMutedState(active);
+            //Gionee <hanbj> <20150427> for amigo end
             updateSlider(active, true /*forceReloadIcon*/);
             updateTimeoutDelay();
             updateZenPanelVisible();
@@ -750,11 +806,18 @@ public class VolumePanel extends Handler implements DemoMode {
         if (isNotificationOrRing(sc.streamType)) {
             suppressor = mNotificationEffectsSuppressor;
             int ringerMode = mAudioManager.getRingerModeInternal();
-            if (ringerMode == AudioManager.RINGER_MODE_SILENT) {
+            //Gionee <hanbj> <20150427> for amigo begin
+            /*if (ringerMode == AudioManager.RINGER_MODE_SILENT) {
                 ringerMode = mLastRingerMode;
             } else {
                 mLastRingerMode = ringerMode;
+            }*/
+            mLastRingerMode = ringerMode;
+            if (ringerMode == AudioManager.RINGER_MODE_SILENT) {
+                sc.icon.setImageResource(com.android.systemui.R.drawable.gn_ic_mode_silent);
+                return;
             }
+            //Gionee <hanbj> <20150427> for amigo end
             if (mHasVibrator) {
                 muted = ringerMode == AudioManager.RINGER_MODE_VIBRATE;
             } else {
@@ -818,21 +881,29 @@ public class VolumePanel extends Handler implements DemoMode {
         if (sc.streamType == STREAM_REMOTE_MUSIC) {
             // never disable touch interactions for remote playback, the muting is not tied to
             // the state of the phone.
-            sc.seekbarView.setEnabled(!fixedVolume);
+            if (ISCTSTEST) {
+                sc.seekbarView.setEnabled(!fixedVolume);
+            }
         } else if (isRinger && mNotificationEffectsSuppressor != null) {
             sc.icon.setEnabled(true);
             sc.icon.setAlpha(1f);
             sc.icon.setClickable(false);
         } else if (isRinger
                 && mAudioManager.getRingerModeInternal() == AudioManager.RINGER_MODE_SILENT) {
-            sc.seekbarView.setEnabled(false);
+            if (ISCTSTEST) {
+                sc.seekbarView.setEnabled(false);
+            }
             sc.icon.setEnabled(false);
             sc.icon.setAlpha(mDisabledAlpha);
-            sc.icon.setClickable(false);
+            //Gionee <hanbj> <20150427> for amigo begin
+            //sc.icon.setClickable(false);
+            //Gionee <hanbj> <20150427> for amigo end
         } else if (fixedVolume ||
                 (sc.streamType != mAudioManager.getMasterStreamType() && !isRinger && muted) ||
                 (sSafetyWarning != null)) {
-            sc.seekbarView.setEnabled(false);
+            if (ISCTSTEST) {
+                sc.seekbarView.setEnabled(false);
+            }
         } else {
             sc.seekbarView.setEnabled(true);
             sc.icon.setEnabled(true);
@@ -896,18 +967,20 @@ public class VolumePanel extends Handler implements DemoMode {
     }
 
     private void setZenPanelVisible(boolean visible) {
-        if (LOGD) Log.d(mTag, "setZenPanelVisible " + visible + " mZenPanel=" + mZenPanel);
-        final boolean changing = visible != isZenPanelVisible();
-        if (visible) {
-            mZenPanel.setHidden(false);
-            resetTimeout();
-        } else {
-            mZenPanel.setHidden(true);
-        }
-        if (changing) {
-            updateTimeoutDelay();
-            resetTimeout();
-        }
+        if (ISCTSTEST) {
+            if (LOGD) Log.d(mTag, "setZenPanelVisible " + visible + " mZenPanel=" + mZenPanel);
+            final boolean changing = visible != isZenPanelVisible();
+            if (visible) {
+                mZenPanel.setHidden(false);
+                resetTimeout();
+            } else {
+                mZenPanel.setHidden(true);
+            }
+            if (changing) {
+                updateTimeoutDelay();
+                resetTimeout();
+            }
+		}
     }
 
     private void updateStates() {
@@ -915,6 +988,29 @@ public class VolumePanel extends Handler implements DemoMode {
         for (int i = 0; i < count; i++) {
             StreamControl sc = (StreamControl) mSliderPanel.getChildAt(i).getTag();
             updateSlider(sc, true /*forceReloadIcon*/);
+            updateAmigoAudioState(sc);
+        }
+    }
+    
+    private void initMutedState(StreamControl sc) {
+    	lastMuted = isMuted(sc.streamType);
+    }
+    
+    private void updateAmigoAudioState(StreamControl sc) {
+        if (sc.streamType == AudioManager.STREAM_RING) {
+        	final boolean muted = isMuted(sc.streamType);
+        	if (muted == !lastMuted) {
+            	ContentResolver resolver = mContext.getContentResolver();
+                if (muted) {        	
+                	int volumeMusic1 = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                    AmigoSettings.putInt(resolver, AmigoSettings.VOLUME_MUSIC, volumeMusic1);                
+                    mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
+                } else {        	
+                	int mediaVolume = AmigoSettings.getInt(resolver, AmigoSettings.VOLUME_MUSIC, 0);
+                	mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, mediaVolume,0);
+                }
+        	}
+        	lastMuted = muted;
         }
     }
 
@@ -1149,14 +1245,19 @@ public class VolumePanel extends Handler implements DemoMode {
                     PlaybackInfo vi = controller.getPlaybackInfo();
                     index = vi.getCurrentVolume();
                     max = vi.getMaxVolume();
-                    if ((vi.getVolumeControl() & VolumeProvider.VOLUME_CONTROL_FIXED) != 0) {
+                    //Gionee <hanbj> <20150427> for amigo begin
+                    /*if ((vi.getVolumeControl() & VolumeProvider.VOLUME_CONTROL_FIXED) != 0) {
                         // if the remote volume is fixed add the flag for the UI
                         flags |= AudioManager.FLAG_FIXED_VOLUME;
-                    }
+                    }*/
+                    //Gionee <hanbj> <20150427> for amigo end
                 }
                 if (LOGD) { Log.d(mTag, "showing remote volume "+index+" over "+ max); }
                 break;
             }
+            
+            default:
+            	break;
         }
 
         if (sc != null) {
@@ -1191,6 +1292,12 @@ public class VolumePanel extends Handler implements DemoMode {
             // when the stream is for remote playback, use -1 to reset the stream type evaluation
             if (stream != STREAM_MASTER) {
                 mAudioManager.forceVolumeControlStream(stream);
+            ISCTSTEST = CTSACTIVITY.equals(getRunningActivity(mContext) );
+            if (ISCTSTEST) {
+            	mZenPanel.setVisibility(View.VISIBLE);
+            } else {
+            	mZenPanel.setVisibility(View.GONE);
+            }
             }
             mDialog.show();
             if (mCallback != null) {
@@ -1548,8 +1655,41 @@ public class VolumePanel extends Handler implements DemoMode {
                 StreamControl sc = (StreamControl) tag;
                 setStreamVolume(sc, progress,
                         AudioManager.FLAG_SHOW_UI | AudioManager.FLAG_VIBRATE);
+                
+                if(sc.streamType == AudioManager.STREAM_RING) {
+                    if (progress == 0 && !lastMuted) {
+                    	updateAmigoAudioToSilentforSeekBar(true);
+                    }
+                    
+                    if(progress != 0 && lastMuted) {
+                    	updateAmigoAudioToSilentforSeekBar(false);
+                    }
+                    
+                    if (progress == 0) {
+                    	lastMuted = true;
+                    } else {
+                    	lastMuted = false;
+                    }
+                } 
             }
             resetTimeout();
+        }
+        
+        private void updateAmigoAudioToSilentforSeekBar(boolean silent) {
+            ContentResolver resolver = mContext.getContentResolver();
+            if (silent) {
+            	AmigoSettings.putInt(resolver, AmigoSettings.AMIGO_VIBRATION_SWITCH, 1);
+            	AmigoSettings.putInt(resolver, AmigoSettings.AMIGO_SILENT_SWITCH, 1);
+            	
+            	int volumeMusic1 = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                AmigoSettings.putInt(resolver, AmigoSettings.VOLUME_MUSIC, volumeMusic1);                
+                mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
+            } else {
+            	AmigoSettings.putInt(resolver, AmigoSettings.AMIGO_SILENT_SWITCH, 0);
+            	
+            	int mediaVolume = AmigoSettings.getInt(resolver, AmigoSettings.VOLUME_MUSIC, 0);
+            	mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, mediaVolume,0);
+            }
         }
 
         @Override

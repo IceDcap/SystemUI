@@ -15,7 +15,7 @@
 -->
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-<!-- 
+
     <style name="theme.volume.seekbar" parent="@android:style/Theme.DeviceDefault">
         <item name="android:colorControlActivated">#ff9000</item>
         <item name="android:colorControlNormal">#d1d1d1</item>
@@ -39,18 +39,19 @@
         <item name="android:textSize">10sp</item>
     </style>
     
-    <style name="LightActionBarStyle" parent="@android:style/Widget.Light.ActionBar.Solid.Inverse">
-    </style>
+
+<!--     <style name="LightActionBarStyle" parent="@android:style/Widget.Light.ActionBar.Solid.Inverse">
+    </style> -->
 
     <style name="GnLightActionBarStyle" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
         <item name="android:background">@drawable/amigo_cab_background_top_dark</item>
     </style>
     
-    <style name="GnAlertDialogLight" parent="@android:style/Theme.Light.Dialog">
+<!--     <style name="GnAlertDialogLight" parent="@android:style/Theme.Light.Dialog">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
-    </style>
-     -->
+    </style> -->
+
 </resources>

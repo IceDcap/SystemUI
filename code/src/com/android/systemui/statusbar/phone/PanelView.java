@@ -36,6 +36,7 @@ import com.android.systemui.EventLogConstants;
 import com.android.systemui.EventLogTags;
 import com.android.systemui.R;
 import com.android.systemui.doze.DozeLog;
+import com.android.systemui.gionee.GnUtil;
 import com.android.systemui.statusbar.FlingAnimationUtils;
 import com.android.systemui.statusbar.StatusBarState;
 
@@ -369,6 +370,10 @@ public abstract class PanelView extends FrameLayout {
                     mVelocityTracker = null;
                 }
                 mPeekTouching = false;
+                if (mExpandedHeight == 0) {
+                    Log.d(TAG, "ACTION_UP  unlock by nc");
+                    GnUtil.setLockState(GnUtil.STATE_LOCK_UNLOCK);
+                }
                 break;
         }
         return !waitForTouchSlop || mTracking;

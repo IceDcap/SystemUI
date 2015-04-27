@@ -92,6 +92,9 @@ import com.android.systemui.RecentsComponent;
 import com.android.systemui.SearchPanelView;
 import com.android.systemui.SwipeHelper;
 import com.android.systemui.SystemUI;
+import com.android.systemui.gionee.cc.GnControlCenter;
+import com.android.systemui.gionee.cc.GnControlCenterView;
+import com.android.systemui.gionee.cc.GnControlCenterImmerseView;
 import com.android.systemui.gionee.nc.GnNotificationService;
 import com.android.systemui.gionee.nc.ui.GnNotificationLevelHeader;
 import com.android.systemui.statusbar.NotificationData.Entry;
@@ -132,7 +135,9 @@ public abstract class BaseStatusBar extends SystemUI implements
     protected static final int MSG_HIDE_HEADS_UP = 1029;
     protected static final int MSG_ESCALATE_HEADS_UP = 1030;
     protected static final int MSG_DECAY_HEADS_UP = 1031;
-
+    // Gionee <huangwt> <2014-12-13> add for CR01425226 begin
+    protected static final int MSG_SHOW_GN_CONTORL_CENTER = 1032;
+    protected static final int MSG_EVENT_GN_CONTORL_CENTER = 1033;
     // Gionee <huangwt> <2014-12-13> add for CR01425226 end
     protected static final int MSG_UPDATE_NOTIFICATION_HEADER = 1034;
     protected static final boolean ENABLE_HEADS_UP = true;
@@ -196,6 +201,13 @@ public abstract class BaseStatusBar extends SystemUI implements
 
     private Locale mLocale;
     private float mFontScale;
+
+    // Gionee <huangwt> <2014-12-13> add for CR01425226 begin
+    // setup contorl center
+    protected GnControlCenter mGnControlCenter = null;
+    protected GnControlCenterView mGnControlCenterView = null;
+    protected GnControlCenterImmerseView mGnImmerseView = null;
+    // Gionee <huangwt> <2014-12-13> add for CR01425226 end
 
     protected boolean mUseHeadsUp = false;
     protected boolean mHeadsUpTicker = false;

@@ -122,6 +122,8 @@ public class PanelBar extends FrameLayout {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 Log.v(TAG, String.format("onTouch: all panels disabled, ignoring touch at (%d,%d)",
                         (int) event.getX(), (int) event.getY()));
+                Log.d(TAG, "onTouchEvent unlock by nc");
+                GnUtil.setLockState(GnUtil.STATE_LOCK_UNLOCK);
             }
             return false;
         }

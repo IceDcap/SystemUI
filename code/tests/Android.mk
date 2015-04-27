@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+ifeq ("no","yes")
+
 LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
@@ -23,8 +25,10 @@ LOCAL_SRC_FILES := $(call all-java-files-under, src) \
     src/com/android/systemui/EventLogTags.logtags
 
 LOCAL_RESOURCE_DIR := $(LOCAL_PATH)/res \
-    frameworks/base/packages/SystemUI/res \
-    frameworks/base/packages/Keyguard/res
+                        $(LOCAL_PATH)/../res \
+                        $(LOCAL_PATH)/../Keyguard/res
+    #frameworks/base/packages/SystemUI/res \
+    #frameworks/base/packages/Keyguard/res
 
 LOCAL_JAVA_LIBRARIES := android.test.runner telephony-common
 
@@ -37,3 +41,5 @@ LOCAL_STATIC_JAVA_LIBRARIES := mockito-target Keyguard
 LOCAL_CERTIFICATE := platform
 
 include $(BUILD_PACKAGE)
+
+endif

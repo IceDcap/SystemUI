@@ -32,7 +32,7 @@
 	<color name="gn_fc_color_white">#FFFFFFFF</color>
 	
 	<!-- Control center quick setting -->
-	<color name="gn_qs_tile_on">#ffffff</color>
+	<color name="gn_qs_tile_on">#fcfcfc</color>
 	<color name="gn_qs_tile_on_opacity">#4cffffff</color>
 	<color name="gn_qs_tile_off">#4cffffff</color>
 	
