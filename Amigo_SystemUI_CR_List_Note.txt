@@ -566,3 +566,12 @@ Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.bd
 Code difference: svn diff -r 4397:4372 http://192.168.110.97/svn/Amigo_SystemUI/trunk
 
 ==================
+==================
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.0.0_V6.0.0.a' non-existent[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+ in revision 4685
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '4685:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================

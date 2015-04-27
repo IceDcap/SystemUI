@@ -555,7 +555,9 @@ public class GnControlCenterPanel extends ViewGroup implements GestureDetector.O
         if (position == EXPANDED_FULL_OPEN) {
             handle.offsetTopAndBottom(mTopOffset - handle.getTop());
             invalidate();
-            mGnControlCenterView.go(GnControlCenter.STATE_OPEN);
+            if (mGnControlCenterView.isShown()) {
+                mGnControlCenterView.go(GnControlCenter.STATE_OPEN);
+            }
         } else if (position == COLLAPSED_FULL_CLOSED) {
             handle.offsetTopAndBottom(mBottomOffset + mBottom - mTop - mHandleHeight
                     - handle.getTop());
