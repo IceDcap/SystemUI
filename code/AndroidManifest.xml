@@ -476,5 +476,14 @@
             android:exported="true"
             android:singleUser="true"
             android:permission="android.permission.BIND_DREAM_SERVICE" />
+        <!-- GIONEE <wujj> <2015-03-20> add for YouJu begin --> 
+        <meta-data
+            android:name="YJ_APP_ID"
+            android:value="12F52463A89D37AAE414184F9B33C8E1" />
+        <meta-data
+            android:name="YJ_CHANNEL_ID"
+            android:value="systemui" />
+        <!-- GIONEE <wujj> <2015-03-20> add for YouJu end --> 
+
     </application>
 </manifest>
