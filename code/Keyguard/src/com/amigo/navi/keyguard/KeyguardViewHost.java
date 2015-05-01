@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -20,6 +21,9 @@ public class KeyguardViewHost extends FrameLayout {
     
     final static boolean DEBUG=true;
     private static final String LOG_TAG="KeyguardViewHost";
+    
+    private int mTouchCallTime = 0;
+    
     
     private Context mContext;
     
@@ -212,5 +216,27 @@ public class KeyguardViewHost extends FrameLayout {
        	 return mAmigoKeyguardView.onBackPress(); 
         }
     	return false;
+    }
+    
+    
+    
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        userActivity(ev);
+        return super.dispatchTouchEvent(ev);
+    }
+    
+    private void userActivity(MotionEvent ev){
+        switch (ev.getActionMasked()) {
+        case MotionEvent.ACTION_DOWN:
+            mViewMediatorCallback.userActivity();
+            break;
+        default:
+            if (mTouchCallTime++ % 50 == 0) {
+                mTouchCallTime = 1;
+                mViewMediatorCallback.userActivity();
+            }
+            break;
+        }
     }
 }

@@ -36,6 +36,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.amigo.navi.keyguard.KeyguardViewHostManager;
+import com.amigo.navi.keyguard.util.VibatorUtil;
 import com.android.internal.widget.LockPatternUtils;
 import com.android.internal.widget.LockPatternView;
 
@@ -155,6 +156,8 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
 			@Override
 			public void onClick(View arg0) {
 				KeyguardViewHostManager.getInstance().scrollToKeyguardPageByAnimation();
+				
+				VibatorUtil.amigoVibrate(mContext, VibatorUtil.LOCKSCREEN_UNLOCK_CODE_TAP, VibatorUtil.TOUCH_TAP_VIBRATE_TIME);
 			}
 		});
     }
@@ -230,6 +233,7 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
 
         public void onPatternCellAdded(List<LockPatternView.Cell> pattern) {
             mCallback.userActivity();
+            VibatorUtil.amigoVibrate(mContext, VibatorUtil.LOCKSCREEN_UNLOCK_CODE_TAP, VibatorUtil.TOUCH_TAP_VIBRATE_TIME);
         }
 
         public void onPatternDetected(List<LockPatternView.Cell> pattern) {
@@ -247,6 +251,9 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
                         pattern.size() >= LockPatternUtils.MIN_PATTERN_REGISTER_FAIL;
                 if (registeredAttempt) {
                     mCallback.reportUnlockAttempt(false);
+                    
+                    VibatorUtil.amigoVibrate(mContext, VibatorUtil.LOCKSCREEN_UNLOCK_CODE_ERROR, VibatorUtil.UNLOCK_ERROR_VIBRATE_TIME);
+                    
                 }
                 int attempts = mKeyguardUpdateMonitor.getFailedUnlockAttempts();
                 if (registeredAttempt &&
@@ -257,6 +264,7 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
                     mSecurityMessageDisplay.setMessage(R.string.kg_wrong_pattern, true);
                     mLockPatternView.postDelayed(mCancelPatternRunnable, PATTERN_CLEAR_TIMEOUT_MS);
                 }
+                
             }
         }
     }

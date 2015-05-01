@@ -61,6 +61,7 @@ import com.amigo.navi.keyguard.notification.NotificationData;
 import com.amigo.navi.keyguard.notification.NotificationData.Entry;
 import com.amigo.navi.keyguard.notification.StatusBarIconView;
 import com.amigo.navi.keyguard.util.AmigoKeyguardUtils;
+import com.amigo.navi.keyguard.util.DataStatistics;
 
 public class KeyguardNotificationModule extends KeyguardModuleBase 
 						implements NotificationData.Environment,
@@ -405,6 +406,7 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
             return;
         }
         notifyUpdate();
+        DataStatistics.getInstance().swipToremoveNotification(mContext);
   }
 
 	private void addNotification(StatusBarNotification notification,
@@ -874,6 +876,7 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
         public void onClick(final View v) {
             final boolean afterKeyguardGone = mIntent.isActivity() && AmigoKeyguardUtils.wouldLaunchResolverActivity(mContext, mIntent.getIntent());
             if(DebugLog.DEBUG) DebugLog.d(TAG, "NotificationClicker-onclick:"+afterKeyguardGone);
+            DataStatistics.getInstance().doubleTapNotification(mContext);
             dismissKeyguardThenExecute(new OnDismissAction() {
                 public boolean onDismiss() {
                     AsyncTask.execute(new Runnable() {
@@ -1136,6 +1139,13 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
     
     public boolean isAmbient(String key) {
         return mNotificationData.isAmbient(key);
+    }
+    
+    public boolean hasNotification(){
+        boolean hasNotification=false;
+        hasNotification=mNotificationData.hasNotification();
+        DebugLog.d(TAG, "hasNotifications: "+hasNotification);
+        return hasNotification;
     }
 
     @Override

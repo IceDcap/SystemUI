@@ -20,7 +20,6 @@ import android.widget.ImageView;
 
 import com.android.systemui.R;
 import com.android.systemui.gionee.cc.GnControlCenterPanel;
-import com.android.systemui.gionee.cc.GnQSTileHost;
 import com.android.systemui.gionee.cc.qs.brightness.GnBrightnessController;
 import com.android.systemui.gionee.cc.qs.brightness.GnToggleSlider;
 import com.android.systemui.gionee.cc.qs.tiles.GnSettingTile;
@@ -221,7 +220,7 @@ public class GnQSPanel extends ViewGroup {
         
         r.tileView.init(click, clickSecondary, longClick);
         r.tile.setListening(mListening);
-        callback.onStateChanged(r.tile.getState());
+        // callback.onStateChanged(r.tile.getState());
         r.tile.refreshState();
         addView(r.tileView);
         return r;
@@ -229,6 +228,7 @@ public class GnQSPanel extends ViewGroup {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        Log.d(TAG, "onMeasure");
         final int width = MeasureSpec.getSize(widthMeasureSpec);
         mBrightnessSlider.measure(exactly(width - mCellWidth - mPanelPadding * 2), MeasureSpec.UNSPECIFIED);
         mSettingTileRecord.tileView.measure(exactly(mCellWidth), exactly(mCellWidth));
@@ -238,7 +238,10 @@ public class GnQSPanel extends ViewGroup {
         int c = -1;
         int rows = 0;
         for (TileRecord record : mRecords) {
-            if (record.tileView.getVisibility() == GONE) continue;
+            if (record.tileView.getVisibility() == GONE) {
+                Log.d(TAG, "onMeasure gone : " + record.tile.getClass().getSimpleName());
+                continue;
+            }
             // wrap to next column if we've reached the max # of columns
             // also don't allow dual + single tiles on the same row
             if (r == -1 || c == (mColumns - 1)) {
@@ -271,6 +274,7 @@ public class GnQSPanel extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        Log.d(TAG, "onLayout");
         layoutBrightnessSlider();
         layoutSettingView();
 
@@ -278,7 +282,10 @@ public class GnQSPanel extends ViewGroup {
         boolean isRtl = getLayoutDirection() == LAYOUT_DIRECTION_RTL;
         int count = 0;
         for (TileRecord record : mRecords) {
-            if (record.tileView.getVisibility() == GONE) continue;
+            if (record.tileView.getVisibility() == GONE) {
+                Log.d(TAG, "onLayout gone : " + record.tile.getClass().getSimpleName());
+                continue;
+            }
             count ++;
             if (count > 10) {
                 // layout out of the view

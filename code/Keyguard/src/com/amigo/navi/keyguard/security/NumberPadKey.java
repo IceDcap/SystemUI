@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.infozone.FontCache;
+import com.amigo.navi.keyguard.util.VibatorUtil;
 import com.android.internal.widget.LockPatternUtils;
 import com.android.keyguard.PasswordTextView;
 import com.android.keyguard.R;
@@ -45,7 +46,10 @@ public class NumberPadKey extends Button {
                 DebugLog.d(LOG_TAG, "NumberPadKey password: "+mTextView.getText());
             }
             userActivity();
-            doHapticKeyClick();
+//            doHapticKeyClick();
+            
+            VibatorUtil.amigoVibrate(mContext, VibatorUtil.LOCKSCREEN_UNLOCK_CODE_TAP, VibatorUtil.TOUCH_TAP_VIBRATE_TIME);
+            
         }
     };
 
@@ -99,11 +103,11 @@ public class NumberPadKey extends Button {
     }
 
     // Cause a VIRTUAL_KEY vibration
-    public void doHapticKeyClick() {
-        if (mEnableHaptics) {
-            performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY,
-                    HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING
-                            | HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
-        }
-    }
+//    public void doHapticKeyClick() {
+//        if (mEnableHaptics) {
+//            performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY,
+//                    HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING
+//                            | HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+//        }
+//    }
 }

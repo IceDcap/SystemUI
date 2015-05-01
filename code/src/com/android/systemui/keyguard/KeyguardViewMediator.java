@@ -75,6 +75,7 @@ import com.amigo.navi.keyguard.AmigoKeyguardHostView;
 import com.amigo.navi.keyguard.skylight.SkylightHost;
 import com.amigo.navi.keyguard.skylight.SkylightUtil;
 import com.amigo.navi.keyguard.sensor.KeyguardSensorModule;
+import com.amigo.navi.keyguard.AppConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -525,6 +526,19 @@ public class KeyguardViewMediator extends SystemUI {
             return KeyguardViewMediator.this.isShowing() ;
         }
         //jingyn add end
+        
+        //jingyn add begin
+        @Override
+        public boolean isShowingAndNotOccluded() {
+            return KeyguardViewMediator.this.isShowingAndNotOccluded() ;
+        }
+        //jingyn add end
+        //jingyn add begin
+        @Override
+        public void adjustStatusBarLocked() {
+            KeyguardViewMediator.this.adjustStatusBarLocked() ;
+        }
+        //jingyn add end
     };
 
     public void userActivity() {
@@ -540,7 +554,6 @@ public class KeyguardViewMediator extends SystemUI {
         mShowKeyguardWakeLock.setReferenceCounted(false);
 
         mContext.registerReceiver(mBroadcastReceiver, new IntentFilter(DELAYED_KEYGUARD_ACTION));
-
         mKeyguardDisplayManager = new KeyguardDisplayManager(mContext);
 
         mAlarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
@@ -589,6 +602,7 @@ public class KeyguardViewMediator extends SystemUI {
 
         mHideAnimation = AnimationUtils.loadAnimation(mContext,
                 com.android.internal.R.anim.lock_screen_behind_enter);
+        mContext.registerReceiver(mHallStatusChangeReceiver, new IntentFilter(AppConstants.ACTION_HALL_STATUS));
     }
 
     @Override
@@ -650,7 +664,6 @@ public class KeyguardViewMediator extends SystemUI {
             mHideAnimationRun = false;
             
             if(mLockPatternUtils.isLockScreenDisabled()) {
-                showOrHideSkylight(false);
                 return;
             }
 
@@ -755,7 +768,7 @@ public class KeyguardViewMediator extends SystemUI {
         }
         KeyguardUpdateMonitor.getInstance(mContext).dispatchScreenTurnedOn();
         maybeSendUserPresentBroadcast();
-        showOrHideSkylight(false);
+        showSkylightIfNeed(false);
     }
 
     private void maybeSendUserPresentBroadcast() {
@@ -892,14 +905,12 @@ public class KeyguardViewMediator extends SystemUI {
     }
     
     
-    private void showOrHideSkylight(final boolean isGotoUnlockIfHide) {
+    private void showSkylightIfNeed(final boolean isGotoUnlockIfHide) {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
                 boolean isHallOpen = SkylightUtil.getIsHallOpen(mContext);
-                if (isHallOpen) {
-                    hideSkylight(isGotoUnlockIfHide);
-                } else {
+                if (!isHallOpen) {
                     showSkylight();
                 }
             }
@@ -913,14 +924,16 @@ public class KeyguardViewMediator extends SystemUI {
             if (isLockDisabled || !isShowing()) {
                 Bundle options = new Bundle();
                 options.putBoolean(AmigoKeyguardHostView.KEY_LOCK_BY_SKYLIGHT, true);
-                doKeyguardLocked(options);
+                if(SkylightHost.isSkylightSizeExist()){
+                    doKeyguardLocked(options);
+                }
             }
         }
         mStatusBarKeyguardViewManager.showSkylight();
     }
     
-    private void hideSkylight(boolean isGotoUnlock){
-        mStatusBarKeyguardViewManager.hideSkylight(isGotoUnlock);
+    private void hideSkylight(boolean forceHide){
+        mStatusBarKeyguardViewManager.hideSkylight(forceHide);
     }
 
     private void readSkylightConfigs() {
@@ -970,6 +983,11 @@ public class KeyguardViewMediator extends SystemUI {
                 mStatusBarKeyguardViewManager.setOccluded(isOccluded);
                 updateActivityLockScreenState();
                 adjustStatusBarLocked();
+                if(mOccluded){
+                    hideSkylight(true);
+                }else{
+                    showSkylight();
+                }
             }
         }
     }
@@ -1055,7 +1073,7 @@ public class KeyguardViewMediator extends SystemUI {
             return;
         }
 
-        if (mLockPatternUtils.isLockScreenDisabled() && !lockedOrMissing) {
+        if (mLockPatternUtils.isLockScreenDisabled() && !lockedOrMissing&&!isLockFromSkylight(options)) {
             if (DEBUG) Log.d(TAG, "doKeyguard: not showing because lockscreen is off");
             return;
         }
@@ -1079,7 +1097,13 @@ public class KeyguardViewMediator extends SystemUI {
     private boolean shouldWaitForProvisioning() {
         return !mUpdateMonitor.isDeviceProvisioned() && !isSecure();
     }
-
+    private boolean isLockFromSkylight(Bundle options){
+        if(options != null){
+            return options.getBoolean(AmigoKeyguardHostView.KEY_LOCK_BY_SKYLIGHT);
+        }else{
+            return false;
+        }
+    }
     /**
      * Dismiss the keyguard through the security layers.
      */
@@ -1170,6 +1194,18 @@ public class KeyguardViewMediator extends SystemUI {
     public void setCurrentUser(int newUserId) {
         mLockPatternUtils.setCurrentUser(newUserId);
     }
+    
+    BroadcastReceiver mHallStatusChangeReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            int hallOpenState = intent.getIntExtra(AppConstants.HALL_STATUS_KEY, 1);
+            Log.d(TAG, "HallStatusChangeReceiver  hallOpenState: " + hallOpenState + " mShowing: " + mShowing);
+            if (hallOpenState == 1) {
+                hideSkylight(false);
+            } else if(hallOpenState==0&&!mOccluded){
+                showSkylight();
+            }
+        };
+    };
 
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -1500,11 +1536,16 @@ public class KeyguardViewMediator extends SystemUI {
                 flags |= StatusBarManager.DISABLE_SEARCH;
                 
                 //jiating modify for keyguard begin
-                if (isSecure() ) {
+                if (isSecure()) {
                     // showing secure lockscreen; disable expanding.
                 	flags |= StatusBarManager.DISABLE_EXPAND;
                 }
                 
+            }
+            if(getIsSkylightShown()){
+                flags |= StatusBarManager.DISABLE_EXPAND;
+                flags |= StatusBarManager.DISABLE_HOME;
+                flags |= StatusBarManager.DISABLE_CLOCK; 
             }
             if (isShowingAndNotOccluded()) {
                 flags |= StatusBarManager.DISABLE_HOME;

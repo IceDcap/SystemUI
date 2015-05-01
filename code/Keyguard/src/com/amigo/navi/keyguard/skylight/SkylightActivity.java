@@ -5,9 +5,8 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 
 import com.amigo.navi.keyguard.DebugLog;
-import com.amigo.navi.keyguard.KeyguardViewHost;
 import com.amigo.navi.keyguard.KeyguardViewHostManager;
-import com.android.keyguard.R ;
+import com.android.keyguard.R;
 
 public class SkylightActivity extends Activity {
 
@@ -15,18 +14,25 @@ public class SkylightActivity extends Activity {
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.skylightTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.skylight_activity_layout);
+        overridePendingTransition(0, 0);
         DebugLog.d(LOG_TAG, "SkylightActivity  onCreate");
-        KeyguardViewHostManager viewHostManager = KeyguardViewHostManager.getInstance();
-
+        KeyguardViewHostManager viewmanager = KeyguardViewHostManager.getInstance();
         if (SkylightUtil.getIsHallOpen(getApplicationContext())) {
             DebugLog.d(LOG_TAG, "SkylightActivity  hallOpen finish ");
             finish();
+            overridePendingTransition(0, 0);
         } else {
-            if (viewHostManager != null) {
-                viewHostManager.notifySkylightActivityCreated(this);
+            DebugLog.d(LOG_TAG, "SkylightActivity  viewmanager is null?  "+(viewmanager==null));
+            /**
+             * why viewmanager maybe null??
+             */
+            if (viewmanager != null) {
+                viewmanager.notifySkylightActivityCreated(this);
             }
+
         }
 
     }

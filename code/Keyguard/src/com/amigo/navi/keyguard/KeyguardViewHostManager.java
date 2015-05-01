@@ -21,9 +21,11 @@ import com.amigo.navi.keyguard.skylight.SkylightActivity;
 import com.amigo.navi.keyguard.skylight.SkylightHost;
 import com.amigo.navi.keyguard.skylight.SkylightUtil;
 import com.amigo.navi.keyguard.util.AmigoKeyguardUtils;
+import com.amigo.navi.keyguard.util.DataStatistics;
 import com.android.keyguard.ViewMediatorCallback;
 import com.android.keyguard.KeyguardHostView.OnDismissAction;
 import com.android.internal.widget.LockPatternUtils;
+
 import static com.android.keyguard.KeyguardHostView.OnDismissAction;
 
 public class KeyguardViewHostManager {
@@ -51,10 +53,12 @@ public class KeyguardViewHostManager {
     private ViewHostReceiver mReceiver=new ViewHostReceiver();
     private KeyguardNotificationCallback mKeyguardNotificationCallback;
     
-    public KeyguardViewHostManager(Context context,KeyguardViewHost host,LockPatternUtils lockPatternUtils,ViewMediatorCallback callback){
+    public KeyguardViewHostManager(Context context,KeyguardViewHost host,SkylightHost skylight,LockPatternUtils lockPatternUtils,ViewMediatorCallback callback){
         mContext=context;
         mKeyguardViewHost=host;
+        mSkylightHost=skylight;
         mLockPatternUtils = lockPatternUtils;
+        DataStatistics.getInstance().onInit(context.getApplicationContext());
         registerReceivers();
         sInstance=this;
         initKeyguard(callback);
@@ -79,7 +83,7 @@ public class KeyguardViewHostManager {
     
     
     public void show(Bundle options){
-        initSkylightHost();
+//        initSkylightHost();
         mKeyguardViewHost.show(options);
         
     }
@@ -91,8 +95,10 @@ public class KeyguardViewHostManager {
     
     
     public void hide() {
+        DataStatistics.getInstance().unlockScreenWhenHasNotification(mContext);
         destroyAcivityIfNeed();
         mKeyguardViewHost.hide();
+        setSkylightHidden();
     }
     
     
@@ -147,23 +153,23 @@ public class KeyguardViewHostManager {
     
     
     
-    protected boolean initSkylightHost() {
-        boolean initSuccess = false;
-        if (SkylightHost.isSkylightSizeExist()) {
-            Log.d(LOG_TAG, "addSkylightToHost host is null? " + (mSkylightHost == null));
-            if (mSkylightHost == null) {
-                mSkylightHost = new SkylightHost(mContext);
-                mSkylightHost.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-                mSkylightHost.setVisibility(View.GONE);
-                mKeyguardViewHost.addView(mSkylightHost);
-                mSkylightHost.bringToFront();
-                initSuccess = true;
-            } else if (mSkylightHost != null) {
-                initSuccess = true;
-            }
-        }
-        return initSuccess;
-    }
+//    protected boolean initSkylightHost() {
+//        boolean initSuccess = false;
+//        if (SkylightHost.isSkylightSizeExist()) {
+//            Log.d(LOG_TAG, "addSkylightToHost host is null? " + (mSkylightHost == null));
+//            if (mSkylightHost == null) {
+//                mSkylightHost = new SkylightHost(mContext);
+//                mSkylightHost.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+//                mSkylightHost.setVisibility(View.GONE);
+//                mKeyguardViewHost.addView(mSkylightHost);
+//                mSkylightHost.bringToFront();
+//                initSuccess = true;
+//            } else if (mSkylightHost != null) {
+//                initSuccess = true;
+//            }
+//        }
+//        return initSuccess;
+//    }
     
     private void setIsSkylightShown(boolean isShown){
         mIsSkylightShown=isShown;
@@ -189,17 +195,12 @@ public class KeyguardViewHostManager {
         if(DEBUG){Log.d(LOG_TAG, "showSkylight  skylight is null? " + (mSkylightHost == null));}
         mViewMediatorCallback.userActivity();
         if (mSkylightHost != null) {
-            ViewParent parent = mSkylightHost.getParent();
-            if (parent == null) {
-                mKeyguardViewHost.addView(mSkylightHost);
-            }
             mSkylightHost.showSkylight();
-            mSkylightHost.bringToFront();
             mSkylightHost.setVisibility(View.VISIBLE);
             mKeyguardViewHost.resetHostYToHomePosition();
-//            updateStatusBarExpandlable(true);
             startActivityIfNeed();
             mIsSkylightShown=true;
+            mViewMediatorCallback.adjustStatusBarLocked();
         }
     }
     public void hideSkylight(boolean isGotoUnlock) {
@@ -207,24 +208,30 @@ public class KeyguardViewHostManager {
         mHandler.sendMessage(msg);
      
     }
-    private void handleHideSkylight(boolean isGotoUnlock){
-        if(!SkylightUtil.getIsHallOpen(mContext)){
+    private void handleHideSkylight(boolean forceHide){
+        if(!SkylightUtil.getIsHallOpen(mContext)&&!forceHide){
             return;
         }
         mViewMediatorCallback.userActivity();
         destroyAcivityIfNeed();
         if (mSkylightHost != null) {
             mSkylightHost.hideSkylight();
-            mSkylightHost.setVisibility(View.GONE);
             boolean isLockScreenDisabled=mLockPatternUtils.isLockScreenDisabled();
+            DebugLog.d(LOG_TAG, "handleHideSkylight  isLockScreenDisable: "+isLockScreenDisabled);
             if (isLockScreenDisabled) {
-                // updateStatusBarExpandlable(false);
-                mViewMediatorCallback.keyguardDone(true);
+                unLockByOther(false);
+            }else{
+                mSkylightHost.setVisibility(View.GONE);
             }
             mIsSkylightShown=false;
+            mViewMediatorCallback.adjustStatusBarLocked();
         }
     }
     
+    private void setSkylightHidden(){
+        mSkylightHost.setVisibility(View.GONE);
+        
+    }
     
     
     public void unLockByOther(boolean animation){
@@ -241,7 +248,7 @@ public class KeyguardViewHostManager {
         /**
          * if alarm boot , do not start activity 
          */
-        if (/*mViewMediatorCallback.isShowingAndNotOccluded()&&*/!AmigoKeyguardUtils.isAlarmBoot()) {
+        if (mViewMediatorCallback.isShowingAndNotOccluded()&&!AmigoKeyguardUtils.isAlarmBoot()) {
             if (mActivitys.size() == 0) {
                 Intent intent = new Intent(mContext, SkylightActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

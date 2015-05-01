@@ -31,6 +31,7 @@ import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.TextView;
 
+import com.amigo.navi.keyguard.util.VibatorUtil;
 import com.android.internal.widget.LockPatternUtils;
 
 public class NumPadKey extends ViewGroup {
@@ -58,7 +59,10 @@ public class NumPadKey extends ViewGroup {
                 mTextView.append(Character.forDigit(mDigit, 10));
             }
             userActivity();
-            doHapticKeyClick();
+//            doHapticKeyClick();
+            
+            VibatorUtil.amigoVibrate(mContext, VibatorUtil.LOCKSCREEN_UNLOCK_CODE_TAP, VibatorUtil.TOUCH_TAP_VIBRATE_TIME);
+
         }
     };
 
@@ -158,11 +162,11 @@ public class NumPadKey extends ViewGroup {
     }
 
     // Cause a VIRTUAL_KEY vibration
-    public void doHapticKeyClick() {
-        if (mEnableHaptics) {
-            performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY,
-                    HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING
-                    | HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
-        }
-    }
+//    public void doHapticKeyClick() {
+//        if (mEnableHaptics) {
+//            performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY,
+//                    HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING
+//                    | HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+//        }
+//    }
 }

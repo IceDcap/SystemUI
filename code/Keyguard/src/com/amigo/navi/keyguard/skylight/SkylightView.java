@@ -26,7 +26,6 @@ import com.android.keyguard.R;
 import com.gionee.amiweather.library.StateInt;
 import com.gionee.amiweather.library.WeatherData;
 
-//import android.os.AsyncTask;
 
 public class SkylightView extends FrameLayout {
 

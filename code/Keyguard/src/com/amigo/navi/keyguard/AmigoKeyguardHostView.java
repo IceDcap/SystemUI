@@ -495,19 +495,16 @@ public class AmigoKeyguardHostView extends FrameLayout {
 		}
 	}
 	
-		private boolean isAtSecurity() {
-		/*boolean isSecurityViewAdded=mLauncherShotPage.isSecurityViewAdded();
-		int xpageHeight=KWDataCache.getXPageHeight(getResources());
-		int scrollY=getScrollY();
-		if(DebugLog.DEBUG){
-			DebugLog.d(LOG_TAG, "xpageHeight: "+xpageHeight+" scrollY: "+scrollY);
-		}
-		boolean tag = scrollY>=xpageHeight&&isSecurityViewAdded;
-		return tag;*/
-			
-			// temporary
-			return false;
-	}
+    private boolean isAtSecurity() {
+//        boolean isSecurityViewAdded = mLauncherShotPage.isSecurityViewAdded();
+        int xpageHeight = KWDataCache.getXPageHeight(getResources());
+        int scrollY = getScrollY();
+        boolean tag = scrollY >= xpageHeight /*&& isSecurityViewAdded*/;
+        if (DebugLog.DEBUG) {
+            DebugLog.d(LOG_TAG, "xpageHeight: " + xpageHeight + " scrollY: " + scrollY+"  isAtSecurity: "+tag);
+        }
+        return tag;
+    }
 	
 	@Override
 	public boolean onInterceptTouchEvent(MotionEvent event) {
@@ -542,16 +539,15 @@ public class AmigoKeyguardHostView extends FrameLayout {
 		return (mScrollDirection != DIRECTION_NONE);
 	}
 	
-	private void gotoSleepIfDoubleTap(MotionEvent event){
-		// 双击灭屏
-//	    KWWorkspace workSpace = KWDragController.getInstance().getWorkspace();
-//        if(workSpace!=null){
-//        	if(DebugLog.DEBUG){
-//        		DebugLog.d(LOG_TAG, "gotoSleepIfDoubleTap workSpace!=null");
-//			}
-//           workSpace.gotoSleepIfDoubleTap(event);
-//        }
-	}
+    private void gotoSleepIfDoubleTap(MotionEvent event) {
+        // 双击灭屏
+        if (mKeyguardPage != null) {
+            if (DebugLog.DEBUG) {
+                DebugLog.d(LOG_TAG, "gotoSleepIfDoubleTap workSpace!=null");
+            }
+            mKeyguardPage.gotoSleepIfDoubleTap(event);
+        }
+    }
 	
 	private boolean onInterceptActionDown(MotionEvent event) {
 //		mLauncherShotPage.onTouchDown();
@@ -732,6 +728,9 @@ public class AmigoKeyguardHostView extends FrameLayout {
 		}
 	}*/
 	
+	private static final int FLING_NONE=-1;
+	private static final int FLING_UP=0;
+	private static final int FLING_DOWN=1;
 	
 	private boolean onActionUp(MotionEvent event) {
 		mScrollDirectionConfirmed = false;
@@ -747,10 +746,14 @@ public class AmigoKeyguardHostView extends FrameLayout {
 		int totalY = Math.round(mDownMotionY - event.getY());
 		float velY = computeVelocityY();
 		releaseVelocityTracker();
-		boolean isUpFling = false;
+		int flingDirection = FLING_NONE;
 		if(mScrollDirection == DIRECTION_UP){
 			boolean velocityYUnlock = (Math.abs(velY) > mMinFlingVelocity) && velY < 0;
-			isUpFling=(totalY > mMinFlingDistance) || velocityYUnlock;
+			if((totalY > mMinFlingDistance) || velocityYUnlock){
+				flingDirection=FLING_UP;
+			}else{
+				flingDirection=FLING_NONE;
+			}
 			if(DebugLog.DEBUG){
 				DebugLog.d(LOG_TAG, "totalY:  up "+totalY+" mMinFlingDistance: "+mMinFlingDistance);
 			}
@@ -758,18 +761,23 @@ public class AmigoKeyguardHostView extends FrameLayout {
 			boolean isDownFling = false;
 			boolean velocitylock = (Math.abs(velY) > mMinFlingVelocity) && velY > 0;
 			isDownFling=(totalY < -mMinFlingDistance) || velocitylock;
-			isUpFling = !isDownFling;
+//			isUpFling = !isDownFling;
+			if(isDownFling){
+				flingDirection=FLING_DOWN;
+			}else{
+				flingDirection=FLING_NONE;
+			}
 			if(DebugLog.DEBUG){
 				DebugLog.d(LOG_TAG, "totalY: down "+totalY+" mMinFlingDistance: "+mMinFlingDistance);
 			}
 		}
 		
 		if(DebugLog.DEBUG){
-			DebugLog.d(LOG_TAG, "onActionUp,totalY:"+totalY+",velY:"+velY+",isUpFling:"+isUpFling);
+			DebugLog.d(LOG_TAG, "onActionUp,totalY:"+totalY+",velY:"+velY+",flingDirection:"+flingDirection);
 		}
 		
 //        if (!mIsTriggerShortcut) {
-		unlockWithVelocity((int) velY, isUpFling);
+		unlockWithVelocity((int) velY, flingDirection);
 //        }
 //		mIsTriggerShortcut=false;
 		return true;
@@ -787,7 +795,12 @@ public class AmigoKeyguardHostView extends FrameLayout {
 		if (mFlingDirection == DIRECTION_UP) {
 			deltaY = mMaxBoundY - getScrollY();
 		}else if(mFlingDirection == DIRECTION_DOWN){
-			deltaY =  - getScrollY();
+			if(getScrollY()>mMaxBoundY/2){
+				deltaY = getScrollY();
+			}else{
+				deltaY =  - getScrollY();
+			}
+			
 		}
 		DebugLog.d(LOG_TAG, "deltaY:"+deltaY+",mMaxBoundY:"+mMaxBoundY+",getscrolly:"+getScrollY());
 		
@@ -806,6 +819,39 @@ public class AmigoKeyguardHostView extends FrameLayout {
 
 		invalidate();
 	}
+	
+
+	private void unlockWithVelocity(int velocity, int flingDirection) {
+		int deltaY =0;
+		if (flingDirection== FLING_UP) {
+			deltaY = mMaxBoundY - getScrollY();
+		}else if(flingDirection== FLING_DOWN){
+				deltaY =  - getScrollY();	
+		}else {
+			if(mBouncerIsShowing){
+				deltaY = mMaxBoundY - getScrollY();
+			}else{
+				deltaY =  - getScrollY();
+			}
+		}
+		DebugLog.d(LOG_TAG, "deltaY:"+deltaY+",mMaxBoundY:"+mMaxBoundY+",getscrolly:"+getScrollY()+"mBouncerIsShowing="+mBouncerIsShowing);
+		
+		int duration = calculateDurationByVelocity(velocity);
+		
+		if (!mScroller.isFinished()) {
+			mScroller.abortAnimation();
+		}
+		
+		if (duration <= 0) {
+			duration = Math.abs(deltaY/3);
+		}
+		
+		mScroller.startScroll(0, getScrollY(), 0, deltaY, duration);
+//		mUnlockAnimStart = true;
+
+		invalidate();
+	}
+	
 	
 	private int calculateDurationByVelocity(int velocity) {
 		int duration = 0;
@@ -996,7 +1042,7 @@ public class AmigoKeyguardHostView extends FrameLayout {
 	       showBouncer(true);
 	       scrollToUnlockByOther();
         }else{
-        	scrollToKeyguardPage(100);
+//        	scrollToKeyguardPage(100);
         	mKeyguardBouncer.prepare();
         }
 		
@@ -1031,20 +1077,7 @@ public class AmigoKeyguardHostView extends FrameLayout {
 		mScroller.startScroll(0, getScrollY(), 0, -getScrollY(), duration);
 		invalidate();
 	}
-	
-	
-	public void scrollToUnlock(){
-		if(DebugLog.DEBUG){
-			DebugLog.d("test_scroll", "scrollToUnlock:"+getScrollY());
-		}
-//		AmigoXPageManager.getInstance(mContext).lockFromLaunchFail();
-		if (!mScroller.isFinished()) {
-			mScroller.abortAnimation();
-		}
-		mScroller.startScroll(0, getScrollY(), 0, mMaxBoundY-getScrollY(), 300);
-		invalidate();
-	}
-	
+
 	public void scrollToUnlockByOther(){
 //		AmigoXPageManager.getInstance(mContext).lockFromLaunchFail();
 		if (!mScroller.isFinished()) {

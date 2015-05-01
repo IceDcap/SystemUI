@@ -64,6 +64,7 @@ import com.android.internal.util.MemInfoReader;
 import android.text.format.Formatter;
 import android.app.ActivityManager;
 import android.app.ActivityManager.MemoryInfo;
+import com.android.systemui.gionee.GnUtil;
 
 public class RecentsActivity extends Activity implements OnClickListener , OnLongClickListener {
 	
@@ -204,7 +205,7 @@ public class RecentsActivity extends Activity implements OnClickListener , OnLon
     @Override
     public void onStart() {
         // Hide wallpaper if it's not a static image
-        if (forceOpaqueBackground(this)) {
+        if (forceOpaqueBackground(this) || !GnUtil.isHighDevice(mContext)) {
             updateWallpaperVisibility(false);
         } else {
             updateWallpaperVisibility(true);
@@ -396,10 +397,10 @@ public class RecentsActivity extends Activity implements OnClickListener , OnLon
     @Override
     public void onClick(View v) {
         mStopTime = 10;
+        mMemoryUsed = getMemoryAvailable();
         mHandler.removeMessages(MSG_SCAN);
         mHandler.sendEmptyMessage(MSG_START_CLEAR);
         mRecentsPanel.clearRecentApps();
-        showMemorySaved();
     }
 
 	private Handler mHandler = new Handler() {
@@ -483,7 +484,6 @@ public class RecentsActivity extends Activity implements OnClickListener , OnLon
                         formatMemory(getMemoryAvailable()),
                         formatMemory(getPhoneRamMemory()));
                 mMemoryInfo.setText(memoryInfo);
-
                 long memorySavedSize = (getMemoryAvailable() > mMemoryUsed) ? (getMemoryAvailable() - mMemoryUsed)
                         : (mMemoryUsed - getMemoryAvailable());
                 String memorySaved = String.format(
@@ -512,20 +512,12 @@ public class RecentsActivity extends Activity implements OnClickListener , OnLon
         mHandler.sendEmptyMessage(MSG_SCAN);
     }
 	
-	private void showMemorySaved() {
+	public void showMemorySaved() {
 	    mPreAngle = mAngle;
-		mMemoryUsed = getMemoryAvailable();
-		Handler handler = new Handler();
-		handler.postDelayed(new Runnable() {
-			
-			@Override
-			public void run() {
-		        mAngle = calculateAngle();
-		        
-		        mHandler.removeMessages(MSG_START_CLEAR);
-		        mHandler.sendEmptyMessage(MSG_STOP_CLEAR);
-			}
-		}, 2000);
+        mAngle = calculateAngle();
+        
+        mHandler.removeMessages(MSG_START_CLEAR);
+        mHandler.sendEmptyMessage(MSG_STOP_CLEAR);
 	}
 
     private int calculateAngle() {

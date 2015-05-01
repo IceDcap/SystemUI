@@ -128,7 +128,7 @@ public class StatusBarWindowManager {
 
     private void applyHeight(State state) {
         boolean expanded = state.isKeyguardShowingAndNotOccluded() || state.statusBarExpanded
-                || state.keyguardFadingAway /*|| state.bouncerShowing*/;
+                || state.keyguardFadingAway||state.skylightShowing /*|| state.bouncerShowing*/;
         if (expanded) {
             mLpChanged.height = ViewGroup.LayoutParams.MATCH_PARENT;
         } else {
@@ -220,6 +220,10 @@ public class StatusBarWindowManager {
         mCurrentState.qsExpanded = expanded;
         apply(mCurrentState);
     }
+    public void setSkylightShowing(boolean showing) {
+        mCurrentState.skylightShowing = showing;
+        apply(mCurrentState);
+    }
 
     /**
      * @param state The {@link StatusBarState} of the status bar.
@@ -239,7 +243,9 @@ public class StatusBarWindowManager {
         boolean bouncerShowing;
         boolean keyguardFadingAway;
         boolean qsExpanded;
-
+        // jingyn  modify for skylight begin
+        boolean skylightShowing;
+        // jingyn  modify for skylight end
         /**
          * The {@link BaseStatusBar} state from the status bar.
          */

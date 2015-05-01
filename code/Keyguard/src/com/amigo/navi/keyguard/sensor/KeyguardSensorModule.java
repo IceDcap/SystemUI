@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.KeyguardViewHostManager;
+import com.amigo.navi.keyguard.util.DataStatistics;
 //import com.gionee.navi.keyguard.amigo.util.DataStatistics;
 
 import amigo.provider.AmigoSettings;
@@ -84,6 +85,13 @@ public class KeyguardSensorModule implements SensorEventListener {
 	}
 
 	private void verifyOrRegisterSensorListener() {
+		// The ROM is supported unlocked by sensor; Does not support default masterSensorSwitch and sensorSwitch is opend.
+		boolean isSupprotDgUnlock = (AmigoSettings.getInt(mContext.getContentResolver(), /*AmigoSettings.IS_SDG_UNLOCK_ON*/"is_sdg_unlock_on", 0) == 1) ? true : false;
+		if(DebugLog.DEBUG) DebugLog.d(TAG_SENSOR_MODULE,"registerListener The ROM issupported unlocked by sensor ?  "+isSupprotDgUnlock);
+		if(!isSupprotDgUnlock){
+			return;
+		}
+		
 		if(mSensorType == TYPE_UNAVAILABLE && mRegisterInitFailCount <= REGISTER_REYRY_INIT_FAIL_COUNT){
 			init();
 		}
@@ -110,7 +118,7 @@ public class KeyguardSensorModule implements SensorEventListener {
 		if(DebugLog.DEBUG) DebugLog.d(TAG_SENSOR_MODULE, "onSensorChanged() value:"+value);
 		if (value == SENSOREVENT_UNLOCK_VALUE) {
 			KeyguardViewHostManager.getInstance().unLockBySensor();
-//			DataStatistics.getInstance().gestureUnlock(mContext);
+			DataStatistics.getInstance().gestureUnlock(mContext);
 		}
 	}
 

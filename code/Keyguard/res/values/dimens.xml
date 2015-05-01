@@ -18,6 +18,7 @@
 */
 -->
 <resources>
+
     <!-- Size of lockscreen outerring on unsecure unlock LockScreen -->
     <dimen name="keyguard_lockscreen_outerring_diameter">270dp</dimen>
 
@@ -70,7 +71,7 @@
     <!-- Size of the clock font in keyguard's status view -->
     <dimen name="kg_status_clock_font_size">75dp</dimen>
 
-    <!-- Size of the generic status lines keyguard's status view  -->
+    <!-- Size of the generic status lines keyguard's status view -->
     <dimen name="kg_status_line_font_size">14sp</dimen>
 
     <!-- Size of margin on the right of keyguard's status view -->
@@ -106,8 +107,10 @@
     <!-- Bottom padding for the widget pager -->
     <dimen name="kg_widget_pager_bottom_padding">64dp</dimen>
 
-    <!-- Top margin for the runway lights. We add a negative margin in large
-        devices to account for the widget pager padding -->
+    <!--
+         Top margin for the runway lights. We add a negative margin in large
+        devices to account for the widget pager padding
+    -->
     <dimen name="kg_runway_lights_top_margin">0dp</dimen>
 
     <!-- Touch slop for the global toggle accessibility gesture -->
@@ -140,21 +143,29 @@
     <!-- Size of the text under the avator on the multiuser lockscreen. -->
     <dimen name="keyguard_avatar_name_size">10sp</dimen>
 
-    <!-- Size of the region along the edge of the screen that will accept
-         swipes to scroll the widget area. -->
+    <!--
+         Size of the region along the edge of the screen that will accept
+         swipes to scroll the widget area.
+    -->
     <dimen name="kg_edge_swipe_region_size">24dp</dimen>
 
-    <!-- If the height if keyguard drops below this threshold (most likely
-    due to the appearance of the IME), then drop the multiuser selector. -->
+    <!--
+    If the height if keyguard drops below this threshold (most likely
+    due to the appearance of the IME), then drop the multiuser selector.
+    -->
     <dimen name="kg_squashed_layout_threshold">600dp</dimen>
 
-    <!-- The height of widgets which do not support vertical resizing. This is only
+    <!--
+    The height of widgets which do not support vertical resizing. This is only
     used on tablets; on phones, this size is determined by the space left by the
-    security mode. -->
+    security mode.
+    -->
     <dimen name="kg_small_widget_height">160dp</dimen>
 
-    <!-- EmergencyCarrierArea overlap - amount to overlap the emergency button and carrier text.
-         Should be 0 on devices with plenty of room (e.g. tablets) -->
+    <!--
+         EmergencyCarrierArea overlap - amount to overlap the emergency button and carrier text.
+         Should be 0 on devices with plenty of room (e.g. tablets)
+    -->
     <dimen name="eca_overlap">-10dip</dimen>
 
     <!-- Default clock parameters -->
@@ -168,7 +179,7 @@
     <dimen name="appear_y_translation_start">32dp</dimen>
 
     <!-- The size of the dots in the PIN unlock method. -->
-    <dimen name="password_dot_size">9dp</dimen>
+    <dimen name="password_dot_size">7dp</dimen>
 
     <!-- The padding between chars of the password view. -->
     <dimen name="password_char_padding">8dp</dimen>
@@ -178,10 +189,9 @@
 
     <!-- The translation for disappearing security views after having solved them. -->
     <dimen name="disappear_y_translation">-32dp</dimen>
-    
-    
+
     <!-- NaviKeyguard dimens begin -->
-    
+
     <dimen name="kg_maincell_layout_carrier_margin_top">12dp</dimen>
     <dimen name="kg_maincell_layout_carrier_battery_gap">8dp</dimen>
     <dimen name="kg_maincell_layout_battery_notification_gap">48dp</dimen>
@@ -189,14 +199,9 @@
     <dimen name="kg_cell_layout_padding">8dp</dimen>
     <dimen name="kg_exitworkspace_height">30dp</dimen>
     <dimen name="kg_infozone_fixed_panel_placeholder_height">5dp</dimen>
-    
-    
-    
-    
     <dimen name="kg_infozone_fixed_panel_height">64dp</dimen>
     <dimen name="kg_infozone_margin_bottom">10dp</dimen>
     <dimen name="kg_infozone_margin_top_at_desk">12dp</dimen>
-    
     <dimen name="widget_left_margin">16dp</dimen>
     <dimen name="kg_infozone_height">79dp</dimen>
     <dimen name="zzzzz_gn_navil_edge_swipe_region_size">48dp</dimen>
@@ -230,54 +235,57 @@
     <dimen name="skylight_time_am_pm_en_text_size">20dp</dimen>
 
     <!-- skylight dimens -->
-    
-    	<!-- notification dimens start-->
-	<!-- Height of a large notification in the status bar -->
+
+
+    <!-- notification dimens start -->
+    <!-- Height of a large notification in the status bar -->
     <dimen name="notification_max_height">256dp</dimen>
     <!-- Height of a small notification in the status bar -->
     <dimen name="notification_min_height">64dp</dimen>
-        <!-- radius of the corners of the material rounded rect background -->
+    <!-- radius of the corners of the material rounded rect background -->
     <dimen name="notification_material_rounded_rect_radius">2dp</dimen>
-        <!-- The size of the gesture span needed to activate the "pull" notification expansion -->
+    <!-- The size of the gesture span needed to activate the "pull" notification expansion -->
     <dimen name="pull_span_min">25dp</dimen>
-        <!-- Falsing threshold used when dismissing notifications from the lockscreen. -->
+    <!-- Falsing threshold used when dismissing notifications from the lockscreen. -->
     <dimen name="swipe_helper_falsing_threshold">70dp</dimen>
-        <!-- Height of notification icons in the status bar -->
+    <!-- Height of notification icons in the status bar -->
     <dimen name="status_bar_icon_size">@*android:dimen/status_bar_icon_size</dimen>
-        <!-- size at which Notification icons will be drawn in the status bar -->
+    <!-- size at which Notification icons will be drawn in the status bar -->
     <dimen name="status_bar_icon_drawing_size">17dip</dimen>
-        <!-- Additional translation (downwards) for appearing notifications when going to the full shade
-         from Keyguard. -->
+    <!--
+         Additional translation (downwards) for appearing notifications when going to the full shade
+         from Keyguard.
+    -->
     <dimen name="go_to_full_shade_appearing_translation">200dp</dimen>
-        <!-- The top padding of the clear all button -->
+    <!-- The top padding of the clear all button -->
     <dimen name="clear_all_padding_top">12dp</dimen>
-        <!-- The padding between the individual notification cards when dimmed. -->
+    <!-- The padding between the individual notification cards when dimmed. -->
     <dimen name="notification_padding_dimmed">0dp</dimen>
-        <!-- The padding between the individual notification cards. -->
+    <!-- The padding between the individual notification cards. -->
     <dimen name="notification_padding">3dp</dimen>
-        <!-- Space reserved for the cards behind the top card in the top stack -->
+    <!-- Space reserved for the cards behind the top card in the top stack -->
     <dimen name="top_stack_peek_amount">0dp</dimen>
-        <!-- Space reserved for the cards behind the top card in the bottom stack -->
+    <!-- Space reserved for the cards behind the top card in the bottom stack -->
     <dimen name="bottom_stack_peek_amount">0dp</dimen>
-        <!-- Z distance between notifications if they are in the stack -->
+    <!-- Z distance between notifications if they are in the stack -->
     <dimen name="z_distance_between_notifications">1dp</dimen>
-        <!-- The height of the area before the bottom stack in which the notifications slow down -->
+    <!-- The height of the area before the bottom stack in which the notifications slow down -->
     <dimen name="bottom_stack_slow_down_length">8dp</dimen>
-        <!-- The height of the area before the top stack in which the notifications slow down -->
+    <!-- The height of the area before the top stack in which the notifications slow down -->
     <dimen name="top_stack_slow_down_length">8dp</dimen>
-        <!-- The padding to the second card when the notifications collapse. -->
+    <!-- The padding to the second card when the notifications collapse. -->
     <dimen name="notification_collapse_second_card_padding">8dp</dimen>
-        <!-- The minimum amount of top overscroll to go to the quick settings. -->
+    <!-- The minimum amount of top overscroll to go to the quick settings. -->
     <dimen name="min_top_overscroll_to_qs">36dp</dimen>
-    
     <dimen name="kg_maincell_layout_padding_left_and_right">10dp</dimen>
-	<!-- notification dimens end-->
+    <!-- notification dimens end -->
 
-
- <dimen name="complex_password_textview_margintop">70dp</dimen>
+    <dimen name="complex_password_textview_margintop">70dp</dimen>
     <dimen name="complex_password_emergency_button_rel_height">56dp</dimen>
     <dimen name="complex_password_linearLayout_height">36dp</dimen>
     <dimen name="complex_password_linearLayout_margintop">20dp</dimen>
+    <dimen name="double_tap_area_radius">83dp</dimen>
 
     <!-- NaviKeyguard dimens end -->
+
 </resources>

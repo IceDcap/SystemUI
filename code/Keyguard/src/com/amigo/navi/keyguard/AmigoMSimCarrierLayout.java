@@ -206,18 +206,18 @@ public class AmigoMSimCarrierLayout extends LinearLayout {
 
     private void registerPhoneStateListener() {
         for (int i = 0; i < mSlotCount; i++) {
-            DebugLog.d(LOG_TAG, "registerPhoneStateListener slotId: " + i);
             // final long subId = getFirstSubInSlot(i);
             final int subId = getSubIdBySubIndex(i);
-            if (subId >= 0) {
+            DebugLog.d(LOG_TAG, "registerPhoneStateListener slotId: " + i+" subId: "+subId);
+//            if (subId >= 0) {
                 mPhoneStateListener[i] = getPhoneStateListener(subId, i);
                 mPhone.listen(mPhoneStateListener[i], PhoneStateListener.LISTEN_SERVICE_STATE
                         | PhoneStateListener.LISTEN_DATA_CONNECTION_STATE | PhoneStateListener.LISTEN_DATA_ACTIVITY
                         | PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
                 DebugLog.d(LOG_TAG, "Register PhoneStateListener");
-            } else {
-                mPhoneStateListener[i] = null;
-            }
+//            } else {
+//                mPhoneStateListener[i] = null;
+//            }
         }
     }
 

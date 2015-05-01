@@ -40,6 +40,7 @@ import android.widget.TextView.OnEditorActionListener;
 import java.util.List;
 
 import com.amigo.navi.keyguard.KeyguardViewHostManager;
+import com.amigo.navi.keyguard.util.VibatorUtil;
 /**
  * Displays an alphanumeric (latin-1) key entry for the user to enter
  * an unlock password
@@ -200,6 +201,8 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
 			@Override
 			public void onClick(View arg0) {
 				KeyguardViewHostManager.getInstance().scrollToKeyguardPageByAnimation();
+				
+				VibatorUtil.amigoVibrate(mContext, VibatorUtil.LOCKSCREEN_UNLOCK_CODE_TAP, VibatorUtil.TOUCH_TAP_VIBRATE_TIME);
 			}
 		});
     }

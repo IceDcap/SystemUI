@@ -2,26 +2,26 @@
 Build Notes
 ==================
 1.版本目的:
-android5.1适配首版
+bugfix
 2.功能变更:
-android5.1代码移植
-3.重点测试的问题:
 无
+3.重点测试的问题:
+上滑多任务报错问题
 4.应用数据库是否改变:
 No
 
 ==================
 Release Location
 ==================
-/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.0.0_V6.0.0.a.zip
+/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.a.zip
 
 ==================
 CR List
 ==================
-svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.0.0_V6.0.0.a' non-existent[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
- in revision 4685
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.br' non-existent in revision 4732
 
 svn: E200009: Could not display info for all targets because some targets don't exist
-svn: E205000: Syntax error in revision argument '4685:'
+svn: E205000: Syntax error in revision argument '4731:'
 File does not exist:  at getAppChangeSet.pl line 48
 

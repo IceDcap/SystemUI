@@ -25,6 +25,7 @@ import com.android.systemui.R;
 import com.android.systemui.gionee.GnBlurHelper;
 import com.android.systemui.gionee.GnUtil;
 import com.android.systemui.gionee.cc.qs.GnQSPanel;
+import com.android.systemui.gionee.cc.qs.GnQSTileHost;
 import com.android.systemui.gionee.cc.qs.policy.GnBluetoothControllerImpl;
 import com.android.systemui.gionee.cc.qs.policy.GnLocationControllerImpl;
 import com.android.systemui.gionee.cc.qs.policy.GnMobileDataControllerImpl;

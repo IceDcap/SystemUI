@@ -39,6 +39,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.RemoteException;
 import android.os.UserHandle;
 import android.provider.Settings;
@@ -102,6 +104,7 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
 
     private final static String LOCK_APP_NAME_FILE = "lock";
     private final static String PACKAGE_NAME = "packageName";
+    private final int MSG_STOP_SCAN_ANIM = 0;
 
     public static interface RecentsScrollView {
         public int numItemsInOneScreenful();
@@ -934,6 +937,7 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
                             setContentDescription(null);
                         }
                     }
+                    mHandler.sendEmptyMessage(MSG_STOP_SCAN_ANIM);
                 } catch (ConcurrentModificationException e) {
                     e.printStackTrace();
                 }
@@ -1019,5 +1023,15 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
 			mRecentsContainer.clearRecentApps();
 		}
 	}
+    
+    Handler mHandler = new Handler() {
 
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			if(MSG_STOP_SCAN_ANIM == msg.what) {
+				((RecentsActivity) getContext()).showMemorySaved();
+			}
+		}
+    };
 }

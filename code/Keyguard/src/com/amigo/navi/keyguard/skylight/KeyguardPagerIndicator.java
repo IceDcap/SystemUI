@@ -55,6 +55,7 @@ public class KeyguardPagerIndicator extends View {
         sDisplayW = SkylightHost.getSkylightWidth();
         sIndicatorH = (int) (sIndicatorH * density);
         MARGIN_RINGHT_AND_LEFT = (int) (MARGIN_RINGHT_AND_LEFT * density);
+        sIndicatorW=getResources().getDisplayMetrics().widthPixels;
         sIndicatorW =sIndicatorW-MARGIN_RINGHT_AND_LEFT*2;
         if(DebugLog.DEBUG)Log.d(LOG_TAG, "sIndicatorW: "+sIndicatorW);
         //Gionee <huangxc><2013-12-18> modify for CR00967751 end

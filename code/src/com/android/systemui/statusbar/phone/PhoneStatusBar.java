@@ -183,6 +183,8 @@ import com.android.systemui.statusbar.stack.StackScrollState.ViewState;
 import com.android.systemui.volume.VolumeComponent;
 
 import com.amigo.navi.keyguard.KeyguardViewHost;
+import com.amigo.navi.keyguard.skylight.SkylightHost;
+
 import com.amigo.navi.keyguard.KeyguardViewHostManager;
 
 
@@ -287,6 +289,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     StatusBarWindowView mStatusBarWindow;
     PhoneStatusBarView mStatusBarView;
     KeyguardViewHost mKeyguardViewHost;
+    SkylightHost mSkylightHost;
     
     private int mStatusBarWindowState = WINDOW_STATE_SHOWING;
     private StatusBarWindowManager mStatusBarWindowManager;
@@ -679,6 +682,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mStatusBarView.setPanelHolder(holder);
 
         mKeyguardViewHost = (KeyguardViewHost) mStatusBarWindow.findViewById(R.id.keyguardViewHost);
+        mSkylightHost = (SkylightHost) mStatusBarWindow.findViewById(R.id.skylightHost);
         mNotificationPanel = (NotificationPanelView) mStatusBarWindow.findViewById(
                 R.id.notification_panel);
         mNotificationPanel.setStatusBar(this);
@@ -4869,6 +4873,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     // jiating modify for keyguard begin
     public KeyguardViewHost getmKeyguardViewHost() {
         return mKeyguardViewHost;
+    }
+    public SkylightHost getSkylightHost() {
+        return mSkylightHost;
     }
 
     public void setmKeyguardViewHost(KeyguardViewHost mKeyguardViewHost) {

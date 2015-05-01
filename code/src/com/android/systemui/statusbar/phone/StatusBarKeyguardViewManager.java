@@ -91,7 +91,6 @@ public class StatusBarKeyguardViewManager implements KeyguardBouncerCallback ,Ke
         mContext = context;
         mViewMediatorCallback = callback;
         mLockPatternUtils = lockPatternUtils;
-        context.registerReceiver(mHallStatusChangeReceiver, new IntentFilter(AppConstants.ACTION_HALL_STATUS));
     }
 
     public void registerStatusBar(PhoneStatusBar phoneStatusBar,
@@ -101,7 +100,7 @@ public class StatusBarKeyguardViewManager implements KeyguardBouncerCallback ,Ke
         mContainer = container;
         mStatusBarWindowManager = statusBarWindowManager;
         mScrimController = scrimController;
-        mKeyguardViewHostManager=new KeyguardViewHostManager(mContext,phoneStatusBar.getmKeyguardViewHost(),mLockPatternUtils,mViewMediatorCallback);
+        mKeyguardViewHostManager=new KeyguardViewHostManager(mContext,phoneStatusBar.getmKeyguardViewHost(),phoneStatusBar.getSkylightHost(),mLockPatternUtils,mViewMediatorCallback);
         mKeyguardViewHostManager.registerBouncerCallback(this);
         mKeyguardViewHostManager.registerKeyguardNotificationCallback(this);
 //        mBouncer = new KeyguardBouncer(mContext, mViewMediatorCallback, mLockPatternUtils,
@@ -176,11 +175,13 @@ public class StatusBarKeyguardViewManager implements KeyguardBouncerCallback ,Ke
     }
     
     public void showSkylight(){
+        mStatusBarWindowManager.setSkylightShowing(true);
         mKeyguardViewHostManager.showSkylight();
     }
     
-    public void hideSkylight(boolean isGotoUnlock){
-        mKeyguardViewHostManager.hideSkylight(isGotoUnlock);
+    public void hideSkylight(boolean forceHide){
+        mKeyguardViewHostManager.hideSkylight(forceHide);
+        mStatusBarWindowManager.setSkylightShowing(false);
     }
 
     public void onScreenTurnedOff() {
@@ -218,17 +219,6 @@ public class StatusBarKeyguardViewManager implements KeyguardBouncerCallback ,Ke
     }
     
     
-    BroadcastReceiver mHallStatusChangeReceiver = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            int hallOpenState = intent.getIntExtra(AppConstants.HALL_STATUS_KEY, 1);
-            Log.d(TAG, "HallStatusChangeReceiver  hallOpenState: " + hallOpenState + " mShowing: " + mShowing);
-            if (hallOpenState == 1) {
-                hideSkylight(true);
-            } else {
-                showSkylight();
-            }
-        };
-    };
 
     public void setNeedsInput(boolean needsInput) {
         mStatusBarWindowManager.setKeyguardNeedsInput(needsInput);

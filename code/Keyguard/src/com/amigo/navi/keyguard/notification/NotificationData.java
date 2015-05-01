@@ -292,6 +292,16 @@ public class NotificationData {
         }
         return false;
     }
+    
+    /**
+     * Return whether there are any notifications (that aren't errors).
+     */
+    public boolean hasNotification() {
+        if(mSortedAndFiltered!=null){
+            return mSortedAndFiltered.size()>0;
+        }
+        return false;
+    }
 
     // Q: What kinds of notifications should show during setup?
     // A: Almost none! Only things coming from the system (package is "android") that also

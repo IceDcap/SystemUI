@@ -34,6 +34,7 @@ import android.view.ViewConfiguration;
 
 import com.android.keyguard.R;
 import com.amigo.navi.keyguard.DebugLog;
+import com.amigo.navi.keyguard.util.DataStatistics;
 
 public class ExpandHelper implements Gefingerpoken {
     public interface Callback {
@@ -537,7 +538,7 @@ public class ExpandHelper implements Gefingerpoken {
         if (!mExpanding) return;
 
         if(DebugLog.DEBUG) DebugLog.d(TAG, "scale in finishing on view: " + mResizedView);
-
+        DataStatistics.getInstance().expandNotification(mContext);
         float currentHeight = mScaler.getHeight();
         float targetHeight = mSmallSize;
 //        float h = mScaler.getHeight();

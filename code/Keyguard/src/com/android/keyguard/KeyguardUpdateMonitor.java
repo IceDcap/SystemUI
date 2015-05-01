@@ -73,6 +73,7 @@ import com.amigo.navi.keyguard.modules.WeatherInfoModule;
 import com.amigo.navi.keyguard.modules.WeatherInfoModule.WeatherInfoUpdateCallback;
 import com.amigo.navi.keyguard.modules.KeyguardMissedInfoModule.MissedInfoCallback;
 
+
 import com.google.android.collect.Lists;
 
 import java.lang.ref.WeakReference;
@@ -1270,6 +1271,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         handleSimStateChange(subId, slotId, State.READY);
     }
 
+    
     /**
      * Report that the emergency call button has been pressed and the emergency dialer is
      * about to be displayed.
@@ -1474,4 +1476,8 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
     }
     
     //guosb add for notification end
+    
+    public void dismissSimLockState(int simId) {
+    	reportSimUnlocked(simId);
+    }
 }

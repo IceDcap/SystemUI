@@ -37,7 +37,7 @@ import android.widget.Scroller;
 
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.KWDataCache;
-import com.android.keyguard.R ;
+import com.android.keyguard.R;
 
 /**
  * An abstraction of the original Workspace which supports browsing through a sequential list of "pages"
@@ -1992,7 +1992,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
         mScroller.startScroll(mUnboundedScrollX, 0, delta, 0, duration);
 
 //      notifyPageSwitched();
-        notifySwitched();
+//        notifySwitched();
 
         // Trigger a compute() to finish switching pages if necessary
         if (immediate) {

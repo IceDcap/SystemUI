@@ -15,6 +15,7 @@ import android.os.UserHandle;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -30,10 +31,13 @@ import com.android.keyguard.R;
 import com.amigo.navi.keyguard.modules.KeyguardNotificationModule;
 import com.amigo.navi.keyguard.notification.ActivatableNotificationView;
 import com.amigo.navi.keyguard.notification.NotificationStackScrollLayout;
+import com.amigo.navi.keyguard.util.DataStatistics;
 //import com.gionee.navi.keyguard.everydayphoto.WallpaperData;
+import com.amigo.navi.keyguard.util.QuickSleepUtil;
 
 public class AmigoKeyguardPage extends RelativeLayout {
 	private static final String LOG_TAG = "NaviKg_KeyguardPage";
+	private Context mContext=null;
 	
 //	private KeyguardInfoZone mInfozone = null;
 	public static MissedInfo sMsgCache = null;
@@ -44,7 +48,7 @@ public class AmigoKeyguardPage extends RelativeLayout {
 
 	public AmigoKeyguardPage(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		
+		mContext=context;
 //		int padding = getResources().getDimensionPixelSize(R.dimen.kg_maincell_layout_padding_left_and_right);
 //        setPadding(padding, 0, padding, 0);
         //
@@ -173,6 +177,22 @@ public class AmigoKeyguardPage extends RelativeLayout {
         module.init();
 	}
 	
+    public Rect getNotificationContentRect() {
+        Rect rect = new Rect(0, 0, 0, 0);
+        if (mNotificationContent != null && (mNotificationContent.getVisibility() == View.VISIBLE)) {
+            int[] windowLocation = new int[2];
+            mNotificationContent.getLocationInWindow(windowLocation);
+            int width = mNotificationContent.getWidth();
+            int height = mNotificationContent.getHeight() - mNotificationContent.getEmptyBottomMargin();
+            rect.left = windowLocation[0];
+            rect.top = windowLocation[1];
+            rect.right = windowLocation[0] + width;
+            rect.bottom = windowLocation[1] + height;
+        }
+
+        return rect;
+    }
+
 	private int measureViewHeight(View view) {
 		int w = View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);  
 		int h = View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);  
@@ -468,4 +488,23 @@ public class AmigoKeyguardPage extends RelativeLayout {
 		public void showMissCount(){
 //			mInfozone.showMissCount();
 		}
+		
+    public void gotoSleepIfDoubleTap(MotionEvent event) {
+        // if(!mIsDoubleTapSwitchOpen){
+        // if(DebugLog.DEBUG){
+        // DebugLog.d(LOG_TAG,
+        // "gotoSleepIfDoubleTap mIsDoubleTapSwitchOpen:"+mIsDoubleTapSwitchOpen);
+        // }
+        // return;
+        // }
+        // if(isPageMoving()||!isHomePage()){
+        // return;
+        // }
+        if (DebugLog.DEBUG) {
+            DebugLog.d(LOG_TAG, "gotoSleepIfDoubleTap QuickSleepUtil.gotoSleepIfDoubleTap");
+        }
+        QuickSleepUtil.gotoSleepIfDoubleTap(mContext, event, this);
+        DataStatistics.getInstance().doubleTapSleepEvent(mContext);
+    }
+		
 }

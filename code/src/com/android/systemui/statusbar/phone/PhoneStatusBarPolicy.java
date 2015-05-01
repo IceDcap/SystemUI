@@ -38,6 +38,7 @@ import com.android.systemui.statusbar.policy.CastController.CastDevice;
 import com.android.systemui.statusbar.policy.HotspotController;
 import android.database.ContentObserver;
 import amigo.provider.AmigoSettings;
+import android.nfc.NfcAdapter;
 
 /**
  * This class contains all of the policy about which icons are installed in the status
@@ -64,12 +65,14 @@ public class PhoneStatusBarPolicy {
     private static final String GN_GLOVE_PATTERN = "glove_patterns";
     private static final String GN_DISTANCE_GESTURE = "distance_gesture";
     private static final String GN_VOICE_MODE = "voice_mode";
+    private static final String GN_NFC = "nfc";
 
     private final Context mContext;
     private final StatusBarManager mService;
     private final Handler mHandler = new Handler();
     private final CastController mCast;
     private final HotspotController mHotspot;
+    private NfcAdapter mNfcAdapter;
 
     // Assume it's all good unless we hear otherwise.  We don't always seem
     // to get broadcasts that it *is* there.
@@ -90,32 +93,26 @@ public class PhoneStatusBarPolicy {
             String action = intent.getAction();
             if (action.equals(AlarmManager.ACTION_NEXT_ALARM_CLOCK_CHANGED)) {
                 updateAlarm(intent);
-            }
-            else if (action.equals(Intent.ACTION_SYNC_STATE_CHANGED)) {
+            } else if (action.equals(Intent.ACTION_SYNC_STATE_CHANGED)) {
                 updateSyncState(intent);
-            }
-            else if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED) ||
+            } else if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED) ||
                     action.equals(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED)) {
                 updateBluetooth();
-            }
-            else if (action.equals(AudioManager.RINGER_MODE_CHANGED_ACTION) ||
+            } else if (action.equals(AudioManager.RINGER_MODE_CHANGED_ACTION) ||
                     action.equals(AudioManager.INTERNAL_RINGER_MODE_CHANGED_ACTION)) {
                 updateVolumeZen();
-            }
-            else if (action.equals(TelephonyIntents.ACTION_SIM_STATE_CHANGED)) {
+            } else if (action.equals(TelephonyIntents.ACTION_SIM_STATE_CHANGED)) {
                 updateSimState(intent);
-            }
-            else if (action.equals(TelecomManager.ACTION_CURRENT_TTY_MODE_CHANGED)) {
+            } else if (action.equals(TelecomManager.ACTION_CURRENT_TTY_MODE_CHANGED)) {
                 updateTTY(intent);
-            }
-            else if (action.equals(Intent.ACTION_USER_SWITCHED)) {
+            } else if (action.equals(Intent.ACTION_USER_SWITCHED)) {
                 updateAlarm(intent);
-            }
-            else if (action.equals(Intent.ACTION_ALARM_CHANGED)) {
+            } else if (action.equals(Intent.ACTION_ALARM_CHANGED)) {
 				updateAlarm(intent);
-			}
-            else if (action.equals(Intent.ACTION_HEADSET_PLUG)) {
+			} else if (action.equals(Intent.ACTION_HEADSET_PLUG)) {
 				updateHeadSet(intent);
+			} else if (action.equals(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED)) {
+				updateNfc(intent);
 			}
         }
     };
@@ -125,6 +122,7 @@ public class PhoneStatusBarPolicy {
         mCast = cast;
         mHotspot = hotspot;
         mService = (StatusBarManager)context.getSystemService(Context.STATUS_BAR_SERVICE);
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(context);
 
         // listen for broadcasts
         IntentFilter filter = new IntentFilter();
@@ -139,6 +137,9 @@ public class PhoneStatusBarPolicy {
         filter.addAction(Intent.ACTION_USER_SWITCHED);
         filter.addAction(Intent.ACTION_HEADSET_PLUG);
         filter.addAction(Intent.ACTION_ALARM_CHANGED);
+        if(mNfcAdapter != null) {
+        	filter.addAction(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED);
+        }
         mContext.registerReceiver(mIntentReceiver, filter, null, mHandler);
         initObserver();
 
@@ -171,6 +172,10 @@ public class PhoneStatusBarPolicy {
         mService.setIconVisibility(SLOT_VOLUME, false);
         updateVolumeZen();*/
         
+        //nfc
+		mService.setIcon(GN_NFC, R.drawable.gn_stat_sys_nfc, 0, null);
+		mService.setIconVisibility(GN_NFC,isNfcEnabled());
+
         // guest mode
         updateGuestMode();
         updateSmartScreenOn();
@@ -587,5 +592,29 @@ public class PhoneStatusBarPolicy {
 		int config = AmigoSettings.getInt(mContext.getContentResolver(), AmigoSettings.SOUND_CONTROL_SWITCH, 0);
 		Log.d(TAG, " Load voice mode config " + config);
 		return config == 1;
+	}
+	
+	//nfc
+	private final void updateNfc(Intent intent) {
+		int newStatus = intent.getIntExtra(NfcAdapter.EXTRA_ADAPTER_STATE,
+                NfcAdapter.STATE_OFF);
+		switch (newStatus) {
+        case NfcAdapter.STATE_OFF:
+            mService.setIconVisibility(GN_NFC, false);                
+            break;
+        case NfcAdapter.STATE_ON:
+            mService.setIconVisibility(GN_NFC, true);
+            break;
+    }
+	}
+	
+	private boolean isNfcEnabled() {
+		boolean isNfcEnabled = false;
+		if(mNfcAdapter == null) {
+			mNfcAdapter = NfcAdapter.getDefaultAdapter(mContext);
+		} else {
+			isNfcEnabled = mNfcAdapter.isEnabled();
+		}
+		return isNfcEnabled;
 	}
 }

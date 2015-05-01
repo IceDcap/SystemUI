@@ -29,6 +29,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.amigo.navi.keyguard.util.VibatorUtil;
 import com.android.internal.widget.LockPatternUtils;
 import com.android.keyguard.R;
 
@@ -130,6 +131,8 @@ public abstract class KeyguardAbsKeyInputView extends LinearLayout
                 }
             }
             mSecurityMessageDisplay.setMessage(getWrongPasswordStringId(), true);
+            
+            VibatorUtil.amigoVibrate(mContext, VibatorUtil.LOCKSCREEN_UNLOCK_CODE_ERROR, VibatorUtil.UNLOCK_ERROR_VIBRATE_TIME);
         }
         resetPasswordText(true /* animate */);
     }

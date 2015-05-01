@@ -106,6 +106,8 @@
 
     <!-- Recents -->
     <uses-permission android:name="android.permission.BIND_APPWIDGET" />
+    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES"/>
+    <uses-permission android:name="android.permission.FORCE_STOP_PACKAGES"/>
 
     <!-- Wifi Display -->
     <uses-permission android:name="android.permission.CONFIGURE_WIFI_DISPLAY" />
@@ -223,6 +225,8 @@
                 android:excludeFromRecents="true"
                 android:launchMode="singleInstance"
                 android:resumeWhilePausing="true"
+                android:screenOrientation="portrait"
+                android:configChanges="keyboard|keyboardHidden|orientation"
                 android:exported="true">
           <intent-filter>
             <action android:name="com.android.systemui.TOGGLE_RECENTS" />

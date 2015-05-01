@@ -283,7 +283,9 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
     }
     
     private void failShake(final int unLockFailReason) {
-        VibatorUtil.vibator(mContext, 100);
+//        VibatorUtil.vibator(mContext, 100);
+    	VibatorUtil.amigoVibrate(mContext, VibatorUtil.LOCKSCREEN_UNLOCK_CODE_ERROR, VibatorUtil.UNLOCK_ERROR_VIBRATE_TIME);
+    	
         ObjectAnimator oan = ObjectAnimator.ofFloat(ll_images, "translationX", new float[] { 0.0F, 25.0F, -25.0F, 25.0F, -25.0F, 15.0F, -15.0F, 6.0F, -6.0F, 0.0F }).setDuration(1000);
         oan.addListener(new AnimatorListener() {
             
@@ -399,7 +401,8 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
                         //go to keyguadhome
                         KeyguardViewHostManager.getInstance().scrollToKeyguardPageByAnimation();
                     }
-                    doHapticKeyClick();
+//                    doHapticKeyClick();
+                    VibatorUtil.amigoVibrate(mContext, VibatorUtil.LOCKSCREEN_UNLOCK_CODE_TAP, VibatorUtil.TOUCH_TAP_VIBRATE_TIME);
                 }
             });
             
@@ -410,7 +413,8 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
                         if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "delete all digits");
                         mPasswordEntry.setText("");
                     }
-                    doHapticKeyClick();
+//                    doHapticKeyClick();
+                    VibatorUtil.amigoVibrate(mContext, VibatorUtil.LOCKSCREEN_UNLOCK_CODE_TAP, VibatorUtil.TOUCH_TAP_VIBRATE_TIME);
                     return true;
                 }
             });

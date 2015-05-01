@@ -1,6 +1,8 @@
 package com.amigo.navi.keyguard.skylight;
 
+
 import com.amigo.navi.keyguard.DebugLog;
+import com.amigo.navi.keyguard.util.DataStatistics;
 
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
@@ -23,23 +25,37 @@ public class SkyPagerView extends KeyguardPagerView {
     
 //    private boolean mIsFinishInitData=false;
     
+    private int mPrePageIndex=0;
     
     private KeyguardPagerIndicator mIndicator = null;
     private ValueAnimator mAnimator;
+    private PageSwitchCallback mPageSwitchCallback=new PageSwitchCallback() {
+        
+        @Override
+        public void onPageSwitching(View newPage, int newPageIndex) {
+            
+        }
+        
+        @Override
+        public void onPageSwitched(View newPage, int newPageIndex) {
+            DebugLog.d(LOG_TAG, "onPageSwitched  newPageIndex: "+newPageIndex);
+            statisticsPageSlide(newPageIndex);
+        }
+    };
     
     public SkyPagerView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         initAnimator();
+        registerPageSwitchCallback(mPageSwitchCallback);
+        
     }
 
     public SkyPagerView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        initAnimator();
+        this(context, attrs,0);
     }
 
     public SkyPagerView(Context context) {
-        super(context);
-        initAnimator();
+        this(context, null);
     }
     
     private AnimatorListener mAnimatorListener=new AnimatorListener() {
@@ -154,12 +170,6 @@ public class SkyPagerView extends KeyguardPagerView {
         mAnimator.start();
     }
 
-    @Override
-    protected void notifyPageSwitched() {
-        super.notifyPageSwitched();
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "notifyPageSwitched");
-    }
-    
     
     @Override
     public void onRemoveView(View v, boolean draging) {
@@ -178,6 +188,19 @@ public class SkyPagerView extends KeyguardPagerView {
         }
         mIndicator.setVisibility(VISIBLE);
         mHandler.sendEmptyMessage(MSG_TOAST_INDICATOR);
+    }
+    
+    private void statisticsPageSlide(int newPageIndex) {
+        int currentPageIndex = getCurrentPageIndex();
+        if (currentPageIndex != mPrePageIndex) {
+            DebugLog.d(LOG_TAG, "statisticsPageSlide newPageIndex: "+newPageIndex);
+            if (currentPageIndex == 0) {//slide to music
+                DataStatistics.getInstance().skylightSlide(mContext, DataStatistics.SKYLIGHT_SLIDE_TO_MUSIC);
+            } else if (currentPageIndex == 1) {//slide to home
+                DataStatistics.getInstance().skylightSlide(mContext, DataStatistics.SKYLIGHT_SLIDE_TO_HOME);
+            }
+            mPrePageIndex = currentPageIndex;
+        }
     }
     
     private Handler mHandler = new Handler() {

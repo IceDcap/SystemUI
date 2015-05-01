@@ -16,6 +16,8 @@
 
 package com.android.keyguard;
 
+import com.amigo.navi.keyguard.util.VibatorUtil;
+
 import android.content.Context;
 import android.graphics.Rect;
 import android.util.AttributeSet;
@@ -157,7 +159,9 @@ public abstract class KeyguardPinBasedInputView extends KeyguardAbsKeyInputView
             mOkButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    doHapticKeyClick();
+//                    doHapticKeyClick();
+                	VibatorUtil.amigoVibrate(mContext, VibatorUtil.LOCKSCREEN_UNLOCK_CODE_TAP, VibatorUtil.TOUCH_TAP_VIBRATE_TIME);
+                	
                     if (mPasswordEntry.isEnabled()) {
                         verifyPasswordAndUnlock();
                     }

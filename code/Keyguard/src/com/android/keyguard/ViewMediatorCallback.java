@@ -85,4 +85,18 @@ public interface ViewMediatorCallback {
      */
     boolean isShowing() ;
     //jingyn add end
+    //jingyn add begin
+    /**
+     * Return is keyguard showing and  not occluded
+     * @return showing or not
+     */
+    boolean isShowingAndNotOccluded() ;
+    //jingyn add end
+    //jingyn add begin
+    /**
+     * Return is keyguard showing and  not occluded
+     * @return showing or not
+     */
+    void adjustStatusBarLocked() ;
+    //jingyn add end
 }

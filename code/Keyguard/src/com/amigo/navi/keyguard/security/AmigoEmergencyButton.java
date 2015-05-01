@@ -26,6 +26,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.amigo.navi.keyguard.util.VibatorUtil;
 import com.android.internal.telephony.IccCardConstants.State;
 import com.android.internal.widget.LockPatternUtils;
 import com.android.keyguard.KeyguardUpdateMonitor;
@@ -83,6 +84,9 @@ public class AmigoEmergencyButton extends Button {
         setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 takeEmergencyCallAction();
+                
+                VibatorUtil.amigoVibrate(mContext, VibatorUtil.LOCKSCREEN_UNLOCK_CODE_TAP, VibatorUtil.TOUCH_TAP_VIBRATE_TIME);
+                
             }
         });
         updateEmergencyCallButton();

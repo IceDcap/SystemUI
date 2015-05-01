@@ -5,7 +5,7 @@
 * add by huangwt for Android L at 20141210.
 * 
 */
-package com.android.systemui.gionee.cc;
+package com.android.systemui.gionee.cc.qs;
 
 import android.content.Context;
 import android.content.Intent;
@@ -19,7 +19,7 @@ import android.provider.Settings.Secure;
 import android.util.Log;
 
 import com.android.systemui.R;
-import com.android.systemui.gionee.cc.qs.GnQSTile;
+import com.android.systemui.gionee.cc.GnControlCenterView;
 import com.android.systemui.gionee.cc.qs.policy.GnBluetoothController;
 import com.android.systemui.gionee.cc.qs.policy.GnLocationController;
 import com.android.systemui.gionee.cc.qs.policy.GnMobileDataController;
