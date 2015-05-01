@@ -741,7 +741,10 @@ public abstract class PanelView extends FrameLayout {
             mClosing = true;
             notifyExpandingStarted();
             if (delayed) {
-                postDelayed(mFlingCollapseRunnable, 120);
+            	//GIONEE <wujj> <2015-04-29> modify for CR01468270 begin
+				// postDelayed(mFlingCollapseRunnable, 120);
+                postDelayed(mFlingCollapseRunnable, 50);
+				// GIONEE <wujj> <2015-04-29> modify for CR01468270 end
             } else {
                 fling(0, false /* expand */);
             }

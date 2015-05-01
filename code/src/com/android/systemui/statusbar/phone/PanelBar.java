@@ -40,6 +40,11 @@ public class PanelBar extends FrameLayout {
     public static final int STATE_CLOSED = 0;
     public static final int STATE_OPENING = 1;
     public static final int STATE_OPEN = 2;
+    
+    //GIONEE <wujj> <2015-04-29> modify for CR01468270 begin
+    // This broadcast is sent to {@code PhoneStatusBar} and key guard
+    public static final String ACTION_NOTIFY_PANEL_STATE = "gn.intent.action.NOTIFY_PANEL_STATE";
+    //GIONEE <wujj> <2015-04-29> modify for CR01468270 end
 
     PanelHolder mPanelHolder;
     ArrayList<PanelView> mPanels = new ArrayList<PanelView>();
@@ -53,20 +58,24 @@ public class PanelBar extends FrameLayout {
     public void go(int state) {
         if (DEBUG) LOG("go state: %d -> %d", mState, state);
         mState = state;
-        notificationPanelState(state);
+        notificationPanelState();
     }
 
-    final private void notificationPanelState(final int state) {
-    	post(new Runnable() {
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				Intent intent = new Intent("gn.intent.action.NOTIFY_PANEL_STATE");
-				intent.putExtra("panel_state", state);
-				getContext().sendBroadcast(intent);
-			}
-		});
+    //GIONEE <wujj> <2015-04-29> modify for CR01468270 begin
+    final private void notificationPanelState() {
+    	removeCallbacks(mNotifyPanelStateRunnable);
+    	post(mNotifyPanelStateRunnable);
     }
+    
+    Runnable mNotifyPanelStateRunnable = new Runnable() {
+		@Override
+		public void run() {
+			Intent intent = new Intent(ACTION_NOTIFY_PANEL_STATE);
+			intent.putExtra("panel_state", mState);
+			getContext().sendBroadcast(intent);
+		}
+	};
+	//GIONEE <wujj> <2015-04-29> modify for CR01468270 end
     
     public PanelBar(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -164,6 +173,7 @@ public class PanelBar extends FrameLayout {
         if (isHighconfigDevice()) {
         	createBlurBg(getContext());
         }
+        
         mPanelHolder.setSelectedPanel(mTouchingPanel);
         for (PanelView pv : mPanels) {
             if (pv != panel) {
@@ -228,20 +238,10 @@ public class PanelBar extends FrameLayout {
             go(STATE_CLOSED);
             onAllPanelsCollapsed();
         }
-        // GIONEE <wujj> <2015-03-02> Modify for CR01445888 begin
-        else if (fullyClosed) {
-        	updateNavigatorBarBackground();
-        }
-        // GIONEE <wujj> <2015-03-02> Modify for CR01445888 end
-
         if (DEBUG) LOG("panelExpansionChanged: end state=%d [%s%s ]", mState,
                 (fullyOpenedPanel!=null)?" fullyOpened":"", fullyClosed?" fullyClosed":"");
     }
     
-    // GIONEE <wujj> <2015-03-02> Modify for CR01445888 begin
-    protected void updateNavigatorBarBackground() {
-    }
-    // GIONEE <wujj> <2015-03-02> Modify for CR01445888 end
     public void collapseAllPanels(boolean animate) {
         boolean waiting = false;
         for (PanelView pv : mPanels) {

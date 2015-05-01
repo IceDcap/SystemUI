@@ -150,6 +150,9 @@ public class PhoneStatusBarView extends PanelBar {
         
         boolean barConsumedEvent = mBar.interceptTouchEvent(event);
 
+		// GIONEE <wujj> <2015-04-24> add begin
+		mBar.setUpdateNaviFlag(true);
+		// GIONEE <wujj> <2015-04-24> add end
         if (DEBUG_GESTURES) {
             if (event.getActionMasked() != MotionEvent.ACTION_MOVE) {
                 EventLog.writeEvent(EventLogTags.SYSUI_PANELBAR_TOUCH,

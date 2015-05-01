@@ -227,8 +227,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     // Time after we abort the launch transition.
     private static final long LAUNCH_TRANSITION_TIMEOUT_MS = 5000;
-
-    private static final boolean CLOSE_PANEL_WHEN_EMPTIED = true;
+    //GIONEE <wujj> <2015-02-03> begin
+    //Don't close notification panel when there is no notification
+    private static final boolean CLOSE_PANEL_WHEN_EMPTIED = false;
+    //GIONEE <wujj> <2015-02-03> end
 
     private static final int NOTIFICATION_PRIORITY_MULTIPLIER = 10; // see NotificationManagerService
     private static final int HIDE_ICONS_BELOW_SCORE = Notification.PRIORITY_LOW * NOTIFICATION_PRIORITY_MULTIPLIER;
@@ -941,6 +943,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             filter.addAction("fake_artwork");
         }
         filter.addAction(ACTION_DEMO);
+        //GIONEE <wujj> <2015-04-29> modify for CR01468270 begin
+        filter.addAction(PanelBar.ACTION_NOTIFY_PANEL_STATE);
+        //GIONEE <wujj> <2015-04-29> modify for CR01468270 end
         context.registerReceiverAsUser(mBroadcastReceiver, UserHandle.ALL, filter, null, null);
 
         // listen for USER_SETUP_COMPLETE setting (per-user)
@@ -2990,6 +2995,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     @Override // CommandQueue
     public void setWindowState(int window, int state) {
         boolean showing = state == WINDOW_STATE_SHOWING;
+		// GIONEE <wujj> <2015-04-24> add begin
+		setUpdateNaviFlag(false);
+		// GIONEE <wujj> <2015-04-24> add end
         if (mStatusBarWindow != null
                 && window == StatusBarManager.WINDOW_STATUS_BAR
                 && mStatusBarWindowState != state) {
@@ -3152,6 +3160,29 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         transitions.transitionTo(mode, anim && (mode != MODE_OPAQUE));
     }
 
+    
+    //GIONEE <wujj> <2015-04-24> add begin
+    // The following code is add to mark whether it's an event from PhoneWindowManager or
+    // an touch event. If it's an touch event, then call {@code refreshNavigationBar()} 
+    // to update Navigationbar's background color
+    private boolean mShouldUpdateNavi = false;
+    public void setUpdateNaviFlag(boolean update) {
+    	mShouldUpdateNavi = !update;
+    }
+    
+    public boolean getUpdateNaviFlag() {
+    	return !mShouldUpdateNavi;
+    }
+    
+    public void refreshNavigationBar(int mode, int windowState) {
+    	if (mNavigationBarView != null) {
+    		mNavigationBarMode = mode;
+    		mNavigationBarWindowState = windowState;
+    		checkBarMode(mNavigationBarMode, mNavigationBarWindowState, mNavigationBarView.getBarTransitions());
+    	}
+    }
+    // GIONEE <wujj> <2015-04-24> add end
+    
     private void finishBarAnimations() {
         mStatusBarView.getBarTransitions().finishAnimations();
         if (mNavigationBarView != null) {
@@ -3633,14 +3664,19 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 if (DEBUG_MEDIA_FAKE_ARTWORK) {
                     updateMediaMetaData(true);
                 }
+            //GIONEE <wujj> <2015-04-29> modify for CR01468270 begin
+            } else if (PanelBar.ACTION_NOTIFY_PANEL_STATE.equals(action)) {
+            	final int state = intent.getIntExtra("panel_state", PanelBar.STATE_CLOSED);
+            	Log.v(TAG, "NOTIFY_PANEL_STATE:"+state);
+            	if (state == PanelBar.STATE_CLOSED) {
+            		mStatusBarWindowManager.setStatusBarExpanded(false);
+                    mStatusBarView.setFocusable(true);
+            	} else if (state == PanelBar.STATE_OPEN) {
+            		mStatusBarWindowManager.setStatusBarExpanded(true);
+                    mStatusBarView.setFocusable(false);
+            	}
             }
-            // GIONEE <wujj> <2015-03-02> Modify for CR01445888 begin
-            else if (Intent.ACTION_USER_PRESENT.equals(action)) {
-                if (mNavigationBarView != null) {
-                    mNavigationBarView.setBackgroundColor(Color.TRANSPARENT);
-                }
-            }
-            // GIONEE <wujj> <2015-03-02> Modify for CR01445888 end
+            //GIONEE <wujj> <2015-04-29> modify for CR01468270 end
         }
     };
 

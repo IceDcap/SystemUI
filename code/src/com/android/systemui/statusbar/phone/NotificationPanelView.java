@@ -654,6 +654,8 @@ public class NotificationPanelView extends PanelView implements
                     mVelocityTracker = null;
                 }
                 break;
+            default:
+                break;
         }
     }
 
@@ -1113,7 +1115,6 @@ public class NotificationPanelView extends PanelView implements
         updateUnlockIcon();
         updateNotificationTranslucency();
         updateNotificationHandler(getContentHeight());
-        updateNavigatorBarBackground();
         if (DEBUG) {
             invalidate();
         }
@@ -1227,21 +1228,6 @@ public class NotificationPanelView extends PanelView implements
     	//jiating modify for keyguard end
     }
 
-
-    //Update Navigator bar's background
-    private void updateNavigatorBarBackground() {
-    	float frac = getExpandedFraction();
-    	int alpa = (int) (frac*255);
-    	NavigationBarView navigationBarView = mStatusBar.getNavigationBarView();
-    	if (navigationBarView != null) {
-    		Configuration config = getResources().getConfiguration();
-    		if (Configuration.ORIENTATION_PORTRAIT == config.orientation) {
-    			navigationBarView.setBackgroundColor(Color.argb(alpa, 0, 0, 0));
-    		} else {
-    			navigationBarView.setBackgroundColor(Color.argb(0xff, 0, 0, 0));
-    		}
-    	}
-    }
     /**
      * Update notification handler in the bottom
      * Hanlder's final position: top = ScreenHeight - NavigatorbarHeight - offset
@@ -1264,6 +1250,18 @@ public class NotificationPanelView extends PanelView implements
 		//<GIONEE> <wujj> <2015-02-27> modify for CR01449220 begin
 		mStatusBar.updateCarrierLabelVisibility(handlerPadding - mCarrierLabelHeight);
 		//<GIONEE> <wujj> <2015-02-27> modify for CR01449220 end
+		
+		// GIONEE <wujj> <2015-04-24> add begin
+		if (mStatusBar.getUpdateNaviFlag()) {
+			if (isFullyCollapsed()) {
+				mStatusBar.refreshNavigationBar(BarTransitions.MODE_TRANSPARENT, 
+						android.app.StatusBarManager.WINDOW_STATE_SHOWING);
+			} else if(isFullyExpanded()) {
+				mStatusBar.refreshNavigationBar(BarTransitions.MODE_OPAQUE, 
+						android.app.StatusBarManager.WINDOW_STATE_SHOWING);
+			}
+		}
+		// GIONEE <wujj> <2015-04-24> add end
 	}
 	
 	private int getKeyguardMaxPanelHeight() {
@@ -1463,7 +1461,6 @@ public class NotificationPanelView extends PanelView implements
     @Override
     protected void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        updateNavigatorBarBackground();
         mAfforanceHelper.onConfigurationChanged();
     }
 
