@@ -2030,7 +2030,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     !NotificationData.showNotificationEvenIfUnprovisioned(ent.notification)) {
                 continue;
             }
-            if (ent.notification.getNotification().priority != Notification.PRIORITY_MIN) {
+            
+            if (ent.notification.getNotification().priority != Notification.PRIORITY_DEFAULT) {
             	toShow.add(ent.icon);
             }
         }
