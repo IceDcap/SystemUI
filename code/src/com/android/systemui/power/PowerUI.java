@@ -206,15 +206,17 @@ public class PowerUI extends SystemUI {
                 }
 
                 if (!plugged
-                        && (bucket < oldBucket || oldPlugged)
+                        && (bucket < oldBucket || oldPlugged || mIsBootUp)
                         && mBatteryStatus != BatteryManager.BATTERY_STATUS_UNKNOWN
                         && bucket < 0) {
                     // only play SFX when the dialog comes up or the bucket changes
                     final boolean playSound = bucket != oldBucket || oldPlugged;
                     // GIONEE <wujj> <2015-03-19> modify for CR01455754 begin
-                    if (mState.shouldNotify() || oldPlugged) {
+                    if (mState.shouldNotify() || oldPlugged || mIsBootUp) {
                     	mWarnings.showLowBatteryWarning(playSound);
+                    	mIsBootUp = false;
                     }
+                    Log.v(TAG, "onReceive: mIsBootUp = "+mIsBootUp);
                     // GIONEE <wujj> <2015-03-19> modify for CR01455754 end
                 } else if (plugged || (bucket > oldBucket && bucket > 0)) {
                     mWarnings.dismissLowBatteryWarning();
@@ -239,6 +241,17 @@ public class PowerUI extends SystemUI {
         }
     };
 
+    // Gionee <wujj> <2015-04-28> add for CR01469943 begin
+    private boolean mIsBootUp;
+    @Override
+    protected void onBootCompleted() {
+    	super.onBootCompleted();
+    	mIsBootUp = true;
+    	Log.v(TAG, "onBootCompleted: mIsBootUp = "+mIsBootUp);
+    }
+
+	// Gionee <wujj> <2015-04-28> add for CR01469943 end
+    
     public void dump(FileDescriptor fd, PrintWriter pw, String[] args) {
         pw.print("mLowBatteryAlertCloseLevel=");
         pw.println(mLowBatteryAlertCloseLevel);
