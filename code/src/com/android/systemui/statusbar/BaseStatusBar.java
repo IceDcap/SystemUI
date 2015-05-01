@@ -104,6 +104,7 @@ import com.android.systemui.statusbar.policy.HeadsUpNotificationView;
 import com.android.systemui.statusbar.policy.PreviewInflater;
 import com.android.systemui.statusbar.stack.NotificationStackScrollLayout;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -201,7 +202,9 @@ public abstract class BaseStatusBar extends SystemUI implements
 
     private Locale mLocale;
     private float mFontScale;
-
+    //GIONEE <wujj> <2015-01-24> add to reload notification view when font/language changed
+    private String mPrivLang = null;
+    private String mPrivFont = null;
     // Gionee <huangwt> <2014-12-13> add for CR01425226 begin
     // setup contorl center
     protected GnControlCenter mGnControlCenter = null;
@@ -506,7 +509,6 @@ public abstract class BaseStatusBar extends SystemUI implements
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                	Log.d("wujiujiu", "onRankingUpdate:"+rankingMap);
                     updateNotificationRanking(rankingMap);
                     updateClearButton();
                 }
@@ -572,6 +574,9 @@ public abstract class BaseStatusBar extends SystemUI implements
         mLocale = currentConfig.locale;
         mLayoutDirection = TextUtils.getLayoutDirectionFromLocale(mLocale);
         mFontScale = currentConfig.fontScale;
+        
+        mPrivLang = mLocale.getLanguage();
+        mPrivFont = getCurrentFontName(currentConfig);
 
         mUserManager = (UserManager) mContext.getSystemService(Context.USER_SERVICE);
 
@@ -753,7 +758,21 @@ public abstract class BaseStatusBar extends SystemUI implements
         final Locale locale = mContext.getResources().getConfiguration().locale;
         final int ld = TextUtils.getLayoutDirectionFromLocale(locale);
         final float fontScale = newConfig.fontScale;
-
+        
+        //GIONEE <wujj> <2015-01-24> modify for CR01438299 Begin
+        Log.v(TAG, "newConfig: "+newConfig);
+        Log.v(TAG, "getCurrentFontName: "+getCurrentFontName(newConfig));
+        String currentLang = newConfig.locale.getLanguage();
+        String currentFont = getCurrentFontName(newConfig);
+        if (isLanguageChanged(currentLang) || isFontChanged(currentFont) || fontScale != mFontScale) {
+        	mPrivLang = currentLang;
+        	mPrivFont = currentFont;
+	        updateNotificationHeadersOnConfigureChanged();
+	        updateFontTypeFace(newConfig);
+	        mNotificationListener.onListenerConnected();
+        }
+        //GIONEE <wujj> <2015-01-24> modify for CR01438299 end
+        
         if (! locale.equals(mLocale) || ld != mLayoutDirection || fontScale != mFontScale) {
             if (DEBUG) {
                 Log.v(TAG, String.format(
@@ -767,6 +786,43 @@ public abstract class BaseStatusBar extends SystemUI implements
         }
     }
 
+    //GIONEE <wujj> <2015-01-24> modify for CR01438299 Begin
+    boolean isLanguageChanged(String currentLang) {
+    	if (currentLang != null && currentLang.equals(mPrivLang)) {
+    		return false;
+    	}
+    	return true;
+    }
+    
+    boolean isFontChanged(String currentFont) {
+    	 if (currentFont != null && currentFont.equals(mPrivFont)){
+    		 return false;
+    	 }
+    	return true;
+    }
+    
+    protected String getCurrentFontName(Configuration configuration) {
+    	if (configuration == null) {
+    		configuration = mContext.getResources().getConfiguration();
+    	}
+    	
+    	try {
+    		Field field = Configuration.class.getDeclaredField("amigoFont");
+    		field.setAccessible(true);
+    		String font = (String) field.get(configuration);
+    		return font;
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+    	return null;
+    }
+    
+    protected void updateNotificationHeadersOnConfigureChanged() {
+    }
+    protected void updateFontTypeFace(final Configuration newConfig) {
+    }
+    //GIONEE <wujj> <2015-01-24> modify for CR01438299 end
+    
     protected View updateNotificationVetoButton(View row, StatusBarNotification n) {
         View vetoButton = row.findViewById(R.id.veto);
         if (n.isClearable() || (mHeadsUpNotificationView.getEntry() != null

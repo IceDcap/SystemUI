@@ -41,6 +41,7 @@ import android.widget.TextView;
 import com.android.keyguard.KeyguardStatusView;
 import com.android.systemui.FontSizeUtils;
 import com.android.systemui.R;
+import com.android.systemui.gionee.GnFontHelper;
 import com.android.systemui.qs.QSPanel;
 import com.android.systemui.qs.QSTile;
 import com.android.systemui.statusbar.policy.UserInfoController;
@@ -174,6 +175,9 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         mClockExpandedSize = getResources().getDimensionPixelSize(R.dimen.qs_time_expanded_size);
         mClockCollapsedScaleFactor = (float) mClockCollapsedSize / (float) mClockExpandedSize;
 
+        //GIONEE <wujj> <2015-01-24> modify for CR01438299 Begin
+        GnFontHelper.resetAmigoFont(newConfig, mTime, mAmPm, mDateCollapsed, mDateExpanded);
+        //GIONEE <wujj> <2015-01-24> modify for CR01438299 end
         updateClockScale();
         updateClockCollapsedMargin();
     }

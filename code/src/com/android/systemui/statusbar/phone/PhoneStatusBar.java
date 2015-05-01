@@ -186,6 +186,7 @@ import com.amigo.navi.keyguard.KeyguardViewHost;
 import com.amigo.navi.keyguard.skylight.SkylightHost;
 
 import com.amigo.navi.keyguard.KeyguardViewHostManager;
+import com.android.systemui.gionee.GnFontHelper;
 
 
 import java.io.FileDescriptor;
@@ -1002,6 +1003,26 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 		});
     	
     }
+    
+    /**
+     * Call when font type or language changed
+     * see {@code BaseStatusBar.onConfigurationChanged}
+     * */
+    protected void updateNotificationHeadersOnConfigureChanged() {
+    	mStackScroller.removeView(mImportantHeader);
+    	mStackScroller.removeView(mOtherHeader);
+    	initNotificationHeader();
+    }
+    
+    @Override
+    protected void updateFontTypeFace(final Configuration newConfig) {
+		final TextView emptyTextView = (TextView) mEmptyShadeView.findViewById(R.id.no_notifications);
+		final TextView percentageTextView = (TextView) mStatusBarWindow.findViewById(R.id.percentage);
+		final TextView batteryTextView = (TextView) mStatusBarWindow.findViewById(R.id.battery_txt);
+		final TextView  networkSpeedTextView = (TextView) mNetworkSpeedView.findViewById(R.id.networkspeed);
+		GnFontHelper.resetAmigoFont(newConfig, mCarrierLabel, emptyTextView, percentageTextView,batteryTextView,networkSpeedTextView);
+    }
+    //GIONEE <wujj> <2015-01-24> modify for CR01438299 end
     
 	private void clearNotifications(NotificationType type) {
 		ArrayList<ExpandableNotificationRow> targetList = mGnNotificationService
