@@ -22,7 +22,7 @@
     android:id="@+id/amigo_keyguard_sim_pin_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="bottom"
+    android:gravity="center_horizontal"
     android:orientation="vertical" >
 
     <!-- androidprv:layout_maxHeight="@dimen/keyguard_security_max_height" -->
@@ -32,47 +32,51 @@
         android:layout_height="wrap_content"
         layout="@layout/keyguard_message_area" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        android:paddingLeft="42dip"
+        android:paddingRight="42dip" >
+
+        <com.android.keyguard.PasswordTextView
+            android:id="@+id/simPinEntry"
+            android:layout_width="@dimen/keyguard_security_width"
+            android:layout_height="36dp"
+            android:layout_centerHorizontal="true"
+            android:contentDescription="@string/keyguard_accessibility_sim_pin_area"
+            android:gravity="center"
+            androidprv:scaledTextSize="18" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="14dip" />
 
     <LinearLayout
         android:id="@+id/keyguard_bouncer_frame"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">      
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="10dp"
-            android:layout_weight="1" >
-
-            <com.android.keyguard.PasswordTextView
-                android:id="@+id/simPinEntry"
-                android:layout_width="@dimen/keyguard_security_width"
-                android:layout_height="36dp"
-                android:layout_centerHorizontal="true"
-                android:contentDescription="@string/keyguard_accessibility_sim_pin_area"
-                android:gravity="center"
-                androidprv:scaledTextSize="18" />
-        </RelativeLayout>
-
-        <View
-            android:layout_width="wrap_content"
-            android:layout_height="14dip" />
-
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingLeft="42dip"
+        android:paddingRight="42dip" >
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:gravity="center_horizontal"
             android:orientation="horizontal" >
-           
+
             <view
                 android:id="@+id/key1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 class="com.amigo.navi.keyguard.security.NumberPadKey"
                 android:background="@drawable/numpadkey_click_effect"
+                android:gravity="center"
                 android:textColor="#ccffffff"
                 android:textSize="32dp"
                 androidprv:digit="1"
@@ -82,10 +86,10 @@
                 android:id="@+id/key2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                 android:gravity="center"
-                 android:layout_marginLeft="37dip"
+                android:layout_marginLeft="37dip"
                 class="com.amigo.navi.keyguard.security.NumberPadKey"
                 android:background="@drawable/numpadkey_click_effect"
+                android:gravity="center"
                 android:textColor="#ccffffff"
                 android:textSize="32dp"
                 androidprv:digit="2"
@@ -95,12 +99,12 @@
                 android:id="@+id/key3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                 android:gravity="center"
+                android:layout_marginLeft="37dip"
                 class="com.amigo.navi.keyguard.security.NumberPadKey"
                 android:background="@drawable/numpadkey_click_effect"
+                android:gravity="center"
                 android:textColor="#ccffffff"
                 android:textSize="32dp"
-                android:layout_marginLeft="37dip"
                 androidprv:digit="3"
                 androidprv:textView="@+id/simPinEntry" />
         </LinearLayout>
@@ -111,9 +115,11 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:gravity="center_horizontal"
-            android:orientation="horizontal">
+            android:orientation="horizontal" >
+
             <view
                 android:id="@+id/key4"
                 android:layout_width="wrap_content"
@@ -159,7 +165,8 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:gravity="center_horizontal"
             android:orientation="horizontal" >
 
@@ -208,52 +215,70 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:gravity="center_horizontal"
             android:orientation="horizontal" >
 
-            <view
+         <!--    <Button
                 android:id="@+id/key_ignore"
-                android:layout_width="wrap_content"
+                android:layout_width="67dip"
                 android:layout_height="wrap_content"
                 android:background="@drawable/numpadkey_click_effect"
                 android:gravity="center"
-                class="com.amigo.navi.keyguard.security.simButtonView"
                 android:text="@string/ignore_password_label"
                 android:textColor="#ccffffff"
-                android:textSize="18dp" />
-   
-              <view
+                android:textSize="18dp"
+                android:visibility="gone" />
+ -->
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00000000"
+                android:clickable="false"
+                android:gravity="center" >
+
+                <Button
+                    android:id="@+id/key_ignore"
+                    android:layout_width="67dip"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/numpadkey_click_effect"
+                    android:gravity="center"
+                    android:text="@string/ignore_password_label"
+                    android:textColor="#ccffffff"
+                    android:textSize="18dp" />
+            </RelativeLayout>
+
+            <view
                 android:id="@+id/key0"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="37dip"
                 class="com.amigo.navi.keyguard.security.NumberPadKey"
                 android:background="@drawable/numpadkey_click_effect"
                 android:gravity="center"
                 android:textColor="#ccffffff"
                 android:textSize="32dp"
-                android:layout_marginLeft="37dip"
                 androidprv:digit="0"
                 androidprv:textView="@+id/simPinEntry" />
-
 
             <RelativeLayout
                 android:id="@+id/key_enter_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="37dip"
                 android:background="@drawable/numpadkey_click_effect"
-                android:gravity="center"
-                android:layout_marginLeft="37dip" >
+                android:clickable="true"
+                android:gravity="center" >
 
-                <view
+                <Button
                     android:id="@+id/key_enter"
-                    android:layout_width="wrap_content"
+                    android:layout_width="67dp"
                     android:layout_height="wrap_content"
                     android:background="#00000000"
                     android:clickable="false"
-                    class="com.amigo.navi.keyguard.security.simButtonView"
                     android:contentDescription="@string/keyboardview_keycode_enter"
-                    android:gravity="center"              
+                    android:gravity="center"
                     android:text="@string/save_password_label"
                     android:textColor="#ccffffff"
                     android:textSize="18dp" />
@@ -266,7 +291,7 @@
                     android:layout_centerInParent="true"
                     android:gravity="center"
                     android:visibility="gone" />
-           </RelativeLayout>
+            </RelativeLayout>
         </LinearLayout>
     </LinearLayout>
 

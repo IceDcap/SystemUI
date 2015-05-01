@@ -5,6 +5,7 @@ import com.android.keyguard.KeyguardViewBase;
 import com.android.internal.widget.LockPatternUtils;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.Choreographer;
 import android.view.KeyEvent;
@@ -50,7 +51,6 @@ public class AmigoKeyguardBouncer {
 	        mKeyguardView = (KeyguardViewBase) mRoot.findViewById(R.id.keyguard_host_view);  
 	        mRoot.setVisibility(View.INVISIBLE);
 	        mRoot.setSystemUiVisibility(View.STATUS_BAR_DISABLE_HOME);
-	        
 	    }
 	  
 	 public void  initKeyguardBouncer(ViewMediatorCallback callback,LockPatternUtils lockPatternUtils){

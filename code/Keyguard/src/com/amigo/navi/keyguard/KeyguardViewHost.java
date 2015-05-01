@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import com.amigo.navi.keyguard.AmigoKeyguardBouncer.KeyguardBouncerCallback;
 import com.amigo.navi.keyguard.sensor.KeyguardSensorModule;
@@ -49,6 +50,7 @@ public class KeyguardViewHost extends FrameLayout {
     
     private void amigoInflateKeyguardView(Bundle options) {
         mAmigoKeyguardView = new AmigoKeyguardHostView(mContext);
+        mAmigoKeyguardView.setOrientation(LinearLayout.VERTICAL);
 //        mAmigoKeyguardView.setLockPatterUtils(mLockPatternUtils);
         addView(mAmigoKeyguardView);
     }

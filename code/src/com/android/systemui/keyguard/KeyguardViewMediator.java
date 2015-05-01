@@ -768,7 +768,7 @@ public class KeyguardViewMediator extends SystemUI {
         }
         KeyguardUpdateMonitor.getInstance(mContext).dispatchScreenTurnedOn();
         maybeSendUserPresentBroadcast();
-        showSkylightIfNeed(false);
+        showSkylightIfNeed();
     }
 
     private void maybeSendUserPresentBroadcast() {
@@ -905,7 +905,7 @@ public class KeyguardViewMediator extends SystemUI {
     }
     
     
-    private void showSkylightIfNeed(final boolean isGotoUnlockIfHide) {
+    private void showSkylightIfNeed() {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -986,7 +986,7 @@ public class KeyguardViewMediator extends SystemUI {
                 if(mOccluded){
                     hideSkylight(true);
                 }else{
-                    showSkylight();
+                    showSkylightIfNeed();
                 }
             }
         }
@@ -1688,6 +1688,9 @@ public class KeyguardViewMediator extends SystemUI {
     }
     
     protected boolean getIsSkylightShown(){
-        return mStatusBarKeyguardViewManager.getIsSkylightShown();
+        if(mStatusBarKeyguardViewManager!=null){
+            return mStatusBarKeyguardViewManager.getIsSkylightShown();
+        }
+        return false;
     }
 }

@@ -372,7 +372,10 @@ public class StatusBarKeyguardViewManager implements KeyguardBouncerCallback ,Ke
 
     
     public boolean getIsSkylightShown(){
-        return mKeyguardViewHostManager.getIsSkylightShown();
+        if(mKeyguardViewHostManager!=null){
+            return mKeyguardViewHostManager.getIsSkylightShown();
+        }
+        return false;
     }
     
     /**

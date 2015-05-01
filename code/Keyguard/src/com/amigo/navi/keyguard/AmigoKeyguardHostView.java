@@ -41,7 +41,7 @@ import com.android.internal.widget.LockPatternUtils;
 //import com.gionee.navi.keyguard.everydayphoto.WallpaperData;
 import static com.android.keyguard.KeyguardHostView.OnDismissAction;
 
-public class AmigoKeyguardHostView extends FrameLayout {
+public class AmigoKeyguardHostView extends LinearLayout {
 	private static final String LOG_TAG = "NaviKg_HostView";
 	
 	public static final String KEY_LOCK_BY_LAUNCHER = "lock_by_launcher";
@@ -235,9 +235,7 @@ public class AmigoKeyguardHostView extends FrameLayout {
 //		mLauncherShotPage = new AmigoLauncherShotPage(context);
 		addView(bouncer,lp);
 //		mKeyguardView = (KeyguardViewBase) bouncer.findViewById(R.id.keyguard_host_view);
-		
-		
-//
+
 //		AmigoXPageManager.getInstance(mContext).setUpXPage(mLauncherShotPage);
 	}
 
@@ -277,47 +275,49 @@ public class AmigoKeyguardHostView extends FrameLayout {
 		return touched;
 	}
 
-	@Override
-	protected void onLayout(boolean changed, int l, int t, int r, int b) {
-		if (getChildCount() == 0) {
-			return;
-		}
-
-		int offsetX = getViewportOffsetX();
-		int offsetY = getViewportOffsetY();
-		mViewport.offset(offsetX, offsetY);
-		
-		int childLeft = offsetX + getPaddingLeft();
-		int childTop = offsetY + getPaddingTop();
-		final int childCount = getChildCount();
-		if (!isFirstViewBringToFront) {
-			isFirstViewBringToFront = true;
-			for (int i = 0; i < childCount; ++i) {
-				View child = getChildAt(i);
-				int childRight = childLeft + child.getMeasuredWidth();
-				int childBottom = childTop + child.getMeasuredHeight();
-				child.layout(childLeft, childTop, childRight, childBottom);
-				childTop += child.getMeasuredHeight();
-			}
-			View child = getChildAt(0);
-			child.bringToFront();
-		} else {
-			childTop += getChildAt(childCount-1).getMeasuredHeight();
-            for (int i = 0; i < childCount; i++) {
-                View child = getChildAt(i);
-                if (i == childCount - 1) {
-                    int childRight = childLeft + child.getMeasuredWidth();
-                    int childBottom = offsetY + getPaddingTop() + child.getMeasuredHeight();
-                    child.layout(childLeft, offsetY + getPaddingTop(), childRight, childBottom);
-                } else {
-                    int childRight = childLeft + child.getMeasuredWidth();
-                    int childBottom = childTop + child.getMeasuredHeight();
-                    child.layout(childLeft, childTop, childRight, childBottom);
-                    childTop += child.getMeasuredHeight();
-                }
-            }
-		}
-	}
+//	@Override
+//	protected void onLayout(boolean changed, int l, int t, int r, int b) {
+//		if (getChildCount() == 0) {
+//			return;
+//		}
+//
+//		int offsetX = getViewportOffsetX();
+//		int offsetY = getViewportOffsetY();
+//		mViewport.offset(offsetX, offsetY);
+//		
+//		int childLeft = offsetX + getPaddingLeft();
+//		int childTop = offsetY + getPaddingTop();
+//		final int childCount = getChildCount();
+//		if (!isFirstViewBringToFront) {
+//			isFirstViewBringToFront = true;
+//			for (int i = 0; i < childCount; ++i) {
+//				View child = getChildAt(i);
+//				int childRight = childLeft + child.getMeasuredWidth();
+//				int childBottom = childTop + child.getMeasuredHeight();
+//				child.layout(childLeft, childTop, childRight, childBottom);
+//				childTop += child.getMeasuredHeight();
+//			}
+//			View child = getChildAt(0);
+//			child.bringToFront();
+//		} else {
+//			childTop += getChildAt(childCount-1).getMeasuredHeight();
+//            for (int i = 0; i < childCount; i++) {
+//                View child = getChildAt(i);
+//                if (i == childCount - 1) {
+//                    int childRight = childLeft + child.getMeasuredWidth();
+//                    int childBottom = offsetY + getPaddingTop() + child.getMeasuredHeight();
+//                    child.layout(childLeft, offsetY + getPaddingTop(), childRight, childBottom);
+//                    DebugLog.d(LOG_TAG, "childTop: 222"+(offsetY + getPaddingTop())+"  childBottom: "+childBottom);
+//                } else {
+//                    int childRight = childLeft + child.getMeasuredWidth();
+//                    int childBottom = childTop + child.getMeasuredHeight();
+//                    child.layout(childLeft, childTop, childRight, childBottom);
+//                    DebugLog.d(LOG_TAG, "childTop: 111"+childTop+"  childBottom: "+childBottom);
+//                    childTop += child.getMeasuredHeight();
+//                }
+//            }
+//		}
+//	}
 
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -340,28 +340,29 @@ public class AmigoKeyguardHostView extends FrameLayout {
 
 		mViewport.set(0, 0, widthSize, heightSize);
 
-		final int verticalPadding = getPaddingTop() + getPaddingBottom();
-		final int horizontalPadding = getPaddingLeft() + getPaddingRight();
-
-		final int childCount = getChildCount();
-		for (int i = 0; i < childCount; ++i) {
-			View child = getChildAt(i);
-			ViewGroup.LayoutParams lp = child.getLayoutParams();
-
-			final int childWidthMode = getChildMeasureSpecMode(lp.width);
-			final int childHeightMode = getChildMeasureSpecMode(lp.height);
-			int childWidthMeausred = MeasureSpec.makeMeasureSpec(widthSize
-					- horizontalPadding, childWidthMode);
-			int childHeightMeasured = MeasureSpec.makeMeasureSpec(heightSize
-					- verticalPadding, childHeightMode);
-			child.measure(childWidthMeausred, childHeightMeasured);
-		}
-
-		setMeasuredDimension(widthSize, heightSize);
-
+//		final int verticalPadding = getPaddingTop() + getPaddingBottom();
+//		final int horizontalPadding = getPaddingLeft() + getPaddingRight();
+//
+//		final int childCount = getChildCount();
+//		for (int i = 0; i < childCount; ++i) {
+//			View child = getChildAt(i);
+//			ViewGroup.LayoutParams lp = child.getLayoutParams();
+//
+//			final int childWidthMode = getChildMeasureSpecMode(lp.width);
+//			final int childHeightMode = getChildMeasureSpecMode(lp.height);
+//			int childWidthMeausred = MeasureSpec.makeMeasureSpec(widthSize
+//					- horizontalPadding, childWidthMode);
+//			int childHeightMeasured = MeasureSpec.makeMeasureSpec(heightSize
+//					- verticalPadding, childHeightMode);
+//			child.measure(childWidthMeausred, childHeightMeasured);
+//		}
+//
+//		setMeasuredDimension(widthSize, heightSize);
+		
 		invalidPagerOffset();
 		
 		resetMaxBound();
+		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 	}
 
 	private int getChildMeasureSpecMode(int dimension) {
