@@ -1334,5 +1334,14 @@ public class AmigoKeyguardHostView extends LinearLayout {
     	
     	return false;
     }
+    
+    public void showBouncerOrKeyguardDone(){
+		 if(isSecure()){
+			 scrollToUnlockByOther();
+			 resetDisMissAction();
+		 }else{
+			 finish();
+		 }
+    }
 }
 

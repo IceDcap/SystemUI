@@ -351,6 +351,7 @@ public class StatusBarKeyguardViewManager implements KeyguardBouncerCallback ,Ke
     public void dismiss() {
         if (mScreenOn) {
 //            showBouncer();
+        	mKeyguardViewHostManager.dismiss();
         	
         }
     }

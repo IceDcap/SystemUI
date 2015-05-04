@@ -241,4 +241,10 @@ public class KeyguardViewHost extends FrameLayout {
             break;
         }
     }
+    
+    public void showBouncerOrKeyguardDone(){
+    	if ( mAmigoKeyguardView!=null) {
+          	  mAmigoKeyguardView.showBouncerOrKeyguardDone(); 
+           }
+    }
 }

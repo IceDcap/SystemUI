@@ -379,4 +379,10 @@ public class KeyguardViewHostManager {
     }
     
     
+    public void showBouncerOrKeyguardDone(){
+    	if ( mKeyguardViewHost!=null) {
+    		mKeyguardViewHost.showBouncerOrKeyguardDone(); 
+           }
+    }
+    
 }
