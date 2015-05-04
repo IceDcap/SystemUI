@@ -1069,11 +1069,13 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
             data = new SimData(state, slotId, subId);
             mSimDatas.put(subId, data);
             changed = true; // no data yet; force update
+            DebugLog.d(TAG, "handleSimStateChange  data is null");
         } else {
             changed = (data.simState != state || data.subId != subId || data.slotId != slotId);
             data.simState = state;
             data.subId = subId;
             data.slotId = slotId;
+            DebugLog.d(TAG, "handleSimStateChange  data is not null");
         }
         if (changed && state != State.UNKNOWN) {
             for (int i = 0; i < mCallbacks.size(); i++) {
@@ -1352,6 +1354,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
 
     public State getSimState(int subId) {
         if (mSimDatas.containsKey(subId)) {
+            DebugLog.d(TAG, "getSimState  subId: "+subId+"  simState: "+mSimDatas.get(subId).simState);
             return mSimDatas.get(subId).simState;
         } else {
             return State.UNKNOWN;

@@ -584,3 +584,15 @@ svn: E205000: Syntax error in revision argument '4731:'
 File does not exist:  at getAppChangeSet.pl line 48
 
 ==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01296451      Opened     jingyn     解决rom锁屏bug
+CR01374919      Opened     guosb      4.4rom锁屏功能开发
+CR01425613      Opened     wujj       合入Android 5.0通知中心代码
+CR01466272      Opened     wujj       上传Android5.1 SystemUI原生代码
+CR01471815      Opened     guozj      android 5.1 SystemUI适配
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.b
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.a
+Code difference: svn diff -r 4742:4734 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================

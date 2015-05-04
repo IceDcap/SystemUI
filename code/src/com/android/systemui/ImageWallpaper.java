@@ -497,7 +497,15 @@ public class ImageWallpaper extends WallpaperService {
         }
 
         private boolean drawWallpaperWithOpenGL(SurfaceHolder sh, int w, int h, int left, int top) {
-            if (!initGL(sh)) return false;
+            boolean initgl = false;
+            try {
+                initgl = initGL(sh);
+            } catch (RuntimeException e) {
+                Log.e(TAG, "initGL()   ERROR RuntimeException");
+                e.printStackTrace();
+            }
+            
+            if (!initgl) return false;
 
             final float right = left + mBackground.getWidth() * mScale;
             final float bottom = top + mBackground.getHeight() * mScale;

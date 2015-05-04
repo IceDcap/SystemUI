@@ -2,26 +2,31 @@
 Build Notes
 ==================
 1.版本目的:
-bugfix
+Bugfix
 2.功能变更:
-无
+移植5.0功能代码
 3.重点测试的问题:
-上滑多任务报错问题
+（1）锁屏来闹钟之后解锁，桌面等无法使用。
+（2）字体切换。
+（3）back键无响应问题。
 4.应用数据库是否改变:
 No
 
 ==================
 Release Location
 ==================
-/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.a.zip
+/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.b.zip
 
 ==================
 CR List
 ==================
 [Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
-svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.br' non-existent in revision 4732
-
-svn: E200009: Could not display info for all targets because some targets don't exist
-svn: E205000: Syntax error in revision argument '4731:'
-File does not exist:  at getAppChangeSet.pl line 48
+CR01296451      Opened     jingyn     解决rom锁屏bug
+CR01374919      Opened     guosb      4.4rom锁屏功能开发
+CR01425613      Opened     wujj       合入Android 5.0通知中心代码
+CR01466272      Opened     wujj       上传Android5.1 SystemUI原生代码
+CR01471815      Opened     guozj      android 5.1 SystemUI适配
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.b
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.a
+Code difference: svn diff -r 4742:4734 http://192.168.110.97/svn/Amigo_SystemUI/trunk
 

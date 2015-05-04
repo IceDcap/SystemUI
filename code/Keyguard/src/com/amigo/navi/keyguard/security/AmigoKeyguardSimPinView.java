@@ -46,6 +46,7 @@ import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.keyguard.EmergencyCarrierArea;
@@ -58,7 +59,7 @@ import com.android.keyguard.R;
 /**
  * Displays a PIN pad for unlocking.
  */
-public class AmigoKeyguardSimPinView extends KeyguardPinBasedInputView {
+public class AmigoKeyguardSimPinView extends AmigoKeyguardSimPinPukBaseView {
     private static final String LOG_TAG = "KeyguardSimPinView";
     private static final boolean DEBUG = KeyguardConstants.DEBUG_SIM_STATES;
     public static final String TAG = "KeyguardSimPinView";
@@ -68,8 +69,7 @@ public class AmigoKeyguardSimPinView extends KeyguardPinBasedInputView {
 
     private AlertDialog mRemainingAttemptsDialog;
     private int mSubId;
-//    private ImageView mSimImageView;
-
+    
     KeyguardUpdateMonitorCallback mUpdateMonitorCallback = new KeyguardUpdateMonitorCallback() {
         @Override
         public void onSimStateChanged(int subId, int slotId, State simState) {
@@ -170,10 +170,11 @@ public class AmigoKeyguardSimPinView extends KeyguardPinBasedInputView {
     @Override
     public void onPause(int reason) {
         // dismiss the dialog.
-        if (mSimUnlockProgressDialog != null) {
-            mSimUnlockProgressDialog.dismiss();
-            mSimUnlockProgressDialog = null;
-        }
+//        if (mSimUnlockProgressDialog != null) {
+//            mSimUnlockProgressDialog.dismiss();
+//            mSimUnlockProgressDialog = null;
+//        }
+        setProgressBarVisible(false);
     }
 
     /**
@@ -256,6 +257,8 @@ public class AmigoKeyguardSimPinView extends KeyguardPinBasedInputView {
         }
     }
 
+
+    
     private Dialog getSimUnlockProgressDialog() {
         if (mSimUnlockProgressDialog == null) {
             mSimUnlockProgressDialog = new ProgressDialog(mContext);
@@ -299,17 +302,19 @@ public class AmigoKeyguardSimPinView extends KeyguardPinBasedInputView {
             
             return;
         }
-
-        getSimUnlockProgressDialog().show();
+        
+        setProgressBarVisible(true);
+//        getSimUnlockProgressDialog().show();
 
         if (mCheckSimPinThread == null) {
             mCheckSimPinThread = new CheckSimPin(mPasswordEntry.getText(), mSubId) {
                 void onSimCheckResponse(final int result, final int attemptsRemaining) {
                     post(new Runnable() {
                         public void run() {
-                            if (mSimUnlockProgressDialog != null) {
-                                mSimUnlockProgressDialog.hide();
-                            }
+//                            if (mSimUnlockProgressDialog != null) {
+//                                mSimUnlockProgressDialog.hide();
+//                            }
+                            setProgressBarVisible(false);
                             resetPasswordText(true /* animate */);
                             if (result == PhoneConstants.PIN_RESULT_SUCCESS) {
                                 KeyguardUpdateMonitor.getInstance(getContext())
@@ -319,7 +324,7 @@ public class AmigoKeyguardSimPinView extends KeyguardPinBasedInputView {
                                 if (result == PhoneConstants.PIN_PASSWORD_INCORRECT) {
                                     if (attemptsRemaining <= 2) {
                                         // this is getting critical - show dialog
-                                        getSimRemainingAttemptsDialog(attemptsRemaining).show();
+//                                        getSimRemainingAttemptsDialog(attemptsRemaining).show();
                                     } else {
                                         // show message
                                         mSecurityMessageDisplay.setMessage(

@@ -58,7 +58,7 @@ import com.android.keyguard.EmergencyCarrierArea;
 /**
  * Displays a PIN pad for entering a PUK (Pin Unlock Kode) provided by a carrier.
  */
-public class AmigoKeyguardSimPukView extends KeyguardPinBasedInputView {
+public class AmigoKeyguardSimPukView extends AmigoKeyguardSimPinPukBaseView {
     private static final String LOG_TAG = "KeyguardSimPukView";
     private static final boolean DEBUG = KeyguardConstants.DEBUG;
     public static final String TAG = "KeyguardSimPukView";
@@ -316,10 +316,11 @@ public class AmigoKeyguardSimPukView extends KeyguardPinBasedInputView {
     @Override
     public void onPause(int reason) {
         // dismiss the dialog.
-        if (mSimUnlockProgressDialog != null) {
-            mSimUnlockProgressDialog.dismiss();
-            mSimUnlockProgressDialog = null;
-        }
+//        if (mSimUnlockProgressDialog != null) {
+//            mSimUnlockProgressDialog.dismiss();
+//            mSimUnlockProgressDialog = null;
+//        }
+        setProgressBarVisible(false);
     }
 
     /**
@@ -419,16 +420,17 @@ public class AmigoKeyguardSimPukView extends KeyguardPinBasedInputView {
     }
 
     private void updateSim() {
-        getSimUnlockProgressDialog().show();
-
+//        getSimUnlockProgressDialog().show();
+        setProgressBarVisible(true);
         if (mCheckSimPukThread == null) {
             mCheckSimPukThread = new CheckSimPuk(mPukText, mPinText, mSubId) {
                 void onSimLockChangedResponse(final int result, final int attemptsRemaining) {
                     post(new Runnable() {
                         public void run() {
-                            if (mSimUnlockProgressDialog != null) {
-                                mSimUnlockProgressDialog.hide();
-                            }
+//                            if (mSimUnlockProgressDialog != null) {
+//                                mSimUnlockProgressDialog.hide();
+//                            }
+                            setProgressBarVisible(false);
                             resetPasswordText(true /* animate */);
                             if (result == PhoneConstants.PIN_RESULT_SUCCESS) {
                                 KeyguardUpdateMonitor.getInstance(getContext())

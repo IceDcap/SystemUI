@@ -1024,7 +1024,7 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
 		}
 	}
     
-    Handler mHandler = new Handler() {
+    private Handler mHandler = new Handler() {
 
 		@Override
 		public void handleMessage(Message msg) {

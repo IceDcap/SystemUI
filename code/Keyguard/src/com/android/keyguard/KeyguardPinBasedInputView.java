@@ -31,7 +31,7 @@ public abstract class KeyguardPinBasedInputView extends KeyguardAbsKeyInputView
         implements View.OnKeyListener {
 
     protected PasswordTextView mPasswordEntry;
-    private View mOkButton;
+    protected View mOkButton;
     private View mDeleteButton;
     private View mButton0;
     private View mButton1;

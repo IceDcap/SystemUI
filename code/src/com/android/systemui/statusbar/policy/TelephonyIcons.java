@@ -193,8 +193,8 @@ class TelephonyIcons {
         R.drawable.ic_qs_signal_lte
     };
 
-    static final int FLIGHT_MODE_ICON = R.drawable.stat_sys_airplane_mode;
-    static final int ROAMING_ICON = R.drawable.stat_sys_data_fully_connected_roam;
+    static final int FLIGHT_MODE_ICON = R.drawable.gn_stat_sys_airplane_mode;
+    static final int ROAMING_ICON = R.drawable.gn_stat_sys_mobile_roam;//stat_sys_data_fully_connected_roam;
     static final int ICON_LTE = R.drawable.stat_sys_data_fully_connected_lte;
     static final int ICON_G = R.drawable.gn_stat_sys_mobile_type_g;
     static final int ICON_E = R.drawable.gn_stat_sys_mobile_type_e;

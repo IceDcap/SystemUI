@@ -36,7 +36,7 @@
 	<color name="gn_qs_tile_on_opacity">#4cffffff</color>
 	<color name="gn_qs_tile_off">#4cffffff</color>
 	
-	<color name="system_bar_background_transparent_5">#0d000000</color>
+	<color name="gn_system_bar_background_transparent_5">#0d000000</color>
 	
 	<!-- Recent -->
 	<color name="gn_recent_app_label_text_color">#ffffff</color>

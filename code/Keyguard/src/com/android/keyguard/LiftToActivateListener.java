@@ -25,7 +25,7 @@ import android.view.accessibility.AccessibilityManager;
  * Hover listener that implements lift-to-activate interaction for
  * accessibility. May be added to multiple views.
  */
-class LiftToActivateListener implements View.OnHoverListener {
+public class LiftToActivateListener implements View.OnHoverListener {
     /** Manager used to query accessibility enabled state. */
     private final AccessibilityManager mAccessibilityManager;
 

@@ -42,6 +42,8 @@ import android.media.MediaActionSound;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.os.Process;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
@@ -381,6 +383,21 @@ class GlobalScreenshot {
 
     private MediaActionSound mCameraSound;
 
+    private Handler mHandler = new Handler() {
+
+        @Override
+        public void handleMessage(Message msg) {
+            
+            switch (msg.what) {
+                case 1:                    
+                    handlerScreenshot(msg);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+    
 
     /**
      * @param context everything needs a context :(
@@ -485,11 +502,11 @@ class GlobalScreenshot {
     /**
      * Takes a screenshot of the current display and shows an animation.
      */
-    void takeScreenshot(Runnable finisher, boolean statusBarVisible, boolean navBarVisible) {
+    void takeScreenshot(final Runnable finisher, final boolean statusBarVisible, final boolean navBarVisible) {
         // We need to orient the screenshot correctly (and the Surface api seems to take screenshots
         // only in the natural orientation of the device :!)
         mDisplay.getRealMetrics(mDisplayMetrics);
-        float[] dims = {mDisplayMetrics.widthPixels, mDisplayMetrics.heightPixels};
+        final float[] dims = {mDisplayMetrics.widthPixels, mDisplayMetrics.heightPixels};
         float degrees = getDegreesForRotation(mDisplay.getRotation());
         boolean requiresRotation = (degrees > 0);
         if (requiresRotation) {
@@ -502,11 +519,47 @@ class GlobalScreenshot {
         }
 
         // Take the screenshot
-        mScreenBitmap = SurfaceControl.screenshot((int) dims[0], (int) dims[1]);
-        if (mScreenBitmap == null) {
-            notifyScreenshotError(mContext, mNotificationManager);
-            finisher.run();
-            return;
+        mHandler.post(new Runnable() {
+            
+            @Override
+            public void run() {
+                mScreenBitmap = SurfaceControl.screenshot((int) dims[0], (int) dims[1]);
+                if (mScreenBitmap == null) {
+                    notifyScreenshotError(mContext, mNotificationManager);
+                    finisher.run();
+                } else {
+                    MsgObject msgObject = new MsgObject(statusBarVisible, navBarVisible, finisher);
+                    Message msg = mHandler.obtainMessage(1, msgObject);
+                    mHandler.sendMessage(msg);
+                }
+            }
+        });
+    }
+
+    private class MsgObject {
+        boolean arg1;
+        boolean arg2;
+        Runnable runnable;
+        
+        public MsgObject(boolean arg1, boolean arg2, Runnable runnable) {
+            this.arg1 = arg1;
+            this.arg2 = arg2;
+            this.runnable = runnable;
+        }
+    }
+    
+    private void handlerScreenshot(Message msg) {
+        mDisplay.getRealMetrics(mDisplayMetrics);
+        final float[] dims = {mDisplayMetrics.widthPixels, mDisplayMetrics.heightPixels};
+        float degrees = getDegreesForRotation(mDisplay.getRotation());
+        boolean requiresRotation = (degrees > 0);
+        if (requiresRotation) {
+            // Get the dimensions of the device in its native orientation
+            mDisplayMatrix.reset();
+            mDisplayMatrix.preRotate(-degrees);
+            mDisplayMatrix.mapPoints(dims);
+            dims[0] = Math.abs(dims[0]);
+            dims[1] = Math.abs(dims[1]);
         }
 
         if (requiresRotation) {
@@ -529,10 +582,10 @@ class GlobalScreenshot {
         mScreenBitmap.prepareToDraw();
 
         // Start the post-screenshot animation
-        startAnimation(finisher, mDisplayMetrics.widthPixels, mDisplayMetrics.heightPixels,
-                statusBarVisible, navBarVisible);
+        MsgObject msgObject = (MsgObject) msg.obj;
+        startAnimation(msgObject.runnable, mDisplayMetrics.widthPixels, mDisplayMetrics.heightPixels,
+                msgObject.arg1, msgObject.arg2);
     }
-
 
     /**
      * Starts the animation after taking the screenshot

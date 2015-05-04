@@ -147,7 +147,7 @@ public class BarTransitions {
             } else {
                 mOpaque = res.getColor(R.color.system_bar_background_opaque);
                 mSemiTransparent = res.getColor(R.color.system_bar_background_semi_transparent);
-                mTransparent = res.getColor(R.color.system_bar_background_transparent);
+                mTransparent = res.getColor(R.color.gn_system_bar_background_transparent_5);
                 mWarning = res.getColor(com.android.internal.R.color.battery_saver_mode_color);
             }
             mGradient = res.getDrawable(gradientResourceId);
