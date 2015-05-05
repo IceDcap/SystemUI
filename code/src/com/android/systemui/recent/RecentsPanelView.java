@@ -76,7 +76,7 @@ import java.util.ConcurrentModificationException;
 public class RecentsPanelView extends FrameLayout implements OnItemClickListener, RecentsCallback,
         StatusBarPanel, Animator.AnimatorListener {
     static final String TAG = "RecentsPanelView";
-    static final boolean DEBUG = PhoneStatusBar.DEBUG || false;
+    static final boolean DEBUG = true;// PhoneStatusBar.DEBUG || false;
     private PopupMenu mPopup;
     private View mRecentsScrim;
     private View mRecentsNoApps;

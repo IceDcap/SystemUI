@@ -182,4 +182,10 @@ public class TvStatusBar extends BaseStatusBar {
     @Override
     public void showScreenPinningRequest() {
     }
+	
+	@Override
+	protected void updateNotificationHeaders() {
+		// TODO Auto-generated method stub
+		
+	}
 }

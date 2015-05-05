@@ -661,7 +661,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         updateDisplaySize(); // populates mDisplayMetrics
         updateResources();
 
-        mIconSize = res.getDimensionPixelSize(com.android.internal.R.dimen.status_bar_icon_size);
+        mIconSize = res.getDimensionPixelSize(R.dimen.gn_status_bar_icon_size);
 
         mStatusBarWindow = (StatusBarWindowView) View.inflate(context,
                 R.layout.super_status_bar, null);
@@ -2093,6 +2093,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mNotificationIcons.removeView(expected);
             mNotificationIcons.addView(expected, i);
         }
+        isShowMoreDot();
     }
 
     @Override
@@ -3339,7 +3340,18 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         // not for you
         if (!isNotificationForCurrentProfiles(n)) return;
-
+        
+        // GIONEE <wujj> <2015-03-11> modify for CR01452708 begin
+        if (!isImportantNotification(n)) return;
+        // GIONEE <wujj> <2015-03-11> modify for CR01452708 end
+        
+        // GIONEE <wujj> <2015-03-16> modify for CR01451591 begin
+        if (mOnConfigChanged) {
+        	mNotificationIcons.setMoreDotAnimator(false);
+        	return;
+        }
+        // GIONEE <wujj> <2015-03-16> modify for CR01451591 end
+        
         // Show the ticker if one is requested. Also don't do this
         // until status bar window is attached to the window manager,
         // because...  well, what's the point otherwise?  And trying to
@@ -3353,6 +3365,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
     }
 
+    // GIONEE <wujj> <2015-03-11> modify for CR01452708 begin
+    private boolean isImportantNotification(StatusBarNotification n) {
+    	return (n.getNotification().priority == Notification.PRIORITY_MAX);
+    }
+    // GIONEE <wujj> <2015-03-11> modify for CR01452708 end
+    
     private class MyTicker extends Ticker {
         MyTicker(Context context, View sb) {
             super(context, sb);
@@ -3821,8 +3839,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mNaturalBarHeight = res.getDimensionPixelSize(
                 com.android.internal.R.dimen.status_bar_height);
 
-        int newIconSize = res.getDimensionPixelSize(
-            com.android.internal.R.dimen.status_bar_icon_size);
+        int newIconSize = res.getDimensionPixelSize(R.dimen.gn_status_bar_icon_size);
         int newIconHPadding = res.getDimensionPixelSize(
             R.dimen.status_bar_icon_padding);
 
@@ -4804,6 +4821,27 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mGnNetworkSpeedController.addLabelView(networkSpeedTextView);
         mGnNetworkSpeedController.initVisibilityState();
     }
+    
+    // GIONEE <wujj> <2015-03-17> Modify for CR01455032 begin
+    @Override
+    protected void setMoreDotAnimator(StatusBarNotification n) {
+    	mNotificationIcons.setMoreDotAnimator(n.getNotification().priority == Notification.PRIORITY_DEFAULT);
+    }
+    
+    // GIONEE <wujj> <2015-03-17> Modify for CR01455032 end
+    
+    public void setMoreVisibility(boolean visible) {
+    	mNotificationIcons.setMoreDotVisibility(visible);
+	}
+    
+    private void isShowMoreDot() {
+		int otherCount = mGnNotificationService.getNotificationCount(NotificationType.OTHER);
+		if(otherCount == 0) {
+			setMoreVisibility(false);
+		} else {
+			setMoreVisibility(true);
+		}
+	}
 
     private final class DozeServiceHost implements DozeHost {
         // Amount of time to allow to update the time shown on the screen before releasing

@@ -47,8 +47,7 @@ public class NotificationOverflowIconsView extends IconMerger {
         super.onFinishInflate();
         mNotificationColorUtil = NotificationColorUtil.getInstance(getContext());
         mTintColor = getResources().getColor(R.color.keyguard_overflow_content_color);
-        mIconSize = getResources().getDimensionPixelSize(
-                com.android.internal.R.dimen.status_bar_icon_size);
+        mIconSize = getResources().getDimensionPixelSize(R.dimen.gn_status_bar_icon_size);
     }
 
     public void setMoreText(TextView moreText) {

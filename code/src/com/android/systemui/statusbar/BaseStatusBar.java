@@ -446,6 +446,9 @@ public abstract class BaseStatusBar extends SystemUI implements
                         addNotification(sbn, currentRanking);
                     }
                     updateClearButton();
+                    if (mOnConfigChanged == true) {
+                    	mOnConfigChanged = false;
+                    }
                 }
             });
         }
@@ -484,6 +487,7 @@ public abstract class BaseStatusBar extends SystemUI implements
                     } else {
                         addNotification(sbn, rankingMap);
                     }
+                    setMoreDotAnimator(sbn);
                     updateClearButton();
                 }
             });
@@ -753,6 +757,7 @@ public abstract class BaseStatusBar extends SystemUI implements
         action.onDismiss();
     }
 
+    protected boolean mOnConfigChanged = false;
     @Override
     protected void onConfigurationChanged(Configuration newConfig) {
         final Locale locale = mContext.getResources().getConfiguration().locale;
@@ -767,6 +772,7 @@ public abstract class BaseStatusBar extends SystemUI implements
         if (isLanguageChanged(currentLang) || isFontChanged(currentFont) || fontScale != mFontScale) {
         	mPrivLang = currentLang;
         	mPrivFont = currentFont;
+        	mOnConfigChanged = true;
 	        updateNotificationHeadersOnConfigureChanged();
 	        updateFontTypeFace(newConfig);
 	        mNotificationListener.onListenerConnected();
@@ -1938,7 +1944,11 @@ public abstract class BaseStatusBar extends SystemUI implements
             RankingMap ranking);
     protected abstract void updateNotificationRanking(RankingMap ranking);
     public abstract void removeNotification(String key, RankingMap ranking);
-    protected void updateNotificationHeaders() {}
+    
+    // Add by GIONEE
+    protected void setMoreDotAnimator(StatusBarNotification n){}
+    protected void setMoreDotAnimator(boolean flags){}
+    protected abstract void updateNotificationHeaders();
 
     public void updateNotification(StatusBarNotification notification, RankingMap ranking) {
         if (DEBUG) Log.d(TAG, "updateNotification(" + notification + ")");
