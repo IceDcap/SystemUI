@@ -116,6 +116,8 @@
 
     <!-- Screen Capturing -->
     <uses-permission android:name="android.permission.MANAGE_MEDIA_PROJECTION" />
+    <!-- fingerprint unlock -->
+    <uses-permission android:name="com.fingerprints.service.ACCESS_FINGERPRINT_MANAGER" />
 
     <application
         android:name=".SystemUIApplication"

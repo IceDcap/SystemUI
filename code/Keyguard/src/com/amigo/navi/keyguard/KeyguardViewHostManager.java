@@ -17,6 +17,7 @@ import android.view.ViewParent;
 import android.widget.FrameLayout.LayoutParams;
 
 import com.amigo.navi.keyguard.AmigoKeyguardBouncer.KeyguardBouncerCallback;
+import com.amigo.navi.keyguard.fingerprint.FingerIndentifyManager;
 import com.amigo.navi.keyguard.skylight.SkylightActivity;
 import com.amigo.navi.keyguard.skylight.SkylightHost;
 import com.amigo.navi.keyguard.skylight.SkylightUtil;
@@ -25,6 +26,7 @@ import com.amigo.navi.keyguard.util.DataStatistics;
 import com.android.keyguard.ViewMediatorCallback;
 import com.android.keyguard.KeyguardHostView.OnDismissAction;
 import com.android.internal.widget.LockPatternUtils;
+import com.gionee.fingerprint.IGnIdentifyCallback;
 
 import static com.android.keyguard.KeyguardHostView.OnDismissAction;
 
@@ -52,6 +54,7 @@ public class KeyguardViewHostManager {
     private MyHandler mHandler=new MyHandler();
     private ViewHostReceiver mReceiver=new ViewHostReceiver();
     private KeyguardNotificationCallback mKeyguardNotificationCallback;
+    private FingerIndentifyManager mFingerIndentifyManager;
     
     public KeyguardViewHostManager(Context context,KeyguardViewHost host,SkylightHost skylight,LockPatternUtils lockPatternUtils,ViewMediatorCallback callback){
         mContext=context;
@@ -62,7 +65,7 @@ public class KeyguardViewHostManager {
         registerReceivers();
         sInstance=this;
         initKeyguard(callback);
-        
+        mFingerIndentifyManager=new FingerIndentifyManager();
     }
   
     
@@ -104,10 +107,12 @@ public class KeyguardViewHostManager {
     
     public void onScreenTurnedOff(){
         mKeyguardViewHost.onScreenTurnedOff();
+        mFingerIndentifyManager.cancel();
     }
     
     public void onScreenTurnedOn(){
         mKeyguardViewHost.onScreenTurnedOn();
+        mFingerIndentifyManager.startIdentify(mIdentifyCb, mFingerIndentifyManager.getIds());
     }
     
     public boolean isShowing(){
@@ -378,7 +383,47 @@ public class KeyguardViewHostManager {
     	return false;
     }
     
+    public void updateSKylightLocation() {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                mSkylightHost.updateSkylightLocation();
+            }
+        });
+    }
     
+    
+    private IGnIdentifyCallback mIdentifyCb = new IGnIdentifyCallback() {
+
+        public void onWaitingForInput() {
+            Log.d(LOG_TAG, "onWaitingForInput()---");
+        }
+
+        public void onInput() {
+            Log.d(LOG_TAG, "onInput()---");
+        }
+
+        public void onCaptureCompleted() {
+            Log.d(LOG_TAG, "onCaptureCompleted()---");
+        }
+
+        public void onCaptureFailed(int reason) {
+            Log.d(LOG_TAG, "onCaptureFailed()---");
+        }
+
+        public void onIdentified(int fingerId, boolean updated) {
+            Log.d(LOG_TAG, "onIdentified()---");
+        }
+
+        public void onNoMatch(int reason) {
+            Log.d(LOG_TAG, "onNoMatch()---reason=" + reason);
+        }
+
+        public void onExtIdentifyMsg(Message msg, String description) {
+            Log.d(LOG_TAG, "onExtIdentifyMsg()---");
+        }
+    };
+
     public void showBouncerOrKeyguardDone(){
     	if ( mKeyguardViewHost!=null) {
     		mKeyguardViewHost.showBouncerOrKeyguardDone(); 

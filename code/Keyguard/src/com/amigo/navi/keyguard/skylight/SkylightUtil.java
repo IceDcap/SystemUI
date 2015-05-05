@@ -12,6 +12,7 @@ import android.util.Log;
 import android.util.Xml;
 
 import com.amigo.navi.keyguard.DebugLog;
+import com.amigo.navi.keyguard.KeyguardViewHostManager;
 
 public class SkylightUtil {
 
@@ -149,7 +150,14 @@ public class SkylightUtil {
 			if(location.getHeight()>0){
 				SkylightHost.sLocation=location;
 			}
+			updateSkylightHost();
+			
 		}
 	} 
-    
+    private static void updateSkylightHost(){
+        KeyguardViewHostManager hostManager=KeyguardViewHostManager.getInstance();
+        if(hostManager!=null){
+            hostManager.updateSKylightLocation();
+        }
+    }
 }

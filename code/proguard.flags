@@ -13,3 +13,11 @@
 -keep class com.android.systemui.statusbar.phone.PhoneStatusBar
 -keep class com.android.systemui.statusbar.tv.TvStatusBar
 -keep class com.android.systemui.recents.*
+
+-dontwarn com.gionee.fingerprint.IGnEnrolCallback
+-dontwarn com.gionee.fingerprint.IGnIdentifyCallback
+-dontwarn com.gionee.fingerprint.IGnCaptureImageCallback
+
+-keep class com.gionee.fingerprint.IGnEnrolCallback { *;}
+-keep class com.gionee.fingerprint.IGnIdentifyCallback { *;}
+-keep class com.gionee.fingerprint.IGnCaptureImageCallback { *;}

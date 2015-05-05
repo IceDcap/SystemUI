@@ -102,10 +102,22 @@ public class SkylightHost extends FrameLayout {
         
         mPageIndicator = (KeyguardPagerIndicator)findViewById(R.id.zzzzz_gn_navil_id_indicator);
         mPagerView.setIndicator(mPageIndicator);
+        
 //        setWallpaperAsBackground();
 //        setBackgroud();
     }
     
+    
+    public void updateSkylightLocation() {
+        if(mSkylightLayout!=null){
+            RelativeLayout.LayoutParams params=(RelativeLayout.LayoutParams)mSkylightLayout.getLayoutParams();
+            params.leftMargin=sLocation.getXaxis();
+            params.topMargin=sLocation.getYaxis();
+            params.width=sLocation.getWidth();
+            params.height=sLocation.getHeight();
+            mSkylightLayout.setLayoutParams(params);
+        }
+    }
 
     private final Handler mHandler = new Handler() {
         @Override
@@ -359,6 +371,8 @@ public class SkylightHost extends FrameLayout {
         }.start();
       
     }
+    
+    
     class LocalReceiver extends BroadcastReceiver {
 
         @Override
@@ -385,5 +399,6 @@ public class SkylightHost extends FrameLayout {
             }
         }
     }
+
 }
 

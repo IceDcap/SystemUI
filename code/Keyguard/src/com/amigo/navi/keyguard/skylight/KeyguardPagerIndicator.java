@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.amigo.navi.keyguard.DebugLog;
+import com.amigo.navi.keyguard.KWDataCache;
 import com.android.keyguard.R ;
 
 
@@ -52,7 +53,7 @@ public class KeyguardPagerIndicator extends View {
         Resources rs = context.getResources();
         //Gionee <huangxc><2013-12-18> modify for CR00967751 begin
         float density = rs.getDisplayMetrics().density;
-        sDisplayW = SkylightHost.getSkylightWidth();
+        sDisplayW = KWDataCache.getScreenWidth(getResources());
         sIndicatorH = (int) (sIndicatorH * density);
         MARGIN_RINGHT_AND_LEFT = (int) (MARGIN_RINGHT_AND_LEFT * density);
         sIndicatorW=getResources().getDisplayMetrics().widthPixels;

@@ -112,6 +112,7 @@ public class SkyPagerView extends KeyguardPagerView {
     public void setIndicator(KeyguardPagerIndicator indicator) {
         mIndicator = indicator;
         resetIndicator();
+        DebugLog.d(LOG_TAG, "setIndicator------");
     }
     
 
