@@ -54,9 +54,9 @@
             android:layout_height="match_parent"
             android:layout_toLeftOf="@id/clear"
             android:background="@drawable/ripple_drawable"
-            android:paddingRight="10dp"
+            android:paddingRight="24dp"
             android:scaleType="centerInside"
-            android:src="@drawable/gn_arrow_right"
+            android:src="@drawable/gn_arrow_up"
             android:visibility="gone" />
     </RelativeLayout>
 

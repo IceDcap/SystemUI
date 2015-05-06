@@ -996,7 +996,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 				if (mShowOther == true) {
 					hideButton.setImageDrawable(mContext.getDrawable(R.drawable.gn_arrow_down));
 				} else {
-					hideButton.setImageDrawable(mContext.getDrawable(R.drawable.gn_arrow_right));
+					hideButton.setImageDrawable(mContext.getDrawable(R.drawable.gn_arrow_up));
 				}
 				updateNotifications();
 			}
@@ -1904,7 +1904,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 			mOtherHeader.setVisibility(View.VISIBLE);
 			mStackScroller.changeViewPosition(mOtherHeader, mStackScroller.getChildCount() - 1);
 			final ImageView hideButton = (ImageView) mOtherHeader.findViewById(R.id.hide);
-			hideButton.setImageDrawable(mContext.getDrawable(R.drawable.gn_arrow_right));
+			hideButton.setImageDrawable(mContext.getDrawable(R.drawable.gn_arrow_up));
 		}
 		// Step 6
 		updateRowStates();
