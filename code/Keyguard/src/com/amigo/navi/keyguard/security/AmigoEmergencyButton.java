@@ -21,12 +21,14 @@ import android.content.Intent;
 import android.os.PowerManager;
 import android.os.SystemClock;
 import android.os.UserHandle;
+import android.telecom.TelecomManager;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.amigo.navi.keyguard.util.VibatorUtil;
+import com.android.internal.R;
 import com.android.internal.telephony.IccCardConstants.State;
 import com.android.internal.widget.LockPatternUtils;
 import com.android.keyguard.KeyguardUpdateMonitor;
@@ -38,7 +40,7 @@ import com.android.keyguard.KeyguardUpdateMonitorCallback;
  * When there's a call in progress, it presents an appropriate message and
  * allows the user to return to the call.
  */
-public class AmigoEmergencyButton extends Button {
+public class AmigoEmergencyButton extends TextView {
     private static final String ACTION_EMERGENCY_DIAL = "com.android.phone.EmergencyDialer.DIAL";
 
     KeyguardUpdateMonitorCallback mInfoCallback = new KeyguardUpdateMonitorCallback() {
@@ -127,7 +129,58 @@ public class AmigoEmergencyButton extends Button {
                 enabled = mLockPatternUtils.isSecure();
             }
         }
-        mLockPatternUtils.updateEmergencyCallButtonState(this, enabled, false);
+//        mLockPatternUtils.updateEmergencyCallButtonState(this, enabled, false);
+          updateEmergencyCallButtonState(this, enabled, false);
+    }
+    
+    
+    /**
+     * Sets the emergency button visibility based on isEmergencyCallCapable().
+     *
+     * If the emergency button is visible, sets the text on the emergency button
+     * to indicate what action will be taken.
+     *
+     * If there's currently a call in progress, the button will take them to the call
+     * @param text The button to update
+     * @param shown Indicates whether the given screen wants the emergency button to show at all
+     * @param showIcon Indicates whether to show a phone icon for the button.
+     */
+    public void updateEmergencyCallButtonState(TextView text, boolean shown, boolean showIcon) {
+        if (isEmergencyCallCapable() && shown) {
+            text.setVisibility(View.VISIBLE);
+        } else {
+            text.setVisibility(View.GONE);
+            return;
+        }
+
+        int textId;
+        if (isInCall()) {
+            // show "return to call" text and show phone icon
+            textId = R.string.lockscreen_return_to_call;
+            int phoneCallIcon = showIcon ? R.drawable.stat_sys_phone_call : 0;
+            text.setCompoundDrawablesWithIntrinsicBounds(phoneCallIcon, 0, 0, 0);
+        } else {
+            textId = R.string.lockscreen_emergency_call;
+            int emergencyIcon = showIcon ? R.drawable.ic_emergency : 0;
+            text.setCompoundDrawablesWithIntrinsicBounds(emergencyIcon, 0, 0, 0);
+        }
+        text.setText(textId);
+    }
+    
+    public boolean isEmergencyCallCapable() {
+        return mContext.getResources().getBoolean(
+                com.android.internal.R.bool.config_voice_capable);
+    }
+    
+    /**
+     * @return {@code true} if there is a call currently in progress, {@code false} otherwise.
+     */
+    public boolean isInCall() {
+        return getTelecommManager().isInCall();
+    }
+
+    private TelecomManager getTelecommManager() {
+        return (TelecomManager) mContext.getSystemService(Context.TELECOM_SERVICE);
     }
 
 }

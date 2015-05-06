@@ -64,6 +64,7 @@ public class KeyguardViewHostManager {
         DataStatistics.getInstance().onInit(context.getApplicationContext());
         registerReceivers();
         sInstance=this;
+        setViewMediatorCallback(callback);
         initKeyguard(callback);
         mFingerIndentifyManager=new FingerIndentifyManager();
     }
@@ -73,9 +74,12 @@ public class KeyguardViewHostManager {
     	return sInstance;
     }
     public void initKeyguard(ViewMediatorCallback callback){
-        setViewMediatorCallback(callback);
         mKeyguardViewHost.initKeyguard(callback, mLockPatternUtils);
         
+    }
+    
+    public void initKeyguardReset(){
+    	mKeyguardViewHost.initKeyguard(mViewMediatorCallback, mLockPatternUtils);
     }
     
     private void registerReceivers(){
@@ -282,6 +286,9 @@ public class KeyguardViewHostManager {
     
     
     public void handleConfigurationChanged() {
+    	if(mKeyguardViewHost != null){
+    		mKeyguardViewHost.onConfigurationChanged();
+    	}
         if(mSkylightHost!=null){
             mSkylightHost.onConfigurationChanged();
         }

@@ -531,14 +531,15 @@ public class RecentsActivity extends Activity implements OnClickListener , OnLon
 	}
 	
 	public String formatMemory(long size) {
-        long sizeM = size / 1024 / 1024;
+/*        long sizeM = size / 1024 / 1024;
 
         if (((float)sizeM / 1024.0f) - 1.1 >= 0.0) {
             float sizeG =  ((float)sizeM / 1024.0f);
             return String.format("%.1fG", sizeG);
         }
 
-        return "" + sizeM + "M";
+        return "" + sizeM + "M";*/
+		return Formatter.formatFileSize(mContext, size);
     }
 	
 	public long getPhoneRamMemory() {

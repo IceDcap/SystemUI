@@ -228,7 +228,9 @@ public class GnControlCenter extends FrameLayout{
                 createBlurBg(mContext);
             }
 
-            if (mImmerseState) {
+            boolean hasNavigationBar = mStatusBar.hasNavigationBar();
+            Log.d(TAG, "hasNavigationBar = " + hasNavigationBar);
+            if (mImmerseState && !hasNavigationBar) {
                 if (sState == STATE_CLOSED) {
                     mImmerseView.setVisibility(VISIBLE);
                     mImmerseView.pushUpIn();

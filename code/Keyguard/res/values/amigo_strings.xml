@@ -91,5 +91,14 @@
     <string name="save_password_label">Ok</string>
     <string name="ignore_password_label">Skip</string>
     <string name="kg_wrong_password_onetime">Wrong password, you can try <xliff:g id="number">%d</xliff:g> time</string>
+     <string name="kg_too_many_failed_simple_attempts_dialog_message">
+        You have incorrectly typed your digit password <xliff:g id="number">%d</xliff:g> times.
+        \n\nTry again in <xliff:g id="number">%d</xliff:g> seconds.
+    </string>
+    
+     <string name="kg_too_many_failed_mixed_password_attempts_dialog_message">
+        You have incorrectly typed your mixed password <xliff:g id="number">%d</xliff:g> times.
+        \n\nTry again in <xliff:g id="number">%d</xliff:g> seconds.
+    </string>
 
 </resources>

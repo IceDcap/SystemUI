@@ -214,10 +214,10 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
                 messageId = R.string.kg_too_many_failed_pattern_attempts_dialog_message;
                 break;
             case PIN:
-                messageId = R.string.kg_too_many_failed_pin_attempts_dialog_message;
+                messageId = R.string.kg_too_many_failed_simple_attempts_dialog_message;
                 break;
             case Password:
-                messageId = R.string.kg_too_many_failed_password_attempts_dialog_message;
+                 messageId = R.string.kg_too_many_failed_mixed_password_attempts_dialog_message;
                 break;
             // These don't have timeout dialogs.
             case Account:

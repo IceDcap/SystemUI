@@ -1,24 +1,27 @@
 package com.amigo.navi.keyguard;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.amigo.navi.keyguard.AmigoKeyguardBouncer.KeyguardBouncerCallback;
-import com.amigo.navi.keyguard.sensor.KeyguardSensorModule;
+import com.amigo.navi.keyguard.util.AmigoKeyguardUtils;
 import com.amigo.navi.keyguard.util.KeyguardWidgetUtils;
+import com.android.internal.widget.LockPatternUtils;
 import com.android.keyguard.KeyguardHostView;
 import com.android.keyguard.ViewMediatorCallback;
-import com.android.internal.widget.LockPatternUtils;
 
 public class KeyguardViewHost extends FrameLayout {
+	
+    private Configuration mConfiguration = null;
+    private String mOldFontStyle="";
     
     final static boolean DEBUG=true;
     private static final String LOG_TAG="KeyguardViewHost";
@@ -38,6 +41,12 @@ public class KeyguardViewHost extends FrameLayout {
 
     public KeyguardViewHost(Context context, AttributeSet attrs) {
        this(context, attrs,0);
+       mConfiguration = new Configuration(getContext().getResources().getConfiguration());
+       mOldFontStyle  = AmigoKeyguardUtils.getmOldFontStyle();;
+       
+       if(DEBUG){
+       	Log.d(LOG_TAG, "onConfigurationChanged() ..KeyguardHostView..mOldFontStyle="+mOldFontStyle);            	
+       }
     }
 
     public KeyguardViewHost(Context context, AttributeSet attrs, int defStyle) {
@@ -46,6 +55,42 @@ public class KeyguardViewHost extends FrameLayout {
         amigoInflateKeyguardView(null);
 
     }
+    
+    
+    public void onConfigurationChanged() {
+    	Configuration newConfig = mContext.getResources().getConfiguration();
+		if (DEBUG)
+			DebugLog.d(LOG_TAG, "onConfigurationChanged  mConfiguration:"
+					+ mConfiguration);
+		String currentFontStyle=AmigoKeyguardUtils.getCurrretFontStyle(newConfig,mOldFontStyle);
+		boolean isChangeFontStyle=false;
+		if(!currentFontStyle.equals(mOldFontStyle)){
+			mOldFontStyle=currentFontStyle;
+			isChangeFontStyle=true;
+			DebugLog.d(LOG_TAG, "onConfigurationChanged() newConfig....amigoFont1111111="+currentFontStyle+"oldFontStyle="+mOldFontStyle);
+		}
+		if (DEBUG)
+			DebugLog.d(LOG_TAG, "onConfigurationChanged  newConfig:" + newConfig+"---"+"isChangeFontStyle:"+isChangeFontStyle);
+		if (mConfiguration != null
+				&& (!newConfig.locale.equals(mConfiguration.locale) || newConfig.fontScale != mConfiguration.fontScale) || isChangeFontStyle) {
+			// only propagate configuration messages if we're currently
+			// showing
+			mConfiguration.locale = newConfig.locale;
+			mConfiguration.fontScale = newConfig.fontScale;
+			
+			resetKeyguardView();
+			
+		} else {
+			if (DEBUG)
+				DebugLog.d(LOG_TAG, "onConfigurationChanged: congfiguration not change");
+		}
+	}
+
+	private void resetKeyguardView() {
+		removeAllViews();
+		amigoInflateKeyguardView(null);
+		KeyguardViewHostManager.getInstance().initKeyguardReset();
+	}
     
     
     private void amigoInflateKeyguardView(Bundle options) {
