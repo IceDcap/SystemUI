@@ -1,6 +1,9 @@
 package com.amigo.navi.keyguard;
 
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
+import android.animation.Animator.AnimatorListener;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -78,6 +81,7 @@ public class AmigoKeyguardPage extends RelativeLayout {
 		addBatteryView();
 		addNotificationClickTipView();
 		addNotificationView();
+		addFingerIdentifyTip();
 		
 		KeyguardUpdateMonitor.getInstance(mContext).registerCallback(
 				mUpdateMonitorCallback);
@@ -85,7 +89,8 @@ public class AmigoKeyguardPage extends RelativeLayout {
                 mReceiver, UserHandle.OWNER, new IntentFilter(Intent.ACTION_TIME_TICK), null, null);
 	}
 	
-	@Override
+
+    @Override
 	protected void onDetachedFromWindow() {
 		// TODO Auto-generated method stub
 		super.onDetachedFromWindow();
@@ -102,10 +107,12 @@ public class AmigoKeyguardPage extends RelativeLayout {
 	private TextView mBatteryInfoView;
 	private TextView mNotificationClickTipView;
 	private NotificationStackScrollLayout mNotificationContent;
+	private RelativeLayout mFingerIdentifyTip;
 	
 	private AmigoBatteryStatus mBatteryStatus = null;
 	private static final float BATTERY_HIDE_ALPHA = 0.001f;
 	private static final int HANDLER_REMOVE_NOTIFICATION_TIP = 1;
+	private static final int HANDLER_HIDE_IDENTIFY_TIP = 2;
 	private static final long HANDLER_REMOVE_NOTIFICATION_TIP_DELAY_TIME = 
 			ActivatableNotificationView.DOUBLETAP_TIMEOUT_MS;
 	
@@ -192,6 +199,20 @@ public class AmigoKeyguardPage extends RelativeLayout {
 
         return rect;
     }
+    
+    private void addFingerIdentifyTip() {
+        LayoutInflater inflater=LayoutInflater.from(mContext);
+        mFingerIdentifyTip=(RelativeLayout)inflater.inflate(R.layout.amigo_keyguard_finger_identify_tip_view, null);
+        AmigoKeyguardPage.LayoutParams params=new AmigoKeyguardPage.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
+        params.bottomMargin=getResources().getDimensionPixelSize(R.dimen.fingerprint_fail_tip_margin_bottom);
+        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        mFingerIdentifyTip.setLayoutParams(params);
+        addView(mFingerIdentifyTip, params);
+        mFingerIdentifyTip.setVisibility(View.GONE);
+        
+    }
+    
 
 	private int measureViewHeight(View view) {
 		int w = View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);  
@@ -269,6 +290,9 @@ public class AmigoKeyguardPage extends RelativeLayout {
 			case HANDLER_REMOVE_NOTIFICATION_TIP:
 				showNotificationClickTip(false);
 				break;
+			case HANDLER_HIDE_IDENTIFY_TIP:
+			    mFingerIdentifyTip.setVisibility(View.GONE);
+			    break;
 			default:
 				break;
 			}
@@ -506,5 +530,44 @@ public class AmigoKeyguardPage extends RelativeLayout {
         QuickSleepUtil.gotoSleepIfDoubleTap(mContext, event, this);
         DataStatistics.getInstance().doubleTapSleepEvent(mContext);
     }
-		
+    
+    
+    ObjectAnimator mShakeAnimator = null;
+
+    public void shakeIdentifyTip() {
+        mFingerIdentifyTip.setVisibility(View.VISIBLE);
+        if (mShakeAnimator == null) {
+            mShakeAnimator = ObjectAnimator.ofFloat(mFingerIdentifyTip, "translationX",
+                    new float[] { 0.0F, -40.0F, 40.0F, -20.0F, 20.0F, 0.0F }).setDuration(
+                    700);
+            mShakeAnimator.addListener(new AnimatorListener() {
+
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    mFingerIdentifyTip.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mHandler.sendEmptyMessageDelayed(HANDLER_HIDE_IDENTIFY_TIP, 1500);
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                }
+            });
+        }
+        if (mShakeAnimator.isRunning()) {
+            mShakeAnimator.cancel();
+        }
+        mHandler.removeMessages(HANDLER_HIDE_IDENTIFY_TIP);
+        mShakeAnimator.start();
+    }
+
+   
 }

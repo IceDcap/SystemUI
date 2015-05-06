@@ -27,6 +27,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.ContentObserver;
 import android.graphics.Bitmap;
 
@@ -44,6 +45,7 @@ import android.os.Handler;
 import android.os.IRemoteCallback;
 import android.os.Message;
 import android.os.RemoteException;
+import android.os.SystemClock;
 import android.os.UserHandle;
 import android.provider.Settings;
 
@@ -52,6 +54,7 @@ import com.android.internal.telephony.IccCardConstants.State;
 import com.android.internal.telephony.PhoneConstants;
 import com.android.internal.telephony.TelephonyIntents;
 import com.android.internal.telephony.TelephonyProperties;
+import com.android.internal.widget.LockPatternUtils;
 
 import android.service.fingerprint.FingerprintManager;
 import android.service.fingerprint.FingerprintManagerReceiver;
@@ -156,6 +159,13 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
     // Password attempts
     private int mFailedAttempts = 0;
     private int mFailedBiometricUnlockAttempts = 0;
+    
+    //jiating modify for keyguard begin 
+    private int mFailedTimeOutSize = 0;
+    private int mRellyFailedTimeOutSize = 0;
+    private static final int MAX_FAILED_MS=1024*60*1000;
+    private  long failedAttemptTimeoutMS=LockPatternUtils.FAILED_ATTEMPT_TIMEOUT_MS * 2;
+    //jiating modify for keyguard begin 
 
     private boolean mAlternateUnlockEnabled;
 
@@ -1069,11 +1079,13 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
             data = new SimData(state, slotId, subId);
             mSimDatas.put(subId, data);
             changed = true; // no data yet; force update
+            DebugLog.d(TAG, "handleSimStateChange  data is null");
         } else {
             changed = (data.simState != state || data.subId != subId || data.slotId != slotId);
             data.simState = state;
             data.subId = subId;
             data.slotId = slotId;
+            DebugLog.d(TAG, "handleSimStateChange  data is not null");
         }
         if (changed && state != State.UNKNOWN) {
             for (int i = 0; i < mCallbacks.size(); i++) {
@@ -1352,6 +1364,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
 
     public State getSimState(int subId) {
         if (mSimDatas.containsKey(subId)) {
+            DebugLog.d(TAG, "getSimState  subId: "+subId+"  simState: "+mSimDatas.get(subId).simState);
             return mSimDatas.get(subId).simState;
         } else {
             return State.UNKNOWN;
@@ -1480,4 +1493,60 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
     public void dismissSimLockState(int simId) {
     	reportSimUnlocked(simId);
     }
+    
+    
+    public void clearFailedUnlockAttempts(boolean isDone) {
+        
+        if(isDone){
+        	mFailedAttempts = 0;
+            mFailedBiometricUnlockAttempts = 0;
+    		mFailedTimeOutSize = 0;
+    		failedAttemptTimeoutMS=LockPatternUtils.FAILED_ATTEMPT_TIMEOUT_MS * 2;
+    	}else{
+    		mFailedTimeOutSize++;
+    	}
+    }
+    
+    public long getDeadline(){
+    	long deadline=0;
+    	if(mFailedTimeOutSize==1){
+    		deadline = SystemClock.elapsedRealtime() + failedAttemptTimeoutMS;
+    	}else if(mFailedTimeOutSize>1){
+    		failedAttemptTimeoutMS=failedAttemptTimeoutMS * 2;
+			if(failedAttemptTimeoutMS>MAX_FAILED_MS){
+				failedAttemptTimeoutMS= MAX_FAILED_MS; 	
+			}
+    	    deadline = SystemClock.elapsedRealtime() + failedAttemptTimeoutMS;
+    	    
+    	}
+    	if(DebugLog.DEBUGMAYBE) DebugLog.d(TAG, "getDeadlinefailedAttemptTimeoutMS :"+failedAttemptTimeoutMS);
+	   	 SharedPreferences sp = mContext.getSharedPreferences("lockDeadline", Context.MODE_PRIVATE);
+	   	 SharedPreferences.Editor editor = sp.edit();
+	   	 editor.putLong("deadline", deadline);
+	   	 editor.commit();
+	   	 return deadline;
+   }
+    
+
+
+    public long getCurDeadLine(){
+    	long deadlineTemp=0;
+    	if(mFailedTimeOutSize==1){
+    		deadlineTemp= SystemClock.elapsedRealtime() + failedAttemptTimeoutMS;
+	   	}else if(mFailedTimeOutSize>1){
+	   		failedAttemptTimeoutMS=failedAttemptTimeoutMS * 2;
+			if(failedAttemptTimeoutMS>MAX_FAILED_MS){
+				failedAttemptTimeoutMS= MAX_FAILED_MS; 	
+			}
+			deadlineTemp = SystemClock.elapsedRealtime() + failedAttemptTimeoutMS;	   	
+		}
+    	SharedPreferences sp = mContext.getSharedPreferences("lockDeadline", Context.MODE_PRIVATE);
+        final long deadline = sp.getLong("deadline", 0L);
+        final long now = SystemClock.elapsedRealtime();
+        if (deadline < now || deadline > (now + deadlineTemp)) {
+            return 0L;
+        }
+        return deadline;
+    }
+    
 }

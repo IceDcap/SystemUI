@@ -91,6 +91,10 @@
     <string name="save_password_label">Ok</string>
     <string name="ignore_password_label">Skip</string>
     <string name="kg_wrong_password_onetime">Wrong password, you can try <xliff:g id="number">%d</xliff:g> time</string>
+    <string name="kg_wrong_password_time">Wrong pattern, you can try <xliff:g id="number">%d</xliff:g> more times</string>
+     <string name="kg_wrong_pattern_time">Wrong pattern, you can try <xliff:g id="number">%d</xliff:g> more times</string>
+     <string name="kg_wrong_pattern_onetime">Wrong pattern, you can try <xliff:g id="number">%d</xliff:g> time</string>
+     <string name="kg_wrong_point_num">Connect at least 4 dots,please try again</string>
      <string name="kg_too_many_failed_simple_attempts_dialog_message">
         You have incorrectly typed your digit password <xliff:g id="number">%d</xliff:g> times.
         \n\nTry again in <xliff:g id="number">%d</xliff:g> seconds.
@@ -100,5 +104,11 @@
         You have incorrectly typed your mixed password <xliff:g id="number">%d</xliff:g> times.
         \n\nTry again in <xliff:g id="number">%d</xliff:g> seconds.
     </string>
-
+     <string name="amigo_kg_too_many_failed_attempts_countdown">"Exceeded <xliff:g id="number">%d</xliff:g> times of password attempts allowed, please try in <xliff:g id="number">%s</xliff:g> .</string>
+     <string name="keyguard_pattern_enter_code">"请输入密码锁或者使用指纹识别"</string>
+     <string name="keyguard_password_enter_code">"请输入密码锁或者使用指纹识别"</string>
+     <string name="forget_password">忘记密码</string>
+     <string name="kg_complex_number_notnull">The password is blank, enter the password</string>
+     
+      <string name="finger_identify_fail_tip">fingerprint identify failed,try again</string>
 </resources>

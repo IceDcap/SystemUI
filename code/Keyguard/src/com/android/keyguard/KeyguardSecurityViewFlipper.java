@@ -293,4 +293,24 @@ public class KeyguardSecurityViewFlipper extends ViewFlipper implements Keyguard
             a.recycle();
         }
     }
+
+	@Override
+	public void fingerPrintFailed() {
+		 KeyguardSecurityView ksv = getSecurityView();
+	        if (ksv != null) {
+	            ksv.  fingerPrintFailed();
+	        }
+		
+	}
+
+	@Override
+	public void fingerPrintSuccess() {
+		 KeyguardSecurityView ksv = getSecurityView();
+	        if (ksv != null) {
+	            ksv.  fingerPrintSuccess();
+	        }
+		
+	}
+    
+    
 }

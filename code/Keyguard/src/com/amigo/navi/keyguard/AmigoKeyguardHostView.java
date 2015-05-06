@@ -1,5 +1,8 @@
 package com.amigo.navi.keyguard;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -19,6 +22,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.animation.Interpolator;
+import android.view.animation.ScaleAnimation;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Scroller;
@@ -1008,7 +1012,7 @@ public class AmigoKeyguardHostView extends LinearLayout {
 //		    resetHostYToHomePosition();
 //		}
 		if(mKeyguardBouncer!=null){
-			mKeyguardBouncer.onResumeSecurityView(KeyguardSecurityView.SCREEN_ON);
+			mKeyguardBouncer.onScreenTurnedOn();
 		}
 		mifLauncherInfozoneReverse = true;
 	}
@@ -1343,5 +1347,22 @@ public class AmigoKeyguardHostView extends LinearLayout {
 			 finish();
 		 }
     }
+    
+    public void shakeFingerIdentifyTip(){
+        mKeyguardPage.shakeIdentifyTip();
+    }
+    
+    public void fingerPrintFailed() {
+        if (mKeyguardBouncer != null) {
+            mKeyguardBouncer.fingerPrintFailed();
+        }
+    }
+
+    public void fingerPrintSuccess() {
+        if (mKeyguardBouncer != null) {
+            mKeyguardBouncer.fingerPrintSuccess();
+        }
+    }
+    
 }
 

@@ -33,6 +33,7 @@ import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
 
+import com.amigo.navi.keyguard.DebugLog;
 import com.android.internal.widget.LockPatternUtils;
 
 /***
@@ -111,6 +112,14 @@ class KeyguardMessageArea extends TextView {
             }
         }
 
+        public void setMessage(int resId, int index,boolean important ,Object formatArgs ) {
+        	if (resId != 0 && important) {
+                mMessageArea.mMessage = mMessageArea.getContext().getString(resId, index,formatArgs);
+                if(DebugLog.DEBUG) DebugLog.d(TAG, "onUnlockFail mMessageArea.mMessage  :"+mMessageArea.mMessage +"");
+                mMessageArea.securityMessageChanged();
+            }
+        }
+        
         @Override
         public void showBouncer(int duration) {
             mMessageArea.hideMessage(duration, false);

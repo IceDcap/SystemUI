@@ -44,5 +44,9 @@ public interface KeyguardSecurityCallback {
      * Shows the backup security for the current method.  If none available, this call is a no-op.
      */
     void showBackupSecurity();
+    
+    int getFingerPrintResult() ;
+    void reset();
+	
 
 }

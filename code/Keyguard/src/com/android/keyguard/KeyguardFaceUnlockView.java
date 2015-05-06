@@ -357,4 +357,18 @@ public class KeyguardFaceUnlockView extends LinearLayout implements KeyguardSecu
     public boolean startDisappearAnimation(Runnable finishRunnable) {
         return false;
     }
+
+	@Override
+	public void fingerPrintFailed() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void fingerPrintSuccess() {
+		// TODO Auto-generated method stub
+		
+	}
+    
+    
 }

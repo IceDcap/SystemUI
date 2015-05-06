@@ -145,12 +145,12 @@ public class AmigoKeyguardBouncer {
 		        }
 		    }
 		 
-//		 public void onScreenTurnedOn() {
-//		        if (mKeyguardView != null && mRoot != null ) {
-//		            mKeyguardView.onResume();
-//		        }
-//		        
-//		 }
+		 public void onScreenTurnedOn() {
+		        if (mKeyguardView != null && mRoot != null ) {
+		            mKeyguardView.onResume(KeyguardSecurityView.SCREEN_ON);
+		        }
+		        
+		 }
 		 
 		 public void onResumeSecurityView(int reason) {
 		        if (mKeyguardView != null && mRoot != null ) {
@@ -165,7 +165,17 @@ public class AmigoKeyguardBouncer {
 		        }
 		 }
 		 
-		 
+    public void fingerPrintFailed() {
+        if (mKeyguardView != null && mRoot != null) {
+            mKeyguardView.fingerPrintFailed();
+        }
+    }
+
+    public void fingerPrintSuccess() {
+        if (mKeyguardView != null && mRoot != null) {
+            mKeyguardView.fingerPrintSuccess();
+        }
+    }
 		 
 
 		 public long getUserActivityTimeout() {

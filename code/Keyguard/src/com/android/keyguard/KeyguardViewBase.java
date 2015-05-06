@@ -497,5 +497,13 @@ public abstract class KeyguardViewBase extends FrameLayout implements SecurityCa
     protected abstract void onCreateOptions(Bundle options);
 
     protected abstract void onExternalMotionEvent(MotionEvent event);
+    
+    public void fingerPrintFailed(){
+    	mSecurityContainer.fingerPrintFailed();
+    }
+    
+    public void fingerPrintSuccess(){
+    	mSecurityContainer.fingerPrintSuccess();
+    }
 
 }

@@ -19,19 +19,24 @@ package com.amigo.navi.keyguard.security;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.KeyguardViewHostManager;
+import com.amigo.navi.keyguard.util.TimeUtils;
 import com.amigo.navi.keyguard.util.VibatorUtil;
 import com.android.keyguard.AppearAnimationUtils;
 import com.android.keyguard.DisappearAnimationUtils;
 import com.android.keyguard.KeyguardPinBasedInputView;
+import com.android.keyguard.KeyguardSecurityContainer;
 import com.android.keyguard.KeyguardUpdateMonitor;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.animation.Animator.AnimatorListener;
 import android.content.Context;
+import android.os.CountDownTimer;
+import android.os.SystemClock;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -74,6 +79,7 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
     private View mDivider;
     private int mDisappearYTranslation;
     private View[][] mViews;
+    private CountDownTimer mSimpleNumViewCountdownTimer = null;
     
     // 10 keyboard button id
     private int [] mKeyButtonsId = new int[]{
@@ -89,6 +95,7 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
             R.id.key9
     };
     private ArrayList<Button> mKeyButtons = new ArrayList<Button>();
+    private TextView forgetButton;
 
     public AmigoKeyguardSimpleNumView(Context context) {
         this(context, null);
@@ -107,17 +114,25 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
 
     protected void resetState() {
         super.resetState();
-        if (KeyguardUpdateMonitor.getInstance(mContext).getMaxBiometricUnlockAttemptsReached()) {
-            mSecurityMessageDisplay.setMessage(R.string.faceunlock_multiple_failures, true);
-        } else {
-            mSecurityMessageDisplay.setMessage(R.string.kg_pin_instructions, false);
-        }
-        
-        long deadline = mLockPatternUtils.getLockoutAttemptDeadline();
-        if (!shouldLockout(deadline)) {
+       
+        long deadline =  mKeyguardUpdateMonitor.getCurDeadLine();
+        if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "resetState :deadline="+deadline);
+        if (deadline!=0) {
             setKeyButtonClickEnable(true);
+            handleAttemptLockout(deadline);
+        }else{
+        	resetMessage();
         }
     }
+    
+    private void resetMessage() {
+    	int retryCount = getUnlokcRetryCount();
+    	if(retryCount>0 && retryCount < LockPatternUtils.FAILED_ATTEMPTS_BEFORE_TIMEOUT){
+    		mSecurityMessageDisplay.setMessage(getWrongPasswordStringId(retryCount),true, retryCount);
+    	}else{
+    		displayDefaultSecurityMessage();
+    	}
+	}
 
     @Override
     protected int getPasswordTextViewId() {
@@ -165,7 +180,9 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
                 mKeyButtons.add((Button)view);
             }
         }
-        
+        mSecurityMessageDisplay.setTimeout(0); // don't show ownerinfo/charging status by default
+        resetState();
+        setForgetPasswordButton();
     }
 
     private void setKeyButtonClickEnable(boolean enabled){
@@ -178,6 +195,20 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
             // for CR01459777 end
         }
     }
+    
+    private void setForgetPasswordButton() {
+   	 forgetButton = (TextView) this.findViewById(R.id.forget_password);
+        if(forgetButton == null) return;
+        
+        forgetButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "forgetButton button clicked  ");
+			
+			}
+		});
+		
+	}
     
     private void initImage(){
         ll_images = (LinearLayout) findViewById(R.id.ll_images);
@@ -242,36 +273,127 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
     
     protected void verifyPasswordAndUnlock() {
         String entry = getPasswordText();
-        Log.d("jing_test", "verifyPasswordAndUnlock entry: "+entry);
+        boolean isLockDone=false;
+        
+        Log.d(LOG_TAG, "verifyPasswordAndUnlock entry: "+entry);
         if (mLockPatternUtils.checkPassword(entry)) {
-            mCallback.reportUnlockAttempt(true);
-            mCallback.dismiss(true);
-            setKeyButtonClickEnable(true);
+        	isLockDone=true;    
         } else {
-            if (entry.length() == MIN_PASSWORD_LENGTH_BEFORE_CHECKING ) {
-                // to avoid accidental lockout, only count attempts that are long enough to be a
-                // real password. This may require some tweaking.
-                mCallback.reportUnlockAttempt(false);
-                int attempts = KeyguardUpdateMonitor.getInstance(mContext).getFailedUnlockAttempts();
-                if (0 == (attempts % LockPatternUtils.FAILED_ATTEMPTS_BEFORE_TIMEOUT)) {
-                    long deadline = mLockPatternUtils.setLockoutAttemptDeadline();
-                    failShake(UNLOCK_FAIL_REASON_TIMEOUT);
-                    handleAttemptLockout(deadline);
-                }else{
-                    failShake(UNLOCK_FAIL_REASON_INCORRECT);
-                    setKeyButtonClickEnable(true);
-                }
-            }
-            int retryCount=getUnlokcRetryCount();
-            if(retryCount!=0){
-                mSecurityMessageDisplay.setMessage(getWrongPasswordStringId(),true,retryCount);
-            }
+        	isLockDone=false;
+           
         }
-        resetPasswordText(true /* animate */);
+        checkPasswordResult(isLockDone, UNLOCK_FAIL_UNKNOW_REASON);
     }
     
+    
+    
+    public void checkPasswordResult(boolean isLockDone , int unLockFailReason) {
+		if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "unLockPatternLock UNLOCK_FAIL_REASON_TOO_SHORT..");
+		int mUnLockFailReason=unLockFailReason;
+		
+		if (isLockDone) {
+			// unLockDone
+			if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "checkPasswordResult unLockPatternDone");
+			unLockDone();
+		} else {
+			// unlockFail
+	        // to avoid accidental lockout, only count attempts that are long enough to be a
+	        // real password. This may require some tweaking.
+	        mCallback.reportUnlockAttempt(false);
+	        mUnLockFailReason = UNLOCK_FAIL_REASON_INCORRECT; 
+	        if (mKeyguardUpdateMonitor.getFailedUnlockAttempts() >= LockPatternUtils.FAILED_ATTEMPTS_BEFORE_TIMEOUT) {
+				mUnLockFailReason = UNLOCK_FAIL_REASON_TIMEOUT;
+			} 
+	            if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "checkPasswordResult unLockPatternfailed...mKeyguardUpdateMonitor.getFailedUnlockAttempts()="+mKeyguardUpdateMonitor.getFailedUnlockAttempts());
+	   			 onUnlockFail(mUnLockFailReason);
+			}
+			
+		resetPasswordText(true /* animate */);		
+	}
+
+	private void unLockDone() {
+		forgetButton.setVisibility(View.INVISIBLE);
+		mCallback.reportUnlockAttempt(true);
+        mCallback.dismiss(true);
+        setKeyButtonClickEnable(true);
+		mCallback.reset();
+	}
+
+
+	public void onUnlockFail(int failReason) {
+		if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "onUnlockFail failReason :"+failReason);
+		forgetButton.setVisibility(View.VISIBLE);
+		if(failReason == UNLOCK_FAIL_REASON_TIMEOUT) {
+			 failShake(UNLOCK_FAIL_REASON_TIMEOUT);
+			long deadline = mKeyguardUpdateMonitor.getDeadline();
+			if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "onUnlockFail deadline :"+deadline);
+        	handleAttemptLockout(deadline);	
+        	
+		} else if(failReason == UNLOCK_FAIL_REASON_INCORRECT) {
+			failShake(UNLOCK_FAIL_REASON_INCORRECT);
+            setKeyButtonClickEnable(true);
+			 int stringId = getWrongPasswordStringId(getUnlokcRetryCount());
+			 if(mCallback.getFingerPrintResult()==KeyguardSecurityContainer.FINGERPRINT_FAILED){
+				 mSecurityMessageDisplay.setMessage(stringId,true,getUnlokcRetryCount());
+			 }else{
+				 mSecurityMessageDisplay.setMessage(stringId,true,getUnlokcRetryCount());
+			 }
+			 
+		}
+	}
+	
+	
+	 public void handleAttemptLockout(long elapsedRealtimeDeadline) {
+
+	        final int index = getTimeOutSize();
+	        final long elapsedRealtime = SystemClock.elapsedRealtime();
+	        if(DebugLog.DEBUGMAYBE) DebugLog.d(LOG_TAG, "handleAttemptLockout mSimpleNumViewCountdownTimer=:"+(mSimpleNumViewCountdownTimer==null));
+	        if(mSimpleNumViewCountdownTimer==null){
+	        	mSimpleNumViewCountdownTimer = new CountDownTimer(elapsedRealtimeDeadline - elapsedRealtime, 1000) {
+		
+		            @Override
+		            public void onTick(long millisUntilFinished) {
+		                final int secondsRemaining = (int) (millisUntilFinished / 1000);
+		                if(DebugLog.DEBUGMAYBE) DebugLog.d(LOG_TAG, "onUnlockFail secondsRemaining :"+secondsRemaining);
+		                mSecurityMessageDisplay.setMessage(
+		                        R.string.amigo_kg_too_many_failed_attempts_countdown, index,true, TimeUtils.secToTime(secondsRemaining));
+		            }
+		
+		            @Override
+		            public void onFinish() {
+		            	if(DebugLog.DEBUGMAYBE) DebugLog.d(LOG_TAG, "onFinish ");
+		            	setKeyButtonClickEnable(true);
+		                displayDefaultSecurityMessage();
+		                mSimpleNumViewCountdownTimer=null;
+		            }
+		
+		        }.start();
+	        }
+	    }
+	
+
+	private int getWrongPasswordStringId(int retryCount) {
+    	int stringId = R.string.kg_wrong_password_time;
+    	if(retryCount == 1){
+    		stringId = R.string.kg_wrong_password_onetime;
+    	}
+        return stringId;
+    }
+	
+	  private void displayDefaultSecurityMessage() {
+	    	mSecurityMessageDisplay.setMessage(R.string.keyguard_password_enter_code, true);
+	    }
+
+
+    
+    private int getTimeOutSize() {
+  		return mKeyguardUpdateMonitor.getFailedUnlockAttempts();
+  	}
+    
+    
+    
     private int getUnlokcRetryCount() {
-        return LockPatternUtils.FAILED_ATTEMPTS_BEFORE_TIMEOUT - KeyguardUpdateMonitor.getInstance(mContext).getFailedUnlockAttempts();
+    	return LockPatternUtils.FAILED_ATTEMPTS_BEFORE_TIMEOUT - mKeyguardUpdateMonitor.getFailedUnlockAttempts();
     }
 
     private void resetPinDelete(int num){
@@ -420,5 +542,19 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
             });
         }
     }
+
+	@Override
+	public void fingerPrintFailed() {
+		
+	}
+
+	@Override
+	public void fingerPrintSuccess() {
+		
+	}
+
+
+    
+    
     
 }

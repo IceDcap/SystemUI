@@ -24,6 +24,9 @@ public interface KeyguardSecurityView {
     static public final int KEYGUARD_HOSTVIEW_SCROLL_AT_UNLOCKH_EIGHT = 4;
     static public final int KEYGUARD_HOSTVIEW_SCROLL_AT_HOMEPAGE = 5;
     
+    //jiating modify for keyguard begin 
+    public static final int UNLOCK_FAIL_UNKNOW_REASON = 0;
+    //jiating modify for keyguard end
     public static final int UNLOCK_FAIL_REASON_INCORRECT = 1;
     public static final int UNLOCK_FAIL_REASON_TOO_SHORT = 2;
     public static final int UNLOCK_FAIL_REASON_TIMEOUT = 3;
@@ -105,4 +108,7 @@ public interface KeyguardSecurityView {
      *         animation started and {@code finishRunnable} will not be run
      */
     boolean startDisappearAnimation(Runnable finishRunnable);
+    
+    void fingerPrintFailed();
+    void fingerPrintSuccess();
 }

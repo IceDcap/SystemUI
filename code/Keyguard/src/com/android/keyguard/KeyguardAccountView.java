@@ -339,5 +339,19 @@ public class KeyguardAccountView extends LinearLayout implements KeyguardSecurit
     public boolean startDisappearAnimation(Runnable finishRunnable) {
         return false;
     }
+
+	@Override
+	public void fingerPrintFailed() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void fingerPrintSuccess() {
+		// TODO Auto-generated method stub
+		
+	}
+    
+    
 }
 

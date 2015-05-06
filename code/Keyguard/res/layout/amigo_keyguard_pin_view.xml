@@ -37,7 +37,16 @@
              androidprv:layout_maxWidth="@dimen/keyguard_security_width"
         androidprv:layout_maxHeight="@dimen/keyguard_security_max_height"
     -->
-
+   <TextView
+                    android:id="@+id/forget_password"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:paddingBottom="17dp"
+                    android:text="@string/forget_password"
+                    android:textColor="#ccffffff"
+                    android:textSize="16dp"
+                    android:visibility="invisible" />
     <include
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

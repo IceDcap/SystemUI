@@ -61,6 +61,11 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
     private SecurityCallback mSecurityCallback;
 
     private final KeyguardUpdateMonitor mUpdateMonitor;
+    
+    private  int fingerPrintResult=FINGERPRINT_UNUSED;
+    public static final int FINGERPRINT_UNUSED=-1;
+    public static final int FINGERPRINT_FAILED=0;
+    public static final int FINGERPRINT_SUCCESS=1;
 
     // Used to notify the container when something interesting happens.
     public interface SecurityCallback {
@@ -217,7 +222,7 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
                 messageId = R.string.kg_too_many_failed_simple_attempts_dialog_message;
                 break;
             case Password:
-                 messageId = R.string.kg_too_many_failed_mixed_password_attempts_dialog_message;
+                messageId = R.string.kg_too_many_failed_mixed_password_attempts_dialog_message;
                 break;
             // These don't have timeout dialogs.
             case Account:
@@ -327,7 +332,7 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
             }
         } else {
             showTimeout =
-                (failedAttempts % LockPatternUtils.FAILED_ATTEMPTS_BEFORE_TIMEOUT) == 0;
+                failedAttempts >= LockPatternUtils.FAILED_ATTEMPTS_BEFORE_TIMEOUT;
             if (usingPattern && mEnableFallback) {
                 if (failedAttempts == failedAttemptWarning) {
                     showAlmostAtAccountLoginDialog();
@@ -342,9 +347,12 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
         }
         monitor.reportFailedUnlockAttempt();
         mLockPatternUtils.reportFailedPasswordAttempt();
-        if (showTimeout) {
-            showTimeoutDialog();
+        //jiating modify for keyguard begin
+       if (showTimeout) {
+//            showTimeoutDialog();
+    	   monitor.clearFailedUnlockAttempts(false);
         }
+      //jiating modify for keyguard end
     }
 
     /**
@@ -619,7 +627,7 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
         public void reportUnlockAttempt(boolean success) {
             KeyguardUpdateMonitor monitor = KeyguardUpdateMonitor.getInstance(mContext);
             if (success) {
-                monitor.clearFailedUnlockAttempts();
+                monitor.clearFailedUnlockAttempts(true);
                 mLockPatternUtils.reportSuccessfulPasswordAttempt();
             } else {
                 if (mCurrentSecuritySelection == SecurityMode.Biometric) {
@@ -635,7 +643,24 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
             KeyguardSecurityContainer.this.showBackupSecurityScreen();
         }
 
+		@Override
+		public int getFingerPrintResult() {
+			// TODO Auto-generated method stub
+			return KeyguardSecurityContainer.this.getFingerPrintResult();
+		}
+
+		@Override
+		public void reset() {
+			KeyguardSecurityContainer.this.setFingerPrintResult(FINGERPRINT_UNUSED);
+			
+		}
+
     };
+    
+	public long getLockoutAttemptDeadline() {
+	    KeyguardUpdateMonitor monitor = KeyguardUpdateMonitor.getInstance(mContext);
+		return monitor.getDeadline();
+	}
 
     // The following is used to ignore callbacks from SecurityViews that are no longer current
     // (e.g. face unlock). This avoids unwanted asynchronous events from messing with the
@@ -651,6 +676,14 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
         public boolean isVerifyUnlockOnly() { return false; }
         @Override
         public void dismiss(boolean securityVerified) { }
+		@Override
+		public int getFingerPrintResult() {
+			return 0;
+		}
+		@Override
+		public void reset() {
+			
+		}
     };
 
     private int getSecurityViewIdForMode(SecurityMode securityMode) {
@@ -724,6 +757,30 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
     public void showUsabilityHint() {
         mSecurityViewFlipper.showUsabilityHint();
     }
+    
+    
+    public void fingerPrintFailed(){
+    	fingerPrintResult=FINGERPRINT_FAILED;
+    	if (mCurrentSecuritySelection != SecurityMode.None) {
+            getSecurityView(mCurrentSecuritySelection).fingerPrintFailed();
+        }
+    }
+    
+    public void fingerPrintSuccess(){
+    	fingerPrintResult=FINGERPRINT_SUCCESS;;
+    	if (mCurrentSecuritySelection != SecurityMode.None) {
+            getSecurityView(mCurrentSecuritySelection).fingerPrintSuccess();
+        }
+    }
+
+	public  int getFingerPrintResult() {
+		return fingerPrintResult;
+	}
+
+	public  void setFingerPrintResult(int fingerPrintResult) {
+		fingerPrintResult = fingerPrintResult;
+	}
+    
     
 
 

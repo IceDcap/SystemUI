@@ -21,6 +21,7 @@ public interface SecurityMessageDisplay {
 
     public void setMessage(int resId, boolean important);
     public void setMessage(int resId, boolean important, Object... formatArgs);
+    public void setMessage(int resId, int index,boolean important ,Object formatArgs );
 
     public void setTimeout(int timeout_ms);
 

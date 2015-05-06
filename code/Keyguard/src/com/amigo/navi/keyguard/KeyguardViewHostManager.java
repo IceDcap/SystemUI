@@ -17,7 +17,7 @@ import android.view.ViewParent;
 import android.widget.FrameLayout.LayoutParams;
 
 import com.amigo.navi.keyguard.AmigoKeyguardBouncer.KeyguardBouncerCallback;
-import com.amigo.navi.keyguard.fingerprint.FingerIndentifyManager;
+import com.amigo.navi.keyguard.fingerprint.FingerIdentifyManager;
 import com.amigo.navi.keyguard.skylight.SkylightActivity;
 import com.amigo.navi.keyguard.skylight.SkylightHost;
 import com.amigo.navi.keyguard.skylight.SkylightUtil;
@@ -54,7 +54,7 @@ public class KeyguardViewHostManager {
     private MyHandler mHandler=new MyHandler();
     private ViewHostReceiver mReceiver=new ViewHostReceiver();
     private KeyguardNotificationCallback mKeyguardNotificationCallback;
-    private FingerIndentifyManager mFingerIndentifyManager;
+    private FingerIdentifyManager mFingerIdentifyManager;
     
     public KeyguardViewHostManager(Context context,KeyguardViewHost host,SkylightHost skylight,LockPatternUtils lockPatternUtils,ViewMediatorCallback callback){
         mContext=context;
@@ -66,7 +66,7 @@ public class KeyguardViewHostManager {
         sInstance=this;
         setViewMediatorCallback(callback);
         initKeyguard(callback);
-        mFingerIndentifyManager=new FingerIndentifyManager();
+        mFingerIdentifyManager=new FingerIdentifyManager(context);
     }
   
     
@@ -106,22 +106,30 @@ public class KeyguardViewHostManager {
         destroyAcivityIfNeed();
         mKeyguardViewHost.hide();
         setSkylightHidden();
+        mFingerIdentifyManager.cancel();
     }
     
     
     public void onScreenTurnedOff(){
         mKeyguardViewHost.onScreenTurnedOff();
-        mFingerIndentifyManager.cancel();
+        mFingerIdentifyManager.cancel();
     }
     
     public void onScreenTurnedOn(){
         mKeyguardViewHost.onScreenTurnedOn();
-        mFingerIndentifyManager.startIdentify(mIdentifyCb, mFingerIndentifyManager.getIds());
+        mFingerIdentifyManager.startIdentifyIfNeed();
     }
     
     public boolean isShowing(){
         if(mViewMediatorCallback != null){
             return mViewMediatorCallback.isShowing();
+        }
+        return false;
+    }
+    
+    public boolean isShowingAndNotOccluded(){
+        if(mViewMediatorCallback != null){
+            return mViewMediatorCallback.isShowingAndNotOccluded();
         }
         return false;
     }
@@ -142,6 +150,7 @@ public class KeyguardViewHostManager {
         mKeyguardViewHost.dismiss();
     }
     
+    
     public void verifyUnlock(){
     	show(null);
     	dismiss();
@@ -161,24 +170,6 @@ public class KeyguardViewHostManager {
     }
     
     
-    
-//    protected boolean initSkylightHost() {
-//        boolean initSuccess = false;
-//        if (SkylightHost.isSkylightSizeExist()) {
-//            Log.d(LOG_TAG, "addSkylightToHost host is null? " + (mSkylightHost == null));
-//            if (mSkylightHost == null) {
-//                mSkylightHost = new SkylightHost(mContext);
-//                mSkylightHost.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-//                mSkylightHost.setVisibility(View.GONE);
-//                mKeyguardViewHost.addView(mSkylightHost);
-//                mSkylightHost.bringToFront();
-//                initSuccess = true;
-//            } else if (mSkylightHost != null) {
-//                initSuccess = true;
-//            }
-//        }
-//        return initSuccess;
-//    }
     
     private void setIsSkylightShown(boolean isShown){
         mIsSkylightShown=isShown;
@@ -398,43 +389,24 @@ public class KeyguardViewHostManager {
             }
         });
     }
-    
-    
-    private IGnIdentifyCallback mIdentifyCb = new IGnIdentifyCallback() {
-
-        public void onWaitingForInput() {
-            Log.d(LOG_TAG, "onWaitingForInput()---");
-        }
-
-        public void onInput() {
-            Log.d(LOG_TAG, "onInput()---");
-        }
-
-        public void onCaptureCompleted() {
-            Log.d(LOG_TAG, "onCaptureCompleted()---");
-        }
-
-        public void onCaptureFailed(int reason) {
-            Log.d(LOG_TAG, "onCaptureFailed()---");
-        }
-
-        public void onIdentified(int fingerId, boolean updated) {
-            Log.d(LOG_TAG, "onIdentified()---");
-        }
-
-        public void onNoMatch(int reason) {
-            Log.d(LOG_TAG, "onNoMatch()---reason=" + reason);
-        }
-
-        public void onExtIdentifyMsg(Message msg, String description) {
-            Log.d(LOG_TAG, "onExtIdentifyMsg()---");
-        }
-    };
-
     public void showBouncerOrKeyguardDone(){
-    	if ( mKeyguardViewHost!=null) {
-    		mKeyguardViewHost.showBouncerOrKeyguardDone(); 
+        if ( mKeyguardViewHost!=null) {
+            mKeyguardViewHost.showBouncerOrKeyguardDone(); 
            }
+    }
+    public void shakeFingerIdentifyTip(){
+        mKeyguardViewHost.shakeFingerIdentifyTip();
+    }
+    public void unlockByFingerIdentify(){
+        mKeyguardViewHost.unlockByFingerIdentify();
+    }
+    
+    public void fingerPrintFailed() {
+        mKeyguardViewHost.fingerPrintFailed();
+    }
+
+    public void fingerPrintSuccess() {
+        mKeyguardViewHost.fingerPrintSuccess();
     }
     
 }

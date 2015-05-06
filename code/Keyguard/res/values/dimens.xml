@@ -72,7 +72,7 @@
     <dimen name="kg_status_clock_font_size">75dp</dimen>
 
     <!-- Size of the generic status lines keyguard's status view -->
-    <dimen name="kg_status_line_font_size">14sp</dimen>
+    <dimen name="kg_status_line_font_size">12sp</dimen>
 
     <!-- Size of margin on the right of keyguard's status view -->
     <dimen name="kg_status_line_font_right_margin">16dp</dimen>
@@ -286,7 +286,9 @@
     <dimen name="complex_password_linearLayout_height">36dp</dimen>
     <dimen name="complex_password_linearLayout_margintop">20dp</dimen>
     <dimen name="double_tap_area_radius">83dp</dimen>
-
+	
+	<dimen name="fingerprint_fail_tip_margin_bottom">200dp</dimen>
+	<dimen name="fingerprint_fail_tip_text_size">12sp</dimen>
     <!-- NaviKeyguard dimens end -->
 
 </resources>

@@ -1,5 +1,8 @@
 package com.amigo.navi.keyguard;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -291,5 +294,62 @@ public class KeyguardViewHost extends FrameLayout {
     	if ( mAmigoKeyguardView!=null) {
           	  mAmigoKeyguardView.showBouncerOrKeyguardDone(); 
            }
+    }
+    
+
+    public void shakeFingerIdentifyTip() {
+        mAmigoKeyguardView.shakeFingerIdentifyTip();
+    }
+    
+    
+    private AnimatorSet mScaleHostAnimator = null;
+
+    public void unlockByFingerIdentify() {
+        if (mScaleHostAnimator == null) {
+            ObjectAnimator animator1 = ObjectAnimator.ofFloat(this, "scaleX", 1f, 0.6f);
+            ObjectAnimator animator2 = ObjectAnimator.ofFloat(this, "scaleY", 1f, 0.6f);
+            ObjectAnimator animator3 = ObjectAnimator.ofFloat(this, "alpha", 1f, 0.4f);
+            mScaleHostAnimator = new AnimatorSet();
+            mScaleHostAnimator.setDuration(200);
+            mScaleHostAnimator.playTogether(animator1, animator2, animator3);
+            mScaleHostAnimator.addListener(new Animator.AnimatorListener() {
+
+                @Override
+                public void onAnimationStart(Animator animation) {
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mViewMediatorCallback.keyguardDone(true);
+                    setVisibility(View.GONE);
+                    resetHostView();
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                    resetHostView();
+                }
+            });
+        }
+        mScaleHostAnimator.start();
+
+    }
+
+    private void resetHostView() {
+        setScaleX(1f);
+        setScaleY(1f);
+        setAlpha(1f);
+    }
+    
+    public void fingerPrintFailed() {
+        mAmigoKeyguardView.fingerPrintFailed();
+    }
+
+    public void fingerPrintSuccess() {
+        mAmigoKeyguardView.fingerPrintSuccess();
     }
 }

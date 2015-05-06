@@ -72,14 +72,14 @@ public abstract class KeyguardAbsKeyInputView extends LinearLayout
 
     public void reset() {
         // start fresh
-        resetPasswordText(false /* animate */);
+//        resetPasswordText(false /* animate */);
         // if the user is currently locked out, enforce it.
-        long deadline = mLockPatternUtils.getLockoutAttemptDeadline();
-        if (shouldLockout(deadline)) {
-            handleAttemptLockout(deadline);
-        } else {
+//        long deadline =  mKeyguardUpdateMonitor.getCurDeadLine();
+//        if (shouldLockout(deadline)) {
+//            handleAttemptLockout(deadline);
+//        } else {
             resetState();
-        }
+//        }
     }
 
     // Allow subclasses to override this behavior
@@ -157,7 +157,7 @@ public abstract class KeyguardAbsKeyInputView extends LinearLayout
             @Override
             public void onFinish() {
                 mSecurityMessageDisplay.setMessage("", true);
-                resetState();
+              
             }
         }.start();
     }
@@ -175,7 +175,7 @@ public abstract class KeyguardAbsKeyInputView extends LinearLayout
 
     @Override
     public void onPause(int reason) {
-
+    	 resetPasswordText(false /* animate */);
     }
 
     @Override
@@ -213,6 +213,18 @@ public abstract class KeyguardAbsKeyInputView extends LinearLayout
     public boolean startDisappearAnimation(Runnable finishRunnable) {
         return false;
     }
+
+	@Override
+	public void fingerPrintFailed() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void fingerPrintSuccess() {
+		// TODO Auto-generated method stub
+		
+	}
     
     
 //    protected void setMessage(int resId) {
@@ -248,6 +260,9 @@ public abstract class KeyguardAbsKeyInputView extends LinearLayout
 //            mMessageView.setTextColor(color);
 //        }
 //    }
+    
+    
+    
     
 }
 

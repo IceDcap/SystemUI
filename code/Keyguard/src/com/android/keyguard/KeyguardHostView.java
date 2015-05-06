@@ -1115,5 +1115,14 @@ public class KeyguardHostView extends KeyguardViewBase {
             }
         }
     }
+    
+    
+    public void fingerPrintFailed(){
+    	super.fingerPrintFailed();
+    }
+    
+    public void fingerPrintSuccess(){
+    	super.fingerPrintSuccess();
+    }
 
 }

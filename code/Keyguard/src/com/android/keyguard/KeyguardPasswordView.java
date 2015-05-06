@@ -18,8 +18,11 @@ package com.android.keyguard;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.os.CountDownTimer;
+import android.os.SystemClock;
 import android.text.Editable;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.TextKeyListener;
 import android.util.AttributeSet;
@@ -39,8 +42,11 @@ import android.widget.TextView.OnEditorActionListener;
 
 import java.util.List;
 
+import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.KeyguardViewHostManager;
+import com.amigo.navi.keyguard.util.TimeUtils;
 import com.amigo.navi.keyguard.util.VibatorUtil;
+import com.android.internal.widget.LockPatternUtils;
 /**
  * Displays an alphanumeric (latin-1) key entry for the user to enter
  * an unlock password
@@ -49,6 +55,7 @@ import com.amigo.navi.keyguard.util.VibatorUtil;
 public class KeyguardPasswordView extends KeyguardAbsKeyInputView
         implements KeyguardSecurityView, OnEditorActionListener, TextWatcher {
 
+    private static final String LOG_TAG="KeyguardPasswordView";
     private final boolean mShowImeAtScreenOn;
     private final int mDisappearYTranslation;
 
@@ -56,6 +63,8 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
     private TextView mPasswordEntry;
     private Interpolator mLinearOutSlowInInterpolator;
     private Interpolator mFastOutLinearInInterpolator;
+    private CountDownTimer mPasswordViewCountdownTimer = null;
+    private TextView forgetButton;
 
     public KeyguardPasswordView(Context context) {
         this(context, null);
@@ -74,10 +83,28 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
     }
 
     protected void resetState() {
-        mSecurityMessageDisplay.setMessage(R.string.kg_password_instructions, false);
-        mPasswordEntry.setEnabled(true);
-    }
+        long deadline =  mKeyguardUpdateMonitor.getCurDeadLine();
+        if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "resetState :deadline="+deadline);
+        if (deadline!=0) {
+            handleAttemptLockout(deadline);
+        }else{
+        	resetMessage();
+        }
 
+    }
+    
+    
+    private void resetMessage() {
+        mPasswordEntry.setEnabled(true);
+    	int retryCount = getUnlokcRetryCount();
+    	if(retryCount>0 && retryCount < LockPatternUtils.FAILED_ATTEMPTS_BEFORE_TIMEOUT){
+    		mSecurityMessageDisplay.setMessage(getWrongPasswordStringId(retryCount),true, retryCount);
+    	}else{
+    		displayDefaultSecurityMessage();
+    	}
+	}
+    
+    
     @Override
     protected int getPasswordTextViewId() {
         return R.id.passwordEntry;
@@ -98,14 +125,26 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
             public void run() {
                 if (isShown()) {
                     mPasswordEntry.requestFocus();
-                    if (reason != KeyguardSecurityView.SCREEN_ON || mShowImeAtScreenOn) {
-                        mImm.showSoftInput(mPasswordEntry, InputMethodManager.SHOW_IMPLICIT);
+                    if ((reason != KeyguardSecurityView.SCREEN_ON || mShowImeAtScreenOn) && mPasswordEntry.isEnabled()) {
+                    	showInput();
                     }
                 }
             }
         });
         }
     }
+  
+    private void showInput(){
+    	post(new Runnable() {
+			@Override
+			public void run() {
+				mPasswordEntry.setSelected(true);
+				mImm.showSoftInput(mPasswordEntry, InputMethodManager.SHOW_IMPLICIT);
+			}
+		});
+    }
+    
+    
 
     @Override
     public void onPause(int reason) {
@@ -116,6 +155,7 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
     }
 
 	private void hiddenInput() {
+		mPasswordEntry.clearFocus();
 		mImm.hideSoftInputFromWindow(getWindowToken(), 0);
 	}
 
@@ -205,7 +245,24 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
 				VibatorUtil.amigoVibrate(mContext, VibatorUtil.LOCKSCREEN_UNLOCK_CODE_TAP, VibatorUtil.TOUCH_TAP_VIBRATE_TIME);
 			}
 		});
+        mSecurityMessageDisplay.setTimeout(0); // don't show ownerinfo/charging status by default
+        resetState();
+        setForgetPasswordButton();
     }
+    
+    private void setForgetPasswordButton() {
+   	 forgetButton = (TextView) this.findViewById(R.id.forget_password);
+        if(forgetButton == null) return;
+        
+        forgetButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "forgetButton button clicked  ");
+			
+			}
+		});
+		
+	}
     
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
@@ -347,4 +404,151 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
         }
         return false;
     }
+    
+
+    protected void verifyPasswordAndUnlock() {
+        String entry = getPasswordText();
+        boolean isLockDone=false;
+        if(TextUtils.isEmpty(entry)){
+        	mSecurityMessageDisplay.setMessage(R.string.kg_complex_number_notnull,true);
+			return;
+		}
+        Log.d(LOG_TAG, "verifyPasswordAndUnlock entry: "+entry);
+        if (mLockPatternUtils.checkPassword(entry)) {
+        	isLockDone=true;    
+        } else {
+        	isLockDone=false;
+           
+        }
+        checkPasswordResult(isLockDone, UNLOCK_FAIL_UNKNOW_REASON);
+    }
+    
+    public void checkPasswordResult(boolean isLockDone , int unLockFailReason) {
+		if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "unLockPatternLock UNLOCK_FAIL_REASON_TOO_SHORT..");
+		int mUnLockFailReason=unLockFailReason;
+		
+		if (isLockDone) {
+			// unLockDone
+			if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "checkPasswordResult unLockPatternDone");
+			unLockDone();
+		} else {
+			// unlockFail
+	        // to avoid accidental lockout, only count attempts that are long enough to be a
+	        // real password. This may require some tweaking.
+			if (mUnLockFailReason != UNLOCK_FAIL_REASON_TOO_SHORT) {
+				  mCallback.reportUnlockAttempt(false);
+			      mUnLockFailReason = UNLOCK_FAIL_REASON_INCORRECT; 
+			      if (mKeyguardUpdateMonitor.getFailedUnlockAttempts() >= LockPatternUtils.FAILED_ATTEMPTS_BEFORE_TIMEOUT) {
+						mUnLockFailReason = UNLOCK_FAIL_REASON_TIMEOUT;
+				  } 
+			      if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "checkPasswordResult unLockPatternfailed...mKeyguardUpdateMonitor.getFailedUnlockAttempts()="+mKeyguardUpdateMonitor.getFailedUnlockAttempts());
+			      onUnlockFail(mUnLockFailReason);
+			}
+			failShake(mUnLockFailReason);
+		}
+			
+		resetPasswordText(true /* animate */);		
+	}
+    
+    
+    private void failShake(int mUnLockFailReason) {
+    	VibatorUtil.amigoVibrate(mContext, VibatorUtil.LOCKSCREEN_UNLOCK_CODE_ERROR, VibatorUtil.UNLOCK_ERROR_VIBRATE_TIME);
+		
+	}
+
+	private void unLockDone() {
+		mCallback.reportUnlockAttempt(true);
+        mCallback.dismiss(true);
+        hiddenInput();
+		mCallback.reset();
+		forgetButton.setVisibility(View.INVISIBLE);
+	}
+    
+    public void onUnlockFail(int failReason) {
+		if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "onUnlockFail failReason :"+failReason);
+		forgetButton.setVisibility(View.VISIBLE);
+		if(failReason == UNLOCK_FAIL_REASON_TIMEOUT) {
+			long deadline = mKeyguardUpdateMonitor.getDeadline();
+			if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "onUnlockFail deadline :"+deadline);
+        	handleAttemptLockout(deadline);	
+		} else if(failReason == UNLOCK_FAIL_REASON_INCORRECT) {
+			 int stringId = getWrongPasswordStringId(getUnlokcRetryCount());
+			 if(mCallback.getFingerPrintResult()==KeyguardSecurityContainer.FINGERPRINT_FAILED){
+				 mSecurityMessageDisplay.setMessage(stringId,true,getUnlokcRetryCount());
+			 }else{
+				 mSecurityMessageDisplay.setMessage(stringId,true,getUnlokcRetryCount());
+			 }
+			 
+		}else if(failReason == UNLOCK_FAIL_REASON_TOO_SHORT) {
+//			mSecurityMessageDisplay.setMessage(R.string.kg_number_is_too_short);
+		}
+	}
+    
+    public void handleAttemptLockout(long elapsedRealtimeDeadline) {
+    	mPasswordEntry.setEnabled(false);
+        final int index = getTimeOutSize();
+        final long elapsedRealtime = SystemClock.elapsedRealtime();
+        if(DebugLog.DEBUGMAYBE) DebugLog.d(LOG_TAG, "handleAttemptLockout mSimpleNumViewCountdownTimer=:"+(mPasswordViewCountdownTimer==null));
+        if(mPasswordViewCountdownTimer==null){
+        	mPasswordViewCountdownTimer = new CountDownTimer(elapsedRealtimeDeadline - elapsedRealtime, 1000) {
+	
+	            @Override
+	            public void onTick(long millisUntilFinished) {
+	                final int secondsRemaining = (int) (millisUntilFinished / 1000);
+	                if(DebugLog.DEBUGMAYBE) DebugLog.d(LOG_TAG, "onUnlockFail secondsRemaining :"+secondsRemaining);
+	                mSecurityMessageDisplay.setMessage(
+	                        R.string.amigo_kg_too_many_failed_attempts_countdown, index,true, TimeUtils.secToTime(secondsRemaining));
+	            }
+	
+	            @Override
+	            public void onFinish() {
+	            	if(DebugLog.DEBUGMAYBE) DebugLog.d(LOG_TAG, "onFinish ");
+	                displayDefaultSecurityMessage();
+	                mPasswordViewCountdownTimer=null;
+	                mPasswordEntry.setEnabled(true);
+	            }
+	
+	        }.start();
+        }
+    }
+
+
+		private int getWrongPasswordStringId(int retryCount) {
+			int stringId = R.string.kg_wrong_password_time;
+			if(retryCount == 1){
+				stringId = R.string.kg_wrong_password_onetime;
+			}
+		    return stringId;
+		}
+		
+		  private void displayDefaultSecurityMessage() {
+		    	mSecurityMessageDisplay.setMessage(R.string.keyguard_password_enter_code, true);
+		    }
+		
+		
+		
+		private int getTimeOutSize() {
+				return mKeyguardUpdateMonitor.getFailedUnlockAttempts();
+			}
+		
+		
+		
+		private int getUnlokcRetryCount() {
+			return LockPatternUtils.FAILED_ATTEMPTS_BEFORE_TIMEOUT - mKeyguardUpdateMonitor.getFailedUnlockAttempts();
+		}
+
+	@Override
+	public void fingerPrintFailed() {
+		// TODO Auto-generated method stub
+		super.fingerPrintFailed();
+	}
+
+	@Override
+	public void fingerPrintSuccess() {
+		// TODO Auto-generated method stub
+		super.fingerPrintSuccess();
+	}
+    
+    
+    
 }
