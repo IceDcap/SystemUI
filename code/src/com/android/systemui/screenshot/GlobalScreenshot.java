@@ -29,6 +29,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -171,7 +172,8 @@ class SaveImageInBackgroundTask extends AsyncTask<SaveImageInBackgroundData, Voi
 
         mNotificationStyle = new Notification.BigPictureStyle()
             .bigPicture(preview);
-        mNotificationBuilder.setStyle(mNotificationStyle);
+        // GIONEE <wujj> <2015-02-03> Delay show notification as big picture styles
+		// mNotificationBuilder.setStyle(mNotificationStyle);
 
         // For "public" situations we want to show all the same info but
         // omit the actual screenshot image.
@@ -253,6 +255,19 @@ class SaveImageInBackgroundTask extends AsyncTask<SaveImageInBackgroundData, Voi
                      PendingIntent.getActivity(context, 0, chooserIntent,
                              PendingIntent.FLAG_CANCEL_CURRENT));
 
+            // Add TUYA action
+            Intent tuyaIntent = new Intent("action.picture.tool.tuya");
+    		tuyaIntent.setDataAndType(uri, "image/png");
+    		tuyaIntent.setDataAndType(uri, "image/jpeg");
+    		tuyaIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_CLEAR_TASK
+    				| Intent.FLAG_ACTIVITY_NEW_TASK);
+    		if (context.getPackageManager()
+    				.queryIntentActivities(tuyaIntent, PackageManager.MATCH_DEFAULT_ONLY).size() != 0) {
+    			mNotificationBuilder.addAction(R.drawable.gn_icon_brush,
+    					context.getString(R.string.tuya), PendingIntent.getActivity(context, 0,
+    							tuyaIntent, PendingIntent.FLAG_CANCEL_CURRENT));
+    		}
+    		
             OutputStream out = resolver.openOutputStream(uri);
             image.compress(Bitmap.CompressFormat.PNG, 100, out);
             out.flush();
@@ -311,7 +326,9 @@ class SaveImageInBackgroundTask extends AsyncTask<SaveImageInBackgroundData, Voi
                 .setWhen(now)
                 .setAutoCancel(true)
                 .setColor(r.getColor(
-                        com.android.internal.R.color.system_notification_accent_color));;
+                        com.android.internal.R.color.system_notification_accent_color));
+			// GIONEE <wujj> <2015-02-03> Delay show notification as big picture styles
+            mNotificationBuilder.setStyle(mNotificationStyle);
 
             // Update the text in the public version as well
             mPublicNotificationBuilder

@@ -4656,14 +4656,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     public void onScreenTurnedOff() {
         mScreenOnFromKeyguard = false;
 //        mScreenOnComingFromTouch = false;
-//        mStackScroller.setAnimationsEnabled(false);
+        mStackScroller.setAnimationsEnabled(false);
     	animateCollapsePanels(CommandQueue.FLAG_EXCLUDE_RECENTS_PANEL, true /* force */);
         updateVisibleToUser();
     }
 
     public void onScreenTurnedOn() {
         mScreenOnFromKeyguard = true;
-//        mStackScroller.setAnimationsEnabled(true);
+        mStackScroller.setAnimationsEnabled(true);
 //        mNotificationPanel.onScreenTurnedOn();
 //        mNotificationPanel.setTouchDisabled(false);
         updateVisibleToUser();

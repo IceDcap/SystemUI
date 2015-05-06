@@ -1948,7 +1948,7 @@ public abstract class BaseStatusBar extends SystemUI implements
     // Add by GIONEE
     protected void setMoreDotAnimator(StatusBarNotification n){}
     protected void setMoreDotAnimator(boolean flags){}
-    protected abstract void updateNotificationHeaders();
+    protected void updateNotificationHeaders() {}
 
     public void updateNotification(StatusBarNotification notification, RankingMap ranking) {
         if (DEBUG) Log.d(TAG, "updateNotification(" + notification + ")");
