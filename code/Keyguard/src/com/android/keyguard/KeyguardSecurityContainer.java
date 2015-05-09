@@ -99,9 +99,6 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
         if (mCurrentSecuritySelection != SecurityMode.None) {
             getSecurityView(mCurrentSecuritySelection).onResume(reason);
             final View currentSecurityView = mSecurityViewFlipper.getCurrentView();
-            currentSecurityView.setVisibility(View.VISIBLE);
-//            currentSecurityView.setTranslationY(150);
-//			currentSecurityView.setAlpha(1);
         }
     }
 
@@ -109,6 +106,7 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
     public void onPause(int reason) {
         if (mCurrentSecuritySelection != SecurityMode.None) {
             getSecurityView(mCurrentSecuritySelection).onPause(reason);
+
         }
     }
 
@@ -781,7 +779,13 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
 		fingerPrintResult = fingerPrintResult;
 	}
     
-    
+    @Override
+    public boolean isFrozen() {
+    	if (mCurrentSecuritySelection != SecurityMode.None) {
+            return getSecurityView(mCurrentSecuritySelection).isFrozen();
+        }
+    	return false;
+    }
 
 
 }

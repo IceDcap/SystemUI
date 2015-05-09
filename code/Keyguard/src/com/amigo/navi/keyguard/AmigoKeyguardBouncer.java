@@ -155,6 +155,7 @@ public class AmigoKeyguardBouncer {
 		 public void onResumeSecurityView(int reason) {
 		        if (mKeyguardView != null && mRoot != null ) {
 		            mKeyguardView.onResume(reason);
+		            mKeyguardView.startAppearAnimation();
 		        }
 		        
 		 }
@@ -177,7 +178,12 @@ public class AmigoKeyguardBouncer {
         }
     }
 		 
-
+    public boolean passwordViewIsForzen(){
+    	 if (mKeyguardView != null && mRoot != null) {
+             return mKeyguardView.passwordViewIsForzen();
+         }
+    	 return false;
+    }
 		 public long getUserActivityTimeout() {
 		    	long timeout=-1;
 		        if (mKeyguardView != null) {
@@ -211,6 +217,8 @@ public class AmigoKeyguardBouncer {
 		    		mBouncerCallback.KeyguardShowing();
 		    	}
 		    }
+		    
+		   
 		    
 		 
 

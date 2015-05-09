@@ -164,7 +164,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
     private int mFailedTimeOutSize = 0;
     private int mRellyFailedTimeOutSize = 0;
     private static final int MAX_FAILED_MS=1024*60*1000;
-    private  long failedAttemptTimeoutMS=LockPatternUtils.FAILED_ATTEMPT_TIMEOUT_MS * 2;
+    private  long mFailedAttemptTimeoutMS=LockPatternUtils.FAILED_ATTEMPT_TIMEOUT_MS * 2;
     //jiating modify for keyguard begin 
 
     private boolean mAlternateUnlockEnabled;
@@ -1501,7 +1501,11 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         	mFailedAttempts = 0;
             mFailedBiometricUnlockAttempts = 0;
     		mFailedTimeOutSize = 0;
-    		failedAttemptTimeoutMS=LockPatternUtils.FAILED_ATTEMPT_TIMEOUT_MS * 2;
+    		mFailedAttemptTimeoutMS=LockPatternUtils.FAILED_ATTEMPT_TIMEOUT_MS * 2;
+    		SharedPreferences sp = mContext.getSharedPreferences("lockDeadline", Context.MODE_PRIVATE);
+    		SharedPreferences.Editor editor = sp.edit();
+    		editor.clear();
+    		editor.commit();
     	}else{
     		mFailedTimeOutSize++;
     	}
@@ -1509,20 +1513,20 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
     
     public long getDeadline(){
     	long deadline=0;
-    	if(mFailedTimeOutSize==1){
-    		deadline = SystemClock.elapsedRealtime() + failedAttemptTimeoutMS;
-    	}else if(mFailedTimeOutSize>1){
-    		failedAttemptTimeoutMS=failedAttemptTimeoutMS * 2;
-			if(failedAttemptTimeoutMS>MAX_FAILED_MS){
-				failedAttemptTimeoutMS= MAX_FAILED_MS; 	
-			}
-    	    deadline = SystemClock.elapsedRealtime() + failedAttemptTimeoutMS;
-    	    
+    	 if(mFailedTimeOutSize>1){
+    		mFailedAttemptTimeoutMS=mFailedAttemptTimeoutMS * 2;  
     	}
-    	if(DebugLog.DEBUGMAYBE) DebugLog.d(TAG, "getDeadlinefailedAttemptTimeoutMS :"+failedAttemptTimeoutMS);
+    	 if(mFailedAttemptTimeoutMS>MAX_FAILED_MS){
+				mFailedAttemptTimeoutMS= MAX_FAILED_MS; 	
+			}
+    	 deadline = System.currentTimeMillis() + mFailedAttemptTimeoutMS;
+    	 if(DebugLog.DEBUGMAYBE) DebugLog.d(TAG, "getDeadlinefailedAttemptTimeoutMS :"+mFailedAttemptTimeoutMS);
 	   	 SharedPreferences sp = mContext.getSharedPreferences("lockDeadline", Context.MODE_PRIVATE);
 	   	 SharedPreferences.Editor editor = sp.edit();
 	   	 editor.putLong("deadline", deadline);
+	   	 editor.putLong("failedAttemptTimeoutMS", mFailedAttemptTimeoutMS);
+	   	 editor.putInt("mFailedAttempts", mFailedAttempts);
+	   	 editor.putInt("mFailedTimeOutSize", mFailedTimeOutSize);
 	   	 editor.commit();
 	   	 return deadline;
    }
@@ -1530,23 +1534,20 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
 
 
     public long getCurDeadLine(){
-    	long deadlineTemp=0;
-    	if(mFailedTimeOutSize==1){
-    		deadlineTemp= SystemClock.elapsedRealtime() + failedAttemptTimeoutMS;
-	   	}else if(mFailedTimeOutSize>1){
-	   		failedAttemptTimeoutMS=failedAttemptTimeoutMS * 2;
-			if(failedAttemptTimeoutMS>MAX_FAILED_MS){
-				failedAttemptTimeoutMS= MAX_FAILED_MS; 	
-			}
-			deadlineTemp = SystemClock.elapsedRealtime() + failedAttemptTimeoutMS;	   	
-		}
     	SharedPreferences sp = mContext.getSharedPreferences("lockDeadline", Context.MODE_PRIVATE);
+    	mFailedAttemptTimeoutMS=sp.getLong("failedAttemptTimeoutMS", mFailedAttemptTimeoutMS);
+    	mFailedAttempts=sp.getInt("mFailedAttempts", mFailedAttempts);
+    	mFailedTimeOutSize=sp.getInt("mFailedTimeOutSize", mFailedAttempts);
+    	if(DebugLog.DEBUGMAYBE) DebugLog.d(TAG, "getCurDeadLine。。。。failedAttemptTimeoutMS :"+mFailedAttemptTimeoutMS+".....mFailedAttempts="+mFailedAttempts);
+        
+        final long now = System.currentTimeMillis();  	
         final long deadline = sp.getLong("deadline", 0L);
-        final long now = SystemClock.elapsedRealtime();
-        if (deadline < now || deadline > (now + deadlineTemp)) {
-            return 0L;
+        if(DebugLog.DEBUGMAYBE) DebugLog.d(TAG, "getCurDeadLine。。。。deadline :"+deadline+"now="+now);
+        if (deadline > now ) {
+            return deadline;
         }
-        return deadline;
+        return 0L;
+       
     }
     
 }

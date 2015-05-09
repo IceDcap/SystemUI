@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/settings_paddingleft"
+    android:paddingRight="@dimen/settings_paddingright" >
+
+    <!--
+         <fragment
+        android:id="@+id/setting_preference_fragment"
+        android:name="com.gionee.navi.keyguard.settings.KeyguardSettingsFragment"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
+    -->
+    <!-- <Button -->
+    <!-- android:text="@string/preference_double_desktop_lock" -->
+    <!-- android:layout_width="wrap_content" -->
+    <!-- android:layout_height="wrap_content"></Button> -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/setting_title"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/settings_titlebar_height"
+            android:gravity="center_vertical"
+            android:text="@string/settings"
+            android:textColor="@color/keyguard_setting_titlebar_color"
+            android:textSize="@dimen/settings_titlebar_textsize" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <amigo.widget.AmigoTextView
+            android:id="@+id/wallpaper_update_title"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/settings_title_height"
+            android:gravity="bottom"
+            android:text="@string/preference_wallpaper_update"
+            android:textColor="@color/keyguard_setting_title_color"
+            android:textSize="@dimen/settings_title_textsize" />
+        <!--             android:paddingBottom="@dimen/settings_title_padding_bottom" -->
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/settings_body_height"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/wallpaper_update_firstline"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/settings_body_firstline_height"
+                android:gravity="bottom"
+                android:text="@string/preference_wallpaper_update"
+                android:textColor="@color/keyguard_setting_firstline_color"
+                android:textSize="@dimen/settings_body_firstline_textsize" />
+            <!--                 android:paddingBottom="@dimen/settings_body_firstline_paddingbottom"
+                android:paddingTop="@dimen/settings_body_firstline_paddingtop" -->
+
+            <TextView
+                android:id="@+id/wallpaper_update_secondline"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/settings_body_secondline_height"
+                android:gravity="center_vertical"
+                android:text="@string/preference_wallpaper_update_summary"
+                android:textColor="@color/keyguard_setting_secondline_color"
+                android:textSize="@dimen/settings_body_secondline_textsize"/>
+            <!--                 android:paddingBottom="@dimen/settings_body_secondline_paddingbottom" -->
+        </LinearLayout>
+
+        <amigo.widget.AmigoSwitch
+            android:id="@+id/settings_switch_wallpaper_update"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical|right"
+            android:layout_marginRight="@dimen/settings_switch_marginright"
+            android:layout_weight="4" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/only_wlan_firstline"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/settings_body_height"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@string/preference_only_wlan"
+            android:textColor="@color/keyguard_setting_firstline_color"
+            android:textSize="@dimen/settings_body_firstline_textsize" />
+
+        <amigo.widget.AmigoSwitch
+            android:id="@+id/settings_switch_only_wlan"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical|right"
+            android:layout_marginRight="@dimen/settings_switch_marginright"
+            android:layout_weight="4" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <View
+            android:id="@+id/settings_divider"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/settings_line_height"
+            android:layout_gravity="right"
+            android:background="@color/keyguard_setting_line_color" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <amigo.widget.AmigoTextView
+            android:id="@+id/double_desktop_lock_title"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/settings_title_height"
+            android:gravity="bottom"
+            android:text="@string/preference_double_desktop_lock_title"
+            android:textColor="@color/keyguard_setting_title_color"
+            android:textSize="@dimen/settings_title_textsize" />
+        <!--             android:paddingBottom="@dimen/settings_title_padding_bottom" -->
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/double_desktop_lock_firstline"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/settings_body_firstline_height"
+                android:text="@string/preference_double_desktop_lock"
+                android:gravity="bottom"
+                android:textColor="@color/keyguard_setting_firstline_color"
+                android:textSize="@dimen/settings_body_firstline_textsize" />
+            <!--                 android:paddingBottom="@dimen/settings_body_firstline_paddingbottom"
+                android:paddingTop="@dimen/settings_body_firstline_paddingtop" -->
+
+            <TextView
+                android:id="@+id/double_desktop_lock_secondline"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/settings_body_secondline_height"
+                android:gravity="center_vertical"
+                android:textColor="@color/keyguard_setting_secondline_color"
+                android:textSize="@dimen/settings_body_secondline_textsize"/>
+            <!--                 android:paddingBottom="@dimen/settings_body_secondline_paddingbottom" -->
+        </LinearLayout>
+
+        <amigo.widget.AmigoSwitch
+            android:id="@+id/settings_switch_double_desktop_lock"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical|right"
+            android:layout_marginRight="@dimen/settings_switch_marginright"
+            android:layout_weight="4" />
+    </LinearLayout>
+
+</LinearLayout>

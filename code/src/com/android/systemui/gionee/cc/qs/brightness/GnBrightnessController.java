@@ -174,13 +174,13 @@ public class GnBrightnessController implements GnToggleSlider.Listener {
                 if (brightnessMode == Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL) {
                     setBrightness(newBrightness);
                     
-                    AsyncTask.execute(new Runnable() {
-                        public void run() {
+//                    AsyncTask.execute(new Runnable() {
+//                        public void run() {
                             Settings.System.putIntForUser(mContext.getContentResolver(),
                                     Settings.System.SCREEN_BRIGHTNESS, newBrightness,
                                     UserHandle.USER_CURRENT);
-                        }
-                    });
+//                        }
+//                    });
                 }
             }
         });
@@ -259,25 +259,25 @@ public class GnBrightnessController implements GnToggleSlider.Listener {
             final int val = value + mMinimumBacklight;
             setBrightness(val);
             if (!tracking) {
-                AsyncTask.execute(new Runnable() {
-                        public void run() {
+//                AsyncTask.execute(new Runnable() {
+//                        public void run() {
                             Settings.System.putIntForUser(mContext.getContentResolver(),
                                     Settings.System.SCREEN_BRIGHTNESS, val,
                                     UserHandle.USER_CURRENT);
-                        }
-                    });
+//                        }
+//                    });
             }
         } else {
             final float adj = value / (BRIGHTNESS_ADJ_RESOLUTION / 2f) - 1;
             setBrightnessAdj(adj);
             if (!tracking) {
-                AsyncTask.execute(new Runnable() {
-                    public void run() {
+//                AsyncTask.execute(new Runnable() {
+//                    public void run() {
                         Settings.System.putFloatForUser(mContext.getContentResolver(),
                                 Settings.System.SCREEN_AUTO_BRIGHTNESS_ADJ, adj,
                                 UserHandle.USER_CURRENT);
-                    }
-                });
+//                    }
+//                });
             }
         }
 

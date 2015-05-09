@@ -24,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.amigo.navi.keyguard.haokan.UIController;
 import com.amigo.navi.keyguard.modules.AmigoBatteryStatus;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.keyguard.KeyguardUpdateMonitorCallback;
@@ -37,6 +38,9 @@ import com.amigo.navi.keyguard.notification.NotificationStackScrollLayout;
 import com.amigo.navi.keyguard.util.DataStatistics;
 //import com.gionee.navi.keyguard.everydayphoto.WallpaperData;
 import com.amigo.navi.keyguard.util.QuickSleepUtil;
+import com.amigo.navi.keyguard.haokan.PlayerManager;
+import com.amigo.navi.keyguard.haokan.analysis.HKAgent;
+import com.amigo.navi.keyguard.haokan.menu.ArcLayout;
 
 public class AmigoKeyguardPage extends RelativeLayout {
 	private static final String LOG_TAG = "NaviKg_KeyguardPage";
@@ -60,7 +64,7 @@ public class AmigoKeyguardPage extends RelativeLayout {
         mBatteryNotificationGap = getResources().getDimensionPixelSize(R.dimen.kg_maincell_layout_battery_notification_gap);
         mNotificationHeight = getResources().getDimensionPixelSize(R.dimen.kg_maincell_layout_notification_height);
         
-        setPadding(0, KWDataCache.getStatusBarHeight(), 0, 0);
+//        setPadding(0, KWDataCache.getStatusBarHeight(), 0, 0);
         
 		showWallpaper();
 	}
@@ -81,6 +85,9 @@ public class AmigoKeyguardPage extends RelativeLayout {
 		addBatteryView();
 		addNotificationClickTipView();
 		addNotificationView();
+
+		addArcLayout();
+
 		addFingerIdentifyTip();
 		
 		KeyguardUpdateMonitor.getInstance(mContext).registerCallback(
@@ -172,6 +179,9 @@ public class AmigoKeyguardPage extends RelativeLayout {
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View notificationView =inflater.inflate(
 				R.layout.amigo_keyguard_notification_scrollview, this, false);
+		UIController controller = UIController.getInstance();
+		controller.setmKeyguardNotificationView(notificationView);
+		controller.setNotificationMarginTop(mNotificationMarginTop - KWDataCache.getStatusBarHeight());
 		AmigoKeyguardPage.LayoutParams lp = new AmigoKeyguardPage.LayoutParams(LayoutParams.MATCH_PARENT,mNotificationHeight);
 		lp.setMargins(0, mNotificationMarginTop, 0, 0);
 		addView(notificationView,lp);
@@ -183,6 +193,15 @@ public class AmigoKeyguardPage extends RelativeLayout {
         module.registerCallback(mNotificationContent);
         module.init();
 	}
+	
+	private void addArcLayout() {
+        // TODO Auto-generated method stub
+	    ArcLayout arcLayout = new ArcLayout(getContext());
+	    arcLayout.setVisibility(INVISIBLE);
+	    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+	    params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE); 
+	    addView(arcLayout, params);
+    }
 	
     public Rect getNotificationContentRect() {
         Rect rect = new Rect(0, 0, 0, 0);
@@ -446,12 +465,17 @@ public class AmigoKeyguardPage extends RelativeLayout {
 //	    	if(mInfozone!=null){
 //	    		mInfozone.onResume();
 //	    }
+	        UIController.getInstance().onScreenTurnedOn();
+//	        HKAgent.onEventScreenOn(mContext, UIController.getInstance().getmCurrentWallpaper());
 	    }
 	    
 	    public void onScreenTurnedOff(){
 //	    	if(mInfozone!=null){
 //	    		mInfozone.onPause();
 //	    	}
+	        
+	        PlayerManager.getInstance().onScreenTurnedOff();
+            UIController.getInstance().onScreenTurnedOff();
 	    }
 	    
 	    public void show(){

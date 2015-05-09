@@ -20,6 +20,7 @@ public class FingerIdentifyManager {
     private static final String LOG_TAG="FingerIdentifyManager";
     
     private static final int MSG_FINGER_NO_MATCH=0;
+    private static final int MSG_FINGER_IDENTIFY=1;
     
     
     private static final String CLASS_GNFPMANAGER = "com.gionee.fingerprint.GnFingerPrintManager";       
@@ -48,6 +49,9 @@ public class FingerIdentifyManager {
                 onFingerNoMatch(msg.arg1);
                 startIdentifyIfNeed();
                 break;
+            case MSG_FINGER_IDENTIFY:
+                onFingerIdentify();
+                break;
 
             default:
                 break;
@@ -56,7 +60,7 @@ public class FingerIdentifyManager {
     };
     
     public void startIdentifyIfNeed(){
-        boolean isStartFingerPrint=isStartFingerPrint();
+        boolean isStartFingerPrint=isActiveFingerPrint();
         
         if(isStartFingerPrint){
             int[] ids=getIds();
@@ -66,16 +70,16 @@ public class FingerIdentifyManager {
         }
     }
 
-    private boolean isStartFingerPrint() {
+    private boolean isActiveFingerPrint() {
         KeyguardViewHostManager manager = KeyguardViewHostManager.getInstance();
         if (manager == null) {
             return false;
         }
         boolean isSkylightShown = manager.getIsSkylightShown();
         boolean isKeyguardShown = manager.isShowingAndNotOccluded();
-        boolean isSecureFrozen = false;
         boolean isSimRequired = manager.needsFullscreenBouncer();
-        return !isSkylightShown && isKeyguardShown && !isSecureFrozen && !isSimRequired;
+        
+        return !isSkylightShown && isKeyguardShown && !isSimRequired;
     }
     
     
@@ -169,7 +173,7 @@ public class FingerIdentifyManager {
 
         public void onIdentified(int fingerId, boolean updated) {
             Log.d(LOG_TAG, "onIdentified()---");
-            KeyguardViewHostManager.getInstance().fingerPrintSuccess();
+            mHandler.sendEmptyMessage(MSG_FINGER_IDENTIFY);
         }
 
         /**
@@ -192,7 +196,8 @@ public class FingerIdentifyManager {
         if (reason == 0) {
             DebugLog.d(LOG_TAG, "onFingerNoMatch mIdentifyFailedTimes: " + mIdentifyFailedTimes);
 
-            if (mIdentifyFailedTimes < 2) {
+            boolean isSecureFrozen = KeyguardViewHostManager.getInstance().passwordViewIsForzen();
+            if (mIdentifyFailedTimes < 2&&!isSecureFrozen) {
                 mIdentifyFailedTimes++;
                 boolean isAtHomePosition = KeyguardViewHostManager.getInstance().isAmigoHostYAtHomePostion();
                 if (isAtHomePosition) {
@@ -211,6 +216,25 @@ public class FingerIdentifyManager {
         } else if (reason == 2) {
 
         }
+    }
+    
+    private void onFingerIdentify() {
+        if(!isActiveFingerPrint()){
+            return;
+        }
+        boolean isSecureFrozen = KeyguardViewHostManager.getInstance().passwordViewIsForzen();
+        boolean isAtHomePosition = KeyguardViewHostManager.getInstance().isAmigoHostYAtHomePostion();
+        if (isSecureFrozen) {
+            if (isAtHomePosition) {
+                KeyguardViewHostManager.getInstance().scrollToUnlockHeightByOther(true);
+            }else{
+                startIdentifyIfNeed();
+            }
+        } else {
+            KeyguardViewHostManager.getInstance().fingerPrintSuccess();
+            KeyguardViewHostManager.getInstance().unlockByFingerIdentify();
+        }
+
     }
 
 }

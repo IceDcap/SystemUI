@@ -9,12 +9,16 @@ import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.animation.AnimationUtils;
 import android.widget.OverScroller;
 
@@ -25,6 +29,7 @@ import com.android.keyguard.R;
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.modules.KeyguardNotificationModule;
 import com.amigo.navi.keyguard.modules.KeyguardNotificationModule.NotificationCallback;
+import com.amigo.navi.keyguard.haokan.UIController;
 
 public class NotificationStackScrollLayout extends ViewGroup
         implements SwipeHelper.Callback, ExpandHelper.Callback, ScrollAdapter,
@@ -223,6 +228,8 @@ public class NotificationStackScrollLayout extends ViewGroup
         setScrollingEnabled(true);
         setAnimationsEnabled(true);
         setExpandingEnabled(true);
+        
+        initLongPressListener();
     }
 
     @Override
@@ -704,6 +711,7 @@ public class NotificationStackScrollLayout extends ViewGroup
                 && !mOnlyScrollingInThisMotion) {
             horizontalSwipeWantsIt = mSwipeHelper.onTouchEvent(ev);
         }
+        mGestureDetector.onTouchEvent(ev);
         return horizontalSwipeWantsIt || scrollerWantsIt || expandWantsIt || super.onTouchEvent(ev);
     }
 
@@ -2518,5 +2526,42 @@ public class NotificationStackScrollLayout extends ViewGroup
         }
     }
 
+    GestureDetector mGestureDetector;
+    private void initLongPressListener() {
+
+        mGestureDetector = new GestureDetector(getContext(),
+                new GestureDetector.SimpleOnGestureListener() {
+                    @Override
+                    public void onLongPress(MotionEvent event) {
+                        int[] location = new int[2];
+                        getLocationOnScreen(location);
+                        UIController.getInstance().onLongPress(event.getX() + location[0], event.getY() + location[1]);
+                    }
+                    
+                    @Override
+                    public boolean onDown(MotionEvent e) {
+                        UIController.getInstance().onDown(e);
+                        return super.onDown(e);
+                    }
+                });
+        
+        setLongClickable(true);
+        setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View arg0) {
+                
+            }
+        });
+        
+        setOnLongClickListener(new OnLongClickListener() {
+            
+            @Override
+            public boolean onLongClick(View arg0) {
+                return false;
+            }
+        });
+ 
+    }
 
 }

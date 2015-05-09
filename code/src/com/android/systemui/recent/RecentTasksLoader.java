@@ -383,7 +383,7 @@ public class RecentTasksLoader implements View.OnTouchListener {
         final ActivityManager am = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
 
         final List<ActivityManager.RecentTaskInfo> recentTasks = am.getRecentTasksForUser(1,
-                ActivityManager.RECENT_IGNORE_UNAVAILABLE, 
+                ActivityManager.RECENT_IGNORE_UNAVAILABLE | ActivityManager.RECENT_INCLUDE_PROFILES, 
                 UserHandle.CURRENT.getIdentifier());
         TaskDescription item = null;
         if (recentTasks != null && recentTasks.size() > 0) {
@@ -420,7 +420,8 @@ public class RecentTasksLoader implements View.OnTouchListener {
         final ActivityManager am = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
 
         final List<ActivityManager.RecentTaskInfo> recentTasks = am.getRecentTasks(2,
-                ActivityManager.RECENT_IGNORE_UNAVAILABLE);
+                ActivityManager.RECENT_IGNORE_UNAVAILABLE
+                | ActivityManager.RECENT_INCLUDE_PROFILES);
         if (recentTasks.size() > 1) {
             ActivityManager.RecentTaskInfo recentInfo = recentTasks.get(1);
 
@@ -478,7 +479,8 @@ public class RecentTasksLoader implements View.OnTouchListener {
                 mContext.getSystemService(Context.ACTIVITY_SERVICE);
 
                 final List<ActivityManager.RecentTaskInfo> recentTasks =
-                        am.getRecentTasks(MAX_TASKS, ActivityManager.RECENT_IGNORE_UNAVAILABLE);
+                        am.getRecentTasks(MAX_TASKS, ActivityManager.RECENT_IGNORE_UNAVAILABLE
+                                | ActivityManager.RECENT_INCLUDE_PROFILES);
                 int numTasks = recentTasks.size();
                 ActivityInfo homeInfo = new Intent(Intent.ACTION_MAIN)
                         .addCategory(Intent.CATEGORY_HOME).resolveActivityInfo(pm, 0);
@@ -631,7 +633,8 @@ public class RecentTasksLoader implements View.OnTouchListener {
                 .getSystemService(Context.ACTIVITY_SERVICE);
 
         final List<ActivityManager.RecentTaskInfo> recentTasks = am.getRecentTasks(MAX_TASKS,
-                ActivityManager.RECENT_IGNORE_UNAVAILABLE);
+                ActivityManager.RECENT_IGNORE_UNAVAILABLE
+                | ActivityManager.RECENT_INCLUDE_PROFILES);
         int numTasks = recentTasks.size();
         ActivityInfo homeInfo = new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME)
                 .resolveActivityInfo(pm, 0);

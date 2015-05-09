@@ -6,6 +6,7 @@ import java.util.Date;
 
 import com.android.keyguard.R;
 import com.amigo.navi.keyguard.DebugLog;
+import com.amigo.navi.keyguard.haokan.UIController;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -40,7 +41,7 @@ public class AmigoKeyguardInfoZone extends FrameLayout{
 	private Time time = null;
 	private Context mContext;
 	private TextView mweekdayText;
-	private TextView mlunarText;
+	private TextView mFestivalText;
 	private TextView mDateView;
 //	private FrameLayout mShowTimeLayout;
 
@@ -48,6 +49,10 @@ public class AmigoKeyguardInfoZone extends FrameLayout{
 	private TextView mWidgetTimeMin;
 	private Typeface mFontTypeRegular;
 	private Typeface mFontTypeThin;
+	
+	private Typeface mFontTypeMedium,mFontTypeLight;
+	    
+	
 	public static final String SHOW_WEATHER_CONDITION_ACTION = "com.coolwind.weather.showweathercondition";
 	public static final String SHOW_TIME_INFO_ACTION = "com.coolwind.weather.showtimeinfo";
 	public static final String New_WIDGET_CITY_JUMP = "new_widget_city_jump";
@@ -70,7 +75,12 @@ public class AmigoKeyguardInfoZone extends FrameLayout{
 	private TextView mweekdayText_US;
 	private LinearLayout mShowTimeLayout_CN;
 	private LinearLayout mShowTimeLayout_US;
-
+	
+	private LinearLayout mTimeLayout,mTimeLayout_US;
+	
+	
+	private LinearLayout mDateinfoLayout;
+	
 	private Handler mHandler = new Handler();
 	
 	public AmigoKeyguardInfoZone(Context context) {
@@ -84,12 +94,18 @@ public class AmigoKeyguardInfoZone extends FrameLayout{
 		init(context);
 	}
 
+
 	private void init(Context context) {
 		mContext = context;
 		time = new Time();
 		mFontTypeRegular = FontCache.get("font/Roboto-Regular.ttf", mContext);
 		mFontTypeThin = FontCache.get("font/Roboto-Thin.ttf", mContext);
+		
+		mFontTypeMedium = FontCache.get("font/Roboto-Medium.ttf", mContext);
+		mFontTypeLight = FontCache.get("font/Roboto-Light.ttf", mContext);
+		
 		mTimeFormatObserver = new TimeFormatObserver(mContext, mHandler);
+		UIController.getInstance().setmInfozone(this);
 	}
 
 	private class LanguageReveicer extends BroadcastReceiver {
@@ -102,18 +118,29 @@ public class AmigoKeyguardInfoZone extends FrameLayout{
 
 	}
 	
+	
+	
 	private void changeLanguage() {
-		if (getResources().getConfiguration().locale.getCountry().equals(
-				"CN")) {
+	    
+		if (getResources().getConfiguration().locale.getCountry().equals("CN")) {
 			if (mShowTimeLayout_CN != null && mShowTimeLayout_US != null) {
 				mShowTimeLayout_CN.setAlpha(1.0f);
 				mShowTimeLayout_US.setAlpha(0.0f);
 			}
+			
+			setWeekView(mweekdayText);
+			setDateFestivalView(mDateinfoLayout);
+			setTimeView(mTimeLayout);
+			
 		} else {
 			if (mShowTimeLayout_CN != null && mShowTimeLayout_US != null) {
 				mShowTimeLayout_CN.setAlpha(0.0f);
 				mShowTimeLayout_US.setAlpha(1.0f);
 			}
+			
+			setWeekView(mweekdayText_US);
+			setDateFestivalView(mDateView_US);
+            setTimeView(mTimeLayout_US);
 		}
 	}
 
@@ -148,39 +175,47 @@ public class AmigoKeyguardInfoZone extends FrameLayout{
 		addView(view, params);
 
 		mDateView = (TextView) view.findViewById(R.id.newwidget41_weatherdate);
-		// mDateView.setText(time.format3339(true));
+		mDateView.setTypeface(mFontTypeLight);
 		mTimeFormatFlag = (TextView) view
 				.findViewById(R.id.newwidget41_weathertime_format_flag);
 
 		mweekdayText = (TextView) view
 				.findViewById(R.id.newwidget41_weatherweekday);
-		mlunarText = (TextView) view.findViewById(R.id.newwidget41_lunar);
+		
+		
+		mFestivalText = (TextView) view.findViewById(R.id.newwidget41_festival);
 
+		
 		mWidgetTimeHour = (TextView) view
 				.findViewById(R.id.newwidget41_weathertime_hour);
+		mWidgetTimeHour.setTypeface(mFontTypeMedium);
 		mWidgetTimeMin = (TextView) view
 				.findViewById(R.id.newwidget41_weathertime_min);
-//		mLieaLayout = (LinearLayout) view
-//				.findViewById(R.id.newwidget41_weathertime);
-//		mWeather_date_info = (LinearLayout) view
-//				.findViewById(R.id.weather_dateinfo);
-//		mWeatherDate = (LinearLayout) view
-//				.findViewById(R.id.newwidget41_weather_date);
-//		mWeather_top = (FrameLayout) view
-//				.findViewById(R.id.newwidget_41_layout);
-//
-//		mShowTimeLayout = (FrameLayout) view
-//				.findViewById(R.id.newwidget41_showtime);
+		mWidgetTimeMin.setTypeface(mFontTypeThin);
+		mTimeLayout = (LinearLayout) view
+				.findViewById(R.id.newwidget41_weathertime);
+		
+		mDateinfoLayout = (LinearLayout) view
+                .findViewById(R.id.newwidget41_dateinfo);
+		
+		mTimeLayout_US = (LinearLayout) view
+                .findViewById(R.id.newwidget41_weathertime_us);
+		
+ 
 
 		// layout US
 		mWidgetTimeHour_US = (TextView) view
 				.findViewById(R.id.newwidget41_weathertime_hour_us);
+		mWidgetTimeHour_US.setTypeface(mFontTypeMedium);
 		mWidgetTimeMin_US = (TextView) view
 				.findViewById(R.id.newwidget41_weathertime_min_us);
+		mWidgetTimeMin_US.setTypeface(mFontTypeThin);
 		mTimeFormatFlag_US = (TextView) view
 				.findViewById(R.id.newwidget41_weathertime_format_flag_us);
+		mTimeFormatFlag_US.setTypeface(mFontTypeThin);
 		mDateView_US = (TextView) view
 				.findViewById(R.id.newwidget41_weatherdate_us);
+		mDateView_US.setTypeface(mFontTypeLight);
 		mweekdayText_US = (TextView) view
 				.findViewById(R.id.newwidget41_weatherweekday_us);
 		mShowTimeLayout_CN = (LinearLayout) view
@@ -297,31 +332,35 @@ public class AmigoKeyguardInfoZone extends FrameLayout{
 				"is24HourFormat-----" + is24HourFormat + ",hash="
 						+ mContext.hashCode() + ",date " + date);}
 		setHourFormat(mWidgetTimeHour,date, is24HourFormat);
-		SimpleDateFormat timeMinFormat = new SimpleDateFormat("mm");
+		SimpleDateFormat timeMinFormat = new SimpleDateFormat(":mm");
 		mWidgetTimeMin.setText(timeMinFormat.format(date));
-		mWidgetTimeHour.setTypeface(mFontTypeRegular);
-		mWidgetTimeMin.setTypeface(mFontTypeThin);
+//		mWidgetTimeHour.setTypeface(mFontTypeRegular);
+//		mWidgetTimeMin.setTypeface(mFontTypeThin);
+	 
+		
 		// us
 		setHourFormat(mWidgetTimeHour_US,date, is24HourFormat);
 		mWidgetTimeMin_US.setText(timeMinFormat.format(date));
-		mWidgetTimeHour_US.setTypeface(mFontTypeRegular);
-		mWidgetTimeMin_US.setTypeface(mFontTypeThin);
+//		mWidgetTimeHour_US.setTypeface(mFontTypeRegular);
+//		mWidgetTimeMin_US.setTypeface(mFontTypeThin);
 		
+	 
 		setTimeFormat(is24HourFormat);
 	}
 	
+	
 	private void setHourFormat(TextView widgetTimeHour ,Date date, boolean is24HourFormat) {
-		if (is24HourFormat) {
-			SimpleDateFormat timeHourFormat24 = new SimpleDateFormat(
-					"HH:");
-			String hour = timeHourFormat24.format(date);
-			widgetTimeHour.setText(hour);
-		} else {
-			SimpleDateFormat timeHourFormat12 = new SimpleDateFormat("h:");
-			String hour = timeHourFormat12.format(date);
-			widgetTimeHour.setText(hour);
-		}
-	}
+        if (is24HourFormat) {
+            SimpleDateFormat timeHourFormat24 = new SimpleDateFormat(
+                    "HH");
+            String hour = timeHourFormat24.format(date);
+            widgetTimeHour.setText(hour);
+        } else {
+            SimpleDateFormat timeHourFormat12 = new SimpleDateFormat("h");
+            String hour = timeHourFormat12.format(date);
+            widgetTimeHour.setText(hour);
+        }
+    }
 	
 	private void setTimeFormat(boolean is24HourFormat) {
 
@@ -368,7 +407,8 @@ public class AmigoKeyguardInfoZone extends FrameLayout{
 			marginLayoutParamsForText.setMargins(0, 0, 0, 0);
 
 			// us
-			mTimeFormatFlag_US.setTypeface(mFontTypeThin);
+//			mTimeFormatFlag_US.setTypeface(mFontTypeThin);
+			
 		}
 	}
 	
@@ -377,7 +417,7 @@ public class AmigoKeyguardInfoZone extends FrameLayout{
 		//cn
 		String weekDay = Utils.getWeekdayString(mContext, time.weekDay);
 		mweekdayText.setText(weekDay);
-		mlunarText.setText(initialTime());
+//		mlunarText.setText(initialTime());
 		setDateFormat(mContext);
 		
 		//us
@@ -387,7 +427,10 @@ public class AmigoKeyguardInfoZone extends FrameLayout{
 		mweekdayText_US.setText(Utils.getWeekString_US(mContext, Calendar
 				.getInstance().get(Calendar.DAY_OF_WEEK)));
 	}
-
+	
+	public void setFestivalText(CharSequence text) {
+	    mFestivalText.setText(text);
+    }
 
 	private void setDateFormat(Context context) {
 		java.text.DateFormat dateFormat = DateFormat.getDateFormat(context);
@@ -443,5 +486,35 @@ public class AmigoKeyguardInfoZone extends FrameLayout{
 		mContext.getContentResolver().unregisterContentObserver(
 				mTimeFormatObserver);
 	}
+	
+    
+    
+    private View mWeekView,mTimeView,mDateFestivalView;
+
+    public View getWeekView() {
+        return mWeekView;
+    }
+
+    public void setWeekView(View mWeekView) {
+        this.mWeekView = mWeekView;
+    }
+
+    public View getTimeView() {
+        return mTimeView;
+    }
+
+    public void setTimeView(View mTimeView) {
+        this.mTimeView = mTimeView;
+    }
+
+    public View getDateFestivalView() {
+        return mDateFestivalView;
+    }
+
+    public void setDateFestivalView(View mDateFestivalView) {
+        this.mDateFestivalView = mDateFestivalView;
+    }
+    
+    
 	
 }

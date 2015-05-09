@@ -1,9 +1,11 @@
 package com.amigo.navi.keyguard.security;
 
 import android.content.Context;
+import android.os.SystemProperties;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.telephony.SubscriptionManager;
 
 import com.amigo.navi.keyguard.util.VibatorUtil;
 import com.android.keyguard.KeyguardPinBasedInputView;
@@ -64,4 +66,44 @@ public abstract class AmigoKeyguardSimPinPukBaseView extends KeyguardPinBasedInp
             mPasswordEntry.setEnabled(true);
         }
     }
+    
+    public String getOptrNameUsingSubId(int subId) {
+        int slotId = SubscriptionManager.getSlotId(subId);
+        if (slotId == 0) {
+            return getContext().getString(R.string.keyguard_sim1_name);
+        } else if (slotId == 1) {
+            return getContext().getString(R.string.keyguard_sim2_name);
+        }
+        return getContext().getString(R.string.keyguard_sim_name);
+    }
+    
+    public int getRetryPinCount(int subId) {
+        int GET_SIM_RETRY_EMPTY = -1;
+        int subIndex = SubscriptionManager.getSlotId(subId);
+        if (subIndex == 3) {
+            return SystemProperties.getInt("gsm.sim.retry.pin1.4", GET_SIM_RETRY_EMPTY);
+        } else if (subIndex == 2) {
+            return SystemProperties.getInt("gsm.sim.retry.pin1.3", GET_SIM_RETRY_EMPTY);
+        } else if (subIndex == 1) {
+            return SystemProperties.getInt("gsm.sim.retry.pin1.2", GET_SIM_RETRY_EMPTY);
+        } else {
+            return SystemProperties.getInt("gsm.sim.retry.pin1", GET_SIM_RETRY_EMPTY);
+        }
+    }
+
+    public int getRetryPukCount(int subId) {
+        int GET_SIM_RETRY_EMPTY = -1; ///M: The default value of the remaining puk count
+        int subIndex =SubscriptionManager.getSlotId(subId);
+
+        if (subIndex == 3) {
+            return SystemProperties.getInt("gsm.sim.retry.puk1.4", GET_SIM_RETRY_EMPTY);
+        } else if (subIndex == 2) {
+            return SystemProperties.getInt("gsm.sim.retry.puk1.3", GET_SIM_RETRY_EMPTY);
+        } else if (subIndex == 1) {
+            return SystemProperties.getInt("gsm.sim.retry.puk1.2", GET_SIM_RETRY_EMPTY);
+        } else {
+            return SystemProperties.getInt("gsm.sim.retry.puk1", GET_SIM_RETRY_EMPTY);
+        }
+    }
+    
 }

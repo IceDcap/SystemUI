@@ -111,4 +111,5 @@ public interface KeyguardSecurityView {
     
     void fingerPrintFailed();
     void fingerPrintSuccess();
+    boolean isFrozen();
 }

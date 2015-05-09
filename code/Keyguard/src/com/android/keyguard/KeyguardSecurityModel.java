@@ -81,38 +81,35 @@ public class KeyguardSecurityModel {
     SecurityMode getSecurityMode() {
         KeyguardUpdateMonitor monitor = KeyguardUpdateMonitor.getInstance(mContext);
         SecurityMode mode = SecurityMode.None;
-        if (SubscriptionManager.isValidSubscriptionId(
-                monitor.getNextSubIdForState(IccCardConstants.State.PIN_REQUIRED))) {
-            mode = SecurityMode.SimPin;
-        } else if (SubscriptionManager.isValidSubscriptionId(
-                    monitor.getNextSubIdForState(IccCardConstants.State.PUK_REQUIRED))
+        if (SubscriptionManager
+                .isValidSubscriptionId(monitor.getNextSubIdForState(IccCardConstants.State.PUK_REQUIRED))
                 && mLockPatternUtils.isPukUnlockScreenEnable()) {
             mode = SecurityMode.SimPuk;
+        } else if (SubscriptionManager.isValidSubscriptionId(monitor
+                .getNextSubIdForState(IccCardConstants.State.PIN_REQUIRED))) {
+            mode = SecurityMode.SimPin;
         } else {
             final int security = mLockPatternUtils.getKeyguardStoredPasswordQuality();
             switch (security) {
-                case DevicePolicyManager.PASSWORD_QUALITY_NUMERIC:
-                case DevicePolicyManager.PASSWORD_QUALITY_NUMERIC_COMPLEX:
-                    mode = mLockPatternUtils.isLockPasswordEnabled() ?
-                            SecurityMode.PIN : SecurityMode.None;
-                    break;
-                case DevicePolicyManager.PASSWORD_QUALITY_ALPHABETIC:
-                case DevicePolicyManager.PASSWORD_QUALITY_ALPHANUMERIC:
-                case DevicePolicyManager.PASSWORD_QUALITY_COMPLEX:
-                    mode = mLockPatternUtils.isLockPasswordEnabled() ?
-                            SecurityMode.Password : SecurityMode.None;
-                    break;
+            case DevicePolicyManager.PASSWORD_QUALITY_NUMERIC:
+            case DevicePolicyManager.PASSWORD_QUALITY_NUMERIC_COMPLEX:
+                mode = mLockPatternUtils.isLockPasswordEnabled() ? SecurityMode.PIN : SecurityMode.None;
+                break;
+            case DevicePolicyManager.PASSWORD_QUALITY_ALPHABETIC:
+            case DevicePolicyManager.PASSWORD_QUALITY_ALPHANUMERIC:
+            case DevicePolicyManager.PASSWORD_QUALITY_COMPLEX:
+                mode = mLockPatternUtils.isLockPasswordEnabled() ? SecurityMode.Password : SecurityMode.None;
+                break;
 
-                case DevicePolicyManager.PASSWORD_QUALITY_SOMETHING:
-                case DevicePolicyManager.PASSWORD_QUALITY_UNSPECIFIED:
-                    if (mLockPatternUtils.isLockPatternEnabled()) {
-                        mode = mLockPatternUtils.isPermanentlyLocked() ?
-                            SecurityMode.Account : SecurityMode.Pattern;
-                    }
-                    break;
+            case DevicePolicyManager.PASSWORD_QUALITY_SOMETHING:
+            case DevicePolicyManager.PASSWORD_QUALITY_UNSPECIFIED:
+                if (mLockPatternUtils.isLockPatternEnabled()) {
+                    mode = mLockPatternUtils.isPermanentlyLocked() ? SecurityMode.Account : SecurityMode.Pattern;
+                }
+                break;
 
-                default:
-                    throw new IllegalStateException("Unknown security quality:" + security);
+            default:
+                throw new IllegalStateException("Unknown security quality:" + security);
             }
         }
         return mode;

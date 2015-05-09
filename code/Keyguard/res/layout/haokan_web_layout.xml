@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.amigo.navi.keyguard.haokan.HKWebLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:visibility="invisible" >
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="@dimen/haokan_webview_close_height"
+        android:layout_marginTop="46dp" >
+
+        <WebView
+            android:id="@+id/haokan_layout_webview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:translationY="512dp" />
+        <!-- 
+            android:layerType="software"
+         -->
+    </FrameLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/haokan_webview_close_height"
+        android:layout_alignParentBottom="true"
+        android:visibility="visible" >
+
+        <ImageView
+            android:id="@+id/haokan_layout_close_link"
+            android:layout_width="27dp"
+            android:layout_height="27dp"
+            android:layout_centerInParent="true"
+            android:alpha="0"
+            android:background="@drawable/haokan_close_link_button"
+            android:gravity="center" />
+    </RelativeLayout>
+
+</com.amigo.navi.keyguard.haokan.HKWebLayout>

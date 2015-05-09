@@ -225,6 +225,12 @@ public abstract class KeyguardAbsKeyInputView extends LinearLayout
 		// TODO Auto-generated method stub
 		
 	}
+	
+	@Override
+	public boolean isFrozen() {
+		// TODO Auto-generated method stub
+		return false;
+	}
     
     
 //    protected void setMessage(int resId) {

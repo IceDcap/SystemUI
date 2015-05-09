@@ -945,6 +945,18 @@ public class KeyguardViewMediator extends SystemUI {
         }.start();
     }
 
+    public void startFingerIdentify(){
+        if(mStatusBarKeyguardViewManager!=null){
+            mStatusBarKeyguardViewManager.startFingerIdentify();
+        }
+    }
+    
+    public void cancelFingerIdentify(){
+        if(mStatusBarKeyguardViewManager!=null){
+            mStatusBarKeyguardViewManager.cancelFingerIdentify();
+        }
+    }
+    
     /**
      * Is the keyguard currently showing and not being force hidden?
      */
@@ -985,8 +997,10 @@ public class KeyguardViewMediator extends SystemUI {
                 adjustStatusBarLocked();
                 if(mOccluded){
                     hideSkylight(true);
+                    cancelFingerIdentify();
                 }else{
                     showSkylightIfNeed();
+                    startFingerIdentify();
                 }
             }
         }
@@ -1451,8 +1465,11 @@ public class KeyguardViewMediator extends SystemUI {
                 // Don't actually hide the Keyguard at the moment, wait for window
                 // manager until it tells us it's safe to do so with
                 // startKeyguardExitAnimation.
+//                mWM.keyguardGoingAway(
+//                        mStatusBarKeyguardViewManager.shouldDisableWindowAnimationsForUnlock(),
+//                        mStatusBarKeyguardViewManager.isGoingToNotificationShade());
                 mWM.keyguardGoingAway(
-                        mStatusBarKeyguardViewManager.shouldDisableWindowAnimationsForUnlock(),
+                        true,
                         mStatusBarKeyguardViewManager.isGoingToNotificationShade());
             } catch (RemoteException e) {
                 Log.e(TAG, "Error while calling WindowManager", e);

@@ -8,6 +8,8 @@ package com.android.systemui.gionee.cc.qs.policy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 
 import android.content.BroadcastReceiver;
@@ -36,6 +38,7 @@ public class GnWifiControllerImpl extends BroadcastReceiver implements GnWifiCon
     String mWifiSsid;
     
     private AsyncTask<Void, Void, Void> mAsyncTask;
+    private ExecutorService mExecutorService = Executors.newCachedThreadPool();
     ArrayList<WifiStateChangedCallback> mCallbacks = new ArrayList<WifiStateChangedCallback>();
     
     public GnWifiControllerImpl(Context context) {
@@ -60,27 +63,21 @@ public class GnWifiControllerImpl extends BroadcastReceiver implements GnWifiCon
     @Override
     public void setWifiEnabled(final boolean enabled) {
         Log.d(TAG, "setWifiEnabled = " + enabled);
-        mAsyncTask = new AsyncTask<Void, Void, Void>() {
+        mExecutorService.execute(new Runnable() {
+            
             @Override
-            protected Void doInBackground(Void... args) {
+            public void run() {
                 // Disable tethering if enabling Wifi
                 final int wifiApState = mWifiManager.getWifiApState();
                 if (enabled
                         && ((wifiApState == WifiManager.WIFI_AP_STATE_ENABLING) || (wifiApState == WifiManager.WIFI_AP_STATE_ENABLED))) {
                     mWifiManager.setWifiApEnabled(null, false);
                 }
-
+                
                 Log.d(TAG, "execute setWifiEnabled = " + enabled);
                 mWifiManager.setWifiEnabled(enabled);
-                return null;
             }
-        };
-        
-        try {
-            mAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        } catch (RejectedExecutionException e) {
-            e.printStackTrace();
-        }
+        });
     }
 
     @Override

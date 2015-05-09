@@ -190,12 +190,14 @@ public class GnControlCenter extends FrameLayout{
         
         if (!isLockScreenAccess) {
             if (isLockScrenn) {
+                Log.d(TAG, "return isLockScrenn");
                 return;
             }
         }
         
         if (!isAppAccess) {
             if (!isHomes() && !isLockScrenn) {
+                Log.d(TAG, "return isApp");
                 return;
             }
         }

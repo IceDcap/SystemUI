@@ -4,28 +4,47 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 import android.widget.LinearLayout;
-
 import com.amigo.navi.keyguard.AmigoKeyguardBouncer.KeyguardBouncerCallback;
+import com.amigo.navi.keyguard.haokan.Common;
+import com.amigo.navi.keyguard.haokan.NicePicturesInit;
+import com.amigo.navi.keyguard.haokan.UIController;
+import com.amigo.navi.keyguard.haokan.db.WallpaperDB;
+import com.amigo.navi.keyguard.haokan.entity.Wallpaper;
+import com.amigo.navi.keyguard.haokan.entity.WallpaperList;
+import com.amigo.navi.keyguard.network.ImageLoader;
+import com.amigo.navi.keyguard.picturepage.adapter.HorizontalAdapter;
+import com.amigo.navi.keyguard.picturepage.widget.HorizontalListView.OnScrollListener;
+import com.amigo.navi.keyguard.picturepage.widget.KeyguardListView;
+import com.amigo.navi.keyguard.picturepage.widget.OnViewTouchListener;
+import com.amigo.navi.keyguard.sensor.KeyguardSensorModule;
 import com.amigo.navi.keyguard.util.AmigoKeyguardUtils;
 import com.amigo.navi.keyguard.util.KeyguardWidgetUtils;
+import com.amigo.navi.keyguard.util.QuickSleepUtil;
 import com.android.internal.widget.LockPatternUtils;
 import com.android.keyguard.KeyguardHostView;
 import com.android.keyguard.ViewMediatorCallback;
 
 public class KeyguardViewHost extends FrameLayout {
+
+    private static final String TAG = "KeyguardViewHost";
+
 	
     private Configuration mConfiguration = null;
     private String mOldFontStyle="";
     
+
     final static boolean DEBUG=true;
     private static final String LOG_TAG="KeyguardViewHost";
     
@@ -56,7 +75,7 @@ public class KeyguardViewHost extends FrameLayout {
         super(context, attrs, defStyle);
         mContext=context;
         amigoInflateKeyguardView(null);
-
+        UIController.getInstance().setmKeyguardViewHost(this);
     }
     
     
@@ -103,6 +122,8 @@ public class KeyguardViewHost extends FrameLayout {
         addView(mAmigoKeyguardView);
     }
 
+
+    
     public void initKeyguard(ViewMediatorCallback callback,LockPatternUtils lockPatternUtils){
     	setViewMediatorCallback(callback);
     	if(mAmigoKeyguardView!=null){
@@ -148,6 +169,8 @@ public class KeyguardViewHost extends FrameLayout {
     public void onScreenTurnedOn(){
     	 mAmigoKeyguardView.onScreenTurnedOn();
     }
+    
+    
     
     
     public void dismissWithAction(KeyguardHostView.OnDismissAction r){
@@ -289,6 +312,20 @@ public class KeyguardViewHost extends FrameLayout {
             break;
         }
     }
+ 
+    
+    public void setOnViewTouchListener(OnViewTouchListener listener){
+        mAmigoKeyguardView.setOnViewTouchListener(listener);
+    }
+    
+    public int getKeyguardPage(){
+        return 0;
+    }
+    
+    public int getHkCaptionsViewHeight(){
+        return 0;
+    }
+    
     
     public void showBouncerOrKeyguardDone(){
     	if ( mAmigoKeyguardView!=null) {
@@ -310,7 +347,7 @@ public class KeyguardViewHost extends FrameLayout {
             ObjectAnimator animator2 = ObjectAnimator.ofFloat(this, "scaleY", 1f, 0.6f);
             ObjectAnimator animator3 = ObjectAnimator.ofFloat(this, "alpha", 1f, 0.4f);
             mScaleHostAnimator = new AnimatorSet();
-            mScaleHostAnimator.setDuration(200);
+            mScaleHostAnimator.setDuration(300);
             mScaleHostAnimator.playTogether(animator1, animator2, animator3);
             mScaleHostAnimator.addListener(new Animator.AnimatorListener() {
 
@@ -352,4 +389,9 @@ public class KeyguardViewHost extends FrameLayout {
     public void fingerPrintSuccess() {
         mAmigoKeyguardView.fingerPrintSuccess();
     }
+    
+    public boolean passwordViewIsForzen() {
+        return mAmigoKeyguardView.passwordViewIsForzen();
+    }
+ 
 }

@@ -596,3 +596,21 @@ Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.a
 Code difference: svn diff -r 4742:4734 http://192.168.110.97/svn/Amigo_SystemUI/trunk
 
 ==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.bu' non-existent in revision 4842
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '4842:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01459185      Opened     zhaowei    {Navi锁屏}提交Navi锁屏代码
+CR01476432      Opened     pengwei    【好看壁纸】代码合入SystemUI
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.d
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.c
+Code difference: svn diff -r 4847:4844 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================

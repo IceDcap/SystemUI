@@ -351,6 +351,11 @@ public class KeyguardAccountView extends LinearLayout implements KeyguardSecurit
 		// TODO Auto-generated method stub
 		
 	}
+	@Override
+	public boolean isFrozen() {
+		// TODO Auto-generated method stub
+		return false;
+	}
     
     
 }

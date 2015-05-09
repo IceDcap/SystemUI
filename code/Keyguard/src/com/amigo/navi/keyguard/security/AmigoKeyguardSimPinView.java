@@ -96,30 +96,46 @@ public class AmigoKeyguardSimPinView extends AmigoKeyguardSimPinPukBaseView {
             Resources rez = getResources();
             final String msg;
             int color = Color.WHITE;
-            if (count < 2) {
-                msg = rez.getString(R.string.kg_sim_pin_instructions);
-            } else {
-                SubscriptionInfo info = monitor.getSubscriptionInfoForSubId(mSubId);
-                CharSequence displayName = info != null ? info.getDisplayName() : ""; // don't crash
-                msg = rez.getString(R.string.kg_sim_pin_instructions_multi, displayName);
-                if (info != null) {
-                    color = info.getIconTint();
-                }
-            }
+//            if (count < 2) {
+//                msg = rez.getString(R.string.kg_sim_pin_instructions);
+//            } else {
+                int strId = R.string.keyguard_password_enter_pin_code_message;
+                String simName=getOptrNameUsingSubId(mSubId);
+                int degree=getRetryPinCount(mSubId);
+                msg = getContext().getString(strId,simName,degree);
+//                SubscriptionInfo info = monitor.getSubscriptionInfoForSubId(mSubId);
+//                CharSequence displayName = info != null ? info.getDisplayName() : ""; // don't crash
+//                msg = rez.getString(R.string.kg_sim_pin_instructions_multi, displayName);
+//                if (info != null) {
+//                    color = info.getIconTint();
+//                }
+//            }
             mSecurityMessageDisplay.setMessage(msg, true);
 //            mSimImageView.setImageTintList(ColorStateList.valueOf(color));
         }
     }
+    
 
     private String getPinPasswordErrorMessage(int attemptsRemaining) {
         String displayMessage;
 
-        if (attemptsRemaining == 0) {
-            displayMessage = getContext().getString(R.string.kg_password_wrong_pin_code_pukked);
-        } else if (attemptsRemaining > 0) {
-            displayMessage = getContext().getResources()
-                    .getQuantityString(R.plurals.kg_password_wrong_pin_code, attemptsRemaining,
-                            attemptsRemaining);
+//        if (attemptsRemaining == 0) {
+//            displayMessage = getContext().getString(R.string.kg_password_wrong_pin_code_pukked);
+//        } else if (attemptsRemaining > 0) {
+//            displayMessage = getContext().getResources()
+//                    .getQuantityString(R.plurals.kg_password_wrong_pin_code, attemptsRemaining,
+//                            attemptsRemaining);
+//        } else {
+//            displayMessage = getContext().getString(R.string.kg_password_pin_failed);
+//        }
+        if (attemptsRemaining > 0) {
+            int strId = R.string.keyguard_password_enter_pin_code_message;
+            String simName=getOptrNameUsingSubId(mSubId);
+            displayMessage = getContext().getString(strId,simName,attemptsRemaining);
+            
+//            displayMessage = getContext().getResources()
+//                    .getQuantityString(R.plurals.kg_password_wrong_pin_code, attemptsRemaining,
+//                            attemptsRemaining);
         } else {
             displayMessage = getContext().getString(R.string.kg_password_pin_failed);
         }
@@ -322,19 +338,21 @@ public class AmigoKeyguardSimPinView extends AmigoKeyguardSimPinPukBaseView {
                                 mCallback.dismiss(true);
                             } else {
                                 if (result == PhoneConstants.PIN_PASSWORD_INCORRECT) {
-                                    if (attemptsRemaining <= 2) {
-                                        // this is getting critical - show dialog
-//                                        getSimRemainingAttemptsDialog(attemptsRemaining).show();
-                                    } else {
-                                        // show message
-                                        mSecurityMessageDisplay.setMessage(
-                                                getPinPasswordErrorMessage(attemptsRemaining), true);
-                                    }
+                                    mSecurityMessageDisplay.setMessage(
+                                            getPinPasswordErrorMessage(attemptsRemaining), true);
+//                                    if (attemptsRemaining <= 2) {
+//                                        // this is getting critical - show dialog
+////                                        getSimRemainingAttemptsDialog(attemptsRemaining).show();
+//                                    } else {
+//                                        // show message
+//                                        mSecurityMessageDisplay.setMessage(
+//                                                getPinPasswordErrorMessage(attemptsRemaining), true);
+//                                    }
                                 } else {
                                     // "PIN operation failed!" - no idea what this was and no way to
                                     // find out. :/
-                                    mSecurityMessageDisplay.setMessage(getContext().getString(
-                                            R.string.kg_password_pin_failed), true);
+//                                    mSecurityMessageDisplay.setMessage(getContext().getString(
+//                                            R.string.kg_password_pin_failed), true);
                                 }
                                 if (DEBUG) Log.d(LOG_TAG, "verifyPasswordAndUnlock "
                                         + " CheckSimPin.onSimCheckResponse: " + result
@@ -355,7 +373,9 @@ public class AmigoKeyguardSimPinView extends AmigoKeyguardSimPinPukBaseView {
 
     @Override
     public void startAppearAnimation() {
-        // noop.
+    	if(getVisibility() == INVISIBLE){
+			setVisibility(VISIBLE);
+    	}
     }
 
     @Override

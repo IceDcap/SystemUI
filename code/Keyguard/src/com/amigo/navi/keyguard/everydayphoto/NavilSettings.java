@@ -20,7 +20,21 @@ public class NavilSettings {
 	public static final String COMMENT2 = "comment2";
 	public static final String COMMENT_EN = "comment_en";
 	public static final String COMMENT_CITY_EN = "comment_city_en";
+
+	public static final String USER_ID = "user_id";
 	
+	public static final String DEFAULT_CATEGORY = "default_category";
+	public static final String CATEGORY_PERSONAL = "category_personal";
+	public static final String CATEGORY_FAVORITE = "category_favorite";
+    
+	public static final String HAOKAN_PAGE = "haokan_page";
+	public static final String HAOKAN_SELECTION_ID = "haokan_selection_ID";
+	public static final String HAOKAN_SAVED_PAGE_URL = "haokan_url";
+	
+	public static final String UPDATE_CATEGORY_DATE = "category_date";
+	public static final String UPDATE_WALLPAPER_DATE = "wallpaper_date";
+	public static final String DATA_VERSION = "data_version";
+	public static final String IS_DATA_INIT = "data_init";
 	
 	public static void setVersionName(String versionName ){
 		sVersionName = versionName;

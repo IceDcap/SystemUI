@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -41,11 +42,16 @@ import com.android.keyguard.ViewMediatorCallback;
 //import com.gionee.navi.keyguard.amigo.wallpaper.KeyguardWallpaperManager;
 import com.amigo.navi.keyguard.AppConstants;
 import com.amigo.navi.keyguard.AmigoKeyguardBouncer.KeyguardBouncerCallback;
+import com.amigo.navi.keyguard.haokan.UIController;
+import com.amigo.navi.keyguard.picturepage.widget.OnViewTouchListener;
+import com.amigo.navi.keyguard.fingerprint.FingerIdentifyManager;
 import com.android.internal.widget.LockPatternUtils;
 //import com.gionee.navi.keyguard.everydayphoto.WallpaperData;
 import static com.android.keyguard.KeyguardHostView.OnDismissAction;
+import com.android.internal.widget.LockPatternUtils;
 
 public class AmigoKeyguardHostView extends LinearLayout {
+    private static final String TAG = "AmigoKeyguardHostView";
 	private static final String LOG_TAG = "NaviKg_HostView";
 	
 	public static final String KEY_LOCK_BY_LAUNCHER = "lock_by_launcher";
@@ -100,8 +106,8 @@ public class AmigoKeyguardHostView extends LinearLayout {
 	
 	private static final int DIRECTION_DOWN = 0;
 	private static final int DIRECTION_UP = 1;
+    private static final int DIRECTION_H = 2;
 	private static final int DIRECTION_NONE = -1;
-	
 	private int mFlingDirection=0;
 	
 	private int mTouchCallTime = 0;
@@ -157,7 +163,7 @@ public class AmigoKeyguardHostView extends LinearLayout {
 	private AmigoKeyguardBouncer mKeyguardBouncer;
 	private boolean mBouncerIsShowing=false;
 	
-	
+	private GestureDetector mGestureDetector;
 	
 	public AmigoKeyguardHostView(Context context) {
 		this(context, null,0);
@@ -201,10 +207,13 @@ public class AmigoKeyguardHostView extends LinearLayout {
 		setBackButtonEnabled(false);
 		mKeyguardBouncer=new AmigoKeyguardBouncer(context,  this);
 		mBouncerIsShowing=false;
+		mUIController = UIController.getInstance();
+		
+		initLongPressListener();
 	}
 	
 	private void initScreenHeight(){
-        mDisplayHeight=KWDataCache.getAllScreenHeigt(mContext);
+        mDisplayHeight=KWDataCache.getAllScreenHeigt(getContext());
         
     }
 	
@@ -541,11 +550,14 @@ public class AmigoKeyguardHostView extends LinearLayout {
 		 if(DebugLog.DEBUGMAYBE){
 			 Log.d("jings", "onInterceptTouchEvent return "+mScrollDirection );
 		 }
+	    if(mOnViewTouchListener != null){
+	        mOnViewTouchListener.onInterceptTouch(event);
+	    }
 		return (mScrollDirection != DIRECTION_NONE);
 	}
 	
     private void gotoSleepIfDoubleTap(MotionEvent event) {
-        // 双击灭屏
+        // 鍙屽嚮鐏睆
         if (mKeyguardPage != null) {
             if (DebugLog.DEBUG) {
                 DebugLog.d(LOG_TAG, "gotoSleepIfDoubleTap workSpace!=null");
@@ -597,19 +609,29 @@ public class AmigoKeyguardHostView extends LinearLayout {
 			DebugLog.d(LOG_TAG, "confirmScrollDirection...mScrollDirectionConfirmed="+mScrollDirectionConfirmed);
 		}
 		if(mScrollDirectionConfirmed) return;
+        DebugLog.d(TAG, "confirmScrollDirection currY:"+currY);
+        DebugLog.d(TAG, "confirmScrollDirection mDownMotionY:"+mDownMotionY);
+        DebugLog.d(TAG, "confirmScrollDirection currX:"+currX);
+        DebugLog.d(TAG, "confirmScrollDirection mDownMotionX:"+mDownMotionX);
 		float deltaY = currY - mDownMotionY;
 		float deltaX = currX - mDownMotionX;
 		boolean angleConform = isAngleConform(deltaX, deltaY);
-		if(deltaY > mMinScrollDirectionConfirmationDistance && getScrollY() >0) {
-			mScrollDirection = DIRECTION_DOWN;
-			mScrollDirectionConfirmed = true;
-			mLastMotionY = currY;
-		} else if(deltaY < -mMinScrollDirectionConfirmationDistance && isHostYAtHomePostion() && angleConform) {
-			mScrollDirection = DIRECTION_UP;
-			mScrollDirectionConfirmed = true;
-			mLastMotionY = currY;
+        DebugLog.d(TAG, "confirmScrollDirection angleConform:"+angleConform);
+        DebugLog.d(TAG, "confirmScrollDirection mScrollDirectionConfirmed:"+mScrollDirectionConfirmed);
+		if(angleConform){
+		    if(deltaY > mMinScrollDirectionConfirmationDistance && getScrollY() >0) {
+		        mScrollDirection = DIRECTION_DOWN;
+		        mScrollDirectionConfirmed = true;
+		        mLastMotionY = currY;
+		    } else if(deltaY < -mMinScrollDirectionConfirmationDistance && isHostYAtHomePostion()) {
+		        mScrollDirection = DIRECTION_UP;
+		        mScrollDirectionConfirmed = true;
+		        mLastMotionY = currY;
 //			AmigoXPageManager.getInstance(mContext).onUnlockStart();
 //			reverseToTimeWidget();
+		    }
+		}else{
+            mScrollDirection = DIRECTION_H;
 		}
 		if(DebugLog.DEBUG){
 			DebugLog.d(LOG_TAG, "confirmScrollDirection,deltaY"+deltaY+",Direction:"+mScrollDirection+"  getScrollY: "+getScrollY()+"   MIN_SCROLL_DIRECTION_CONFIRMATION_DISTANCE="+mMinScrollDirectionConfirmationDistance);
@@ -617,8 +639,14 @@ public class AmigoKeyguardHostView extends LinearLayout {
 	}
 	
 	private boolean isAngleConform(float x, float y){
+	    DebugLog.d(TAG,"isAngleConform x:" + x);
+	    DebugLog.d(TAG,"isAngleConform y:" + y);
+	    if(x == 0){
+	        return true;
+	    }
 		double tangent = y/x;
 		double angle =  Math.toDegrees(Math.atan(Math.abs(tangent)));
+	    DebugLog.d(TAG,"isAngleConform angle:" + angle);
 		if(angle >= minAngle){
 			return true;
 		}
@@ -646,7 +674,7 @@ public class AmigoKeyguardHostView extends LinearLayout {
 				default:
 					break;
 		}
-		
+		mGestureDetector.onTouchEvent(event);
 		return handled;
 	}
 	
@@ -659,7 +687,9 @@ public class AmigoKeyguardHostView extends LinearLayout {
 		mLastMotionY = mDownMotionY = me.getY();
 //		mLastMotionRemainderX = 0;
 		mLastMotionRemainderY = 0;
-
+        if(mOnViewTouchListener != null){
+            mOnViewTouchListener.onTouch(me);
+        }
 		return true;
 	}
 	
@@ -669,10 +699,10 @@ public class AmigoKeyguardHostView extends LinearLayout {
 //		if(!mKeyguardViewManager.isShowing()){
 //			return false;
 //		}
-		
-		if(!mScrollDirectionConfirmed){
+		DebugLog.d(TAG,"onActionMove mScrollDirection:" + mScrollDirection);
+		if(mScrollDirection == DIRECTION_NONE){
 			confirmIfIntercept(event);
-		}else{
+		}else if(mScrollDirection == DIRECTION_DOWN || mScrollDirection == DIRECTION_UP){
 			
 			float currY = event.getY();
 			float deltaY = mLastMotionY + mLastMotionRemainderY - currY;
@@ -689,6 +719,11 @@ public class AmigoKeyguardHostView extends LinearLayout {
 //				mShouldAddLauncherShot = false;
 //			}
 		}
+	      if(mScrollDirection == DIRECTION_H){
+	            if(mOnViewTouchListener != null){
+	                mOnViewTouchListener.onTouch(event);
+	            }
+	        }
 		return true;
 	}
 	
@@ -708,7 +743,7 @@ public class AmigoKeyguardHostView extends LinearLayout {
 			missCountShow = true;
 		}
 		
-		// 每日一图文案
+		// 姣忔棩涓�浘鏂囨
 //		rotationDayPictureComment(adjustedY);
 		
 		super.scrollTo(x, adjustedY);
@@ -747,7 +782,6 @@ public class AmigoKeyguardHostView extends LinearLayout {
 //		if(!mKeyguardViewManager.isShowing()) {
 //			return true;
 //		}
-		
 		int totalY = Math.round(mDownMotionY - event.getY());
 		float velY = computeVelocityY();
 		releaseVelocityTracker();
@@ -774,6 +808,10 @@ public class AmigoKeyguardHostView extends LinearLayout {
 			}
 			if(DebugLog.DEBUG){
 				DebugLog.d(LOG_TAG, "totalY: down "+totalY+" mMinFlingDistance: "+mMinFlingDistance);
+			}
+		}else if(mScrollDirection == DIRECTION_H){
+		    if(mOnViewTouchListener != null){
+			       mOnViewTouchListener.onTouch(event);
 			}
 		}
 		
@@ -973,7 +1011,7 @@ public class AmigoKeyguardHostView extends LinearLayout {
 		}
 //		Log.e("ddd", "========-top=========" + top);
 		//use owner wallpaper
-		changeBackground(-top,(float)top/mMaxBoundY,false);
+		mUIController.onKeyguardScrollChanged(top, mMaxBoundY,isSecure());
 	}
 	
 	public void onScreenTurnedOff() {
@@ -985,9 +1023,9 @@ public class AmigoKeyguardHostView extends LinearLayout {
 //		}
 //		
 //		clearFocus();
-//		if(mKeyguardPage!=null){
-//			mKeyguardPage.onScreenTurnedOff();
-//		}
+		if(mKeyguardPage!=null){
+			mKeyguardPage.onScreenTurnedOff();
+		}
 
 //		
 ////		setToHomePage();
@@ -1041,19 +1079,18 @@ public class AmigoKeyguardHostView extends LinearLayout {
 		}
 	}
 	
-	public void showBouncerOrKeyguard(){
-		if (needsFullscreenBouncer()) {
-	        // The keyguard might be showing (already). So we need to hide it.
-	       showBouncer(true);
-	       scrollToUnlockByOther();
-        }else{
-//        	scrollToKeyguardPage(100);
-        	mKeyguardBouncer.prepare();
+    public void showBouncerOrKeyguard() {
+        if (needsFullscreenBouncer()) {
+           KeyguardViewHostManager.getInstance().cancelFingerIdentify();
+            // The keyguard might be showing (already). So we need to hide it.
+            showBouncer(true);
+            scrollToUnlockByOther();
+        } else {
+            // scrollToKeyguardPage(100);
+            mKeyguardBouncer.prepare();
         }
-		
-		
-		
-	}
+
+    }
 
 	
     public void hide() {
@@ -1177,7 +1214,7 @@ public class AmigoKeyguardHostView extends LinearLayout {
 				
 //		boolean unLockNowByAIDLSuccess = AmigoLauncherSnapshotManager.getInstance(mContext).showLauncherByAIDL();
 //		if(DebugLog.DEBUG){
-//	    	DebugLog.d(LOG_TAG, "showLauncherByAIDL unLockNowByAIDLSuccess锛�"+unLockNowByAIDLSuccess);
+//	    	DebugLog.d(LOG_TAG, "showLauncherByAIDL unLockNowByAIDLSuccess閿涳拷"+unLockNowByAIDLSuccess);
 //		}
 //		if(!unLockNowByAIDLSuccess){
 //			sendShowLauncher();
@@ -1226,6 +1263,8 @@ public class AmigoKeyguardHostView extends LinearLayout {
 	public void setChangeBackgroundModeForAnima(){
 //		mKeyguardWallpaperManager.setChangeBackgroundModeForAnima();
 	}
+	
+	UIController mUIController;
 	
 	// use owner wallpaper
 	public void changeBackground(float y,float blind,boolean isAnima){
@@ -1277,6 +1316,8 @@ public class AmigoKeyguardHostView extends LinearLayout {
 	}
 	
 	private OnDismissAction mOnDisMissAction;
+
+    private OnViewTouchListener mOnViewTouchListener;
 	public void dismissWithAction(OnDismissAction r){
 		mOnDisMissAction = r;
 		scrollToUnlockByOther();
@@ -1338,6 +1379,39 @@ public class AmigoKeyguardHostView extends LinearLayout {
     	
     	return false;
     }
+
+
+    public void setOnViewTouchListener(OnViewTouchListener touchListener){
+        mOnViewTouchListener = touchListener;
+    }
+    
+    private void initLongPressListener() {
+        
+        mGestureDetector = new GestureDetector(getContext(),
+                new GestureDetector.SimpleOnGestureListener() {
+                    @Override
+                    public void onLongPress(MotionEvent event) {
+                        UIController.getInstance().onLongPress(event.getX(), event.getY());
+                    }
+                    
+                    
+                    @Override
+                    public boolean onDown(MotionEvent e) {
+                        UIController.getInstance().onDown(e);
+                        return super.onDown(e);
+                    }
+                });
+        
+        setLongClickable(true);
+ 
+//        this.setOnTouchListener(new OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View view, MotionEvent event) {
+//                 return mGestureDetector.onTouchEvent(event);
+//            }
+//        });
+    }
+
     
     public void showBouncerOrKeyguardDone(){
 		 if(isSecure()){
@@ -1347,6 +1421,7 @@ public class AmigoKeyguardHostView extends LinearLayout {
 			 finish();
 		 }
     }
+ 
     
     public void shakeFingerIdentifyTip(){
         mKeyguardPage.shakeIdentifyTip();
@@ -1364,5 +1439,12 @@ public class AmigoKeyguardHostView extends LinearLayout {
         }
     }
     
+    public boolean passwordViewIsForzen(){
+        if (mKeyguardBouncer != null) {
+           return mKeyguardBouncer.passwordViewIsForzen();
+        }
+        return false;
+    }
+
 }
 

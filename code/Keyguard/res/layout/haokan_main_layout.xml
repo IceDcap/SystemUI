@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.amigo.navi.keyguard.haokan.HKMainLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:arc="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/haokan_main_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <include
+        android:id="@+id/haokan_page_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/haokan_main_layout_marginbottom"
+        layout="@layout/haokan_page_layout" />
+
+    <!-- 
+    <FrameLayout
+        android:id="@+id/haokan_layout_webview_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/haokan_main_layout_marginbottom"
+        android:visibility="gone" >
+
+        <WebView
+            android:id="@+id/haokan_layout_webview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="100dp"
+            android:background="#00000000"
+            android:layerType="software" />
+    </FrameLayout>
+
+    <RelativeLayout
+        android:id="@+id/haokan_layout_close_link"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/haokan_main_layout_marginbottom"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone" >
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerInParent="true"
+            android:gravity="center" />
+    </RelativeLayout>
+     -->
+
+</com.amigo.navi.keyguard.haokan.HKMainLayout>

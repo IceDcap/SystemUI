@@ -253,7 +253,8 @@ public class RecentsActivity extends Activity implements OnClickListener , OnLon
             final ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
 
             final List<ActivityManager.RecentTaskInfo> recentTasks =
-                    am.getRecentTasks(2, ActivityManager.RECENT_IGNORE_UNAVAILABLE);
+                    am.getRecentTasks(2, ActivityManager.RECENT_IGNORE_UNAVAILABLE
+                            | ActivityManager.RECENT_INCLUDE_PROFILES);
 /*            final List<ActivityManager.RecentTaskInfo> recentTasks =
                     am.getRecentTasks(2,
                             ActivityManager.RECENT_WITH_EXCLUDED |

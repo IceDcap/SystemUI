@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.amigo.navi.keyguard.haokan.menu.ArcHomeButton xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ArcHomeButton"
+    android:layout_width="80dp"
+    android:layout_height="80dp"
+    android:background="@android:color/transparent" >
+
+    <ImageView
+        android:id="@+id/control_hint"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:visibility="invisible"
+        android:layout_centerInParent="true"
+        android:background="@drawable/arcmenu_cancle_background" />
+</com.amigo.navi.keyguard.haokan.menu.ArcHomeButton>

@@ -35,6 +35,7 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.animation.Animator.AnimatorListener;
 import android.content.Context;
+import android.content.Intent;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.text.Editable;
@@ -53,6 +54,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.android.internal.widget.LockPatternUtils;
 import com.android.keyguard.R;
+import com.gionee.account.sdk.GioneeAccount;
+import com.gionee.account.sdk.listener.verifyListener;
+import com.gionee.account.sdk.vo.LoginInfo;
 
 
 /**
@@ -80,6 +84,7 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
     private int mDisappearYTranslation;
     private View[][] mViews;
     private CountDownTimer mSimpleNumViewCountdownTimer = null;
+    private boolean isFrozen=false;
     
     // 10 keyboard button id
     private int [] mKeyButtonsId = new int[]{
@@ -96,6 +101,7 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
     };
     private ArrayList<Button> mKeyButtons = new ArrayList<Button>();
     private TextView forgetButton;
+    private GioneeAccount gioneeAccount;
 
     public AmigoKeyguardSimpleNumView(Context context) {
         this(context, null);
@@ -183,6 +189,8 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
         mSecurityMessageDisplay.setTimeout(0); // don't show ownerinfo/charging status by default
         resetState();
         setForgetPasswordButton();
+        gioneeAccount = GioneeAccount.getInstance(mContext);
+        setVisibility(INVISIBLE);
     }
 
     private void setKeyButtonClickEnable(boolean enabled){
@@ -196,18 +204,50 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
         }
     }
     
+
     private void setForgetPasswordButton() {
-   	 forgetButton = (TextView) this.findViewById(R.id.forget_password);
-        if(forgetButton == null) return;
-        
-        forgetButton.setOnClickListener(new View.OnClickListener() {
+	   	 forgetButton = (TextView) this.findViewById(R.id.forget_password);
+	     if(forgetButton == null) return;
+	     if(getTimeOutSize()>=5){
+	    	 forgetButton.setVisibility(View.VISIBLE);
+	     }
+         forgetButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
 				if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "forgetButton button clicked  ");
-			
+				LoginInfo  loginInfo= AmigoAccount.getInstance().getAccountNameAndId();
+ 			    if(loginInfo!=null){
+ 			    	logAccount(loginInfo);
+ 			    }else{
+ 			    	    Intent intent = new Intent(mContext, AmigoUnBindAcountActivity.class);
+ 		                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+ 		                mContext.startActivity(intent);
+ 			    }
 			}
 		});
 		
+	}
+    
+    private void logAccount(LoginInfo  loginInfo) {
+		gioneeAccount.verifyForSP(mContext, loginInfo,
+				new verifyListener() {
+
+					@Override
+					public void onError(Exception e) {
+
+					}
+
+					@Override
+					public void onSucess(Object o) {
+                          Log.i("jiating","ForgetPasswordButton...onSuccess") ;
+                          checkPasswordResult(true, UNLOCK_FAIL_UNKNOW_REASON);
+					}
+
+					@Override
+					public void onCancel(Object o) {
+
+					}
+				});
 	}
     
     private void initImage(){
@@ -314,7 +354,9 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
 	private void unLockDone() {
 		forgetButton.setVisibility(View.INVISIBLE);
 		mCallback.reportUnlockAttempt(true);
-        mCallback.dismiss(true);
+		if(mCallback.getFingerPrintResult()!=KeyguardSecurityContainer.FINGERPRINT_SUCCESS){
+			mCallback.dismiss(true);
+		}
         setKeyButtonClickEnable(true);
 		mCallback.reset();
 	}
@@ -322,8 +364,9 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
 
 	public void onUnlockFail(int failReason) {
 		if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "onUnlockFail failReason :"+failReason);
-		forgetButton.setVisibility(View.VISIBLE);
+		
 		if(failReason == UNLOCK_FAIL_REASON_TIMEOUT) {
+			forgetButton.setVisibility(View.VISIBLE);
 			 failShake(UNLOCK_FAIL_REASON_TIMEOUT);
 			long deadline = mKeyguardUpdateMonitor.getDeadline();
 			if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "onUnlockFail deadline :"+deadline);
@@ -346,7 +389,7 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
 	 public void handleAttemptLockout(long elapsedRealtimeDeadline) {
 
 	        final int index = getTimeOutSize();
-	        final long elapsedRealtime = SystemClock.elapsedRealtime();
+	        final long elapsedRealtime =System.currentTimeMillis();
 	        if(DebugLog.DEBUGMAYBE) DebugLog.d(LOG_TAG, "handleAttemptLockout mSimpleNumViewCountdownTimer=:"+(mSimpleNumViewCountdownTimer==null));
 	        if(mSimpleNumViewCountdownTimer==null){
 	        	mSimpleNumViewCountdownTimer = new CountDownTimer(elapsedRealtimeDeadline - elapsedRealtime, 1000) {
@@ -356,7 +399,8 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
 		                final int secondsRemaining = (int) (millisUntilFinished / 1000);
 		                if(DebugLog.DEBUGMAYBE) DebugLog.d(LOG_TAG, "onUnlockFail secondsRemaining :"+secondsRemaining);
 		                mSecurityMessageDisplay.setMessage(
-		                        R.string.amigo_kg_too_many_failed_attempts_countdown, index,true, TimeUtils.secToTime(secondsRemaining));
+		                        R.string.amigo_kg_too_many_failed_attempts_countdown, index,true, TimeUtils.secToTime(secondsRemaining,mContext));
+		                isFrozen=true;
 		            }
 		
 		            @Override
@@ -365,6 +409,7 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
 		            	setKeyButtonClickEnable(true);
 		                displayDefaultSecurityMessage();
 		                mSimpleNumViewCountdownTimer=null;
+		                isFrozen=false;
 		            }
 		
 		        }.start();
@@ -449,20 +494,24 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
 
     @Override
     public void startAppearAnimation() {
-        enableClipping(false);
-        setAlpha(1f);
-        setTranslationY(mAppearAnimationUtils.getStartTranslation());
-        animate()
-                .setDuration(500)
-                .setInterpolator(mAppearAnimationUtils.getInterpolator())
-                .translationY(0);
-        mAppearAnimationUtils.startAnimation(mViews,
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        enableClipping(true);
-                    }
-                });
+    	if(getVisibility() == INVISIBLE){
+			setVisibility(VISIBLE);
+			enableClipping(false);
+	        setAlpha(1f);
+	        setTranslationY(mAppearAnimationUtils.getStartTranslation());
+	        animate()
+	                .setDuration(500)
+	                .setInterpolator(mAppearAnimationUtils.getInterpolator())
+	                .translationY(0);
+	        mAppearAnimationUtils.startAnimation(mViews,
+	                new Runnable() {
+	                    @Override
+	                    public void run() {
+	                        enableClipping(true);
+	                    }
+	                });
+    	}
+        
     }
 
     @Override
@@ -542,18 +591,23 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
             });
         }
     }
+    
+    
 
 	@Override
 	public void fingerPrintFailed() {
-		
+		checkPasswordResult(false, UNLOCK_FAIL_UNKNOW_REASON);
 	}
 
 	@Override
 	public void fingerPrintSuccess() {
-		
+		checkPasswordResult(true, UNLOCK_FAIL_UNKNOW_REASON);
 	}
 
-
+    @Override
+    public void onPause(int reason) {
+    	setVisibility(View.INVISIBLE);
+    }
     
     
     

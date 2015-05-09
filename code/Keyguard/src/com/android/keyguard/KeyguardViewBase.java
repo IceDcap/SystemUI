@@ -505,5 +505,8 @@ public abstract class KeyguardViewBase extends FrameLayout implements SecurityCa
     public void fingerPrintSuccess(){
     	mSecurityContainer.fingerPrintSuccess();
     }
+    public boolean passwordViewIsForzen(){
+    	return mSecurityContainer.isFrozen();
+    }
 
 }

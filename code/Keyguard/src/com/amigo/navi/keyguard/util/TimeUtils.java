@@ -1,24 +1,21 @@
 package com.amigo.navi.keyguard.util;
 
+import com.android.keyguard.R;
+
 import android.content.Context;
 
 public class TimeUtils {
       
 	  private static boolean isChinese=false;
 	
-	  public static String secToTime(int time) {  
+	  public static String secToTime(int time,Context context) {  
 	        String timeStr = null;  
 	        int hour = 0;  
 	        int minute = 0;  
 	        int second = 0;  
 	        if (time <= 60)
-	        	if(isChinese){
-	        		timeStr= time+"秒";  
-	        		  
-	        	}else{
-	        		timeStr= time+"s";
-	        	}
-	        	
+	        		timeStr= time+context.getResources().getString(R.string.second);  
+
 	        else {  
 	            minute = time / 60;  
 	            if (minute<60 ) {
@@ -26,20 +23,14 @@ public class TimeUtils {
 	            	if(second!=0){
 	            		minute=minute+1;	
 	            	}
-	            	if(isChinese){
-	            		timeStr= minute+"分";
-	            	}else{
-	            		timeStr= minute+"m";
-	            	}
+	            	timeStr= minute+context.getResources().getString(R.string.minute);
+
 	            } else {  
 	                hour = minute / 60;  
 	                if (hour > 99)   
 	                minute = minute % 60;
-	                if(isChinese){
-	                	timeStr = hour + "小时" + minute + "分"; 
-	                }else{
-	                	timeStr = hour + "h" + minute + "m";
-	                }
+	                timeStr = hour + context.getResources().getString(R.string.hour) +minute+ context.getResources().getString(R.string.minute);; 
+
 	            }  
 	        }  
 	        return timeStr;  

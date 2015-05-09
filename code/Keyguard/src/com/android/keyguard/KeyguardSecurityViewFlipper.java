@@ -311,6 +311,15 @@ public class KeyguardSecurityViewFlipper extends ViewFlipper implements Keyguard
 	        }
 		
 	}
+	@Override
+	public boolean isFrozen() {
+		boolean isFrozenTemp=false;
+		 KeyguardSecurityView ksv = getSecurityView();
+	        if (ksv != null) {
+	        	isFrozenTemp=ksv.isFrozen();
+	        }
+	        return isFrozenTemp;
+	}
     
     
 }

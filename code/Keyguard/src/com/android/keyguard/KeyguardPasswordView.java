@@ -17,6 +17,7 @@
 package com.android.keyguard;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Rect;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
@@ -44,9 +45,15 @@ import java.util.List;
 
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.KeyguardViewHostManager;
+import com.amigo.navi.keyguard.security.AmigoAccount;
+import com.amigo.navi.keyguard.security.AmigoUnBindAcountActivity;
+import com.amigo.navi.keyguard.skylight.SkylightActivity;
 import com.amigo.navi.keyguard.util.TimeUtils;
 import com.amigo.navi.keyguard.util.VibatorUtil;
 import com.android.internal.widget.LockPatternUtils;
+import com.gionee.account.sdk.GioneeAccount;
+import com.gionee.account.sdk.listener.verifyListener;
+import com.gionee.account.sdk.vo.LoginInfo;
 /**
  * Displays an alphanumeric (latin-1) key entry for the user to enter
  * an unlock password
@@ -65,6 +72,8 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
     private Interpolator mFastOutLinearInInterpolator;
     private CountDownTimer mPasswordViewCountdownTimer = null;
     private TextView forgetButton;
+    private GioneeAccount gioneeAccount;
+    private boolean isFrozen=false;
 
     public KeyguardPasswordView(Context context) {
         this(context, null);
@@ -152,6 +161,7 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
         if(reason == KeyguardSecurityView.KEYGUARD_HOSTVIEW_SCROLL_AT_HOMEPAGE){
         	hiddenInput();
         }
+        setVisibility(INVISIBLE);
     }
 
 	private void hiddenInput() {
@@ -248,20 +258,54 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
         mSecurityMessageDisplay.setTimeout(0); // don't show ownerinfo/charging status by default
         resetState();
         setForgetPasswordButton();
+        gioneeAccount = GioneeAccount.getInstance(mContext);
+        setVisibility(INVISIBLE);
     }
     
+
     private void setForgetPasswordButton() {
-   	 forgetButton = (TextView) this.findViewById(R.id.forget_password);
+   	    forgetButton = (TextView) this.findViewById(R.id.forget_password);
         if(forgetButton == null) return;
-        
+        if(getTimeOutSize()>=5){
+       	 forgetButton.setVisibility(View.VISIBLE);
+        }
         forgetButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
 				if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "forgetButton button clicked  ");
-			
+ 			    LoginInfo  loginInfo= AmigoAccount.getInstance().getAccountNameAndId();
+ 			    if(loginInfo!=null){
+ 			    	logAccount(loginInfo);
+ 			    }else{
+ 			    	Intent intent = new Intent(mContext, AmigoUnBindAcountActivity.class);
+		            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		            mContext.startActivity(intent);
+ 			    }
 			}
 		});
 		
+	}
+    
+	private void logAccount(LoginInfo  loginInfo) {
+		gioneeAccount.verifyForSP(mContext, loginInfo,
+				new verifyListener() {
+
+					@Override
+					public void onError(Exception e) {
+
+					}
+
+					@Override
+					public void onSucess(Object o) {
+                          Log.i("jiating","ForgetPasswordButton...onSuccess") ;
+                          checkPasswordResult(true, UNLOCK_FAIL_UNKNOW_REASON);
+					}
+
+					@Override
+					public void onCancel(Object o) {
+
+					}
+				});
 	}
     
     @Override
@@ -353,13 +397,17 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
 
     @Override
     public void startAppearAnimation() {
-        setAlpha(0f);
-        setTranslationY(0f);
-        animate()
-                .alpha(1)
-                .withLayer()
-                .setDuration(300)
-                .setInterpolator(mLinearOutSlowInInterpolator);
+    	if(getVisibility() == INVISIBLE){
+			setVisibility(VISIBLE);
+			 setAlpha(0f);
+		        setTranslationY(0f);
+		        animate()
+		                .alpha(1)
+		                .withLayer()
+		                .setDuration(300)
+		                .setInterpolator(mLinearOutSlowInInterpolator);
+    	}
+       
     }
 
     @Override
@@ -458,7 +506,9 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
 
 	private void unLockDone() {
 		mCallback.reportUnlockAttempt(true);
-        mCallback.dismiss(true);
+		if(mCallback.getFingerPrintResult()!=KeyguardSecurityContainer.FINGERPRINT_SUCCESS){
+	        mCallback.dismiss(true);
+		}
         hiddenInput();
 		mCallback.reset();
 		forgetButton.setVisibility(View.INVISIBLE);
@@ -466,8 +516,9 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
     
     public void onUnlockFail(int failReason) {
 		if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "onUnlockFail failReason :"+failReason);
-		forgetButton.setVisibility(View.VISIBLE);
+		
 		if(failReason == UNLOCK_FAIL_REASON_TIMEOUT) {
+			forgetButton.setVisibility(View.VISIBLE);
 			long deadline = mKeyguardUpdateMonitor.getDeadline();
 			if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "onUnlockFail deadline :"+deadline);
         	handleAttemptLockout(deadline);	
@@ -487,7 +538,7 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
     public void handleAttemptLockout(long elapsedRealtimeDeadline) {
     	mPasswordEntry.setEnabled(false);
         final int index = getTimeOutSize();
-        final long elapsedRealtime = SystemClock.elapsedRealtime();
+        final long elapsedRealtime = System.currentTimeMillis();
         if(DebugLog.DEBUGMAYBE) DebugLog.d(LOG_TAG, "handleAttemptLockout mSimpleNumViewCountdownTimer=:"+(mPasswordViewCountdownTimer==null));
         if(mPasswordViewCountdownTimer==null){
         	mPasswordViewCountdownTimer = new CountDownTimer(elapsedRealtimeDeadline - elapsedRealtime, 1000) {
@@ -497,7 +548,8 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
 	                final int secondsRemaining = (int) (millisUntilFinished / 1000);
 	                if(DebugLog.DEBUGMAYBE) DebugLog.d(LOG_TAG, "onUnlockFail secondsRemaining :"+secondsRemaining);
 	                mSecurityMessageDisplay.setMessage(
-	                        R.string.amigo_kg_too_many_failed_attempts_countdown, index,true, TimeUtils.secToTime(secondsRemaining));
+	                        R.string.amigo_kg_too_many_failed_attempts_countdown, index,true, TimeUtils.secToTime(secondsRemaining,mContext));
+	                isFrozen=true;
 	            }
 	
 	            @Override
@@ -506,6 +558,7 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
 	                displayDefaultSecurityMessage();
 	                mPasswordViewCountdownTimer=null;
 	                mPasswordEntry.setEnabled(true);
+	                isFrozen=false;
 	            }
 	
 	        }.start();
@@ -539,16 +592,18 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
 
 	@Override
 	public void fingerPrintFailed() {
-		// TODO Auto-generated method stub
-		super.fingerPrintFailed();
+		checkPasswordResult(false, UNLOCK_FAIL_UNKNOW_REASON);
 	}
 
 	@Override
 	public void fingerPrintSuccess() {
-		// TODO Auto-generated method stub
-		super.fingerPrintSuccess();
+		checkPasswordResult(true, UNLOCK_FAIL_UNKNOW_REASON);
 	}
     
-    
+    @Override
+    public boolean isFrozen() {
+    	// TODO Auto-generated method stub
+    	return isFrozen;
+    }
     
 }

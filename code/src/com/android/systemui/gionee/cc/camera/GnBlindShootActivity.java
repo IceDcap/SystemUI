@@ -187,12 +187,14 @@ public class GnBlindShootActivity extends Activity {
     }
 
     private void autoFocus() {
-
-//        SystemClock.sleep(2000);
-
-//        mCamera.autoFocus(mAutoFocus);
-        Log.d("jings", "autoFocus: " + SystemClock.elapsedRealtime());
-        mCamera.takePicture(null, null, mPicCallback);
+        // SystemClock.sleep(2000);
+        // mCamera.autoFocus(mAutoFocus);
+        Log.d(LOG_TAG, "autoFocus: " + SystemClock.elapsedRealtime());
+        try {
+            mCamera.takePicture(null, null, mPicCallback);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
     }
 
     private boolean checkCameraHardware(Context context) {

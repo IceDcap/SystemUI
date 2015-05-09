@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
-public class BitmapBlur {
+public class BitmapUtil {
 	
 	
 	/** 水平方向模糊度 */
@@ -127,6 +127,15 @@ public static void blur(int[] in, int[] out, int width, int height,
  
     public static int clamp(int x, int a, int b) {
         return (x < a) ? a : (x > b) ? b : x;
+    }
+    
+    
+    
+    public static void recycleBitmap(Bitmap bitmap){
+        if(bitmap!=null&&!bitmap.isRecycled()){
+            bitmap.recycle();
+            bitmap=null;
+        }
     }
 
 }

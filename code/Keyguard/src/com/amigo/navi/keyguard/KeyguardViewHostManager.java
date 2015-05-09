@@ -7,38 +7,59 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.FrameLayout.LayoutParams;
 
 import com.amigo.navi.keyguard.AmigoKeyguardBouncer.KeyguardBouncerCallback;
+import com.amigo.navi.keyguard.haokan.Common;
+import com.amigo.navi.keyguard.haokan.KeyguardDataModelInit;
+import com.amigo.navi.keyguard.haokan.KeyguardWallpaperContainer;
+import com.amigo.navi.keyguard.haokan.NicePicturesInit;
+import com.amigo.navi.keyguard.haokan.NicePicturesInit.DataChangedInterface;
+import com.amigo.navi.keyguard.haokan.UIController;
+import com.amigo.navi.keyguard.haokan.analysis.HKAgent;
+import com.amigo.navi.keyguard.haokan.db.WallpaperDB;
+import com.amigo.navi.keyguard.haokan.entity.Wallpaper;
+import com.amigo.navi.keyguard.haokan.entity.WallpaperList;
+import com.amigo.navi.keyguard.network.ImageLoader;
+import com.amigo.navi.keyguard.network.theardpool.ThreadUtil;
+import com.amigo.navi.keyguard.picturepage.adapter.HorizontalAdapter;
+import com.amigo.navi.keyguard.picturepage.widget.KeyguardListView;
+import com.amigo.navi.keyguard.picturepage.widget.HorizontalListView.OnScrollListener;
+import com.amigo.navi.keyguard.picturepage.widget.OnViewTouchListener;
 import com.amigo.navi.keyguard.fingerprint.FingerIdentifyManager;
 import com.amigo.navi.keyguard.skylight.SkylightActivity;
 import com.amigo.navi.keyguard.skylight.SkylightHost;
 import com.amigo.navi.keyguard.skylight.SkylightUtil;
 import com.amigo.navi.keyguard.util.AmigoKeyguardUtils;
 import com.amigo.navi.keyguard.util.DataStatistics;
+import com.amigo.navi.keyguard.util.QuickSleepUtil;
+import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.keyguard.ViewMediatorCallback;
 import com.android.keyguard.KeyguardHostView.OnDismissAction;
 import com.android.internal.widget.LockPatternUtils;
 import com.gionee.fingerprint.IGnIdentifyCallback;
 
-import static com.android.keyguard.KeyguardHostView.OnDismissAction;
-
 public class KeyguardViewHostManager {
-
+    private static final String TAG = "KeyguardViewHostManager";
     final static boolean DEBUG=true;
     private static final String LOG_TAG="KeyguardViewHostManager";
     
     private static final int MSG_HIDE_SKYLIGHT=0;
     private static final int MSG_SHOW_SKYLIGHT=1;
     private static final int MSG_CONFIGURATION_CHANGED = 2;
-    
+    private static final int MSG_UPDATE_HAOKAN_LIST = 3;
+    private static final int MSG_UPDATE_HAOKAN_LIST_SCREEN_ON = 4;
     
     private static KeyguardViewHostManager sInstance=null;
     
@@ -54,9 +75,19 @@ public class KeyguardViewHostManager {
     private MyHandler mHandler=new MyHandler();
     private ViewHostReceiver mReceiver=new ViewHostReceiver();
     private KeyguardNotificationCallback mKeyguardNotificationCallback;
+    private NicePicturesInit mNicePicturesInit;
     private FingerIdentifyManager mFingerIdentifyManager;
+    // for statistics
+    private long timeOnKeyguard = -1;
+    private long timeOnKeyguardStart = -1;
+    private boolean IsClearLock = false;
     
     public KeyguardViewHostManager(Context context,KeyguardViewHost host,SkylightHost skylight,LockPatternUtils lockPatternUtils,ViewMediatorCallback callback){
+        DebugLog.d(TAG,"KeyguardViewHostManager");
+        initVersionName(context);
+        KeyguardDataModelInit.getInstance(context).initData();
+        mNicePicturesInit = NicePicturesInit.getInstance(context.getApplicationContext());
+        mNicePicturesInit.init();
         mContext=context;
         mKeyguardViewHost=host;
         mSkylightHost=skylight;
@@ -66,9 +97,28 @@ public class KeyguardViewHostManager {
         sInstance=this;
         setViewMediatorCallback(callback);
         initKeyguard(callback);
+        mKeyguardViewHost.setOnViewTouchListener(mViewTouchListener);
+        initThreadUtil();
+        initHorizontalListView();
         mFingerIdentifyManager=new FingerIdentifyManager(context);
     }
   
+	private void initVersionName(Context context) {
+		try{
+            PackageManager packageManager = context.getPackageManager();
+            PackageInfo packInfo = packageManager.getPackageInfo(context.getPackageName(), 0);
+//            NavilSettings.sVersionName = packInfo.versionName;
+        	DebugLog.d(TAG, "KeyguardViewHostManager packInfo.versionName:" + packInfo.versionName);
+            Common.setVersionName(packInfo.versionName);
+        } catch(Exception e){
+        	DebugLog.d(TAG, "KeyguardViewHostManager error:" + e);
+        }
+	}
+    
+    private void initThreadUtil() {
+        mThreadUtil = new ThreadUtil();
+    }
+
     
     public static KeyguardViewHostManager getInstance(){
     	return sInstance;
@@ -106,18 +156,43 @@ public class KeyguardViewHostManager {
         destroyAcivityIfNeed();
         mKeyguardViewHost.hide();
         setSkylightHidden();
-        mFingerIdentifyManager.cancel();
+		timeOnKeyguard = System.currentTimeMillis() - timeOnKeyguardStart;
+        HKAgent.onEventTimeClearLock(mContext, (int) timeOnKeyguard);
+        timeOnKeyguardStart = timeOnKeyguard = -1;
+        IsClearLock = true;
+        cancelFingerIdentify();
+        updateNotifiOnkeyguard(false);
     }
     
     
     public void onScreenTurnedOff(){
         mKeyguardViewHost.onScreenTurnedOff();
-        mFingerIdentifyManager.cancel();
+        if (!IsClearLock){
+        	timeOnKeyguard = System.currentTimeMillis() - timeOnKeyguardStart;
+        	HKAgent.onEventTimeSceenOff(mContext, (int) timeOnKeyguard);
+        	timeOnKeyguardStart = timeOnKeyguard = -1;
+        }
+//      if(mImageLoader != null){
+//      mImageLoader.clearCache();
+//      System.gc();
+//  }
+        cancelFingerIdentify();
     }
     
     public void onScreenTurnedOn(){
         mKeyguardViewHost.onScreenTurnedOn();
-        mFingerIdentifyManager.startIdentifyIfNeed();
+        Wallpaper wallpaper= UIController.getInstance().getmCurrentWallpaper();
+        if (wallpaper != null){
+        	HKAgent.onEventScreenOn(mContext, UIController.getInstance().getmCurrentWallpaper());
+        	HKAgent.onEventIMGShow(mContext, UIController.getInstance().getmCurrentWallpaper());
+        }
+        timeOnKeyguardStart = System.currentTimeMillis();
+        IsClearLock = false;
+//      if(mWallpaperAdapter != null){
+//      mWallpaperAdapter.notifyDataSetChanged();
+//   }
+     updateHorizontalListViewWhenScreenChanged();
+        startFingerIdentify();
     }
     
     public boolean isShowing(){
@@ -156,6 +231,33 @@ public class KeyguardViewHostManager {
     	dismiss();
     }
     
+    private void updateNotifiOnkeyguard(boolean isShow){
+        if(isShow){
+            KeyguardUpdateMonitor.getInstance(mContext).getNotificationModule().setLastKeyguardShowTime(System.currentTimeMillis());
+            KeyguardUpdateMonitor.getInstance(mContext).getNotificationModule().updateNotifications();
+        }else{
+            KeyguardUpdateMonitor.getInstance(mContext).getNotificationModule().removeAllNotifications();
+        }
+    }
+    
+    public void startFingerIdentify(){
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                mFingerIdentifyManager.startIdentifyIfNeed();
+            }
+        });
+    }
+    
+    public void cancelFingerIdentify() {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                mFingerIdentifyManager.cancel();
+            }
+        });
+    }
+    
     public void setViewMediatorCallback(ViewMediatorCallback callback){
         mViewMediatorCallback=callback;
     }
@@ -191,7 +293,7 @@ public class KeyguardViewHostManager {
             return;
         }
         
-
+        cancelFingerIdentify();
         if(DEBUG){Log.d(LOG_TAG, "showSkylight  skylight is null? " + (mSkylightHost == null));}
         mViewMediatorCallback.userActivity();
         if (mSkylightHost != null) {
@@ -226,6 +328,8 @@ public class KeyguardViewHostManager {
             mIsSkylightShown=false;
             mViewMediatorCallback.adjustStatusBarLocked();
         }
+        
+       startFingerIdentify();
     }
     
     private void setSkylightHidden(){
@@ -302,10 +406,30 @@ public class KeyguardViewHostManager {
             case MSG_CONFIGURATION_CHANGED:
                 handleConfigurationChanged();
                 break;
+            case MSG_UPDATE_HAOKAN_LIST:
+                DebugLog.d(TAG,"update listview mHandler");
+                WallpaperList wallpaperList = (WallpaperList) msg.obj;
+                refreshHorizontalListView(wallpaperList); 
+                UIController.getInstance().refreshWallpaperInfo();
+                break;
+            case MSG_UPDATE_HAOKAN_LIST_SCREEN_ON:
+                WallpaperList wallpapers = (WallpaperList) msg.obj;
+                refreshHorizontalListView(wallpapers); 
+                mKeyguardListView.setPosition(mShowPage);
+                UIController.getInstance().refreshWallpaperInfo();
+                break;
             default:
                 break;
 
             }
+        }
+    }
+
+    private void updateHorizontalListLoopState(WallpaperList wallpaperList) {
+        if(wallpaperList.size() <= 1){
+            mKeyguardListView.setCanLoop(false);
+        }else{
+            mKeyguardListView.setCanLoop(true);
         }
     }
     
@@ -381,6 +505,28 @@ public class KeyguardViewHostManager {
     	return false;
     }
     
+    private ImageLoader mImageLoader = null;
+    private KeyguardListView mKeyguardListView;
+    private HorizontalAdapter mWallpaperAdapter;
+    protected int mShowPage;
+    private void initHorizontalListView(){
+        DebugLog.d(TAG,"initHorizontalListView wallpaperList");
+      KeyguardWallpaperContainer container = new KeyguardWallpaperContainer(mContext.getApplicationContext());
+      mKeyguardListView = new KeyguardListView(mContext.getApplicationContext());
+      mImageLoader = new ImageLoader(mContext.getApplicationContext());
+      WallpaperList wallpaperList = new WallpaperList();
+      mWallpaperAdapter = new HorizontalAdapter(mContext.getApplicationContext(), wallpaperList,mImageLoader);
+      UIController.getInstance().setmKeyguardListView(mKeyguardListView);
+      mKeyguardListView.setAdapter(mWallpaperAdapter);
+      updateDataAndRefreshKeyguardListView();
+      mKeyguardListView.setOnScrollListener(mKeyguardListViewScrollListener);
+      container.addView(mKeyguardListView, 0);
+      mKeyguardViewHost.addView(container, 0);
+//      mKeyguardViewHost.addView(mKeyguardListView, 0);
+      NicePicturesInit.getInstance(mContext).setDataChangedListener(mDataChangedListener);
+      UIController controller = UIController.getInstance();
+      mKeyguardListView.setTouchlListener(controller);
+    }
     public void updateSKylightLocation() {
         mHandler.post(new Runnable() {
             @Override
@@ -400,6 +546,210 @@ public class KeyguardViewHostManager {
     public void unlockByFingerIdentify(){
         mKeyguardViewHost.unlockByFingerIdentify();
     }
+    private void updateHorizontalListView(){
+        boolean isLock = WallpaperDB.getInstance(mContext).queryHasLockPaper();
+//        if(isLock){
+            WallpaperList wallpaperList = queryWallpaperList();
+            querySelectionPageWhenLock(wallpaperList);
+            Message msg = mHandler.obtainMessage(MSG_UPDATE_HAOKAN_LIST);
+            msg.obj = wallpaperList;
+            mHandler.sendMessage(msg);
+//        }else{
+//            
+//        }
+    }
+    
+    private void updateDataAndRefreshKeyguardListView(){
+        DebugLog.d(TAG,"update listview updateDataAndRefreshKeyguardListView");
+            new Thread(new Runnable() {
+                
+                @Override
+                public void run() {
+                    mShowPage = 0;
+                    WallpaperDB wallpaperDB = WallpaperDB.getInstance(mContext);
+                    DebugLog.d(TAG,"updateDataAndRefreshKeyguardListView");
+                    boolean isLock = wallpaperDB.queryHasLockPaper();
+                    WallpaperList wallpaperList = queryWallpaperList();
+                    DebugLog.d(TAG,"updateDataAndRefreshKeyguardListView isLock:" + isLock);
+                    DebugLog.d(TAG,"updateDataAndRefreshKeyguardListView size:" + wallpaperList.size());
+                    if(isLock){
+                        querySelectionPageWhenLock(wallpaperList);
+                        Message msg = mHandler.obtainMessage(MSG_UPDATE_HAOKAN_LIST_SCREEN_ON);
+                        msg.obj = wallpaperList;
+                        mHandler.sendMessage(msg);
+                    }else{
+                        String currentTime = Common.formatCurrentTime();
+                        Wallpaper wallpaper = wallpaperDB.queryDynamicShowWallpaper(currentTime);
+                        if(wallpaper != null){
+                            querySelectionPageWhenNotLock(wallpaperList,wallpaper);
+                        }
+                        Message msg = mHandler.obtainMessage(MSG_UPDATE_HAOKAN_LIST_SCREEN_ON);
+                        msg.obj = wallpaperList;
+                        mHandler.sendMessage(msg);
+                    }
+                }
+            }).start();
+//            refreshHorizontalListView(wallpaperList);
+//            mKeyguardListView.setPosition(mShowPage);
+    }
+
+    private void querySelectionPageWhenNotLock(WallpaperList wallpaperList,Wallpaper wallpaper) {
+//        DebugLog.d(TAG,"querySelectionPageWhenNotLock 1");
+//        DebugLog.d(TAG,"querySelectionPageWhenNotLock currentTime:" + currentTime);
+        for(int index = 0;index < wallpaperList.size();index++){
+            if(wallpaperList.get(index).getImgId() == wallpaper.getImgId()){
+                mShowPage = index;
+                break;
+            }
+        }
+    }
+    
+    /**
+     * @param wallpaperList
+     */
+    private void querySelectionPageWhenLock(WallpaperList wallpaperList) {
+        DebugLog.d(TAG,"updateSelectionPage 1");
+        for(int index = 0;index < wallpaperList.size();index++){
+            if(wallpaperList.get(index).isLocked()){
+                mShowPage = index;
+                DebugLog.d(TAG,"updateSelectionPage 2");
+                break;
+            }
+        }
+        DebugLog.d(TAG,"updateSelectionPage mShowPage:" + mShowPage);
+    }
+    
+    private void updateHorizontalListViewWhenScreenChanged(){
+        DebugLog.d(TAG,"updateHorizontalListViewWhenScreenChanged");
+        if(mKeyguardListView == null){
+            return;
+        }
+        updateDataAndRefreshKeyguardListView();
+    }
+    
+    /**
+     * @return
+     */
+    private WallpaperList queryWallpaperList() {
+        WallpaperList wallpaperList = WallpaperDB.getInstance(mContext.getApplicationContext())
+                .queryPicturesDownLoaded();   
+        return wallpaperList;
+    }
+    
+    
+      NicePicturesInit.DataChangedInterface mDataChangedListener = new DataChangedInterface() {
+        
+        @Override
+        public void onDataChanged(final String url,final Bitmap bitmap) {
+//            mImageLoader.addImage2Cache(url, bitmap);
+//            mThreadUtil.runOnWorkThreadOnlyOne(mUpdateHorizontalListViewRunnable);
+        }
+    };
+    
+    Runnable mUpdateHorizontalListViewRunnable = new Runnable() {
+        @Override
+        public void run() {
+            updateHorizontalListView();
+        }
+    };
+    
+    private ThreadUtil mThreadUtil = null;
+    OnScrollListener mKeyguardListViewScrollListener = new OnScrollListener() {
+        @Override
+        public void onScrollMoving(int motionX) {
+            DebugLog.d(TAG,"onScrollMoving");
+            mWallpaperAdapter.lock();
+            QuickSleepUtil.updateWallPaperScrollingState(false);
+        }
+        
+        @Override
+        public void onScrollEnd() {
+            DebugLog.d(TAG,"onScrollEnd");
+            mWallpaperAdapter.unlock();
+            Wallpaper wallpaper = null;
+            Object obj = mKeyguardListView.getCurrentItem();
+            if(obj != null){
+                wallpaper = (Wallpaper) obj;
+            	HKAgent.onEventIMGShow(mContext.getApplicationContext(), wallpaper);
+            }
+            WallpaperDB wallpaperDB = WallpaperDB.getInstance(mContext.getApplicationContext());
+            Wallpaper lockWallpaper = wallpaperDB.queryPicturesDownLoadedLock();
+            if(lockWallpaper != null && wallpaper != null && lockWallpaper.getImgId() != wallpaper.getImgId()){
+                DebugLog.d(TAG,"onScrollEnd url:" + wallpaper.getImgUrl());
+                float order = wallpaper.getShowOrder();
+                float floorOrder = (float) Math.floor(order);
+                DebugLog.d(TAG,"onScrollEnd floorOrder:" + floorOrder);
+                float showOrder = floorOrder + 0.5f;
+                lockWallpaper.setShowOrder(showOrder);
+                wallpaperDB.updateShowOrder(lockWallpaper);
+        		HKAgent.onEventIMGSwitch(mContext.getApplicationContext(), lockWallpaper);
+            }      	
+
+//            mThreadUtil.releaseWorkThread();
+        }
+        
+        @Override
+        public void onScrollBegin() {
+            DebugLog.d(TAG,"onScrollBegin");
+            mWallpaperAdapter.lock();
+            QuickSleepUtil.updateWallPaperScrollingState(true);
+//            mThreadUtil.occupyWorkThread();
+        }
+    };
+    
+    OnViewTouchListener mViewTouchListener = new OnViewTouchListener() {
+        
+        @Override
+        public void onTouch(MotionEvent event) {
+            if(mKeyguardViewHost.isAmigoHostYAtHomePostion()){
+                dispatchTouchEventToListView(event);
+            }
+        }
+
+        @Override
+        public void onInterceptTouch(MotionEvent event) {
+            if(mKeyguardViewHost.isAmigoHostYAtHomePostion()){
+                mKeyguardListView.interceptTouchEvent(event);
+            }
+        }
+    };
+    private int mTouchDownY;
+    
+    
+    private void refreshHorizontalListView(WallpaperList wallpaperList) {
+        updateHorizontalListLoopState(wallpaperList);
+        mWallpaperAdapter.updateDataList(wallpaperList);
+        mWallpaperAdapter.notifyDataSetChanged();
+    }
+    
+    private void dispatchTouchEventToListView(MotionEvent event) {
+        int motionX = (int) event.getX();
+        DebugLog.d(TAG,"motionMove real motionX:" + motionX);
+        if(event.getAction() == MotionEvent.ACTION_DOWN){
+            mTouchDownY = 0;
+            mKeyguardListView.dealwithTouchEvent(event);
+          } 
+          DebugLog.d(TAG,"motionMove real is beginScroll:" + mKeyguardListView.isBeginScroll((int) event.getX()));
+        if(mKeyguardListView.isBeginScroll()){
+          if(event.getAction() != MotionEvent.ACTION_UP){
+//                int infozoneHeight = mKeyguardViewHost.getKeyguardPage().getInfozoneViewHeight();
+                int infozoneHeight = 0;
+                int copyWriter = mKeyguardViewHost.getHkCaptionsViewHeight();
+                int scollAtHorizontalHeight = KWDataCache.getAllScreenHeigt(mContext) - infozoneHeight
+                        - copyWriter;
+                DebugLog.d(TAG,"motionMove real mTouchDownY:" + mTouchDownY);
+                DebugLog.d(TAG,"motionMove real scollAtHorizontalHeight:" + scollAtHorizontalHeight);
+                if(mTouchDownY < scollAtHorizontalHeight){
+                    mKeyguardListView.dealwithTouchEvent(event);
+                }
+          }
+        }
+          if(event.getAction() == MotionEvent.ACTION_UP){
+             mKeyguardListView.dealwithTouchEvent(event);
+          }
+    }
+    
+    
     
     public void fingerPrintFailed() {
         mKeyguardViewHost.fingerPrintFailed();
@@ -409,4 +759,7 @@ public class KeyguardViewHostManager {
         mKeyguardViewHost.fingerPrintSuccess();
     }
     
+    public boolean passwordViewIsForzen() {
+        return mKeyguardViewHost.passwordViewIsForzen();
+    }
 }

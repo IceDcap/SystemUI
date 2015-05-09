@@ -7,12 +7,16 @@ import java.util.Locale;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
+import android.os.Handler;
+import android.os.Message;
 import android.text.format.DateFormat;
 import android.text.format.Time;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewParent;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -21,6 +25,7 @@ import android.widget.TextView;
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.modules.KeyguardMissedInfoModule.MissedInfoCallback;
 import com.amigo.navi.keyguard.modules.WeatherInfoModule.WeatherInfoUpdateCallback;
+import com.amigo.navi.keyguard.util.QuickSleepUtil;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.keyguard.R;
 import com.gionee.amiweather.library.StateInt;
@@ -30,6 +35,8 @@ import com.gionee.amiweather.library.WeatherData;
 public class SkylightView extends FrameLayout {
 
     private static final String LOG_TAG = "SkylightView";
+    private static final int MSG_CHANGE_SKYLIGHT_BG=0;
+    
     private static final String strMaxMissCount = "n";
     private static final int maxMissCount = 99;
     private Context mContext;
@@ -120,7 +127,116 @@ public class SkylightView extends FrameLayout {
         mTemperatureText.setTypeface(mFaceT);
 
     }
+    
+    
+    private Handler mHandler =new Handler(){
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+            case MSG_CHANGE_SKYLIGHT_BG:
+                changeSkyligtBg(msg.arg1);
+                break;
 
+            default:
+                break;
+            }
+            
+            
+        };
+    };
+    
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        return super.dispatchTouchEvent(ev);
+    }
+    
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        int action = event.getAction();
+        if (action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_UP) {
+            QuickSleepUtil.gotoSleepIfDoubleTap(mContext, event);
+        }
+        
+        judgePulldownAction(event);
+        return super.onTouchEvent(event);
+    }
+    
+    
+    private float mTouchDownYPosition=0;
+    private float mTouchDownXPosition=0;
+   
+    private void judgePulldownAction(MotionEvent event) {
+        int action = event.getAction();
+        if (action == MotionEvent.ACTION_DOWN) {     
+            mTouchDownYPosition = event.getY();
+            mTouchDownXPosition = event.getX();
+            Log.d(LOG_TAG, "mTouchDownXPosition: "+mTouchDownXPosition+"  mTouchDownYPosition: "+mTouchDownYPosition);
+        } else if (action == MotionEvent.ACTION_UP||action==MotionEvent.ACTION_CANCEL) {
+            float yOffset=Math.abs(event.getY()-mTouchDownYPosition);
+            float xOffset=Math.abs(event.getX()-mTouchDownXPosition);
+            boolean longEnough=yOffset>SkylightHost.getSkylightHeight()/4;
+            boolean isDownDirection=(event.getY()-mTouchDownYPosition)>0;
+            boolean isPullDownAction=(yOffset>xOffset&&longEnough&&isDownDirection);
+            DebugLog.d(LOG_TAG, "longEnough: "+longEnough+"  yOffset: "+yOffset+"  xOffset: "+xOffset+"  isDownDirection:"+isDownDirection+"  isPullDownAction: "+isPullDownAction);
+            if(isPullDownAction){
+                getNextBgIndex();
+                SkylightHost host = getParentSkylightHost(SkylightView.this);
+                if(host!=null){
+                    changeSkyligtBg(host.getBgCurrentIndex());
+                }
+            }
+        }
+    }
+
+    private void getNextBgIndex() {
+        Log.d(LOG_TAG, "changeSkylightBg-------");
+        SkylightHost host = getParentSkylightHost(SkylightView.this);
+        Log.d(LOG_TAG, "host: " + host);
+        if (host == null) {
+            return;
+        }
+        int currenBgIndex = host.getBgCurrentIndex();
+
+        int bgCount = host.getBgCount();
+        if (bgCount > 0) {
+            if (currenBgIndex == bgCount) {
+                currenBgIndex = 1;
+            } else {
+                currenBgIndex++;
+            }
+        }
+        host.setBgCurrentIndex(currenBgIndex);
+    }
+    
+    private void changeSkyligtBg(final int index) {
+        new Thread() {
+            public void run() {
+                SkylightHost host = getParentSkylightHost(SkylightView.this);
+                if(host!=null){
+                    host.readBgBitmapFromSys(index);
+                }
+            };
+        }.start();
+    }
+    
+    private SkylightHost getParentSkylightHost(View view) {
+        Log.d(LOG_TAG, "getParentSkylightHost-------");
+        ViewParent parent = view.getParent();
+        if (parent != null) {
+            if (parent instanceof SkylightHost) {
+                return (SkylightHost) parent;
+            } else {
+                return getParentSkylightHost((View)parent);
+            }
+        } else {
+            return null;
+        }
+    }
+    
+    @Override
+    public boolean performClick() {
+        return super.performClick();
+    }
+    
     private Typeface createTypeface(String familyname, int style) {
         Typeface mFace = Typeface.create(familyname, style);
         return mFace;

@@ -8,6 +8,7 @@ import java.lang.reflect.Method;
 import org.xmlpull.v1.XmlPullParser;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.util.Xml;
 
@@ -34,6 +35,12 @@ public class SkylightUtil {
     private static Object sAmigoServerManager=null;
     
     private static int sHallSwitchNodeId=0;//
+    
+    
+    
+    public static final String SKYLIGHT_BG_PATH="system/etc/GN_SkyLight/";
+    public static final String SKYLIGHT_SP="skylight_sp";
+    public static final String BG_CURRENT_INDEX_KEY="current_bg_index";
     
     
 	public static boolean getIsHallOpen(Context context) {
@@ -75,30 +82,15 @@ public class SkylightUtil {
 	    return sHallSwitchNodeId;
 	}
 
-//    private static String getHallStatus() {
-//        String status = HALL_STATUS_OPEN;
-//        try {
-//            status = readLine(FILENAME_HALL_STATUS);
-//            Log.d(LOG_TAG, "status: "+status);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        return status;
-//    }
-//
-//    private static String readLine(String filename) throws IOException {
-//    	// findbugs
-//    	InputStreamReader isr = new InputStreamReader(new FileInputStream(filename), CHARSET);
-//    	BufferedReader reader = new BufferedReader(isr,256);  
-////        FileReader fr = new FileReader(filename);
-////        BufferedReader reader = new BufferedReader(fr, 256);
-//        try {
-//            return reader.readLine();
-//        } finally {
-//        	isr.close();
-//            reader.close();
-//        }
-//    }
+    public static boolean writeSharedPreference(Context context, String name, String key, int value) {
+        SharedPreferences sp = context.getSharedPreferences(name, Context.MODE_PRIVATE);
+        return sp.edit().putInt(key, value).commit();
+    }
+
+    public static int readValueFromSharePreference(Context context, String name, String key) {
+        SharedPreferences sp = context.getSharedPreferences(name, Context.MODE_PRIVATE);
+        return sp.getInt(key, 1);
+    }
     
 	public static void readSkylightLocationFromXml() {
 	    if(DebugLog.DEBUG)Log.d(LOG_TAG, "readSkylightLocationFromXml------------");

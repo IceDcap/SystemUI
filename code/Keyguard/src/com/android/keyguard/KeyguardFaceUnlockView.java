@@ -369,6 +369,12 @@ public class KeyguardFaceUnlockView extends LinearLayout implements KeyguardSecu
 		// TODO Auto-generated method stub
 		
 	}
+	
+	@Override
+	public boolean isFrozen() {
+		// TODO Auto-generated method stub
+		return false;
+	}
     
     
 }

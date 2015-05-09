@@ -20,6 +20,9 @@ public class VibatorUtil {
 	public static final String LOCKSCREEN_MENU_LONG_PRESS = "LOCKSCREEN_MENU_LONG_PRESS";
 	public static final String LOCKSCREEN_UNLOCK_CODE_TAP = "LOCKSCREEN_UNLOCK_CODE_TAP";
 	public static final String LOCKSCREEN_UNLOCK_CODE_ERROR = "LOCKSCREEN_UNLOCK_CODE_ERROR";
+	public static final String LOCKSCREEN_STORYMODE_CLICK = "LOCKSCREEN_STORYMODE_CLICK";
+	
+
 	
 	public static void vibator(Context context, long  milliseconds){
 		if(mVibrator == null){

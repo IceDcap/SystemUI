@@ -20,7 +20,7 @@
         xmlns:androidprv="http://schemas.android.com/apk/prv/res/android"
         package="com.android.systemui"
         android:sharedUserId="android.uid.systemui"
-		android:versionName="6.1.0.b"
+		android:versionName="6.1.0.d"
         coreApp="true">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -117,6 +117,12 @@
 
     <!-- Screen Capturing -->
     <uses-permission android:name="android.permission.MANAGE_MEDIA_PROJECTION" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
+    
+
     <!-- fingerprint unlock -->
     <uses-permission android:name="com.fingerprints.service.ACCESS_FINGERPRINT_MANAGER" />
 
@@ -425,6 +431,16 @@
             android:excludeFromRecents="true"
             android:theme="@android:style/Theme.Light" >
         </activity>
+        
+            <activity
+	            android:name="com.amigo.navi.keyguard.security.AmigoUnBindAcountActivity"
+	            android:screenOrientation="portrait"
+	            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+           </activity>
+             
+         <activity
+            android:name="com.gionee.account.sdk.activity.AssistActivity" >
+        </activity>
                 
         <activity
             android:name="com.android.systemui.gionee.cc.fakecall.GnCallingActivity"
@@ -445,6 +461,19 @@
             android:name="com.android.systemui.gionee.cc.camera.GnNotificationHandleActivity"
             android:excludeFromRecents="true"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+        </activity>
+        
+        <activity
+            android:name="com.amigo.navi.keyguard.settings.KeyguardSettingsActivity"
+            android:excludeFromRecents="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+        </activity>
+        <activity
+            android:name="com.amigo.navi.keyguard.haokan.HKCategoryActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:excludeFromRecents="true" >
+          
         </activity>
         
         <service
@@ -492,5 +521,10 @@
             android:value="systemui" />
         <!-- GIONEE <wujj> <2015-03-20> add for YouJu end --> 
 
+        <receiver android:name="com.amigo.navi.keyguard.network.connect.NetworkChangeReceiver" >
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

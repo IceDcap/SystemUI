@@ -119,6 +119,7 @@ public class GnBluetoothControllerImpl implements GnBluetoothController {
 
     @Override
     public void setBluetoothEnabled(boolean enabled) {
+        Log.d(TAG, "setBluetoothEnabled : " + enabled + "  mAdapter = " + mAdapter);
         if (mAdapter != null) {
             if (enabled) {
                 mAdapter.enable();

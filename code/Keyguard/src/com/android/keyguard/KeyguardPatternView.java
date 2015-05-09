@@ -19,10 +19,12 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
+import android.os.UserHandle;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -39,10 +41,16 @@ import android.widget.Toast;
 
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.KeyguardViewHostManager;
+import com.amigo.navi.keyguard.security.AmigoAccount;
+import com.amigo.navi.keyguard.security.AmigoUnBindAcountActivity;
 import com.amigo.navi.keyguard.util.TimeUtils;
 import com.amigo.navi.keyguard.util.VibatorUtil;
 import com.android.internal.widget.LockPatternUtils;
 import com.android.internal.widget.LockPatternView;
+import com.gionee.account.sdk.GioneeAccount;
+import com.gionee.account.sdk.listener.verifyListener;
+import com.gionee.account.sdk.vo.LoginInfo;
+
 
 
 import java.util.List;
@@ -71,6 +79,7 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
     private LockPatternView mLockPatternView;
     private KeyguardSecurityCallback mCallback;
     private TextView forgetButton;
+    private boolean isFrozen=false;
 
     /**
      * Keeps track of the last time we poked the wake lock during dispatching of the touch event.
@@ -95,6 +104,7 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
     private ViewGroup mKeyguardBouncerFrame;
     private KeyguardMessageArea mHelpMessage;
     private int mDisappearYTranslation;
+    private GioneeAccount gioneeAccount;
 
     enum FooterMode {
         Normal,
@@ -169,20 +179,54 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
         mSecurityMessageDisplay.setTimeout(0); // don't show ownerinfo/charging status by default
         reset();
         setForgetPasswordButton();
+        gioneeAccount = GioneeAccount.getInstance(mContext);
+        setVisibility(INVISIBLE);
     }
 
     private void setForgetPasswordButton() {
     	 forgetButton = (TextView) this.findViewById(R.id.forget_password);
          if(forgetButton == null) return;
-         
-         forgetButton.setOnClickListener(new View.OnClickListener() {
+         if(getTimeOutSize()>=5){
+        	 forgetButton.setVisibility(View.VISIBLE);
+         }
+        forgetButton.setOnClickListener(new View.OnClickListener() {
  			@Override
  			public void onClick(View arg0) {
  				if(DebugLog.DEBUG) DebugLog.d(TAG, "forgetButton button clicked  ");
- 			
+ 			    LoginInfo  loginInfo= AmigoAccount.getInstance().getAccountNameAndId();
+ 			    if(loginInfo!=null){
+ 			    	logAccount(loginInfo);
+ 			    }else{
+ 			    	Intent intent = new Intent(mContext, AmigoUnBindAcountActivity.class);
+	                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+	                mContext.startActivity(intent);
+ 			    }
+ 			    
  			}
  		});
 		
+	}
+    
+	private void logAccount(LoginInfo  loginInfo) {
+		gioneeAccount.verifyForSP(mContext, loginInfo,
+				new verifyListener() {
+
+					@Override
+					public void onError(Exception e) {
+
+					}
+
+					@Override
+					public void onSucess(Object o) {
+                          Log.i("jiating","ForgetPasswordButton...onSuccess") ;
+                  		checkPasswordResult(true, UNLOCK_FAIL_UNKNOW_REASON,null);
+					}
+
+					@Override
+					public void onCancel(Object o) {
+
+					}
+				});
 	}
 
     @Override
@@ -334,17 +378,20 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
 	private void unLockDone() {
 		mCallback.reportUnlockAttempt(true);
 		mLockPatternView.setDisplayMode(LockPatternView.DisplayMode.Correct);
-		mCallback.dismiss(true);
+		if(mCallback.getFingerPrintResult()!=KeyguardSecurityContainer.FINGERPRINT_SUCCESS){
+			mCallback.dismiss(true);
+		}
 		mCallback.reset();
 		forgetButton.setVisibility(View.INVISIBLE);
 	}
 
 
 	public void onUnlockFail(int failReason) {
-		forgetButton.setVisibility(View.VISIBLE);
+		
 		mLockPatternView.setDisplayMode(LockPatternView.DisplayMode.Wrong);	
 		if(DebugLog.DEBUG) DebugLog.d(TAG, "onUnlockFail failReason :"+failReason);
 		if(failReason == UNLOCK_FAIL_REASON_TIMEOUT) {
+			forgetButton.setVisibility(View.VISIBLE);
 		    VibatorUtil.amigoVibrate(mContext, VibatorUtil.LOCKSCREEN_UNLOCK_CODE_ERROR, VibatorUtil.UNLOCK_ERROR_VIBRATE_TIME);
 			long deadline = mKeyguardUpdateMonitor.getDeadline();
 			if(DebugLog.DEBUG) DebugLog.d(TAG, "onUnlockFail deadline :"+deadline+"LockPatternUtils.FAILED_ATTEMPT_TIMEOUT_MS="+LockPatternUtils.FAILED_ATTEMPT_TIMEOUT_MS);
@@ -380,7 +427,7 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
         mLockPatternView.clearPattern();
         mLockPatternView.setEnabled(false);
         final int index = getTimeOutSize();
-        final long elapsedRealtime = SystemClock.elapsedRealtime();
+        final long elapsedRealtime = System.currentTimeMillis();
         if(mCountdownTimer==null){
 	        mCountdownTimer = new CountDownTimer(elapsedRealtimeDeadline - elapsedRealtime, 1000) {
 	
@@ -389,7 +436,8 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
 	                final int secondsRemaining = (int) (millisUntilFinished / 1000);
 	                if(DebugLog.DEBUGMAYBE) DebugLog.d(TAG, "onUnlockFail secondsRemaining :"+secondsRemaining);
 	                mSecurityMessageDisplay.setMessage(
-	                        R.string.amigo_kg_too_many_failed_attempts_countdown, index,true, TimeUtils.secToTime(secondsRemaining));
+	                        R.string.amigo_kg_too_many_failed_attempts_countdown, index,true, TimeUtils.secToTime(secondsRemaining,mContext));
+	                isFrozen=true;
 	            }
 	
 	            @Override
@@ -398,6 +446,7 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
 	                mLockPatternView.setEnabled(true);
 	                displayDefaultSecurityMessage();
 	                mCountdownTimer=null;
+	                isFrozen=false;
 	            }
 	
 	        }.start();
@@ -419,6 +468,7 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
             mCountdownTimer.cancel();
             mCountdownTimer = null;
         }
+        setVisibility(INVISIBLE);
     }
 
     @Override
@@ -445,30 +495,34 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
 
     @Override
     public void startAppearAnimation() {
-        enableClipping(false);
-        setAlpha(1f);
-        setTranslationY(mAppearAnimationUtils.getStartTranslation());
-        animate()
-                .setDuration(500)
-                .setInterpolator(mAppearAnimationUtils.getInterpolator())
-                .translationY(0);
-        mAppearAnimationUtils.startAnimation(
-                mLockPatternView.getCellStates(),
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        enableClipping(true);
-                    }
-                },
-                this);
-        if (!TextUtils.isEmpty(mHelpMessage.getText())) {
-            mAppearAnimationUtils.createAnimation(mHelpMessage, 0,
-                    AppearAnimationUtils.DEFAULT_APPEAR_DURATION,
-                    mAppearAnimationUtils.getStartTranslation(),
-                    true /* appearing */,
-                    mAppearAnimationUtils.getInterpolator(),
-                    null /* finishRunnable */);
-        }
+    	if(getVisibility() == INVISIBLE){
+			setVisibility(VISIBLE);
+			 enableClipping(false);
+		        setAlpha(1f);
+		        setTranslationY(mAppearAnimationUtils.getStartTranslation());
+		        animate()
+		                .setDuration(500)
+		                .setInterpolator(mAppearAnimationUtils.getInterpolator())
+		                .translationY(0);
+		        mAppearAnimationUtils.startAnimation(
+		                mLockPatternView.getCellStates(),
+		                new Runnable() {
+		                    @Override
+		                    public void run() {
+		                        enableClipping(true);
+		                    }
+		                },
+		                this);
+		        if (!TextUtils.isEmpty(mHelpMessage.getText())) {
+		            mAppearAnimationUtils.createAnimation(mHelpMessage, 0,
+		                    AppearAnimationUtils.DEFAULT_APPEAR_DURATION,
+		                    mAppearAnimationUtils.getStartTranslation(),
+		                    true /* appearing */,
+		                    mAppearAnimationUtils.getInterpolator(),
+		                    null /* finishRunnable */);
+		        }
+    	}
+       
     }
 
     @Override
@@ -567,6 +621,10 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
 		checkPasswordResult(true, UNLOCK_FAIL_UNKNOW_REASON,null);
 		
 	}
-    
+	@Override
+	public boolean isFrozen() {
+		// TODO Auto-generated method stub
+		return isFrozen;
+	}
     
 }

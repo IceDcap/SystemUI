@@ -183,6 +183,17 @@ public class StatusBarKeyguardViewManager implements KeyguardBouncerCallback ,Ke
         mKeyguardViewHostManager.hideSkylight(forceHide);
         mStatusBarWindowManager.setSkylightShowing(false);
     }
+    public void startFingerIdentify(){
+        if(mKeyguardViewHostManager!=null){
+            mKeyguardViewHostManager.startFingerIdentify();
+        }
+    }
+    
+    public void cancelFingerIdentify(){
+        if(mKeyguardViewHostManager!=null){
+            mKeyguardViewHostManager.cancelFingerIdentify();
+        }
+    }
 
     public void onScreenTurnedOff() {
         mScreenOn = false;

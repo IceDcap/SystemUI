@@ -196,13 +196,11 @@ public class Recents extends SystemUI implements RecentsComponent {
                         Intent intent =
                                 new Intent(RecentsActivity.WINDOW_ANIMATION_START_INTENT);
                         intent.setPackage("com.android.systemui");
-                        //sendBroadcastSafely(intent);
-                        mContext.sendBroadcastAsUser(intent, new UserHandle(UserHandle.USER_CURRENT));
+                        sendBroadcastSafely(intent);
                     }
                 });
         intent.putExtra(RecentsActivity.WAITING_FOR_WINDOW_ANIMATION_PARAM, true);
-        //startActivitySafely(intent, opts.toBundle());
-        mContext.startActivityAsUser(intent, opts.toBundle(), new UserHandle(UserHandle.USER_CURRENT));
+        startActivitySafely(intent, opts.toBundle());
     }
 
     @Override

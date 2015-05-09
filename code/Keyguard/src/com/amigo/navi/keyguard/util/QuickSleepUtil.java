@@ -34,9 +34,14 @@ public class QuickSleepUtil {
         if(isTouchInvalidArea(event, mainCellLayout)){
             return;
         }
+        gotoSleepIfDoubleTap(context, event);
+       
+    }
+    
+    public static void gotoSleepIfDoubleTap(Context context, MotionEvent event) {
         if(sDoubleTapAreaRadius == -1){
-        	sDoubleTapAreaRadius = context.getResources().getDimensionPixelSize(R.dimen.double_tap_area_radius);
-        	if(DebugLog.DEBUG) DebugLog.d(TAG, "gotoSleepIfDoubleTap sDoubleTapAreaRadius:"+sDoubleTapAreaRadius);
+            sDoubleTapAreaRadius = context.getResources().getDimensionPixelSize(R.dimen.double_tap_area_radius);
+            if(DebugLog.DEBUG) DebugLog.d(TAG, "gotoSleepIfDoubleTap sDoubleTapAreaRadius:"+sDoubleTapAreaRadius);
         }
         int action = event.getAction();
         if (action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_UP) {
@@ -67,7 +72,7 @@ public class QuickSleepUtil {
                 boolean isDoubleTapDistanceShort =isDoubleTapDistanceShortEnough(event);
                 if(DebugLog.DEBUG) DebugLog.d(TAG, "isDoubleTap: " + isDoubleTap + "  isInDoubleTapArea: " + isDoubleTapDistanceShort);
                 if (isDoubleTap && isDoubleTapDistanceShort) {
-                	if(DebugLog.DEBUG) DebugLog.d(TAG, "gotoSleepIfDoubleTap()  mLastClickTime: " + mLastClickTime + "  clickTime:"
+                    if(DebugLog.DEBUG) DebugLog.d(TAG, "gotoSleepIfDoubleTap()  mLastClickTime: " + mLastClickTime + "  clickTime:"
                                 + clickTime);
                         PowerManager pw = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
                         pw.goToSleep(SystemClock.uptimeMillis());
@@ -100,6 +105,13 @@ public class QuickSleepUtil {
         return isInvalidArea;
     }
     
+    public static  boolean sIsWallPaperScrolling = false;
+    private static boolean isWallPaperScrolling(){
+        return sIsWallPaperScrolling;
+    } 
     
+    public static void updateWallPaperScrollingState(boolean flag){
+        sIsWallPaperScrolling = flag;
+    }
     
 }

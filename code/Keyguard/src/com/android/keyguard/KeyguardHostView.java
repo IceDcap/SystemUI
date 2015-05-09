@@ -16,6 +16,7 @@
 
 package com.android.keyguard;
 
+import com.amigo.navi.keyguard.KeyguardViewHostManager;
 import com.android.internal.widget.LockPatternUtils;
 import com.android.keyguard.KeyguardSecurityModel.SecurityMode;
 import com.android.keyguard.KeyguardUpdateMonitor.DisplayClientState;
@@ -382,6 +383,9 @@ public class KeyguardHostView extends KeyguardViewBase {
 
             if (mSlidingChallengeLayout != null) {
                 mSlidingChallengeLayout.setChallengeInteractive(!isFullScreen);
+            }
+            if(!(securityMode==SecurityMode.SimPin|| securityMode == SecurityMode.SimPuk)){
+                KeyguardViewHostManager.getInstance().startFingerIdentify();
             }
         }
         return finished;
@@ -1124,5 +1128,10 @@ public class KeyguardHostView extends KeyguardViewBase {
     public void fingerPrintSuccess(){
     	super.fingerPrintSuccess();
     }
+    
+    public boolean passwordViewIsForzen(){
+    	return super.passwordViewIsForzen();
+    }
+    
 
 }

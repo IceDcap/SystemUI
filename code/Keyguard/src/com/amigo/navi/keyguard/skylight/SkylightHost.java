@@ -1,9 +1,11 @@
 package com.amigo.navi.keyguard.skylight;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 
 import android.appwidget.AppWidgetHostView;
-import android.appwidget.AppWidgetProviderInfo;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,12 +13,14 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager;
 import android.os.SystemClock;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -26,10 +30,10 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
-
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.modules.WeatherInfoModule;
 import com.amigo.navi.keyguard.util.AmigoKeyguardUtils;
+import com.amigo.navi.keyguard.util.BitmapUtil;
 import com.amigo.navi.keyguard.util.DataStatistics;
 import com.amigo.navi.keyguard.util.KeyguardWidgetUtils;
 import com.android.keyguard.KeyguardUpdateMonitor;
@@ -54,6 +58,7 @@ public class SkylightHost extends FrameLayout {
     private PowerManager mPowerManager=null;
     Drawable mWallpaperDrawable = null;
     FrameLayout mSkylightLayout;
+    RelativeLayout mBgLayout;
     private AppWidgetHostView mMusicWidget = null;
     static SkylightLocation sLocation=new SkylightLocation();
     
@@ -64,6 +69,13 @@ public class SkylightHost extends FrameLayout {
     private boolean mIsMusicPlaying=false;
     
     private LocalReceiver mReceiver=new LocalReceiver();
+    
+    private Context mContext;
+    
+    
+    private int mBgCount=0;
+    private int mBgCurrenIndex=0;
+    private Bitmap mBgBitmap=null;
     
     public SkylightHost(Context context) {
         this(context,null);
@@ -76,9 +88,11 @@ public class SkylightHost extends FrameLayout {
     
     public SkylightHost(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        mContext=context;
 //        mConfiguration = new Configuration(getContext().getResources().getConfiguration());
         mOldFontStyle = AmigoKeyguardUtils.getmOldFontStyle();
         mPowerManager=(PowerManager)context.getSystemService(Context.POWER_SERVICE);
+        getSkylightBackgroundConfig();
         initView(context);
         requestFocus();
     }
@@ -86,6 +100,7 @@ public class SkylightHost extends FrameLayout {
     
     private void initView(Context context) {
         LayoutInflater.from(context).inflate(R.layout.skylight_host_view, this,true);
+        mBgLayout=(RelativeLayout)findViewById(R.id.skylight_bg_layout);
         mSkylightLayout = (FrameLayout) findViewById(R.id.skyligt_window);
         RelativeLayout.LayoutParams params=(RelativeLayout.LayoutParams)mSkylightLayout.getLayoutParams();
         params.leftMargin=sLocation.getXaxis();
@@ -124,7 +139,17 @@ public class SkylightHost extends FrameLayout {
         public void handleMessage(Message msg) {
             switch (msg.what) {
             case UPDATE_BACKGROUD:
-                
+                Bitmap bm=(Bitmap)msg.obj;
+                if(mBgCurrenIndex!=msg.arg1){
+                    BitmapUtil.recycleBitmap(bm);
+                    return;
+                }
+                Bitmap temp=mBgBitmap;
+                mBgBitmap=bm;
+                mBgLayout.setBackground(new BitmapDrawable(mBgBitmap));
+                BitmapUtil.recycleBitmap(temp);
+                SkylightUtil.writeSharedPreference(mContext, SkylightUtil.SKYLIGHT_SP, SkylightUtil.BG_CURRENT_INDEX_KEY,
+                        mBgCurrenIndex);
                 break;
             case UPDATE_WEATHER_INFO:
                 Log.d(LOG_TAG, "UPDATE_WEATHER_INFO--------");
@@ -280,6 +305,77 @@ public class SkylightHost extends FrameLayout {
     		return sLocation.getWidth();
     	}
     	return 0;
+    }
+    
+    public static int getSkylightHeight(){
+        if(sLocation!=null){
+            return sLocation.getHeight();
+        }
+        return 0;
+    }
+    
+    private void getSkylightBackgroundConfig() {
+        new ReadSkylightBgConfigThread().start();
+    }
+    
+
+    private class ReadSkylightBgConfigThread extends Thread {
+
+        @Override
+        public void run() {
+
+            File file = new File(SkylightUtil.SKYLIGHT_BG_PATH);
+            if (!file.exists()) {
+                return;
+            }
+            String[] fileNames = file.list();
+            mBgCount = fileNames.length;
+            if (mBgCount > 0) {
+                mBgCurrenIndex = SkylightUtil.readValueFromSharePreference(mContext, SkylightUtil.SKYLIGHT_SP,
+                        SkylightUtil.BG_CURRENT_INDEX_KEY);
+                readBgBitmapFromSys(mBgCurrenIndex);
+            }
+        }
+
+    }
+    
+    
+    protected void readBgBitmapFromSys(int bgIndex) {
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(SkylightUtil.SKYLIGHT_BG_PATH +bgIndex + ".png");
+            Bitmap bm = BitmapFactory.decodeStream(fis);
+            DebugLog.d(LOG_TAG, "readBgBitmapFromSys  bgCount: "+mBgCount+"  index: "+bgIndex+" bm: "+bm);
+            if (bm == null) {
+                return;
+            }
+            Message msg = mHandler.obtainMessage(UPDATE_BACKGROUD, bm);
+            msg.arg1=bgIndex;
+            mHandler.sendMessage(msg);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+    
+    protected int getBgCurrentIndex(){
+        return mBgCurrenIndex;
+    }
+    
+    protected void setBgCurrentIndex(int index){
+        mBgCurrenIndex=index;
+    }
+    
+    protected int getBgCount(){
+        DebugLog.d(LOG_TAG, "bgCount: "+mBgCount);
+        return mBgCount;
     }
 
     

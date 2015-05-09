@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+
+    <ImageView
+        android:id="@+id/arc_item_image"
+        android:layout_width="62dp"
+        android:layout_height="62dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/arcmenu_favorite_background" />
+
+    <TextView
+        android:id="@+id/arc_item_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/haokan_arcmenu_text_background"
+        android:paddingBottom="3dp"
+        android:paddingLeft="9dp"
+        android:paddingRight="9dp"
+        android:paddingTop="3dp"
+        android:textColor="#000000"
+        android:textSize="12dp"
+        android:visibility="gone" />
+
+</merge>

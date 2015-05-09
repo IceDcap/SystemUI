@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="110dp"
+    android:layout_height="110dp"
+    android:background="@null" >
+
+    <com.amigo.navi.keyguard.haokan.CircleImageView
+        android:id="@+id/haokan_category_item_image"
+        android:layout_width="110dp"
+        android:layout_height="110dp" />
+
+    <TextView
+        android:id="@+id/haokan_category_item_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/haokan_category_item_image"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="2dp"
+        android:textColor="#ffffff"
+        android:textSize="14dp" />
+
+    <ImageView
+        android:id="@+id/haokan_category_item_jiaobiao"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="5dp"
+        android:background="@drawable/haokan_category_favorite_flag" />
+
+</RelativeLayout>
