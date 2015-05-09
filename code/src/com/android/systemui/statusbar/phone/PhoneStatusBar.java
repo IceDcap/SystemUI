@@ -274,12 +274,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     CastControllerImpl mCastController;
     VolumeComponent mVolumeComponent;
     KeyguardUserSwitcher mKeyguardUserSwitcher;
-    FlashlightController mFlashlightController;
     UserSwitcherController mUserSwitcherController;
     NextAlarmController mNextAlarmController;
     KeyguardMonitor mKeyguardMonitor;
     BrightnessMirrorController mBrightnessMirrorController;
-    AccessibilityController mAccessibilityController;
     GnNetworkSpeedController mGnNetworkSpeedController;
     GnSkyLightStatusBar mGnSkyLightStatusBar;
 
@@ -338,9 +336,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     StatusBarHeaderView mHeader;
     KeyguardStatusBarView mKeyguardStatusBar;
     View mKeyguardStatusView;
-    KeyguardBottomAreaView mKeyguardBottomArea;
     boolean mLeaveOpenOnKeyguardHide;
-    KeyguardIndicationController mKeyguardIndicationController;
 
     private boolean mKeyguardFadingAway;
     private long mKeyguardFadingAwayDelay;
@@ -802,13 +798,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mKeyguardStatusBar = (KeyguardStatusBarView) mStatusBarWindow.findViewById(R.id.keyguard_header);
         mStatusIconsKeyguard = (LinearLayout) mKeyguardStatusBar.findViewById(R.id.statusIcons);
         mKeyguardStatusView = mStatusBarWindow.findViewById(R.id.keyguard_status_view);
-        mKeyguardBottomArea =
-                (KeyguardBottomAreaView) mStatusBarWindow.findViewById(R.id.keyguard_bottom_area);
-        mKeyguardBottomArea.setActivityStarter(this);
-        mKeyguardIndicationController = new KeyguardIndicationController(mContext,
-                (KeyguardIndicationTextView) mStatusBarWindow.findViewById(
-                        R.id.keyguard_indication_text));
-        mKeyguardBottomArea.setKeyguardIndicationController(mKeyguardIndicationController);
 
         mTickerEnabled = res.getBoolean(R.bool.enable_ticker);
         if (mTickerEnabled) {
@@ -907,11 +896,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             });
         }
 
-        mFlashlightController = new FlashlightController(mContext);
-        mKeyguardBottomArea.setFlashlightController(mFlashlightController);
-        mKeyguardBottomArea.setPhoneStatusBar(this);
-        mAccessibilityController = new AccessibilityController(mContext);
-        mKeyguardBottomArea.setAccessibilityController(mAccessibilityController);
         mNextAlarmController = new NextAlarmController(mContext);
         mKeyguardMonitor = new KeyguardMonitor();
         if (UserSwitcherController.isUserSwitcherAvailable(UserManager.get(mContext))) {
@@ -4463,7 +4447,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         EventLogTags.writeSysuiLockscreenGesture(
                 EventLogConstants.SYSUI_LOCKSCREEN_GESTURE_TAP_NOTIFICATION_ACTIVATE,
                 0 /* lengthDp - N/A */, 0 /* velocityDp - N/A */);
-        mKeyguardIndicationController.showTransientIndication(R.string.notification_tap_again);
         ActivatableNotificationView previousView = mStackScroller.getActivatedChild();
         if (previousView != null) {
             previousView.makeInactive(true /* animate */);
@@ -4495,7 +4478,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     @Override
     public void onActivationReset(ActivatableNotificationView view) {
         if (view == mStackScroller.getActivatedChild()) {
-            mKeyguardIndicationController.hideTransientIndication();
             mStackScroller.setActivatedChild(null);
         }
     }
@@ -4509,20 +4491,16 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     }
 
     public void onUnlockHintStarted() {
-        mKeyguardIndicationController.showTransientIndication(R.string.keyguard_unlock);
     }
 
     public void onHintFinished() {
         // Delay the reset a bit so the user can read the text.
-        mKeyguardIndicationController.hideTransientIndicationDelayed(HINT_RESET_DELAY_MS);
     }
 
     public void onCameraHintStarted() {
-        mKeyguardIndicationController.showTransientIndication(R.string.camera_hint);
     }
 
     public void onPhoneHintStarted() {
-        mKeyguardIndicationController.showTransientIndication(R.string.phone_hint);
     }
 
     public void onTrackingStopped(boolean expand) {

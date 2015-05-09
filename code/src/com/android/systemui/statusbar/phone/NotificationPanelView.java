@@ -64,7 +64,7 @@ import com.android.systemui.statusbar.stack.StackStateAnimator;
 public class NotificationPanelView extends PanelView implements
         ExpandableView.OnHeightChangedListener, ObservableScrollView.Listener,
         View.OnClickListener, NotificationStackScrollLayout.OnOverscrollTopChangedListener,
-        KeyguardAffordanceHelper.Callback, NotificationStackScrollLayout.OnEmptySpaceClickListener {
+        NotificationStackScrollLayout.OnEmptySpaceClickListener {
 
     private static final boolean DEBUG = false;
 
@@ -78,7 +78,6 @@ public class NotificationPanelView extends PanelView implements
 
     public static final long DOZE_ANIMATION_DURATION = 700;
     private GnNotficationHandlerView mNotficationHandlerView;
-    private KeyguardAffordanceHelper mAfforanceHelper;
     private StatusBarHeaderView mHeader;
     private KeyguardUserSwitcher mKeyguardUserSwitcher;
     private KeyguardStatusBarView mKeyguardStatusBar;
@@ -97,7 +96,6 @@ public class NotificationPanelView extends PanelView implements
      * Handles launching the secure camera properly even when other applications may be using the
      * camera hardware.
      */
-    private SecureCameraLaunchManager mSecureCameraLaunchManager;
 
     /**
      * If set, the ongoing touch gesture might both trigger the expansion in {@link PanelView} and
@@ -211,10 +209,6 @@ public class NotificationPanelView extends PanelView implements
                 android.R.interpolator.fast_out_linear_in);
         mDozeAnimationInterpolator = AnimationUtils.loadInterpolator(getContext(),
                 android.R.interpolator.linear_out_slow_in);
-        mKeyguardBottomArea = (KeyguardBottomAreaView) findViewById(R.id.keyguard_bottom_area);
-        mAfforanceHelper = new KeyguardAffordanceHelper(this, getContext());
-        mSecureCameraLaunchManager =
-                new SecureCameraLaunchManager(getContext(), mKeyguardBottomArea);
     }
 
     @Override
@@ -288,12 +282,10 @@ public class NotificationPanelView extends PanelView implements
 
     @Override
     public void onAttachedToWindow() {
-        mSecureCameraLaunchManager.create();
     }
 
     @Override
     public void onDetachedFromWindow() {
-        mSecureCameraLaunchManager.destroy();
     }
 
     /**
@@ -387,7 +379,6 @@ public class NotificationPanelView extends PanelView implements
         mIsLaunchTransitionFinished = false;
         mBlockTouches = false;
         mUnlockIconActive = false;
-        mAfforanceHelper.reset(true);
         mStatusBar.dismissPopups();
         mNotificationStackScroller.setOverScrollAmount(0f, true /* onTop */, false /* animate */,
                 true /* cancelAnimators */);
@@ -830,38 +821,6 @@ public class NotificationPanelView extends PanelView implements
                 .setInterpolator(mDozeAnimationInterpolator)
                 .setUpdateListener(mStatusBarAnimateAlphaListener)
                 .start();
-    }
-
-    private final Runnable mAnimateKeyguardBottomAreaInvisibleEndRunnable = new Runnable() {
-        @Override
-        public void run() {
-            mKeyguardBottomArea.setVisibility(View.GONE);
-        }
-    };
-
-    private void setKeyguardBottomAreaVisibility(int statusBarState,
-            boolean goingToFullShade) {
-    	   //jiating modify for keyguard begin
-        /*if (goingToFullShade) {
-            mKeyguardBottomArea.animate().cancel();
-            mKeyguardBottomArea.animate()
-                    .alpha(0f)
-                    .setStartDelay(mStatusBar.getKeyguardFadingAwayDelay())
-                    .setDuration(mStatusBar.getKeyguardFadingAwayDuration()/2)
-                    .setInterpolator(PhoneStatusBar.ALPHA_OUT)
-                    .withEndAction(mAnimateKeyguardBottomAreaInvisibleEndRunnable)
-                    .start();
-        } else if (statusBarState == StatusBarState.KEYGUARD
-                || statusBarState == StatusBarState.SHADE_LOCKED) {
-            mKeyguardBottomArea.animate().cancel();
-            mKeyguardBottomArea.setVisibility(View.VISIBLE);
-            mKeyguardBottomArea.setAlpha(1f);
-        } else {
-            mKeyguardBottomArea.animate().cancel();
-            mKeyguardBottomArea.setVisibility(View.GONE);
-            mKeyguardBottomArea.setAlpha(1f);
-        }*/
-    	   //jiating modify for keyguard end
     }
 
     private void setKeyguardStatusViewVisibility(int statusBarState, boolean keyguardFadingAway,
@@ -1349,7 +1308,6 @@ public class NotificationPanelView extends PanelView implements
         float alphaQsExpansion = 1 - Math.min(1, getQsExpansionFraction() * 2);
         mKeyguardStatusBar.setAlpha(Math.min(alphaNotifications, alphaQsExpansion)
                 * mKeyguardStatusBarAnimateAlpha);
-        mKeyguardBottomArea.setAlpha(Math.min(1 - getQsExpansionFraction(), alphaNotifications));
         setQsTranslation(mQsExpansionHeight);
     }
 
@@ -1461,13 +1419,11 @@ public class NotificationPanelView extends PanelView implements
     @Override
     protected void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        mAfforanceHelper.onConfigurationChanged();
     }
 
     @Override
     public void onRtlPropertiesChanged(int layoutDirection) {
         if (layoutDirection != mOldLayoutDirection) {
-            mAfforanceHelper.onRtlPropertiesChanged();
             mOldLayoutDirection = layoutDirection;
         }
     }
@@ -1480,128 +1436,13 @@ public class NotificationPanelView extends PanelView implements
     }
 
     @Override
-    public void onAnimationToSideStarted(boolean rightPage, float translation, float vel) {
-        boolean start = getLayoutDirection() == LAYOUT_DIRECTION_RTL ? rightPage : !rightPage;
-        mIsLaunchTransitionRunning = true;
-        mLaunchAnimationEndRunnable = null;
-        float displayDensity = mStatusBar.getDisplayDensity();
-        int lengthDp = Math.abs((int) (translation / displayDensity));
-        int velocityDp = Math.abs((int) (vel / displayDensity));
-        if (start) {
-            EventLogTags.writeSysuiLockscreenGesture(
-                    EventLogConstants.SYSUI_LOCKSCREEN_GESTURE_SWIPE_DIALER, lengthDp, velocityDp);
-            mKeyguardBottomArea.launchPhone();
-        } else {
-            EventLogTags.writeSysuiLockscreenGesture(
-                    EventLogConstants.SYSUI_LOCKSCREEN_GESTURE_SWIPE_CAMERA, lengthDp, velocityDp);
-            mSecureCameraLaunchManager.startSecureCameraLaunch();
-        }
-        mStatusBar.startLaunchTransitionTimeout();
-        mBlockTouches = true;
-    }
-
-    @Override
-    public void onAnimationToSideEnded() {
-        mIsLaunchTransitionRunning = false;
-        mIsLaunchTransitionFinished = true;
-        if (mLaunchAnimationEndRunnable != null) {
-            mLaunchAnimationEndRunnable.run();
-            mLaunchAnimationEndRunnable = null;
-        }
-    }
-
-    @Override
     protected void onEdgeClicked(boolean right) {
-        if ((right && getRightIcon().getVisibility() != View.VISIBLE)
-                || (!right && getLeftIcon().getVisibility() != View.VISIBLE)
-                || isDozing()) {
-            return;
-        }
-        mHintAnimationRunning = true;
-        mAfforanceHelper.startHintAnimation(right, new Runnable() {
-            @Override
-            public void run() {
-                mHintAnimationRunning = false;
-                mStatusBar.onHintFinished();
-            }
-        });
-        boolean start = getLayoutDirection() == LAYOUT_DIRECTION_RTL ? right : !right;
-        if (start) {
-            mStatusBar.onPhoneHintStarted();
-        } else {
-            mStatusBar.onCameraHintStarted();
-        }
+    	return;
     }
 
     @Override
     protected void startUnlockHintAnimation() {
         super.startUnlockHintAnimation();
-        startHighlightIconAnimation(getCenterIcon());
-    }
-
-    /**
-     * Starts the highlight (making it fully opaque) animation on an icon.
-     */
-    private void startHighlightIconAnimation(final KeyguardAffordanceView icon) {
-        icon.setImageAlpha(1.0f, true, KeyguardAffordanceHelper.HINT_PHASE1_DURATION,
-                mFastOutSlowInInterpolator, new Runnable() {
-                    @Override
-                    public void run() {
-                        icon.setImageAlpha(KeyguardAffordanceHelper.SWIPE_RESTING_ALPHA_AMOUNT,
-                                true, KeyguardAffordanceHelper.HINT_PHASE1_DURATION,
-                                mFastOutSlowInInterpolator, null);
-                    }
-                });
-    }
-
-    @Override
-    public float getPageWidth() {
-        return getWidth();
-    }
-
-    @Override
-    public void onSwipingStarted() {
-        mSecureCameraLaunchManager.onSwipingStarted();
-        requestDisallowInterceptTouchEvent(true);
-        mOnlyAffordanceInThisMotion = true;
-    }
-
-    @Override
-    public KeyguardAffordanceView getLeftIcon() {
-        return getLayoutDirection() == LAYOUT_DIRECTION_RTL
-                ? mKeyguardBottomArea.getCameraView()
-                : mKeyguardBottomArea.getPhoneView();
-    }
-
-    @Override
-    public KeyguardAffordanceView getCenterIcon() {
-        return mKeyguardBottomArea.getLockIcon();
-    }
-
-    @Override
-    public KeyguardAffordanceView getRightIcon() {
-        return getLayoutDirection() == LAYOUT_DIRECTION_RTL
-                ? mKeyguardBottomArea.getPhoneView()
-                : mKeyguardBottomArea.getCameraView();
-    }
-
-    @Override
-    public View getLeftPreview() {
-        return getLayoutDirection() == LAYOUT_DIRECTION_RTL
-                ? mKeyguardBottomArea.getCameraPreview()
-                : mKeyguardBottomArea.getPhonePreview();
-    }
-
-    @Override
-    public View getRightPreview() {
-        return getLayoutDirection() == LAYOUT_DIRECTION_RTL
-                ? mKeyguardBottomArea.getPhonePreview()
-                : mKeyguardBottomArea.getCameraPreview();
-    }
-
-    @Override
-    public float getAffordanceFalsingFactor() {
-        return mStatusBar.isScreenOnComingFromTouch() ? 1.5f : 1.0f;
     }
 
     @Override
@@ -1679,13 +1520,10 @@ public class NotificationPanelView extends PanelView implements
         mDozing = dozing;
         if (mDozing) {
             mKeyguardStatusBar.setVisibility(View.INVISIBLE);
-            mKeyguardBottomArea.setVisibility(View.INVISIBLE);
         } else {
-            mKeyguardBottomArea.setVisibility(View.VISIBLE);
             mKeyguardStatusBar.setVisibility(View.VISIBLE);
             if (animate) {
                 animateKeyguardStatusBarIn();
-                mKeyguardBottomArea.startFinishDozeAnimation();
             }
         }
     }

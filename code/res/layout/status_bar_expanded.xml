@@ -109,9 +109,9 @@
 
     </com.android.systemui.statusbar.phone.NotificationsQuickSettingsContainer>
 
-    <include
+  <!--   <include
             layout="@layout/keyguard_bottom_area"
-            android:visibility="gone" />
+            android:visibility="gone" /> -->
 
     <include layout="@layout/status_bar_expanded_header" />
 
