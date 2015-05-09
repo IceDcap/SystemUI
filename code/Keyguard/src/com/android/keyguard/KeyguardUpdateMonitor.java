@@ -1323,6 +1323,10 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
 
     public void reportFailedUnlockAttempt() {
         mFailedAttempts++;
+        SharedPreferences sp = mContext.getSharedPreferences("lockDeadline", Context.MODE_PRIVATE);
+	    SharedPreferences.Editor editor = sp.edit();
+	    editor.putInt("mFailedAttempts", mFailedAttempts);
+	    editor.commit();
     }
 
     public boolean isClockVisible() {
@@ -1525,7 +1529,6 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
 	   	 SharedPreferences.Editor editor = sp.edit();
 	   	 editor.putLong("deadline", deadline);
 	   	 editor.putLong("failedAttemptTimeoutMS", mFailedAttemptTimeoutMS);
-	   	 editor.putInt("mFailedAttempts", mFailedAttempts);
 	   	 editor.putInt("mFailedTimeOutSize", mFailedTimeOutSize);
 	   	 editor.commit();
 	   	 return deadline;

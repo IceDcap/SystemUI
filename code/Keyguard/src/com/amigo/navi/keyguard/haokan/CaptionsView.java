@@ -11,6 +11,7 @@ import android.animation.Animator.AnimatorListener;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.text.method.LinkMovementMethod;
@@ -63,6 +64,8 @@ public class CaptionsView extends LinearLayout {
     
     private boolean mClickLink = false;
     
+    private Rect mLinkDrawablebounds = new Rect();
+    
     public void setContentVisible(boolean visible) {
         if (mContentVisible != visible) {
             this.mContentVisible = visible;
@@ -94,6 +97,12 @@ public class CaptionsView extends LinearLayout {
          
          mInitialTranslationY = getResources().getDimensionPixelSize(R.dimen.haokan_caption_layout_translationY);
          
+         int left = getResources().getDimensionPixelSize(R.dimen.haokan_caption_link_left);
+         int top = getResources().getDimensionPixelSize(R.dimen.haokan_caption_link_top);
+         int right = getResources().getDimensionPixelSize(R.dimen.haokan_caption_link_right);
+         int bottom = getResources().getDimensionPixelSize(R.dimen.haokan_caption_link_bottom);
+         
+         mLinkDrawablebounds.set(left, top, right, bottom);
         initUI();
     }
     
@@ -120,7 +129,7 @@ public class CaptionsView extends LinearLayout {
     public void setContentText(Caption caption) {
 
         CaptionSpannableString string = new CaptionSpannableString(getContext()
-                .getApplicationContext(), caption, mContentLinkDrawable);
+                .getApplicationContext(), caption, mContentLinkDrawable,mLinkDrawablebounds);
         mTextViewContent.setText(string);
         mTextViewContent.setMovementMethod(LinkMovementMethod.getInstance());
         mTextViewTitle.setText(caption.getTitle());

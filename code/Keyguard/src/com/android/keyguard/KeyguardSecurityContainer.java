@@ -99,6 +99,7 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
         if (mCurrentSecuritySelection != SecurityMode.None) {
             getSecurityView(mCurrentSecuritySelection).onResume(reason);
             final View currentSecurityView = mSecurityViewFlipper.getCurrentView();
+            currentSecurityView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -471,7 +472,6 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
 		set.setDuration(300);
 		set.addAnimation(alpha);
 		set.addAnimation(trans);
-		
 		set.setAnimationListener(new AnimationListener() {
 			
 			@Override

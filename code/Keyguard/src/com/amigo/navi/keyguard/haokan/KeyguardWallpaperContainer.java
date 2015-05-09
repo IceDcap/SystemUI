@@ -32,6 +32,8 @@ public class KeyguardWallpaperContainer extends FrameLayout {
     
     Bitmap mBitmap = null;
     
+    private boolean mIsSecure = false;
+    
     public KeyguardWallpaperContainer(Context context) {
         this(context,null);
     }
@@ -74,16 +76,30 @@ public class KeyguardWallpaperContainer extends FrameLayout {
     @Override
     protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
-        if (mTop != mScreenHeight) {
-            canvas.drawBitmap(mBitmap, 0, mTop, mPaint);
+        
+        if (!mIsSecure) {
+            if (mTop != mScreenHeight) {
+                canvas.drawBitmap(mBitmap, 0, mTop, mPaint);
+            }
         }
     }
     
-    public void onKeyguardScrollChanged(int top,int maxBoundY) {
+    
+    
+    public void onKeyguardScrollChanged(int top,int maxBoundY, boolean isSecure) {
+        mIsSecure = isSecure;
         
-        int bitmapHeight = mBitmap.getHeight();
-        mTop = (int) (mScreenHeight - top * (bitmapHeight / (float)maxBoundY));
-        postInvalidate();
+        if (!isSecure) {
+            int bitmapHeight = mBitmap.getHeight();
+            mTop = (int) (mScreenHeight - top * (bitmapHeight / (float)maxBoundY));
+            postInvalidate();
+            return;
+        } 
+        
+        if (mTop <= 0) {
+            postInvalidate();
+        }
+        
     }
     
     
