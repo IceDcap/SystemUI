@@ -1,6 +1,7 @@
 package com.amigo.navi.keyguard.haokan;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -36,7 +37,7 @@ public class CaptionSpannableString extends SpannableStringBuilder{
     }
 
 
-    public CaptionSpannableString(Context context, Caption caption,Drawable mContentLinkDrawable) {
+    public CaptionSpannableString(Context context, Caption caption,Drawable mContentLinkDrawable,Rect linkRect) {
         
         super(caption.getContent());
         mCaption = caption;
@@ -66,8 +67,8 @@ public class CaptionSpannableString extends SpannableStringBuilder{
                         .getContent().length() + caption.getImgSource().length() + 1,
                         Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
             }
-
-            mContentLinkDrawable.setBounds(5, 5, 33, 33);
+            mContentLinkDrawable.setBounds(linkRect);
+//            mContentLinkDrawable.setBounds(5, 5, 33, 33);
             ImageSpan imageSpan = new ImageSpan(mContentLinkDrawable, ImageSpan.ALIGN_BASELINE);
 
             setSpan(imageSpan, length() - 1, length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);

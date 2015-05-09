@@ -166,13 +166,8 @@ public class UIController implements OnTouchlListener{
         }
         
         WebView webView = mWebLayout.getmWebView();
-        
-//        mWebLayoutBackground = KeyguardWallpaper.getBlurBitmap(getCurrentWallpaperBitmap().copy(Bitmap.Config.ARGB_8888, true), 3);
-//        mWebLayout.setBackground(new BitmapDrawable(mWebLayoutBackground));
+ 
         keyguardHostView.addView(mWebLayout);
-        
-        //1.文案隐藏
-        //2.infoZone下移
         
         final CaptionsView captionsView = getmCaptionsView();
         final AmigoKeyguardInfoZone infoZone = getmInfozone();
@@ -368,13 +363,18 @@ public class UIController implements OnTouchlListener{
             week.setTranslationX(translationX / 4.0f);
             dateFestival.setTranslationX(translationX / 4.0f);
             mPlayerLayout.setTranslationX(translationX / 2.0f);
-            
-            mPlayerLayout.setAlpha(translationX / 400);
+            float alpha = translationX / 400f;
+//            Log.v("zhaowei", "translationX = " + translationX + "  alpha = " + alpha);
+            mPlayerLayout.setAlpha(1 - alpha);
             
         }else {
             time.setTranslationX(100);
             week.setTranslationX(100);
             dateFestival.setTranslationX(100);
+            
+            if (mPlayerLayout.getAlpha() != 0f) {
+                mPlayerLayout.setAlpha(0);
+            }
         }
         
         translationX = Math.abs(x);
@@ -584,7 +584,6 @@ public class UIController implements OnTouchlListener{
             infozoneAlpha = 1.0f - (top - captionScrollHeight) / (maxBoundY -captionScrollHeight);
         }
 
-        mInfozone.setAlpha(infozoneAlpha);
         mCaptionsView.setAlpha(captionsAlpha);
         mPlayerLayout.setAlpha(playerAlpha);
         mKeyguardNotificationView.setAlpha(notificationAlpha);
@@ -598,8 +597,9 @@ public class UIController implements OnTouchlListener{
         }
          
         if (!isSecure) {
-            mKeyguardWallpaperContainer.onKeyguardScrollChanged(top, maxBoundY);
+            mInfozone.setAlpha(infozoneAlpha);
         }
+        mKeyguardWallpaperContainer.onKeyguardScrollChanged(top, maxBoundY,isSecure);
     }
     
     

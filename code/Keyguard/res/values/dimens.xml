@@ -320,6 +320,10 @@
 	<dimen name="haokan_caption_layout_content_textsize">11dp</dimen>
 	<dimen name="haokan_caption_layout_content_height">45dp</dimen>
 	<dimen name="haokan_caption_layout_translationY">53dp</dimen>
+	<dimen name="haokan_caption_link_left">1dp</dimen>
+	<dimen name="haokan_caption_link_top">1dp</dimen>
+	<dimen name="haokan_caption_link_right">8dp</dimen>
+	<dimen name="haokan_caption_link_bottom">8dp</dimen>
 	
 	
 	<dimen name="haokan_notification_layout_image_width">64dp</dimen>
@@ -330,27 +334,25 @@
 	<dimen name="haokan_notification_layout_close_marginright">6dp</dimen>
 	<dimen name="haokan_notification_layout_button_size">32dp</dimen>
 	
-	
 	<item name="menuFromDegrees" format="float" type="dimen">-157.5</item>
     <item name="menuToDegrees" format="float" type="dimen">-22.5</item>
-    
     <dimen name="menuChildSize">100dp</dimen>
-     <dimen name="menuHomeButtonSize">80dp</dimen>
-	<!-- haokan dimens end-->
-	
-	
-	
+
+    <dimen name="menuHomeButtonSize">80dp</dimen>
 	<dimen name="haokan_arcmenu_radius">113dp</dimen>
-	<!-- 
-	<dimen name="haokan_arcmenu_radius_big">157dp</dimen>
-	 -->
-	 <dimen name="haokan_arcmenu_radius_big">123dp</dimen>
-	
+	<dimen name="haokan_arcmenu_radius_big">123dp</dimen>
 	<dimen name="haokan_infozone_max_translationX">33dp</dimen>
-	
 	<dimen name="haokan_circle_imageview_radius">49dp</dimen>
 	<dimen name="haokan_wallpaper_alpha_offset">50dp</dimen>
 	<dimen name="haokan_webview_close_height">48dp</dimen>
+	<!-- haokan dimens end-->
+	
+	
+	<!-- infozone -->
+	<dimen name="keyguard_infozone_time_textsize">55dp</dimen>
+	<dimen name="keyguard_infozone_week_textsize">20dp</dimen>
+	<dimen name="keyguard_infozone_date_textsize">14dp</dimen>
+	
 	
 			
 	<!-- settings dimens begin -->	

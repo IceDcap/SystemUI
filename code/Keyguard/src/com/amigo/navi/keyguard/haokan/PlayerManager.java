@@ -491,8 +491,8 @@ public class PlayerManager {
             public void run() {
                 if (mMediaPlayer != null){
                     if (mMediaPlayer.isPlaying()) {
-                        mHandler.sendEmptyMessage(0);
                         mCurrentDuration = mMediaPlayer.getCurrentPosition();
+                        mHandler.sendEmptyMessage(0);
                     }
                 }
             }
@@ -505,8 +505,10 @@ public class PlayerManager {
     private Handler mHandler = new Handler() {
         
         public void handleMessage(android.os.Message msg) {
-            
-            int position = mMediaPlayer.getCurrentPosition();
+            final int position = mCurrentDuration;
+//            if (mMediaPlayer != null) {
+//                position = mMediaPlayer.getCurrentPosition();
+//            }
             int duration = mDuration;
             if (duration > 0) {
                 mPlayerButton.setProgress(position / (float)duration);
