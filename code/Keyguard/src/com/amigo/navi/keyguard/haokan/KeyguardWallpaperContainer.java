@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.PorterDuffXfermode;
@@ -31,8 +32,8 @@ public class KeyguardWallpaperContainer extends FrameLayout {
     float cx,cy;
     
     Bitmap mBitmap = null;
-    
-    private boolean mIsSecure = false;
+    private float mBlind=1;
+    private boolean mIsSecure;
     
     public KeyguardWallpaperContainer(Context context) {
         this(context,null);
@@ -71,37 +72,37 @@ public class KeyguardWallpaperContainer extends FrameLayout {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
     }
-    
+    private static final int BLINDDEGREE = 150;
     
     @Override
     protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
-        
-        if (!mIsSecure) {
-            if (mTop != mScreenHeight) {
-                canvas.drawBitmap(mBitmap, 0, mTop, mPaint);
-            }
-        }
-    }
-    
-    
-    
-    public void onKeyguardScrollChanged(int top,int maxBoundY, boolean isSecure) {
-        mIsSecure = isSecure;
-        
-        if (!isSecure) {
-            int bitmapHeight = mBitmap.getHeight();
-            mTop = (int) (mScreenHeight - top * (bitmapHeight / (float)maxBoundY));
-            postInvalidate();
-            return;
-        } 
-        
-        if (mTop <= 0) {
-            postInvalidate();
+        if (!mIsSecure && mTop != mScreenHeight) {
+            canvas.drawBitmap(mBitmap, 0, mTop, mPaint);
         }
         
+        int color = Color.argb((int)(BLINDDEGREE * mBlind), 0, 0, 0);
+		canvas.drawColor(color);
     }
     
+    public void onKeyguardScrollChanged(int top,int maxBoundY) {
+        
+        int bitmapHeight = mBitmap.getHeight();
+        mTop = (int) (mScreenHeight - top * (bitmapHeight / (float)maxBoundY));
+        postInvalidate();
+    }
     
+   public void onKeyguardScrollChanged(int top,int maxBoundY, boolean isSecure) {
+        
+        int bitmapHeight = mBitmap.getHeight();
+        mTop = (int) (mScreenHeight - top * (bitmapHeight / (float)maxBoundY));
+        mIsSecure=isSecure;
+        if(isSecure){
+        	mBlind= (float)top/maxBoundY;
+        }else{
+        	mBlind=0;
+        }
+        postInvalidate();
+    }
     
 }

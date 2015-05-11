@@ -333,6 +333,11 @@
 	<dimen name="haokan_notification_layout_player_marginright">50dp</dimen>
 	<dimen name="haokan_notification_layout_close_marginright">6dp</dimen>
 	<dimen name="haokan_notification_layout_button_size">32dp</dimen>
+	<dimen name="haokan_notification_layout_settings_textsize">15sp</dimen>
+	<dimen name="haokan_notification_layout_settings_content_textsize">12sp</dimen>
+	<dimen name="haokan_notification_layout_settings_padding_h">8dp</dimen>
+	<dimen name="haokan_notification_layout_settings_image_width">52dp</dimen>
+	<dimen name="haokan_notification_layout_settings_gap_height">2dp</dimen>
 	
 	<item name="menuFromDegrees" format="float" type="dimen">-157.5</item>
     <item name="menuToDegrees" format="float" type="dimen">-22.5</item>

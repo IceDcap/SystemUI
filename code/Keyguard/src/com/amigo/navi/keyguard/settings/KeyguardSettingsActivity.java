@@ -11,6 +11,8 @@ import amigo.preference.AmigoPreferenceFrameLayout.LayoutParams;
 import amigo.widget.AmigoSwitch;
 import amigo.widget.AmigoTextView;
 import amigo.app.AmigoActionBar;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -23,6 +25,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,6 +36,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -42,6 +46,9 @@ import com.amigo.navi.keyguard.haokan.UIController;
 import com.amigo.navi.keyguard.haokan.analysis.Event;
 import com.amigo.navi.keyguard.haokan.analysis.HKAgent;
 import com.android.keyguard.R;
+import android.content.Intent;
+
+
 
 public class KeyguardSettingsActivity extends AmigoActivity {
 	private final String TAG = "KeyguardSettingsActivity";
@@ -74,6 +81,10 @@ public class KeyguardSettingsActivity extends AmigoActivity {
 		super.onCreate(arg0); 
 //		AmigoActionBar mActionBar = getAmigoActionBar();
 //		mActionBar.hide();
+		Intent intent = getIntent();
+		if (KeyguardSettings.CLEARNOTIFICATION.equals(intent.getStringExtra(KeyguardSettings.CLEARNOTIFICATION))){
+			cancelNotification();
+		}
 		
         if (Build.VERSION.SDK_INT >= 21) {
             this.getWindow().getAttributes().systemUiVisibility |= (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -377,6 +388,9 @@ public class KeyguardSettingsActivity extends AmigoActivity {
     
     
     private void saveConnectState(boolean connect){
+    	if (connect){
+    		cancelNotification();
+    	}
     	changeWallpaperUpdateData(connect);
 		connectNet = connect;
 		KeyguardSettings.setConnectState(getApplicationContext(),connect);
@@ -432,5 +446,14 @@ public class KeyguardSettingsActivity extends AmigoActivity {
 		networkDialog.setCancelable(false);
 		networkDialog.setCanceledOnTouchOutside(false);
 	}   
-
+    
+    private void cancelNotification() {
+        Log.v(TAG, "cancelNotification");
+        NotificationManager mNotificationManager;
+        mNotificationManager = (NotificationManager)getApplicationContext().getSystemService("notification");
+        try {
+            mNotificationManager.cancel(KeyguardSettings.NOTIFICATION_ID_SETTING);
+        } catch (Exception e) {
+        }
+    }
 }

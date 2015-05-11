@@ -27,6 +27,9 @@ public class KeyguardSettings {
 	public static final int SWITCH_ONLY_WLAN_OFF = 2;
 	
 	public static final long ANIMATION_DELAY = 33;
+
+	public static final String CLEARNOTIFICATION = "clearNotification_KeyguardSettingsActivity";
+	public static final int NOTIFICATION_ID_SETTING = 1007;
 	
 	
     

@@ -85,6 +85,10 @@
     <string name="dialog_information">系统提示</string>
     <string name="dialog_information_point">欢迎使用锁屏壁纸。</string>
     <string name="dialog_Allinformation">在使用过程中可能产生数据流量，具体资费请咨询运营商。是否继续建立数据连接？</string>
+    <string name="haokan_notification_settings_content">打开壁纸更新开关可获取最新壁纸</string>
+    
+    
+    
     <string name="haokan_arc_menu_favorite">收藏</string>
     <string name="haokan_arc_menu_favorite_ok">已收藏</string>
     <string name="haokan_arc_menu_lock">锁定</string>

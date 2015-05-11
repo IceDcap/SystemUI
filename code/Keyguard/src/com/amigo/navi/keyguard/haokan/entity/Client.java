@@ -55,7 +55,7 @@ public class Client {
     }
 
     public String getImei() {
-        imei = "008600215556761";
+        //imei = "008600215556761";
         return imei;
     }
 

@@ -25,7 +25,7 @@ public class DownLoadJsonManager {
     private static final String TAG = "DownLoadJsonManager"; 
     public static String sUrlDomain = "http://t-nav.gionee.com/lockimage/";
     private final static String TEST_URL_DOMAIN = "http://t-nav.gionee.com/lockimage/";
-    private final static String PRODUCTION_URL_DOMAIN = "http://t-nav.gionee.com/lockimage/";
+    private final static String PRODUCTION_URL_DOMAIN = "http://nav.gionee.com/lockimage/";
     
     //request register
     private static final String CLIENT_VERSION = "v"; 

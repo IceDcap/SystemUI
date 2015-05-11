@@ -19,6 +19,8 @@ package com.android.keyguard;
 import android.app.ActivityManagerNative;
 import android.app.AlarmManager;
 import android.app.IUserSwitchObserver;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.admin.DevicePolicyManager;
 import android.app.trust.TrustManager;
@@ -30,6 +32,8 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.ContentObserver;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 
 import static android.os.BatteryManager.BATTERY_STATUS_FULL;
 import static android.os.BatteryManager.BATTERY_STATUS_UNKNOWN;
@@ -65,6 +69,7 @@ import android.telephony.SubscriptionManager.OnSubscriptionsChangedListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.util.SparseBooleanArray;
+import android.widget.RemoteViews;
 
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.modules.AmigoBatteryStatus;
@@ -75,6 +80,8 @@ import com.amigo.navi.keyguard.modules.KeyguardMissedInfoModule;
 import com.amigo.navi.keyguard.modules.WeatherInfoModule;
 import com.amigo.navi.keyguard.modules.WeatherInfoModule.WeatherInfoUpdateCallback;
 import com.amigo.navi.keyguard.modules.KeyguardMissedInfoModule.MissedInfoCallback;
+import com.amigo.navi.keyguard.settings.KeyguardSettings;
+import com.amigo.navi.keyguard.settings.KeyguardSettingsActivity;
 
 
 import com.google.android.collect.Lists;
@@ -945,6 +952,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
      */
     protected void handleBootCompleted() {
         if (mBootCompleted) return;
+        createNotification();
         mBootCompleted = true;
         for (int i = 0; i < mCallbacks.size(); i++) {
             KeyguardUpdateMonitorCallback cb = mCallbacks.get(i).get();
@@ -1550,7 +1558,52 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
             return deadline;
         }
         return 0L;
+		
        
     }
-    
+	
+	
+    private NotificationManager mNotificationManager;
+    private Notification mNotification;  
+    private void createNotification() {    	
+    	boolean notNeedNotification = KeyguardSettings.getWallpaperUpadteState(mContext);
+        mNotificationManager = (NotificationManager)mContext.getSystemService("notification");
+        if(!notNeedNotification){
+			if (mNotification == null) {
+				mNotification = new Notification();
+				mNotification.icon = R.drawable.haokan_notification_settings;
+				mNotification.when = System.currentTimeMillis();
+				mNotification.flags = Notification.FLAG_AUTO_CANCEL;
+			}
+
+			if (mNotification.contentView == null) {
+
+				Intent intent = new Intent(mContext,
+						KeyguardSettingsActivity.class);
+				intent.putExtra(KeyguardSettings.CLEARNOTIFICATION, KeyguardSettings.CLEARNOTIFICATION);
+				PendingIntent pendingIntent = PendingIntent.getActivity(
+						mContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+				RemoteViews mRemoteViews = new RemoteViews(
+						mContext.getPackageName(),
+						R.layout.haokan_notification_settings_layout);
+	            mRemoteViews.setOnClickPendingIntent(R.id.haokan_notification_settings, pendingIntent);
+				mNotification.contentView = mRemoteViews;
+			}
+			String title = mContext.getResources().getString(R.string.settings);
+			String content = mContext.getResources().getString(
+					R.string.haokan_notification_settings_content);
+			mNotification.contentView.setTextViewText(
+					R.id.haokan_notification_settings_title, title);
+			mNotification.contentView.setTextViewText(
+					R.id.haokan_notification_settings_content, content);
+			Drawable drawable = mContext.getResources().getDrawable(
+					R.drawable.haokan_notification_settings);
+			BitmapDrawable bd = (BitmapDrawable) drawable;
+			Bitmap bitmap = bd.getBitmap();
+			mNotification.contentView.setImageViewBitmap(
+					R.id.haokan_notification_image_settings, bitmap);	
+			mNotificationManager.notify(KeyguardSettings.NOTIFICATION_ID_SETTING, mNotification);
+
+		}    
+    }    
 }

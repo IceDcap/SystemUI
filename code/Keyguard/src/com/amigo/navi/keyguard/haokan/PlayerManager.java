@@ -173,7 +173,7 @@ public class PlayerManager {
                 e.printStackTrace();
             }
             
-            HKAgent.onEvent(mApplicationContext, mCurrentMusic.getTypeId(), mCurrentMusic.getImgId(), Event.PLAYER_MUSIC);
+            HKAgent.onEvent(mApplicationContext, mCurrentMusic.getImgId(), mCurrentMusic.getTypeId(),  Event.PLAYER_MUSIC);
         }
     }
     
