@@ -24,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.amigo.navi.keyguard.haokan.HKMainLayout;
 import com.amigo.navi.keyguard.haokan.UIController;
 import com.amigo.navi.keyguard.modules.AmigoBatteryStatus;
 import com.android.keyguard.KeyguardUpdateMonitor;
@@ -35,6 +36,7 @@ import com.android.keyguard.R;
 import com.amigo.navi.keyguard.modules.KeyguardNotificationModule;
 import com.amigo.navi.keyguard.notification.ActivatableNotificationView;
 import com.amigo.navi.keyguard.notification.NotificationStackScrollLayout;
+import com.amigo.navi.keyguard.settings.KeyguardSettings;
 import com.amigo.navi.keyguard.util.DataStatistics;
 //import com.gionee.navi.keyguard.everydayphoto.WallpaperData;
 import com.amigo.navi.keyguard.util.QuickSleepUtil;
@@ -59,6 +61,7 @@ public class AmigoKeyguardPage extends RelativeLayout {
 //		int padding = getResources().getDimensionPixelSize(R.dimen.kg_maincell_layout_padding_left_and_right);
 //        setPadding(padding, 0, padding, 0);
         //
+		mStatusBarHeight=KWDataCache.getStatusBarHeight();
 		mCarrierMarginTop = getResources().getDimensionPixelSize(R.dimen.kg_maincell_layout_carrier_margin_top);
         mCarrierBatteryGap = getResources().getDimensionPixelSize(R.dimen.kg_maincell_layout_carrier_battery_gap);
         mBatteryNotificationGap = getResources().getDimensionPixelSize(R.dimen.kg_maincell_layout_battery_notification_gap);
@@ -83,6 +86,7 @@ public class AmigoKeyguardPage extends RelativeLayout {
 		
 		addCarrierView();
 		addBatteryView();
+		addHKMainLayout();
 		addNotificationClickTipView();
 		addNotificationView();
 
@@ -123,6 +127,7 @@ public class AmigoKeyguardPage extends RelativeLayout {
 	private static final long HANDLER_REMOVE_NOTIFICATION_TIP_DELAY_TIME = 
 			ActivatableNotificationView.DOUBLETAP_TIMEOUT_MS;
 	
+	private int mStatusBarHeight=0;
 	private int mCarrierMarginTop = 0;
 	private int mCarrierHeight = 0;
 	private int mCarrierBatteryGap = 0;
@@ -132,6 +137,18 @@ public class AmigoKeyguardPage extends RelativeLayout {
 	private int mBatteryNotificationGap = 0;
 	private int mNotificationHeight = 0;
 	
+	
+	private void addHKMainLayout() {
+
+	    LayoutInflater inflater=LayoutInflater.from(mContext);
+        HKMainLayout mainLayout = (HKMainLayout)inflater.inflate(R.layout.haokan_main_layout, null);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+        addView(mainLayout, params);
+        
+    }
+	
+	
 	private void addCarrierView(){
 	    LayoutInflater inflater=LayoutInflater.from(mContext);
 		mCarrierText=(LinearLayout)inflater.inflate(R.layout.amigo_keyguard_carrier_area, null);
@@ -139,7 +156,7 @@ public class AmigoKeyguardPage extends RelativeLayout {
 
 		AmigoKeyguardPage.LayoutParams lp = new AmigoKeyguardPage.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
 		mCarrierText.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP);
-		lp.setMargins(0, mCarrierMarginTop, 0, 0);
+		lp.setMargins(0, mStatusBarHeight+mCarrierMarginTop, 0, 0);
 		addView(mCarrierText, lp);
 //		mCarrierText.setBackgroundColor(Color.parseColor("#880000ff"));
 		if(mCarrierHeight == 0){
@@ -155,7 +172,7 @@ public class AmigoKeyguardPage extends RelativeLayout {
 		mBatteryInfoView.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP);
 		AmigoKeyguardPage.LayoutParams lp2 = new AmigoKeyguardPage.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
 		
-		lp2.setMargins(0, mBatteryMarginTop, 0, 0);
+		lp2.setMargins(0, mStatusBarHeight+mBatteryMarginTop, 0, 0);
 		addView(mBatteryInfoView, lp2);
 		if(mBatteryInfoViewHeight == 0){
 			mBatteryInfoViewHeight = measureViewHeight(mBatteryInfoView);
@@ -169,7 +186,7 @@ public class AmigoKeyguardPage extends RelativeLayout {
 		mNotificationClickTipView.setTextAppearance(mContext, R.style.kg_maincelllayout_battery_notification_textview);
 		mNotificationClickTipView.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP);
 		AmigoKeyguardPage.LayoutParams lp = new AmigoKeyguardPage.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
-		lp.setMargins(0, mBatteryMarginTop, 0, 0);
+		lp.setMargins(0, mStatusBarHeight+mBatteryMarginTop, 0, 0);
 		addView(mNotificationClickTipView, lp);
 		mNotificationClickTipView.setVisibility(View.GONE);
 	}
@@ -181,7 +198,7 @@ public class AmigoKeyguardPage extends RelativeLayout {
 				R.layout.amigo_keyguard_notification_scrollview, this, false);
 		UIController controller = UIController.getInstance();
 		controller.setmKeyguardNotificationView(notificationView);
-		controller.setNotificationMarginTop(mNotificationMarginTop - KWDataCache.getStatusBarHeight());
+		controller.setNotificationMarginTop(mNotificationMarginTop);
 		AmigoKeyguardPage.LayoutParams lp = new AmigoKeyguardPage.LayoutParams(LayoutParams.MATCH_PARENT,mNotificationHeight);
 		lp.setMargins(0, mNotificationMarginTop, 0, 0);
 		addView(notificationView,lp);
@@ -195,12 +212,22 @@ public class AmigoKeyguardPage extends RelativeLayout {
 	}
 	
 	private void addArcLayout() {
-        // TODO Auto-generated method stub
+	    
+	    
+	    RelativeLayout relativeLayout = new RelativeLayout(getContext());
 	    ArcLayout arcLayout = new ArcLayout(getContext());
-	    arcLayout.setVisibility(INVISIBLE);
-	    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-	    params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE); 
-	    addView(arcLayout, params);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+        relativeLayout.addView(arcLayout, params);
+	    
+        params = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+        addView(relativeLayout, params);
+        relativeLayout.setVisibility(GONE);
+        relativeLayout.setBackgroundColor(0x10000000);
+        UIController.getInstance().setmArcMenu(relativeLayout);
+ 
     }
 	
     public Rect getNotificationContentRect() {
@@ -548,11 +575,14 @@ public class AmigoKeyguardPage extends RelativeLayout {
         // if(isPageMoving()||!isHomePage()){
         // return;
         // }
+        boolean isDoubleTapOpen=KeyguardSettings.getDoubleDesktopLockState(getContext());
         if (DebugLog.DEBUG) {
-            DebugLog.d(LOG_TAG, "gotoSleepIfDoubleTap QuickSleepUtil.gotoSleepIfDoubleTap");
+            DebugLog.d(LOG_TAG, "gotoSleepIfDoubleTap QuickSleepUtil.gotoSleepIfDoubleTap isOpen: "+isDoubleTapOpen);
         }
-        QuickSleepUtil.gotoSleepIfDoubleTap(mContext, event, this);
-        DataStatistics.getInstance().doubleTapSleepEvent(mContext);
+        if (isDoubleTapOpen) {
+            QuickSleepUtil.gotoSleepIfDoubleTap(mContext, event, this);
+            DataStatistics.getInstance().doubleTapSleepEvent(mContext);
+        }
     }
     
     

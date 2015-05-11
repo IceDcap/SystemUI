@@ -311,7 +311,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     // left-hand icons
     LinearLayout mStatusIcons;
-    LinearLayout mStatusIconsKeyguard;
+//    LinearLayout mStatusIconsKeyguard;
 
     // the icons themselves
     IconMerger mNotificationIcons;
@@ -334,7 +334,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     // top bar
     StatusBarHeaderView mHeader;
-    KeyguardStatusBarView mKeyguardStatusBar;
+//    KeyguardStatusBarView mKeyguardStatusBar;
     View mKeyguardStatusView;
     boolean mLeaveOpenOnKeyguardHide;
 
@@ -795,8 +795,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         mHeader = (StatusBarHeaderView) mStatusBarWindow.findViewById(R.id.header);
         mHeader.setActivityStarter(this);
-        mKeyguardStatusBar = (KeyguardStatusBarView) mStatusBarWindow.findViewById(R.id.keyguard_header);
-        mStatusIconsKeyguard = (LinearLayout) mKeyguardStatusBar.findViewById(R.id.statusIcons);
+//        mKeyguardStatusBar = (KeyguardStatusBarView) mStatusBarWindow.findViewById(R.id.keyguard_header);
+//        mStatusIconsKeyguard = (LinearLayout) mKeyguardStatusBar.findViewById(R.id.statusIcons);
         mKeyguardStatusView = mStatusBarWindow.findViewById(R.id.keyguard_status_view);
 
         mTickerEnabled = res.getBoolean(R.bool.enable_ticker);
@@ -857,14 +857,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mCastController = new CastControllerImpl(mContext);
         final SignalClusterView signalCluster =
                 (SignalClusterView) mStatusBarView.findViewById(R.id.signal_cluster);
-        final SignalClusterView signalClusterKeyguard =
-                (SignalClusterView) mKeyguardStatusBar.findViewById(R.id.signal_cluster);
+//        final SignalClusterView signalClusterKeyguard =
+//                (SignalClusterView) mKeyguardStatusBar.findViewById(R.id.signal_cluster);
         mNetworkController.addSignalCluster(signalCluster);
-        mNetworkController.addSignalCluster(signalClusterKeyguard);
+//        mNetworkController.addSignalCluster(signalClusterKeyguard);
         signalCluster.setSecurityController(mSecurityController);
         signalCluster.setNetworkController(mNetworkController);
-        signalClusterKeyguard.setSecurityController(mSecurityController);
-        signalClusterKeyguard.setNetworkController(mNetworkController);
+//        signalClusterKeyguard.setSecurityController(mSecurityController);
+//        signalClusterKeyguard.setNetworkController(mNetworkController);
         final boolean isAPhone = mNetworkController.hasVoiceCallingFeature();
         if (isAPhone) {
             mNetworkController.addEmergencyListener(new NetworkControllerImpl.EmergencyListener() {
@@ -901,18 +901,18 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (UserSwitcherController.isUserSwitcherAvailable(UserManager.get(mContext))) {
             mUserSwitcherController = new UserSwitcherController(mContext, mKeyguardMonitor);
         }
-        mKeyguardUserSwitcher = new KeyguardUserSwitcher(mContext,
-                (ViewStub) mStatusBarWindow.findViewById(R.id.keyguard_user_switcher),
-                mKeyguardStatusBar, mNotificationPanel, mUserSwitcherController);
+//        mKeyguardUserSwitcher = new KeyguardUserSwitcher(mContext,
+//                (ViewStub) mStatusBarWindow.findViewById(R.id.keyguard_user_switcher),
+//                mKeyguardStatusBar, mNotificationPanel, mUserSwitcherController);
 
         // User info. Trigger first load.
         mHeader.setUserInfoController(mUserInfoController);
-        mKeyguardStatusBar.setUserInfoController(mUserInfoController);
+//        mKeyguardStatusBar.setUserInfoController(mUserInfoController);
         mUserInfoController.reloadUserInfo();
 
         /*((BatteryMeterView) mStatusBarView.findViewById(R.id.battery)).setBatteryController(
                 mBatteryController);*/
-        mKeyguardStatusBar.setBatteryController(mBatteryController);
+//        mKeyguardStatusBar.setBatteryController(mBatteryController);
 
         PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
         mBroadcastReceiver.onReceive(mContext,
@@ -1437,7 +1437,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     public void refreshAllStatusBarIcons() {
         refreshAllIconsForLayout(mStatusIcons);
-        refreshAllIconsForLayout(mStatusIconsKeyguard);
+//        refreshAllIconsForLayout(mStatusIconsKeyguard);
         refreshAllIconsForLayout(mNotificationIcons);
     }
 
@@ -1460,8 +1460,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 LayoutParams.WRAP_CONTENT, mIconSize));
         view = new StatusBarIconView(mContext, slot, null);
         view.set(icon);
-        mStatusIconsKeyguard.addView(view, viewIndex, new LinearLayout.LayoutParams(
-                LayoutParams.WRAP_CONTENT, mIconSize));
+//        mStatusIconsKeyguard.addView(view, viewIndex, new LinearLayout.LayoutParams(
+//                LayoutParams.WRAP_CONTENT, mIconSize));
     }
 
     public void updateIcon(String slot, int index, int viewIndex,
@@ -1470,14 +1470,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 + " old=" + old + " icon=" + icon);
         StatusBarIconView view = (StatusBarIconView) mStatusIcons.getChildAt(viewIndex);
         view.set(icon);
-        view = (StatusBarIconView) mStatusIconsKeyguard.getChildAt(viewIndex);
-        view.set(icon);
+//        view = (StatusBarIconView) mStatusIconsKeyguard.getChildAt(viewIndex);
+//        view.set(icon);
     }
 
     public void removeIcon(String slot, int index, int viewIndex) {
         if (SPEW) Log.d(TAG, "removeIcon slot=" + slot + " index=" + index + " viewIndex=" + viewIndex);
         mStatusIcons.removeViewAt(viewIndex);
-        mStatusIconsKeyguard.removeViewAt(viewIndex);
+//        mStatusIconsKeyguard.removeViewAt(viewIndex);
     }
 
     public UserHandle getCurrentUserHandle() {

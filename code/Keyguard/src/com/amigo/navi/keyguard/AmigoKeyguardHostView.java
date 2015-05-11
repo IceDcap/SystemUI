@@ -557,7 +557,6 @@ public class AmigoKeyguardHostView extends LinearLayout {
 	}
 	
     private void gotoSleepIfDoubleTap(MotionEvent event) {
-        // 鍙屽嚮鐏睆
         if (mKeyguardPage != null) {
             if (DebugLog.DEBUG) {
                 DebugLog.d(LOG_TAG, "gotoSleepIfDoubleTap workSpace!=null");
@@ -1372,6 +1371,7 @@ public class AmigoKeyguardHostView extends LinearLayout {
     }
     
     public boolean onBackPress(){
+        UIController.getInstance().onBackPress();
     	if(mBouncerIsShowing){
     		scrollToKeyguardPage(300);
     		return true;

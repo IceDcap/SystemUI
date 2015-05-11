@@ -53,7 +53,7 @@ public class HKWebLayout extends RelativeLayout {
 
             @Override
             public void onClick(View arg0) {
-                mWebView.loadUrl("about:blank");
+                
                 UIController.getInstance().removeWebView();
             }
         });
@@ -62,6 +62,8 @@ public class HKWebLayout extends RelativeLayout {
         mWebView.setFocusable(true);
         mWebView.setBackgroundColor(Color.TRANSPARENT);
      
+        UIController.getInstance().setmWebView(mWebView);
+        
         setSettings(mWebView.getSettings());
         mWebView.addJavascriptInterface(new WebAppInterface(getContext()), "Android");
 
@@ -164,20 +166,7 @@ public class HKWebLayout extends RelativeLayout {
         setting.setUseWideViewPort(true);
         
     }
- 
     
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        // TODO Auto-generated method stub
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            
-            Log.v("zhaowei", "KEYCODE_BACK");
-            UIController.getInstance().removeWebView();
-            mWebView.loadUrl("about:blank");
-            return true;
-        }
-        
-        return super.onKeyDown(keyCode, event);
-    }
+ 
 
 }

@@ -92,6 +92,8 @@
     <string name="haokan_arc_menu_share">分享</string>
     <string name="haokan_arc_menu_subscribe">订阅</string>
     <string name="haokan_arc_menu_setting">设置</string>
+   	<string name="haokan_arc_menu_tip_no_locked">取消锁定</string>
+   	<string name="haokan_arc_menu_tip_no_favorite">取消收藏</string>
     <string name="haokan_category_life">生活</string>
     <string name="haokan_category_traffic">交通</string>
     <string name="haokan_category_star">明星</string>

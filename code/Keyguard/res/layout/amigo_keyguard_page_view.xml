@@ -10,14 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
         
-        <include
-            android:id="@+id/haokan_main_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="visible"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            layout="@layout/haokan_main_layout" />
         
          <include layout="@layout/amigo_keyguard_infozone"
             android:id="@+id/amigo_infozone"

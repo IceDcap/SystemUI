@@ -53,6 +53,7 @@ import com.amigo.navi.keyguard.KeyguardViewHost;
 import com.amigo.navi.keyguard.KeyguardViewHostManager;
 //import com.gionee.navi.keyguard.amigo.AmigoSecurityManager;
 import com.amigo.navi.keyguard.DebugLog;
+import com.amigo.navi.keyguard.haokan.UIController;
 import com.amigo.navi.keyguard.notification.ActivatableNotificationView;
 import com.amigo.navi.keyguard.notification.ActivatableNotificationView.OnActivatedListener;
 import com.amigo.navi.keyguard.notification.ExpandableNotificationRow;
@@ -272,6 +273,7 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
                 } else {
                     addNotification(sbn, rankingMap);
                 }
+                UIController.getInstance().showNotificationAndHideCaption();
             }
         });
 	}
@@ -406,7 +408,6 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
             return;
         }
         notifyUpdate();
-        DataStatistics.getInstance().swipToremoveNotification(mContext);
   }
 
 	private void addNotification(StatusBarNotification notification,
@@ -693,6 +694,7 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
 			vetoButton.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
 					// Accessibility feedback
+				    DataStatistics.getInstance().swipToremoveNotification(mContext);
 					v.announceForAccessibility(mContext
 							.getString(R.string.accessibility_notification_dismissed));
 					try {
@@ -1129,7 +1131,7 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
         		
         		// guosb modify for notification begin
         		// TODO add security opinion 
-                /*&& AmigoSecurityManager.getInstance(mContext).isSecurityLockOn()*/;
+                && KeyguardViewHostManager.getInstance().isSecure();
         // guosb modify for notification end
     }
     

@@ -120,10 +120,10 @@
    	<string name="haokan_arc_menu_subscribe">Subscribe</string>
    	<string name="haokan_arc_menu_setting">Settings</string>
    	
-   	<string name="haokan_arc_menu_tip_locked">Locked</string>
+ 
    	<string name="haokan_arc_menu_tip_no_locked">Unlock</string>
    	<string name="haokan_arc_menu_tip_no_favorite">Discard</string>
-   	<string name="haokan_arc_menu_tip_favorite">Saved</string>
+   
    	
    	<string name="haokan_category_life">Life</string>
    	<string name="haokan_category_traffic">Traffic</string>

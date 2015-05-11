@@ -59,8 +59,11 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
     private int mRadiusMax = 0;
     private int mRadiusNormal = 0;
     private int mEdgeDistance = 0;
-    
+    private int mTopDistance = 0;
     private Rect MainRect = new Rect();
+    
+    
+    private UIController controller;
     
     /**
      * children will be set the same size.
@@ -100,13 +103,16 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
     public ArcLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         mChildSize = getResources().getDimensionPixelSize(R.dimen.menuChildSize);
-        mRadiusMax = getResources().getDimensionPixelSize(R.dimen.haokan_arcmenu_radius_big);
+        mRadiusMax = getResources().getDimensionPixelSize(R.dimen.haokan_arcmenu_radius_max);
         mHomeButtonSize = getResources().getDimensionPixelSize(R.dimen.menuHomeButtonSize);
         mRadiusNormal = getResources().getDimensionPixelSize(R.dimen.haokan_arcmenu_radius);
         WIDTH_PIXELS = Common.getScreenWidth(getContext());
         HEIGHT_PIXELS = Common.getScreenHeight(getContext());
         
         mEdgeDistance = (int) (mRadiusNormal * Math.cos(Math.toRadians(DEFAULT_FROM_DEGREES)));
+        
+        mTopDistance = (int) (mRadiusMax * Math.sin(Math.toRadians(25)));
+        
         
         MainRect.set(mEdgeDistance, 0, WIDTH_PIXELS - mEdgeDistance, HEIGHT_PIXELS);
         
@@ -117,8 +123,8 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
         
         ArcHomeButton arcHomeButton =  (ArcHomeButton) inflater.inflate(R.layout.haokan_arc_home_button, null, true);
         addArcHomeButton(arcHomeButton);
-        
-        UIController.getInstance().setmArcLayout(this);
+        controller = UIController.getInstance();
+        controller.setmArcLayout(this);
     }
     
 
@@ -337,7 +343,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                 if (isLast) {
                     mShrinkAnimatorRunning = false;
                     mExpanded = false;
-                    UIController.getInstance().showKeyguardNotification();
+                    controller.showKeyguardNotification();
                 }
             }
             
@@ -384,7 +390,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
         }
     
         animatorSet.start();
-        UIController.getInstance().addAnimator(animatorSet);
+        controller.addAnimator(animatorSet);
         
     }
 
@@ -411,12 +417,15 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                 fromDegrees = -152;
                 toDegrees = -28;
             }else {
-                fromDegrees = 29;
+                fromDegrees = 28;
                 toDegrees = 152;
             }
             radius = mRadiusNormal;
             
         }else if (x < mEdgeDistance) {
+            if (y <= mTopDistance) {
+                return false;
+            }
             
             if (y > HEIGHT_PIXELS / 3) {
                 fromDegrees = -62;
@@ -428,12 +437,16 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
             radius = mRadiusMax;
         }else {
             
+            if (y <= mTopDistance) {
+                return false;
+            }
+            
             if (y > HEIGHT_PIXELS / 3) {
                 fromDegrees = 118;
-                toDegrees = 241;
+                toDegrees = 242;
             }else {
-                fromDegrees = 95;
-                toDegrees = 220;
+                fromDegrees = 93;
+                toDegrees = 205;
             }
             radius = mRadiusMax;
         }
@@ -492,11 +505,25 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
             }
         }, 80);
 
+        postDelayed(mCloseMenuRunnable, 5000);
+        
         mArcHomeButton.rippleAnimRun();
     }
     
-    public void startHide() {
+    
+    private Runnable mCloseMenuRunnable = new Runnable() {
         
+        @Override
+        public void run() {
+            if (isExpanded() && !animatorRunning()) {
+                startHide();
+            }
+        }
+    };
+    
+    
+    public void startHide() {
+        removeCallbacks(mCloseMenuRunnable);
         switchState();
         mArcHomeButton.closeAnimRun();
     }
@@ -570,7 +597,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
             @Override
             public void onAnimationEnd(Animator arg0) {
 
-                setVisibility(View.GONE);
+                controller.hideArcMenu();
                 mArcHomeButton.getmImageView().setScaleX(0.4f);
                 mArcHomeButton.getmImageView().setScaleY(0.4f);
                 mArcHomeButton.getmImageView().setVisibility(GONE);
@@ -608,7 +635,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                 arcItemButton.setScaleY(0f);
                 
                 mClicKItemAnimatorRunning = false;
-                UIController.getInstance().showKeyguardNotification();
+                controller.showKeyguardNotification();
             }
             
             @Override
@@ -616,7 +643,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                 
             }
         });
-        UIController.getInstance().addAnimator(set);
+        controller.addAnimator(set);
         
         set.start();
     }
@@ -660,7 +687,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                 
                 boolean success = false;
                 
-                Bitmap currentWallpaper = UIController.getInstance().getCurrentWallpaperBitmap(mWallpaper);
+                Bitmap currentWallpaper = controller.getCurrentWallpaperBitmap(mWallpaper);
 //                String favoriteLocalPath = Common.saveWallpaper(currentWallpaper,mWallpaper);
                 String favoriteLocalPath = FileUtil.saveWallpaper(currentWallpaper, mWallpaper);
                 if (favoriteLocalPath != null) {
@@ -679,7 +706,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                         @Override
                         public void run() {
                            
-                            bindClickItemFeekBackAnimator(arcItemButton, true, R.string.haokan_arc_menu_tip_favorite);
+                            bindClickItemFeekBackAnimator(arcItemButton, true, R.string.haokan_arc_menu_favorite_ok);
                         }
                     }, 500);
                     
@@ -689,7 +716,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                         
                         @Override
                         public void run() {
-                            UIController.getInstance().showTip(R.string.haokan_tip_favorite_error);
+                            controller.showTip(R.string.haokan_tip_favorite_error);
                         }
                     }, 300);
                 }
@@ -708,9 +735,9 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                 boolean success =  false;
                 
                 if(mWallpaper.isLocked()){
-                    success = UIController.getInstance().clearLock(getContext(),mWallpaper);
+                    success = controller.clearLock(getContext(),mWallpaper);
                 }else{
-                    success = UIController.getInstance().lockWallpaper(getContext(), mWallpaper);
+                    success = controller.lockWallpaper(getContext(), mWallpaper);
                 }
                 if (success) {
                     HKAgent.onEventWallpaperLock(getContext().getApplicationContext(), mWallpaper);
@@ -720,7 +747,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                         public void run() {
                             
                             boolean isLocked = mWallpaper.isLocked();
-                            int stringId = isLocked ? R.string.haokan_arc_menu_tip_locked : R.string.haokan_arc_menu_tip_no_locked;
+                            int stringId = isLocked ? R.string.haokan_arc_menu_lock_ok : R.string.haokan_arc_menu_tip_no_locked;
                             
                             bindClickItemFeekBackAnimator(arcItemButton, isLocked, stringId);
                         }
@@ -740,7 +767,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
         }
 
         Log.v(TAG, "onClick  view = " + view.getId());
-
+        removeCallbacks(mCloseMenuRunnable);
         int viewId = view.getId();
         
         final ArcItemButton arcItemButton = mArcItems.get(viewId);
@@ -763,10 +790,10 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                 onClickLocked(arcItemButton);
                 break;
             case 2:
-                UIController.getInstance().startCategoryActivity(getContext().getApplicationContext());
+                controller.startCategoryActivity(getContext().getApplicationContext());
                 break;
             case 3:
-                UIController.getInstance().startSettingsActivity(getContext().getApplicationContext());
+                controller.startSettingsActivity(getContext().getApplicationContext());
                 break;
             default:
                 break;
@@ -817,7 +844,8 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
             
             @Override
             public void onAnimationStart(Animator arg0) {
-                setVisibility(VISIBLE);
+                controller.showArcMenu(); 
+                
                 arcItemButton.getmTextView().setVisibility(VISIBLE);
                 arcItemButton.setTranslationX(arcItemButton.getToXDelta());
                 arcItemButton.setTranslationY(arcItemButton.getToYDelta());
@@ -870,6 +898,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
         }
         return running;
     }
+    
     
 
 }

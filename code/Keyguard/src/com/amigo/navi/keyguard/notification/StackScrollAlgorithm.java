@@ -829,7 +829,7 @@ public class StackScrollAlgorithm {
     }
     
     public float getOffsetOfTopChild(){
-    	if(mTempAlgorithmState.lastTopStackIndex <0 ){
+    	if(mTempAlgorithmState.lastTopStackIndex <0  || mTempAlgorithmState.visibleChildren.size()<1){
     		return 0;
     	}
     	View child = mTempAlgorithmState.visibleChildren.get(mTempAlgorithmState.lastTopStackIndex);

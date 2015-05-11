@@ -41,12 +41,16 @@ public class AmigoKeyguardInfoZone extends FrameLayout{
 	private Time time = null;
 	private Context mContext;
 	private TextView mweekdayText;
-	private TextView mFestivalText;
+	private TextView mFestivalText,mFestivalText_US;
 	private TextView mDateView;
 //	private FrameLayout mShowTimeLayout;
 
 	private TextView mWidgetTimeHour;
 	private TextView mWidgetTimeMin;
+	
+	private TextView mWidgetTimeMiddle,mWidgetTimeMiddle_US;
+    
+	
 	private Typeface mFontTypeRegular;
 	private Typeface mFontTypeThin;
 	
@@ -79,7 +83,7 @@ public class AmigoKeyguardInfoZone extends FrameLayout{
 	private LinearLayout mTimeLayout,mTimeLayout_US;
 	
 	
-	private LinearLayout mDateinfoLayout;
+	private LinearLayout mDateinfoLayout,mDateinfoLayout_US;
 	
 	private Handler mHandler = new Handler();
 	
@@ -93,7 +97,6 @@ public class AmigoKeyguardInfoZone extends FrameLayout{
 		super(context, attri);
 		init(context);
 	}
-
 
 	private void init(Context context) {
 		mContext = context;
@@ -118,11 +121,9 @@ public class AmigoKeyguardInfoZone extends FrameLayout{
 
 	}
 	
-	
-	
 	private void changeLanguage() {
-	    
-		if (getResources().getConfiguration().locale.getCountry().equals("CN")) {
+		if (getResources().getConfiguration().locale.getCountry().equals(
+				"CN")) {
 			if (mShowTimeLayout_CN != null && mShowTimeLayout_US != null) {
 				mShowTimeLayout_CN.setAlpha(1.0f);
 				mShowTimeLayout_US.setAlpha(0.0f);
@@ -139,7 +140,7 @@ public class AmigoKeyguardInfoZone extends FrameLayout{
 			}
 			
 			setWeekView(mweekdayText_US);
-			setDateFestivalView(mDateView_US);
+			setDateFestivalView(mDateinfoLayout_US);
             setTimeView(mTimeLayout_US);
 		}
 	}
@@ -184,19 +185,33 @@ public class AmigoKeyguardInfoZone extends FrameLayout{
 		
 		
 		mFestivalText = (TextView) view.findViewById(R.id.newwidget41_festival);
+		mFestivalText_US = (TextView) view.findViewById(R.id.newwidget41_festival_us);
 
-		
 		mWidgetTimeHour = (TextView) view
 				.findViewById(R.id.newwidget41_weathertime_hour);
 		mWidgetTimeHour.setTypeface(mFontTypeMedium);
 		mWidgetTimeMin = (TextView) view
 				.findViewById(R.id.newwidget41_weathertime_min);
 		mWidgetTimeMin.setTypeface(mFontTypeThin);
+		
+		mWidgetTimeMiddle = (TextView) view
+                .findViewById(R.id.newwidget41_weathertime_middle);
+		mWidgetTimeMiddle.setTypeface(mFontTypeThin);
+		
+		mWidgetTimeMiddle.setText(":");
+		
+		mWidgetTimeMiddle_US = (TextView) view
+        .findViewById(R.id.newwidget41_weathertime_middle_us);
+		mWidgetTimeMiddle_US.setText(":");
+		
 		mTimeLayout = (LinearLayout) view
 				.findViewById(R.id.newwidget41_weathertime);
 		
 		mDateinfoLayout = (LinearLayout) view
                 .findViewById(R.id.newwidget41_dateinfo);
+		
+		mDateinfoLayout_US = (LinearLayout) view
+                .findViewById(R.id.newwidget41_dateinfo_us);
 		
 		mTimeLayout_US = (LinearLayout) view
                 .findViewById(R.id.newwidget41_weathertime_us);
@@ -332,7 +347,7 @@ public class AmigoKeyguardInfoZone extends FrameLayout{
 				"is24HourFormat-----" + is24HourFormat + ",hash="
 						+ mContext.hashCode() + ",date " + date);}
 		setHourFormat(mWidgetTimeHour,date, is24HourFormat);
-		SimpleDateFormat timeMinFormat = new SimpleDateFormat(":mm");
+		SimpleDateFormat timeMinFormat = new SimpleDateFormat("mm");
 		mWidgetTimeMin.setText(timeMinFormat.format(date));
 //		mWidgetTimeHour.setTypeface(mFontTypeRegular);
 //		mWidgetTimeMin.setTypeface(mFontTypeThin);
@@ -344,10 +359,8 @@ public class AmigoKeyguardInfoZone extends FrameLayout{
 //		mWidgetTimeHour_US.setTypeface(mFontTypeRegular);
 //		mWidgetTimeMin_US.setTypeface(mFontTypeThin);
 		
-	 
 		setTimeFormat(is24HourFormat);
 	}
-	
 	
 	private void setHourFormat(TextView widgetTimeHour ,Date date, boolean is24HourFormat) {
         if (is24HourFormat) {
@@ -430,6 +443,7 @@ public class AmigoKeyguardInfoZone extends FrameLayout{
 	
 	public void setFestivalText(CharSequence text) {
 	    mFestivalText.setText(text);
+	    mFestivalText_US.setText(text);
     }
 
 	private void setDateFormat(Context context) {

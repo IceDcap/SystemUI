@@ -32,12 +32,12 @@
         android:layout_width="match_parent"
         android:layout_gravity="bottom"
         />
-
+<!-- 
     <include
         layout="@layout/keyguard_status_view"
         android:layout_height="wrap_content"
         android:visibility="gone" />
-
+ -->
     <TextView
         android:id="@+id/emergency_calls_only"
         android:textAppearance="@style/TextAppearance.StatusBar.Expanded.Network.EmergencyOnly"
@@ -103,9 +103,9 @@
             android:layout_height="match_parent"
             android:layout_width="match_parent" />
 
-        <include
+       <!--  <include
             layout="@layout/keyguard_status_bar"
-            android:visibility="invisible" />
+            android:visibility="invisible" /> -->
 
     </com.android.systemui.statusbar.phone.NotificationsQuickSettingsContainer>
 

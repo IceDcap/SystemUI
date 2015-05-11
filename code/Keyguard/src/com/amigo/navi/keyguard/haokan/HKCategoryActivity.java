@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -56,7 +57,9 @@ public class HKCategoryActivity extends Activity{
     private CategoryAdapter mCategoryAdapter;
     private Bitmap mWindowBackgroud;
     
-     private Handler mHandler = new Handler(){
+    private TextView mTextView;
+    
+    private Handler mHandler = new Handler(){
 
          @Override
          public void handleMessage(Message msg) {
@@ -70,6 +73,7 @@ public class HKCategoryActivity extends Activity{
         super.onCreate(arg0);
         setContentView(R.layout.haokan_category_layout);
  
+        UIController.getInstance().setCategoryActivity(this);
         if(Build.VERSION.SDK_INT  >=  21){
             this.getWindow().getAttributes().systemUiVisibility |= (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
@@ -110,21 +114,12 @@ public class HKCategoryActivity extends Activity{
         }).start();
     }    
     
-    TextView mTextView;
+   
     
     private void onInitUI() {
         mCategoryAdapter = new CategoryAdapter(this);
         mTextView = (TextView)findViewById(R.id.TextView);
         mTextView.setVisibility(View.GONE);
-//        mTextView.setOnClickListener(new OnClickListener() {
-//            
-//            @Override
-//            public void onClick(View arg0) {
-//                mGridView.setLayoutAnimation(getAnimationController());
-//                mGridView.setAdapter(mCategoryAdapter);
-//                mCategoryAdapter.notifyDataSetChanged();
-//            }
-//        });
         
         mGridView = (GridView) findViewById(R.id.haokan_gridview);
         mGridView.setSelector(new ColorDrawable(Color.TRANSPARENT));
@@ -188,7 +183,7 @@ public class HKCategoryActivity extends Activity{
                 mCategoryAdapter.notifyDataSetChanged();
             }
 
-        }, 200);
+        }, 30);
 
     }
     
@@ -353,6 +348,11 @@ public class HKCategoryActivity extends Activity{
         public CircleImageView image;
     }
     
-    
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Log.v(TAG, "onBackPressed");
+        finish();
+    }
     
 }

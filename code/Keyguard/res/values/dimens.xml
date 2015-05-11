@@ -340,7 +340,7 @@
 
     <dimen name="menuHomeButtonSize">80dp</dimen>
 	<dimen name="haokan_arcmenu_radius">113dp</dimen>
-	<dimen name="haokan_arcmenu_radius_big">123dp</dimen>
+	<dimen name="haokan_arcmenu_radius_max">123dp</dimen>
 	<dimen name="haokan_infozone_max_translationX">33dp</dimen>
 	<dimen name="haokan_circle_imageview_radius">49dp</dimen>
 	<dimen name="haokan_wallpaper_alpha_offset">50dp</dimen>

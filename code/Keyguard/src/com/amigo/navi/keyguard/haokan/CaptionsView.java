@@ -169,14 +169,14 @@ public class CaptionsView extends LinearLayout {
             @Override
             public void onClick(View v) {
 
+                setContentVisibilityAnimation(!mContentVisible);
+
                 if (mContentVisible) {
-                    UIController.getInstance().showKeyguardNotification();
-                }else {
                     UIController.getInstance().hideKeyguardNotification();
+                }else {
+                    UIController.getInstance().showKeyguardNotification();
                 }
                 
-                setContentVisibilityAnimation(!mContentVisible);
-//                HKAgent.onEvent(getContext().getApplicationContext(), 1, 1, Event.IMG_CLICK_TITLE);
                 HKAgent.onEventIMGTitle(getContext().getApplicationContext(), UIController.getInstance().getmCurrentWallpaper());
             }
         });
@@ -190,17 +190,22 @@ public class CaptionsView extends LinearLayout {
                     mClickLink = false;
                     return;
                 }
-                if (mContentVisible) {
+                setContentVisibilityAnimation(!mContentVisible);
+                if (!mContentVisible) {
                     UIController.getInstance().showKeyguardNotification();
                 }
-                setContentVisibilityAnimation(!mContentVisible);
                 
             }
         });
     
     }
  
+    
  
+    public boolean isContentVisible() {
+        return mContentVisible;
+    }
+
     public void setContentVisibilityAnimation(boolean visible) {
         if (mContentVisible != visible) {
             this.mContentVisible = visible;
@@ -498,6 +503,11 @@ public class CaptionsView extends LinearLayout {
 
     public void setClickLink(boolean mClickLink) {
         this.mClickLink = mClickLink;
+        if (mClickLink) {
+            CharSequence charSequence = mTextViewContent.getText();
+            mTextViewContent.setText(charSequence);
+            mTextViewContent.invalidate();
+        }
     }
     
     
