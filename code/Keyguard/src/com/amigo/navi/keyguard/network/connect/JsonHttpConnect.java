@@ -23,6 +23,7 @@ public class JsonHttpConnect {
     private String mUa;
     public String mRequestBody = null;
     public static final String CONNECT_ERROR = "connect_error";
+    public static final String JSON_ERROR = "json_error";
     
     public JsonHttpConnect(int timeOut, String method, String ua,String requestBody) {
         mTimeOut = timeOut;
@@ -110,12 +111,15 @@ public class JsonHttpConnect {
         String result = "";
         if(isNeedCompress){
             byteOutputStream = new ByteArrayOutputStream();
-            GZIPUtils.decompress(inputStream, byteOutputStream);
+            boolean success = GZIPUtils.decompress(inputStream, byteOutputStream);
             try {
                 byteOutputStream.flush();
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
+            }
+            if(!success){
+            	return JSON_ERROR;
             }
             if(byteOutputStream != null){
                 DebugLog.d(TAG,"loadJsonFromInternet getString");
@@ -124,6 +128,9 @@ public class JsonHttpConnect {
             }
           }else{
               result = GZIPUtils.inputStream2String(inputStream,"UTF-8");
+              if(result == null){
+            	  return JSON_ERROR;
+              }
           }
         return result;
     }

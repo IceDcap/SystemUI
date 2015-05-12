@@ -5,10 +5,15 @@ import com.amigo.navi.keyguard.haokan.entity.Wallpaper;
 import com.amigo.navi.keyguard.network.FailReason;
 import com.amigo.navi.keyguard.network.ImageLoaderInterface;
 import com.amigo.navi.keyguard.network.ImageLoadingListener;
-import com.amigo.navi.keyguard.network.local.DealWithFileFromLocal;
+import com.amigo.navi.keyguard.network.local.DealWithFromLocalInterface;
+import com.amigo.navi.keyguard.network.local.ReadFileFromAssets;
+import com.amigo.navi.keyguard.network.local.ReadFileFromSD;
 import com.amigo.navi.keyguard.network.local.LocalBitmapOperation;
 import com.amigo.navi.keyguard.network.local.LocalFileOperationInterface;
 import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
+import com.amigo.navi.keyguard.network.theardpool.Job;
+import com.amigo.navi.keyguard.network.theardpool.LoadImagePool;
+import com.amigo.navi.keyguard.network.theardpool.LoadImageThread;
 import com.amigo.navi.keyguard.picturepage.interfacers.OnReloadListener;
 
 import android.content.Context;
@@ -40,6 +45,7 @@ public class ImageViewForHeadCompound extends ImageView implements OnReloadListe
     
     private int mWidth = 0;
     private int mHeight = 0;
+    private static final String PATH = "wallpaper_pics";
     public ImageViewForHeadCompound(Context context) {
         super(context);
         init();
@@ -138,7 +144,9 @@ public class ImageViewForHeadCompound extends ImageView implements OnReloadListe
         mNeedCache = isNeedCache;
         DebugLog.d("HorizontalListView","makeAndAddView loadImageBitmap mUrl:" + mUrl);
         DebugLog.d("HorizontalListView","makeAndAddView loadImageBitmap wallpaper.getImgUrl():" + wallpaper.getImgUrl());
-        if (!mUrl.equals(wallpaper.getImgUrl())) {
+        boolean isCurUrl = mUrl.equals(wallpaper.getImgUrl());
+        DebugLog.d("HorizontalListView","makeAndAddView loadImageBitmap wallpaper.isCurUrl:" + isCurUrl);
+        if (!isCurUrl) {
             this.setBitmap(null);
         }
         DebugLog.d(LOG_TAG,"loadImageBitmap mConfig:" + mConfig);
@@ -231,19 +239,58 @@ public class ImageViewForHeadCompound extends ImageView implements OnReloadListe
 //            DownLoadWorker worker = new DownLoadWorker(job);
 //            worker.setUrl(wallpaper.getImgUrl());
 //            DownLoadJsonThreadPool.getInstance().submit(worker);
-            new Thread(new Runnable() {
+            Job job = new Job() {
                 
                 @Override
-                public void run() {
-                    DealWithFileFromLocal readImageFromLocal = null;
-                    LocalFileOperationInterface localFileOperation = new LocalBitmapOperation();
-                  DebugLog.d(LOG_TAG,"Thread2 mUrl:" + mUrl);
-                  readImageFromLocal = new DealWithFileFromLocal(getContext().getApplicationContext(),
-                  DiskUtils.WALLPAPER_BITMAP_FOLDER,DiskUtils.getCachePath(getContext().getApplicationContext()),localFileOperation);
-                  mConfig.mImageLoader.loadImage(mUrl, loadingListener,
-                  readImageFromLocal, isNeedCache);                    
+                public void runTask() {
+                    DealWithFromLocalInterface readImageFromLocal = null;
+                    DebugLog.d(LOG_TAG,"load image thread url:" + wallpaper.getImgUrl()  + " time begin:" + System.currentTimeMillis());
+                    DebugLog.d(LOG_TAG,"load image thread getType():" + wallpaper.getType());
+                    if(wallpaper.getType() == Wallpaper.WALLPAPER_FROM_FIXED_FOLDER){
+                	 readImageFromLocal = new ReadFileFromAssets(getContext().getApplicationContext(), PATH);
+                 }else{
+                     LocalFileOperationInterface localFileOperation = new LocalBitmapOperation();
+                     readImageFromLocal = new ReadFileFromSD(getContext().getApplicationContext(),
+                             DiskUtils.WALLPAPER_BITMAP_FOLDER,DiskUtils.getCachePath(getContext().getApplicationContext()),localFileOperation);
+                 }
+                 
+                  mConfig.mImageLoader.loadImage(wallpaper.getImgUrl(), loadingListener,
+                  readImageFromLocal, isNeedCache);       
+                  DebugLog.d(LOG_TAG,"load image thread url:" + wallpaper.getImgUrl()  + " time end:" + System.currentTimeMillis());
                 }
-            }).start();
+                
+                @Override
+                public int getProgress() {
+                    return 0;
+                }
+                
+                @Override
+                public void cancelTask() {
+                    
+                }
+            };
+//        	Runnable runnable = new Runnable() {
+//				
+//				@Override
+//				public void run() {
+//                    DealWithFromLocalInterface readImageFromLocal = null;
+//                    DebugLog.d(LOG_TAG,"load image thread url:" + wallpaper.getImgUrl()  + " time begin:" + System.currentTimeMillis());
+//                    DebugLog.d(LOG_TAG,"load image thread getType():" + wallpaper.getType());
+//                    if(wallpaper.getType() == Wallpaper.WALLPAPER_FROM_FIXED_FOLDER){
+//                	 readImageFromLocal = new ReadFileFromAssets(getContext().getApplicationContext(), PATH);
+//                 }else{
+//                     LocalFileOperationInterface localFileOperation = new LocalBitmapOperation();
+//                     readImageFromLocal = new ReadFileFromSD(getContext().getApplicationContext(),
+//                             DiskUtils.WALLPAPER_BITMAP_FOLDER,DiskUtils.getCachePath(getContext().getApplicationContext()),localFileOperation);
+//                 }
+//                 
+//                  mConfig.mImageLoader.loadImage(wallpaper.getImgUrl(), loadingListener,
+//                  readImageFromLocal, isNeedCache);       
+//                  DebugLog.d(LOG_TAG,"load image thread url:" + wallpaper.getImgUrl()  + " time end:" + System.currentTimeMillis());					
+//				}
+//			};
+            LoadImageThread loadImageThread = new LoadImageThread(wallpaper.getImgUrl(), job);
+			LoadImagePool.getInstance(getContext().getApplicationContext()).loadImage(loadImageThread, wallpaper.getImgUrl());
         }
     }
 

@@ -120,7 +120,8 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
 
     protected void resetState() {
         super.resetState();
-       
+        resetPasswordText(true /* animate */);
+        refreshImageStat(0);
         long deadline =  mKeyguardUpdateMonitor.getCurDeadLine();
         if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "resetState :deadline="+deadline);
         if (deadline!=0) {

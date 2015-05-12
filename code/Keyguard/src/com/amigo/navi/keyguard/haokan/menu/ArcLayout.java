@@ -282,6 +282,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                 if (isLast) {
                     mExpanded = true;
                     mExpandAnimatorRunning = false;
+                    controller.setArcExpanding(false);
                 }
             }
             
@@ -505,7 +506,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
             }
         }, 80);
 
-        postDelayed(mCloseMenuRunnable, 5000);
+        postDelayed(mCloseMenuRunnable, 3000);
         
         mArcHomeButton.rippleAnimRun();
     }

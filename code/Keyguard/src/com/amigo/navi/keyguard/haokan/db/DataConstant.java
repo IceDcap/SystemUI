@@ -1,6 +1,7 @@
 
 package com.amigo.navi.keyguard.haokan.db;
 
+import com.amigo.navi.keyguard.haokan.entity.Category;
 
 public class DataConstant {
     
@@ -10,15 +11,17 @@ public class DataConstant {
     public static final String TABLE_WALLPAPER = "wallpaper";
     public static final String TABLE_STATISTICS = "statistics";
     public static final String TABLE_FAVORITE = "favorite";
-    
+    public static final int LOCAL = 1;
+    public static final int INTERNET = 0;
     public static final String CREATE_CATEGORY_SQL = "create table category (" +
             "type_id integer primary key," +
             "type_name text," +
             "type_icon_url text," +
-            "favorite integer not null default 0," +
+            "favorite integer not null default 1," +
             CategoryColumns.DOWNLOAD_PICTURE + " integer default 0,"+
-            "type_icon_resid integer default 0," + 
-            "type_name_resid integer default 0" + 
+            CategoryColumns.TODAY_IMAGE + " integer default 1," + 
+            CategoryColumns.SAVE_TYPE + " integer default 0," + 
+            CategoryColumns.EN_NAME + " text," + 
             ")";
     
     
@@ -30,8 +33,9 @@ public class DataConstant {
         public static final String FAVORITE = "favorite";
         public static final String DOWNLOAD_PICTURE = "download_picture";
         
-        public static final String TYPE_ICON_RESID = "type_icon_resid";
-        public static final String TYPE_NAME_RESID = "type_name_resid";
+        public static final String TODAY_IMAGE = "today_img";
+        public static final String SAVE_TYPE = "save_type";
+        public static final String EN_NAME = "en_name";
     }
     
     
@@ -69,6 +73,7 @@ public class DataConstant {
             WallpaperColumns.SHOW_ORDER + " real," +
             WallpaperColumns.SHOW_TIME_BEGIN + " time," +
             WallpaperColumns.SHOW_TIME_END + " time," +
+            WallpaperColumns.SAVE_TYPE + " integer default 0," + 
             "primary key (img_id, type_id)" +
             ")";
 
@@ -106,12 +111,13 @@ public class DataConstant {
         public static final String DOWNLOAD_PICTURE = "download_picture";
         public static final String FAVORITE = "favorite";
         public static final String FAVORITE_LOCAL_PATH = "favorite_local_path";
-        public static final String LOCK = "lock";
+        public static final String LOCK = "is_lock";
         public static final String TODAY_IMAGE = "today_img";
         public static final String REAL_ORDER = "real_order";
         public static final String SHOW_ORDER = "show_order";
         public static final String SHOW_TIME_BEGIN = "show_time_begin";
         public static final String SHOW_TIME_END = "show_time_end";
+        public static final String SAVE_TYPE = "save_type";
     }
 
     public static final String CREATE_STATISTICS_SQL = "create table statistics (" +

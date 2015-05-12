@@ -16,7 +16,7 @@ import android.util.LruCache;
 
 public class ImageLoader implements ImageLoaderInterface{
     private static final String LOG_TAG = "ImageLoader";
-    private int mSecondMaxCapacity = 5;
+    private int mSecondMaxCapacity = 8;
     private Context mContext;
     int maxMemory = (int) Runtime.getRuntime().maxMemory();
     int mCacheSize = maxMemory / 4;  

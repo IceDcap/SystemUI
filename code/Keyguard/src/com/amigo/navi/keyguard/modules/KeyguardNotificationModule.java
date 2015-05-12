@@ -273,7 +273,6 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
                 } else {
                     addNotification(sbn, rankingMap);
                 }
-                UIController.getInstance().showNotificationAndHideCaption();
             }
         });
 	}

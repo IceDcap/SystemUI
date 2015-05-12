@@ -61,8 +61,9 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
     private SecurityCallback mSecurityCallback;
 
     private final KeyguardUpdateMonitor mUpdateMonitor;
+    private int mReason=-1;
     
-    private  int fingerPrintResult=FINGERPRINT_UNUSED;
+    private  int mFingerPrintResult=FINGERPRINT_UNUSED;
     public static final int FINGERPRINT_UNUSED=-1;
     public static final int FINGERPRINT_FAILED=0;
     public static final int FINGERPRINT_SUCCESS=1;
@@ -96,15 +97,17 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
 
     @Override
     public void onResume(int reason) {
+        mReason=reason;
         if (mCurrentSecuritySelection != SecurityMode.None) {
             getSecurityView(mCurrentSecuritySelection).onResume(reason);
             final View currentSecurityView = mSecurityViewFlipper.getCurrentView();
-            currentSecurityView.setVisibility(View.VISIBLE);
+//            currentSecurityView.setVisibility(View.VISIBLE);
         }
     }
 
     @Override
     public void onPause(int reason) {
+        mReason=reason;
         if (mCurrentSecuritySelection != SecurityMode.None) {
             getSecurityView(mCurrentSecuritySelection).onPause(reason);
 
@@ -565,8 +568,15 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
 
         final int securityViewIdForMode = getSecurityViewIdForMode(securityMode);
         for (int i = 0; i < childCount; i++) {
-        	if (mSecurityViewFlipper.getChildAt(i).getId() == securityViewIdForMode) {
-                mSecurityViewFlipper.setDisplayedChild(i);
+            if (mSecurityViewFlipper.getChildAt(i).getId() == securityViewIdForMode) {
+                 mSecurityViewFlipper.setDisplayedChild(i);
+                 //jingyn add for set security view  visible begin
+                 if(!isPinPukViewId(securityViewIdForMode)){
+                     if(mReason==KeyguardSecurityView.KEYGUARD_HOSTVIEW_SCROLL_AT_HOMEPAGE){
+                         mSecurityViewFlipper.getChildAt(i).setVisibility(View.INVISIBLE);
+                     }
+                 }
+                 //jingyn add for set security view  visible end
                 break;
             }
         }
@@ -758,25 +768,25 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
     
     
     public void fingerPrintFailed(){
-    	fingerPrintResult=FINGERPRINT_FAILED;
+    	mFingerPrintResult=FINGERPRINT_FAILED;
     	if (mCurrentSecuritySelection != SecurityMode.None) {
             getSecurityView(mCurrentSecuritySelection).fingerPrintFailed();
         }
     }
     
     public void fingerPrintSuccess(){
-    	fingerPrintResult=FINGERPRINT_SUCCESS;;
+    	mFingerPrintResult=FINGERPRINT_SUCCESS;;
     	if (mCurrentSecuritySelection != SecurityMode.None) {
             getSecurityView(mCurrentSecuritySelection).fingerPrintSuccess();
         }
     }
 
 	public  int getFingerPrintResult() {
-		return fingerPrintResult;
+		return mFingerPrintResult;
 	}
 
 	public  void setFingerPrintResult(int fingerPrintResult) {
-		fingerPrintResult = fingerPrintResult;
+		this.mFingerPrintResult = fingerPrintResult;
 	}
     
     @Override
@@ -787,6 +797,11 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
     	return false;
     }
 
-
+    public boolean isPinPukViewId(int viewId) {
+        if (viewId == R.layout.amigo_keyguard_sim_pin_view || viewId == R.layout.amigo_keyguard_sim_puk_view) {
+            return true;
+        }
+        return false;
+    }
 }
 

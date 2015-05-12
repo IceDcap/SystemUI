@@ -4182,7 +4182,16 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }*/
         //jiating modify for keyguard end
     }
-
+    
+  //GIONEE <Amigo_Keyguard>  jiating <2015-05-12> modify for click emgenceButton or show alarmClock on KeyguradView  begin
+    public void setOccluded(boolean occluded) {
+    	if(occluded){
+            mKeyguardViewHost.setVisibility(View.GONE);
+    	}else{
+    		 mKeyguardViewHost.setVisibility(View.VISIBLE);
+    	}
+    }
+    //GIONEE <Amigo_Keyguard>  jiating <2015-05-12> modify for click emgenceButton or show alarmClock on KeyguradView  end
     public boolean isCollapsing() {
         return mNotificationPanel.isCollapsing();
     }

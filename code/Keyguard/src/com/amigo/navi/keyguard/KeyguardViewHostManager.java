@@ -3,6 +3,7 @@ package com.amigo.navi.keyguard;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.ActivityOptions;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -356,7 +358,12 @@ public class KeyguardViewHostManager {
             if (mActivitys.size() == 0) {
                 Intent intent = new Intent(mContext, SkylightActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                mContext.startActivity(intent);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    Bundle opts = ActivityOptions.makeCustomAnimation(mContext, 0, 0).toBundle();
+                    mContext.startActivity(intent, opts);
+                } else {
+                    mContext.startActivity(intent);
+                }
             }
         }
     }
@@ -684,7 +691,6 @@ public class KeyguardViewHostManager {
                 wallpaperDB.updateShowOrder(lockWallpaper);
         		HKAgent.onEventIMGSwitch(mContext.getApplicationContext(), lockWallpaper);
             }      	
-
 //            mThreadUtil.releaseWorkThread();
         }
         

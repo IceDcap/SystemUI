@@ -9,6 +9,8 @@ import android.widget.Toast;
 
 import java.io.Serializable;
 
+import com.amigo.navi.keyguard.haokan.db.DataConstant;
+
 public class Category implements Serializable{
     private static final long serialVersionUID = 1L; // 定义序列化ID
 
@@ -29,6 +31,11 @@ public class Category implements Serializable{
     
     private Bitmap icon;
     
+    private String nameID = "";
+    //0 表示从网上获取的壁纸，1表示固定壁纸
+    public static final int WALLPAPER_FROM_WEB = DataConstant.INTERNET;
+    public static final int WALLPAPER_FROM_FIXED_FOLDER = DataConstant.LOCAL;
+    private int type = WALLPAPER_FROM_WEB;
 
     public boolean isFavorite() {
         return favorite;
@@ -86,6 +93,22 @@ public class Category implements Serializable{
     public void setIcon(Bitmap icon) {
         this.icon = icon;
     }
+
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
+	}
+
+	public String getNameID() {
+		return nameID;
+	}
+
+	public void setNameID(String nameID) {
+		this.nameID = nameID;
+	}
 
      
     

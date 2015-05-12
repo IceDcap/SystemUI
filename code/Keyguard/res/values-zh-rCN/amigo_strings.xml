@@ -130,4 +130,13 @@
     <string name="keyguard_password_enter_pin_code_message">"<xliff:g id="card">%s</xliff:g>,输入 PIN码,剩余<xliff:g id="number">%d</xliff:g>次"</string>
     <string name="keyguard_password_enter_puk_code_message">"<xliff:g id="card">%s</xliff:g>,请输入 PUK码,剩余<xliff:g id="number">%d</xliff:g>次"</string>
 
+   	<string name="lvyou">旅游</string>
+   	<string name="shijue">视觉</string>
+   	<string name="qiche">汽车</string>
+   	<string name="tiyu">体育</string>
+   	<string name="xinyu">心语</string>
+   	<string name="shenghuo">生活</string>
+   	<string name="yule">娱乐</string>
+   	<string name="jinxuan">amigo精选</string>
+
 </resources>

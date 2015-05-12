@@ -1,5 +1,6 @@
 package com.amigo.navi.keyguard.network.local;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -30,12 +31,16 @@ public class LocalFileOperation implements LocalFileOperationInterface {
         }
         try {
             InputStream assetsDB = mContext.getAssets().open((String) obj);
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = assetsDB.read(buffer)) > 0) {
-                os.write(buffer, 0, length);
-            }
-            os.flush();
+//            byte[] buffer = new byte[1024];
+//            int length;
+//            while ((length = assetsDB.read(buffer)) > 0) {
+//                os.write(buffer, 0, length);
+//            }
+//            os.flush();
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            
+            byte[] bts = DiskUtils.Stream2Byte(assetsDB);
+            DiskUtils.saveBitmap(bts,os);
             assetsDB.close();
         }catch (IOException e) {
             DebugLog.d(TAG, "saveFile ioerror:" + e);

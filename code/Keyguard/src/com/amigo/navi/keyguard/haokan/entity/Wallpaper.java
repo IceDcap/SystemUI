@@ -6,6 +6,8 @@ import android.text.TextUtils;
 
 import java.io.Serializable;
 
+import com.amigo.navi.keyguard.haokan.db.DataConstant;
+
 public class Wallpaper implements Serializable{
     private static final long serialVersionUID = 1L;  
     
@@ -53,6 +55,11 @@ public class Wallpaper implements Serializable{
     
     private float showOrder;
     
+    private String showTimeBegin;
+    
+    private String showTimeEnd;
+    
+    
     public boolean isLocked() {
         return locked;
     }
@@ -72,8 +79,8 @@ public class Wallpaper implements Serializable{
  
     //0 表示从网上获取的壁纸，1表示固定壁纸
     private int type = WALLPAPER_FROM_WEB;
-    public static final int WALLPAPER_FROM_WEB = 0;
-    public static final int WALLPAPER_FROM_FIXED_FOLDER = 1;
+    public static final int WALLPAPER_FROM_WEB = DataConstant.INTERNET;
+    public static final int WALLPAPER_FROM_FIXED_FOLDER = DataConstant.LOCAL;
     
  
     public int getImgId() {
@@ -276,6 +283,22 @@ public class Wallpaper implements Serializable{
             stringBuffer.append(", MusicName : ").append(getMusic().getmMusicName());
         }
         return stringBuffer.toString();
+    }
+    
+        public String getShowTimeBegin() {
+        return showTimeBegin;
+    }
+
+    public void setShowTimeBegin(String showTimeBegin) {
+        this.showTimeBegin = showTimeBegin;
+    }
+
+    public String getShowTimeEnd() {
+        return showTimeEnd;
+    }
+
+    public void setShowTimeEnd(String showTimeEnd) {
+        this.showTimeEnd = showTimeEnd;
     }
 
 }

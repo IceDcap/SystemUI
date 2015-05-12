@@ -161,7 +161,7 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
         if(reason == KeyguardSecurityView.KEYGUARD_HOSTVIEW_SCROLL_AT_HOMEPAGE){
         	hiddenInput();
         }
-        setVisibility(INVISIBLE);
+//        setVisibility(INVISIBLE);
     }
 
 	private void hiddenInput() {
@@ -259,7 +259,7 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
         resetState();
         setForgetPasswordButton();
         gioneeAccount = GioneeAccount.getInstance(mContext);
-        setVisibility(INVISIBLE);
+//        setVisibility(INVISIBLE);
     }
     
 

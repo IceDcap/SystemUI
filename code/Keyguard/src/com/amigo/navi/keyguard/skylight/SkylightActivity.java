@@ -17,7 +17,6 @@ public class SkylightActivity extends Activity {
         setTheme(R.style.skylightTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.skylight_activity_layout);
-        overridePendingTransition(0, 0);
         DebugLog.d(LOG_TAG, "SkylightActivity  onCreate");
         KeyguardViewHostManager viewmanager = KeyguardViewHostManager.getInstance();
         if (SkylightUtil.getIsHallOpen(getApplicationContext())) {

@@ -208,7 +208,7 @@ public class AmigoKeyguardHostView extends LinearLayout {
 		mKeyguardBouncer=new AmigoKeyguardBouncer(context,  this);
 		mBouncerIsShowing=false;
 		mUIController = UIController.getInstance();
-		
+		mUIController.setAmigoKeyguardHostView(this);
 		initLongPressListener();
 	}
 	

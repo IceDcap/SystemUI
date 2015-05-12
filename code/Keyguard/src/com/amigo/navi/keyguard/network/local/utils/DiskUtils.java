@@ -1,6 +1,7 @@
 
 package com.amigo.navi.keyguard.network.local.utils;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -16,6 +17,7 @@ import com.amigo.navi.keyguard.DebugLog;
 
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.CompressFormat;
@@ -124,8 +126,59 @@ public class DiskUtils {
         StringBuffer fileName = new StringBuffer();
         String regString = "[^A-Za-z0-9.]";
         String newUrl = url.replaceAll(regString, "_");
-        fileName.append(newUrl).append(LOAD_IMAGE_SUFFIX);
+        fileName.append(newUrl);
         return fileName.toString();
     }
+ 
+    public static byte[] Stream2Byte(InputStream is) {
+		BufferedInputStream in = null;
+		ByteArrayOutputStream out = null;
+		try {
+			in = new BufferedInputStream(is);
+			out = new ByteArrayOutputStream();
+
+			System.out.println("Available bytes:" + in.available());
+
+			byte[] temp = new byte[1024];
+			int size = 0;
+			while ((size = in.read(temp)) != -1) {
+				out.write(temp, 0, size);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				in.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+		byte[] content = out.toByteArray();
+		System.out.println("Readed bytes count:" + content.length);
+		return content;
+    }
+    
+    public static Bitmap getImageFromAssetsFile(Context context,String fileName)  
+    {  
+        Bitmap image = null;  
+        AssetManager am = context.getResources().getAssets();  
+        try  
+        {  
+        	DebugLog.d(TAG,"getImageFromAssetsFile fileName:" + fileName);
+            InputStream is = am.open(fileName);  
+            image = BitmapFactory.decodeStream(is); 
+        	DebugLog.d(TAG,"getImageFromAssetsFile image:" + image);
+            is.close();  
+        }  
+        catch (IOException e)  
+        {  
+        	DebugLog.d(TAG,"getImageFromAssetsFile error:" + e.getStackTrace());
+            e.printStackTrace();  
+        }  
+    
+        return image;  
+    
+    }  
     
 }

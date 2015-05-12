@@ -246,7 +246,7 @@ public class StatusBarKeyguardViewManager implements KeyguardBouncerCallback ,Ke
 
     public void setOccluded(boolean occluded) {
     	//jiating modify for keyguard begin
-       /* if (occluded && !mOccluded && mShowing) {
+  /*      if (occluded && !mOccluded && mShowing) {
             if (mPhoneStatusBar.isInLaunchTransition()) {
                 mOccluded = true;
                 mPhoneStatusBar.fadeKeyguardAfterLaunchTransition(null  beforeFading ,
@@ -260,8 +260,9 @@ public class StatusBarKeyguardViewManager implements KeyguardBouncerCallback ,Ke
                 return;
             }
         }*/
-    	//jiating modify for keyguard end
         mOccluded = occluded;
+        mPhoneStatusBar.setOccluded(mOccluded);
+    	//jiating modify for keyguard end
         mStatusBarWindowManager.setKeyguardOccluded(occluded);
         reset();
     }

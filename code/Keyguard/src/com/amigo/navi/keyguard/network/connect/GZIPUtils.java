@@ -231,7 +231,8 @@ public abstract class GZIPUtils {
      * @param os
      * @throws Exception
      */
-    public static void decompress(InputStream is, OutputStream os) {
+    public static boolean decompress(InputStream is, OutputStream os) {
+    	boolean flag = false;
         if (is != null) {
             GZIPInputStream gis = null;
             try {
@@ -243,7 +244,9 @@ public abstract class GZIPUtils {
                     os.write(data, 0, count);
                 }
                 Log.e(LOGTAG, "decompress end");
+                flag = true;
             } catch (Exception e) {
+            	flag = false;
                 Log.e(LOGTAG, "decompress stream error:" + e);
             } finally {
                 try {
@@ -255,6 +258,7 @@ public abstract class GZIPUtils {
                 }
             }
         }
+        return flag;
     }
 
     /**

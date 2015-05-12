@@ -23,6 +23,9 @@ package com.amigo.navi.keyguard.network.connect;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import com.amigo.navi.keyguard.DebugLog;
+
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -79,6 +82,17 @@ public class NetWorkUtils {
         return false;
     }
 
+    public static boolean isWifi(Context context) { 
+    	ConnectivityManager connectivityManager = (ConnectivityManager) context 
+    	.getSystemService(Context.CONNECTIVITY_SERVICE); 
+    	NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo(); 
+    	if (activeNetInfo != null 
+    	&& activeNetInfo.getType() == ConnectivityManager.TYPE_WIFI) { 
+    		return true; 
+    	} 
+    	return false; 
+    } 
+    
     public static File createSavedFileByUrl(String url, String saveFolder) {
         File file = null;
 

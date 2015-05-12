@@ -36,11 +36,16 @@ import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.everydayphoto.NavilSettings;
 import com.amigo.navi.keyguard.haokan.db.CategoryDB;
 import com.amigo.navi.keyguard.haokan.entity.Category;
-import com.amigo.navi.keyguard.network.local.DealWithFileFromLocal;
+import com.amigo.navi.keyguard.network.local.ReadFileFromSD;
 import com.amigo.navi.keyguard.network.local.LocalBitmapOperation;
 import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
 import com.amigo.navi.keyguard.settings.KeyguardWallpaper;
+
+import java.io.File;
 import java.util.List;
+
+import org.w3c.dom.Text;
+
 import com.android.keyguard.R;
 
 public class HKCategoryActivity extends Activity{
@@ -58,7 +63,7 @@ public class HKCategoryActivity extends Activity{
     private Bitmap mWindowBackgroud;
     
     private TextView mTextView;
-    
+    private static final String PATH = "category_pics";
     private Handler mHandler = new Handler(){
 
          @Override
@@ -88,7 +93,7 @@ public class HKCategoryActivity extends Activity{
         onInitUI();
         setBlurBackground();
        LocalBitmapOperation localFileOperation = new LocalBitmapOperation();
-       final DealWithFileFromLocal dealWithFileFromLocal = new DealWithFileFromLocal(this, DiskUtils.CATEGORY_BITMAP_FOLDER,
+       final ReadFileFromSD dealWithFileFromLocal = new ReadFileFromSD(this, DiskUtils.CATEGORY_BITMAP_FOLDER,
                 DiskUtils.getCachePath(this), localFileOperation);
         new Thread(new Runnable(){
 
@@ -100,12 +105,16 @@ public class HKCategoryActivity extends Activity{
                     String url = category.getTypeIconUrl();
                     DebugLog.d(TAG,"category onCreate url:" + url);
                     if(!TextUtils.isEmpty(url)){
-                        String key = DiskUtils.constructFileNameByUrl(url);
-                        DebugLog.d(TAG,"category onCreate key:" + key);
-                        Bitmap bmp = (Bitmap) dealWithFileFromLocal.readFromLocal(key);
-//                        Bitmap bmp=BitmapFactory.decodeResource(HKCategoryActivity.this.getResources(), R.drawable.haokan_life);
-//                        DebugLog.d(TAG,"category onCreate bmp:" + bmp);
-                        category.setIcon(bmp);
+                    	if(Category.WALLPAPER_FROM_FIXED_FOLDER == category.getType()){
+                    		String path = PATH + File.separator + url + ".png";
+                    		Bitmap bitmap = DiskUtils.getImageFromAssetsFile(getApplicationContext(), path);
+                            category.setIcon(bitmap);
+                    	}else{
+                            String key = DiskUtils.constructFileNameByUrl(url);
+                            DebugLog.d(TAG,"category onCreate key:" + key);
+                            Bitmap bmp = (Bitmap) dealWithFileFromLocal.readFromLocal(key);
+                            category.setIcon(bmp);
+                    	}
                     }
                 }
                 
@@ -174,16 +183,14 @@ public class HKCategoryActivity extends Activity{
  
 
     public void onFillUI() {
-        mHandler.postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
+//        mHandler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
                 mGridView.setLayoutAnimation(getAnimationController());
                 mGridView.setAdapter(mCategoryAdapter);
                 mCategoryAdapter.notifyDataSetChanged();
-            }
-
-        }, 30);
+//            }
+//        }, 30);
 
     }
     
@@ -286,10 +293,16 @@ public class HKCategoryActivity extends Activity{
 //            holder.image.setImageDrawable(getDrawable(R.drawable.haokan_life));
             
             
-            if (category.getTypeNameResId() != 0) {
-                holder.title.setText(category.getTypeNameResId());
-            }else {
-                holder.title.setText(category.getTypeName());
+//            if (category.getTypeNameResId() != 0) {
+//                holder.title.setText(category.getTypeNameResId());
+//            }else {
+//                holder.title.setText(category.getTypeName());
+//            }
+            
+            if(!TextUtils.isEmpty(category.getNameID())){
+            	holder.title.setText(getResId(category.getNameID()));
+            }else{
+            	holder.title.setText(category.getTypeName());
             }
             
             holder.image.setOnClickListener(new OnClickListener() {
@@ -354,5 +367,15 @@ public class HKCategoryActivity extends Activity{
         Log.v(TAG, "onBackPressed");
         finish();
     }
+    
+
+    public int getResId(String name) {
+    	String defType = "string";
+        String packageName = this.getApplicationInfo().packageName;
+
+        return this.getResources().getIdentifier(name, defType, packageName);
+
+    }
+
     
 }

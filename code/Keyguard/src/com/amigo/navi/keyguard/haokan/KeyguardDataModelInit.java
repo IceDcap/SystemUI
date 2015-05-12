@@ -13,7 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 import com.amigo.navi.keyguard.DebugLog;
-import com.amigo.navi.keyguard.network.local.DealWithFileFromLocal;
+import com.amigo.navi.keyguard.network.local.ReadFileFromSD;
 import com.amigo.navi.keyguard.network.local.LocalFileOperation;
 import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
 
@@ -31,8 +31,8 @@ public class KeyguardDataModelInit {
     
     private static final String TAG = "KeyguardDataModelInit";
     private Context mContext = null;
-    private DealWithFileFromLocal mDealWithWallpaperFile = null;
-    private DealWithFileFromLocal mDealWithCategoryFile = null;
+    private ReadFileFromSD mDealWithWallpaperFile = null;
+    private ReadFileFromSD mDealWithCategoryFile = null;
 
     private static KeyguardDataModelInit sInstance = null;
     
@@ -50,29 +50,29 @@ public class KeyguardDataModelInit {
     private KeyguardDataModelInit(Context context){
         mContext = context.getApplicationContext();
         LocalFileOperation localFileOperation = new LocalFileOperation(context);
-        mDealWithWallpaperFile = new DealWithFileFromLocal(context, DiskUtils.WALLPAPER_BITMAP_FOLDER, 
+        mDealWithWallpaperFile = new ReadFileFromSD(context, DiskUtils.WALLPAPER_BITMAP_FOLDER, 
                 DiskUtils.getCachePath(context.getApplicationContext())
                 , localFileOperation);
-        mDealWithCategoryFile = new DealWithFileFromLocal(context, DiskUtils.CATEGORY_BITMAP_FOLDER, 
+        mDealWithCategoryFile = new ReadFileFromSD(context, DiskUtils.CATEGORY_BITMAP_FOLDER, 
                 DiskUtils.getCachePath(context.getApplicationContext())
                 , localFileOperation);
     }
     
     public void initData(){
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        boolean flag = Common.getHaoKanDataInit(mContext);
-                        DebugLog.d(TAG,"initData flag:" + flag);
-                        if(!flag){
-                            boolean savedSuccess = saveInitDataToClientDB(mContext);
-                            boolean copySuccess = copyDataToSD(mContext);
-                            if(savedSuccess && copySuccess){
-                                Common.setHaoKanDataInit(mContext, true);
-                            }
-                        } 
-                    }
-                }).start();
+        saveInitDataToClientDB(mContext);
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        boolean flag = Common.getHaoKanDataInit(mContext);
+//                        DebugLog.d(TAG,"initData flag:" + flag);
+//                        if(!flag){
+//                            boolean copySuccess = copyDataToSD(mContext);
+//                            if(savedSuccess && copySuccess){
+//                                Common.setHaoKanDataInit(mContext, true);
+//                            }
+//                        } 
+//                    }
+//                }).start();
     }  
     
     private final static String DBNAME = "haokan.db";

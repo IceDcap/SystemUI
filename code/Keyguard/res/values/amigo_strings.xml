@@ -145,4 +145,12 @@
     <string name="keyguard_password_enter_pin_code_message">"<xliff:g id="card">%s</xliff:g>,Input PIN,remain <xliff:g id="number">%d</xliff:g> times"</string>
     <string name="keyguard_password_enter_puk_code_message">"<xliff:g id="card">%s</xliff:g>,Input PUK,remain <xliff:g id="number">%d</xliff:g> times"</string>
       
+    <string name="lvyou">Travel</string>
+   	<string name="shijue">Charm</string>
+   	<string name="qiche">Speed</string>
+   	<string name="tiyu">Sports</string>
+   	<string name="xinyu">Beautiful Mind</string>
+   	<string name="shenghuo">LOHAS</string>
+   	<string name="yule">Entertainment</string>
+   	<string name="jinxuan">amigo Selected</string>
 </resources>

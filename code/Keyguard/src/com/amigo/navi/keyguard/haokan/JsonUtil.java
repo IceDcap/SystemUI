@@ -2,7 +2,10 @@ package com.amigo.navi.keyguard.haokan;
 
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
+
+import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.haokan.entity.Client;
 import com.amigo.navi.keyguard.haokan.entity.EventLogger;
 import com.amigo.navi.keyguard.haokan.entity.WallpaperList;
@@ -21,6 +24,7 @@ import com.amigo.navi.keyguard.haokan.entity.WallpaperList;
 import com.amigo.navi.keyguard.haokan.entity.Music;
 
 public class JsonUtil {
+	private static final String TAG = "JsonUtil";
     private static final String DATA_VERSION = "dv";
     
     public static String parseJsonToUserId(String jsonString) {
@@ -134,6 +138,17 @@ public class JsonUtil {
                         wallpaper.setUrlPv(jsonObject5.optString("up"));
                         wallpaper.setIsAdvert(jsonObject5.optInt("ia"));
                         wallpaper.setBackgroundColor(jsonObject5.optString("bc"));
+                        String showTime = jsonObject5.optString("t");
+                        if(!TextUtils.isEmpty(showTime)){
+                            String[] times = showTime.split("-");
+                            if(times != null && times.length > 1){
+                                wallpaper.setShowTimeBegin(times[0]);
+                                wallpaper.setShowTimeEnd(times[1]);
+                            }else{
+                                wallpaper.setShowTimeBegin("");
+                                wallpaper.setShowTimeEnd("");
+                            }
+                        }
                         Music music = new Music();
  
                         music.setmMusicName(jsonObject5.optString("mn"));
@@ -150,6 +165,7 @@ public class JsonUtil {
             list.setHasMore(jsonObject.optInt("hm") == 1);
           
         } catch (JSONException e) {
+            DebugLog.d(TAG,"parseJsonToWallpaperList error e:" + e.getStackTrace());
             e.printStackTrace();
         }
         return list;

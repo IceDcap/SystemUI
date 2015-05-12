@@ -25,7 +25,7 @@ public class LocalBitmapOperation implements LocalFileOperationInterface {
         return saveBitmapToLocal(bitmap,os);
     }
 
-    private synchronized boolean saveBitmapToLocal(Bitmap bitmap,OutputStream outputStream) {
+    private boolean saveBitmapToLocal(Bitmap bitmap,OutputStream outputStream) {
         DebugLog.d(TAG,"saveBitmapToLocal");
         try {
             byte[] bts = DiskUtils.convertBitmap(bitmap);

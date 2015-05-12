@@ -67,6 +67,10 @@ public class KeyguardWallpaperContainer extends FrameLayout {
         mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.haokan_wallpaper_alpha).copy(Bitmap.Config.ARGB_8888, true);
     }
     
+    public void reset() {
+        mTop = mScreenHeight;
+        invalidate();
+    }
     
     @Override
     protected void onDraw(Canvas canvas) {

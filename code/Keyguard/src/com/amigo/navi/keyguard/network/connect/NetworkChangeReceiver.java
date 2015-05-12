@@ -21,9 +21,10 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
         NicePicturesInit nicePicturesInit = NicePicturesInit.getInstance(context);
 		if(networkState){
 		    nicePicturesInit.registerData();
-		}else{
-	        nicePicturesInit.shutDownWorkPool();
 		}
+//		else{
+//	        nicePicturesInit.shutDownWorkPool();
+//		}
 	}
 	
 	// 网路是否可用

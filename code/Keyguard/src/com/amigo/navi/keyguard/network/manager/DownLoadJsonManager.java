@@ -53,7 +53,7 @@ public class DownLoadJsonManager {
     private static final String CATEGORY_DIVIDE = ",";
     private static final String TEST_VERSION = "edit_version_1.0";
     private static boolean sIsGetWallpaperImmediately = false;
-    
+    public static final String ERROR = "connect_error";
     
     private static DownLoadJsonManager sManager = null;
     
@@ -82,6 +82,9 @@ public class DownLoadJsonManager {
         String result = "";
         String method = ConnectionParameters.HTTP_POST;
         result = connectMethod(context, params, method,REQUEST_REGISTER_ID,jsonData,false);
+        if(ERROR.equals(result)){
+        	result = "";
+        }
         return result;
     }
 
@@ -134,6 +137,7 @@ public class DownLoadJsonManager {
                 category += categoryList.get(index);
             }
         }
+    	DebugLog.d(TAG,"requestPicturesOfCurrentDay category :" + category);
         String screenSize = Common.getDensityDpiClip(context.getApplicationContext());
         String currentDate = Common.formatCurrentDate();
         String userID = Common.getUserId(context.getApplicationContext());
@@ -193,6 +197,9 @@ public class DownLoadJsonManager {
         URL jsonUrl = NetWorkUtils.constructRequestURL(url, queryString);
         JsonHttpConnect httpConnect = new JsonHttpConnect(timeOut, method, ua, requestBody);
         result = httpConnect.loadJsonFromInternet(jsonUrl,isNeedCompress);
+        if(JsonHttpConnect.JSON_ERROR.equals(result) || JsonHttpConnect.CONNECT_ERROR.endsWith(result)){
+        	return ERROR;
+        }
         return result;
     }
     
