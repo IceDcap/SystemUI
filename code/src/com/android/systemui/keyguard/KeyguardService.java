@@ -73,14 +73,12 @@ public class KeyguardService extends Service {
 
         @Override // Binder interface
         public void verifyUnlock(IKeyguardExitCallback callback) {
-            if (isSkylightIsShowing()) {return;}
             checkPermission();
             mKeyguardViewMediator.verifyUnlock(callback);
         }
 
         @Override // Binder interface
         public void keyguardDone(boolean authenticated, boolean wakeup) {
-            if (isSkylightIsShowing()) {return;}
             checkPermission();
             mKeyguardViewMediator.keyguardDone(authenticated, wakeup);
         }
@@ -93,7 +91,6 @@ public class KeyguardService extends Service {
 
         @Override // Binder interface
         public void dismiss() {
-            if (isSkylightIsShowing()) {return;}
             checkPermission();
             mKeyguardViewMediator.dismiss();
         }
@@ -164,9 +161,5 @@ public class KeyguardService extends Service {
             mKeyguardViewMediator.onActivityDrawn();
         }
     };
-    
-    private boolean isSkylightIsShowing(){
-        return mKeyguardViewMediator.getIsSkylightShown();
-    }
 }
 

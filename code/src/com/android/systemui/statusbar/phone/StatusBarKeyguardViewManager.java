@@ -260,6 +260,13 @@ public class StatusBarKeyguardViewManager implements KeyguardBouncerCallback ,Ke
                 return;
             }
         }*/
+        //<Amigo_Keyguard>  jingyn <2015-05-12> modify for fingerIdentify begin
+        if(occluded){
+            cancelFingerIdentify();
+        }else{
+            startFingerIdentify();
+        }
+        //<Amigo_Keyguard>  jingyn <2015-05-12> modify for fingerIdentify end
         mOccluded = occluded;
         mPhoneStatusBar.setOccluded(mOccluded);
     	//jiating modify for keyguard end

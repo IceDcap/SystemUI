@@ -662,10 +662,6 @@ public class KeyguardViewMediator extends SystemUI {
 
             resetKeyguardDonePendingLocked();
             mHideAnimationRun = false;
-            
-            if(mLockPatternUtils.isLockScreenDisabled()) {
-                return;
-            }
 
             // Lock immediately based on setting if secure (user has a pin/pattern/password).
             // This also "locks" the device when not secure to provide easy access to the
@@ -870,6 +866,7 @@ public class KeyguardViewMediator extends SystemUI {
      * @see android.app.KeyguardManager#exitKeyguardSecurely
      */
     public void verifyUnlock(IKeyguardExitCallback callback) {
+        if (getIsSkylightShown()) {return;}
         synchronized (this) {
             if (DEBUG) Log.d(TAG, "verifyUnlock");
             if (shouldWaitForProvisioning()) {
@@ -904,58 +901,6 @@ public class KeyguardViewMediator extends SystemUI {
         }
     }
     
-    
-    private void showSkylightIfNeed() {
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                boolean isHallOpen = SkylightUtil.getIsHallOpen(mContext);
-                if (!isHallOpen) {
-                    showSkylight();
-                }
-            }
-        });
-
-    }
-    
-    private void showSkylight() {
-        synchronized (this) {
-            boolean isLockDisabled = mLockPatternUtils.isLockScreenDisabled();
-            if (isLockDisabled || !isShowing()) {
-                Bundle options = new Bundle();
-                options.putBoolean(AmigoKeyguardHostView.KEY_LOCK_BY_SKYLIGHT, true);
-                if(SkylightHost.isSkylightSizeExist()){
-                    doKeyguardLocked(options);
-                }
-            }
-        }
-        mStatusBarKeyguardViewManager.showSkylight();
-    }
-    
-    private void hideSkylight(boolean forceHide){
-        mStatusBarKeyguardViewManager.hideSkylight(forceHide);
-    }
-
-    private void readSkylightConfigs() {
-        new Thread() {
-            public void run() {
-                Log.d(TAG, "readSkylightConfigs--------------");
-                SkylightUtil.readSkylightLocationFromXml();
-            };
-        }.start();
-    }
-
-    public void startFingerIdentify(){
-        if(mStatusBarKeyguardViewManager!=null){
-            mStatusBarKeyguardViewManager.startFingerIdentify();
-        }
-    }
-    
-    public void cancelFingerIdentify(){
-        if(mStatusBarKeyguardViewManager!=null){
-            mStatusBarKeyguardViewManager.cancelFingerIdentify();
-        }
-    }
     
     /**
      * Is the keyguard currently showing and not being force hidden?
@@ -995,13 +940,7 @@ public class KeyguardViewMediator extends SystemUI {
                 mStatusBarKeyguardViewManager.setOccluded(isOccluded);
                 updateActivityLockScreenState();
                 adjustStatusBarLocked();
-                if(mOccluded){
-                    hideSkylight(true);
-                    cancelFingerIdentify();
-                }else{
-                    showSkylightIfNeed();
-                    startFingerIdentify();
-                }
+                setSkylightOccluded();
             }
         }
     }
@@ -1128,6 +1067,7 @@ public class KeyguardViewMediator extends SystemUI {
     }
 
     public void dismiss() {
+        if (getIsSkylightShown()) {return;}
         mHandler.sendEmptyMessage(DISMISS);
     }
 
@@ -1241,6 +1181,7 @@ public class KeyguardViewMediator extends SystemUI {
 
     public void keyguardDone(boolean authenticated, boolean wakeup) {
         if (DEBUG) Log.d(TAG, "keyguardDone(" + authenticated + ")");
+        if (getIsSkylightShown()) {return;}
         EventLog.writeEvent(70000, 2);
         Message msg = mHandler.obtainMessage(KEYGUARD_DONE, authenticated ? 1 : 0, wakeup ? 1 : 0);
         mHandler.sendMessage(msg);
@@ -1702,6 +1643,57 @@ public class KeyguardViewMediator extends SystemUI {
                 Slog.w(TAG, "Failed to call onShowingStateChanged or onSimSecureStateChanged", e);
             }
         }
+    }
+    
+    
+    private void showSkylightIfNeed() {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                boolean isHallOpen = SkylightUtil.getIsHallOpen(mContext);
+                if (!isHallOpen) {
+                    showSkylight();
+                }
+            }
+        });
+
+    }
+    
+    private void showSkylight() {
+        synchronized (this) {
+            boolean isLockDisabled = mLockPatternUtils.isLockScreenDisabled();
+            if (isLockDisabled || !isShowing()) {
+                Bundle options = new Bundle();
+                options.putBoolean(AmigoKeyguardHostView.KEY_LOCK_BY_SKYLIGHT, true);
+                if(SkylightHost.isSkylightSizeExist()){
+                    doKeyguardLocked(options);
+                }
+            }
+        }
+        if(!mOccluded){
+            mStatusBarKeyguardViewManager.showSkylight();
+        }
+    }
+    
+    private void hideSkylight(boolean forceHide){
+        mStatusBarKeyguardViewManager.hideSkylight(forceHide);
+    }
+    
+    private void setSkylightOccluded(){
+        if(mOccluded){
+            hideSkylight(true);
+        }else{
+            showSkylightIfNeed();
+        }
+    }
+
+    private void readSkylightConfigs() {
+        new Thread() {
+            public void run() {
+                Log.d(TAG, "readSkylightConfigs--------------");
+                SkylightUtil.readSkylightLocationFromXml();
+            };
+        }.start();
     }
     
     protected boolean getIsSkylightShown(){
