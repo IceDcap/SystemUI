@@ -22,6 +22,7 @@
     android:id="@+id/notification_guts"
     android:visibility="gone"
     android:clickable="true"
+    android:paddingTop="6dp"
     android:gravity="top|start"
     >
     <LinearLayout
