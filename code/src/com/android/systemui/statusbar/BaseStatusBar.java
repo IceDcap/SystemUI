@@ -118,7 +118,7 @@ public abstract class BaseStatusBar extends SystemUI implements
         RecentsComponent.Callbacks, ExpandableNotificationRow.ExpansionLogger,
         NotificationData.Environment {
     public static final String TAG = "StatusBar";
-    public static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    public static final boolean DEBUG = true;//Log.isLoggable(TAG, Log.DEBUG);
     public static final boolean MULTIUSER_DEBUG = false;
 
     // STOPSHIP disable once we resolve b/18102199
@@ -831,6 +831,7 @@ public abstract class BaseStatusBar extends SystemUI implements
     
     protected View updateNotificationVetoButton(View row, StatusBarNotification n) {
         View vetoButton = row.findViewById(R.id.veto);
+        Log.v("wujiujiu", "n.isClearable() = "+n.isClearable());
         if (n.isClearable() || (mHeadsUpNotificationView.getEntry() != null
                 && mHeadsUpNotificationView.getEntry().row == row)) {
             final String _pkg = n.getPackageName();
