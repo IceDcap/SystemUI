@@ -70,6 +70,7 @@ import com.android.systemui.statusbar.BaseStatusBar;
 import com.android.systemui.statusbar.StatusBarPanel;
 import com.android.systemui.statusbar.phone.PhoneStatusBar;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 
@@ -229,6 +230,7 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
         }
 
         public int getCount() {
+        	Log.d(TAG, " mRecentTaskDescriptions.size() = " + (mRecentTaskDescriptions != null ? mRecentTaskDescriptions.size() : 0));
             return mRecentTaskDescriptions != null ? mRecentTaskDescriptions.size() : 0;
         }
 
@@ -744,6 +746,7 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
 
     private void refreshRecentTasksList(
             ArrayList<TaskDescription> recentTasksList, boolean firstScreenful) {
+    	Log.d(TAG, " mRecentTaskDescriptions = " + mRecentTaskDescriptions + " recentTasksList = " + recentTasksList);
         if (mRecentTaskDescriptions == null && recentTasksList != null) {
             onTasksLoaded(recentTasksList, firstScreenful);
         } else {
@@ -772,6 +775,7 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
         int numRecentApps = mRecentTaskDescriptions != null
                 ? mRecentTaskDescriptions.size() : 0;
         String recentAppsAccessibilityDescription;
+        Log.d(TAG, "updateUiElements mRecentTaskDescriptions.size() = " + items);
         if (numRecentApps == 0) {
             recentAppsAccessibilityDescription =
                 getResources().getString(R.string.status_bar_no_recent_apps);
@@ -819,28 +823,47 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
         show(false);
         if (ad.taskId >= 0) {
             // This is an active task; it should just go to the foreground.
-            am.moveTaskToFront(ad.taskId, ActivityManager.MOVE_TASK_WITH_HOME,
-                    opts);
+            /*am.moveTaskToFront(ad.taskId, ActivityManager.MOVE_TASK_WITH_HOME,
+                    opts);*/
+        	boolean successful;
+        	try {
+        		Method method = Class.forName("android.app.ActivityManager")
+        				.getMethod("moveTaskToFrontWithResult", int.class, int.class, Bundle.class);
+        		successful = (Boolean) method.invoke(am, ad.taskId, ActivityManager.MOVE_TASK_WITH_HOME, opts);
+        		Log.d(TAG, "invoke moveTaskToFrontWithResult successful: " + successful);
+        		if(!successful) {
+        			startActivityFromRecent(ad, context, opts);
+        		}
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.e(TAG, "invoke moveTaskToFrontWithResult failed: " + e);
+				// TODO: handle exception
+			}
             Log.v(TAG, "Move Task To Front for " + ad.taskId);
         } else {
-            Intent intent = ad.intent;
-            intent.addFlags(Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY
-                    | Intent.FLAG_ACTIVITY_TASK_ON_HOME
-                    | Intent.FLAG_ACTIVITY_NEW_TASK);
-            if (DEBUG) Log.v(TAG, "Starting activity " + intent);
-            try {
-                context.startActivityAsUser(intent, opts,
-                        new UserHandle(ad.userId));
-            } catch (SecurityException e) {
-                Log.e(TAG, "Recents does not have the permission to launch " + intent, e);
-            } catch (ActivityNotFoundException e) {
-                Log.e(TAG, "Error launching activity " + intent, e);
-            }
+            startActivityFromRecent(ad, context, opts);
         }
         if (usingDrawingCache) {
             holder.thumbnailViewImage.setDrawingCacheEnabled(false);
         }
     }
+
+	private void startActivityFromRecent(TaskDescription ad,
+			final Context context, Bundle opts) {
+		Intent intent = ad.intent;
+		intent.addFlags(Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY
+		        | Intent.FLAG_ACTIVITY_TASK_ON_HOME
+		        | Intent.FLAG_ACTIVITY_NEW_TASK);
+		if (DEBUG) Log.v(TAG, "Starting activity " + intent);
+		try {
+		    context.startActivityAsUser(intent, opts,
+		            new UserHandle(ad.userId));
+		} catch (SecurityException e) {
+		    Log.e(TAG, "Recents does not have the permission to launch " + intent, e);
+		} catch (ActivityNotFoundException e) {
+		    Log.e(TAG, "Error launching activity " + intent, e);
+		}
+	}
 
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         handleOnClick(view);
@@ -1031,6 +1054,7 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
 			super.handleMessage(msg);
 			if(MSG_STOP_SCAN_ANIM == msg.what) {
 				((RecentsActivity) getContext()).showMemorySaved();
+				clearTaskDescription();
 			}
 		}
     };

@@ -212,6 +212,7 @@ public class RecentsActivity extends Activity implements OnClickListener , OnLon
         }
         getProcessWhiteList();
         mShowing = true;
+        Log.d(TAG, " on Start. mRecentsPanel is null ? = " + mRecentsPanel);
         if (mRecentsPanel != null) {
             // Call and refresh the recent tasks list in case we didn't preload tasks
             // or in case we don't get an onNewIntent
@@ -363,6 +364,7 @@ public class RecentsActivity extends Activity implements OnClickListener , OnLon
                     final RecentTasksLoader recentTasksLoader = RecentTasksLoader.getInstance(this);
                     boolean waitingForWindowAnimation = checkWaitingForAnimationParam &&
                             intent.getBooleanExtra(WAITING_FOR_WINDOW_ANIMATION_PARAM, false);
+                    Log.d(TAG, " TOGGLE_RECENTS_INTENT and recentsPanel is not showing,so call RecentsPanel.show(true,**)");
                     mRecentsPanel.show(true, recentTasksLoader.getLoadedTasks(),
                             recentTasksLoader.isFirstScreenful(), waitingForWindowAnimation);
                 }

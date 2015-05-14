@@ -54,7 +54,7 @@ public class RecentsHorizontalScrollView extends HorizontalScrollView
 
 	private static final int MIN_SCROLL_TIME = 300;
     private static final String TAG = RecentsPanelView.TAG;
-    private static final boolean DEBUG = RecentsPanelView.DEBUG;
+    private static final boolean DEBUG = true;//RecentsPanelView.DEBUG;
     private LinearLayout mLinearLayout;
     private TaskDescriptionAdapter mAdapter;
     private RecentsCallback mCallback;
@@ -469,6 +469,7 @@ public class RecentsHorizontalScrollView extends HorizontalScrollView
     }
 
     public void setAdapter(TaskDescriptionAdapter adapter) {
+    	Log.d(TAG, "adapter.getCount() = " + adapter.getCount());
         mAdapter = adapter;
         mAdapter.registerDataSetObserver(new DataSetObserver() {
             public void onChanged() {
@@ -936,7 +937,6 @@ public class RecentsHorizontalScrollView extends HorizontalScrollView
 
             @Override
             public void run() {
-                mCallback.clearTaskDescription();
                 
                 for (int i = mLinearLayout.getChildCount() - 1; i >= 0; i--) {
                     final View view = mLinearLayout.getChildAt(i);

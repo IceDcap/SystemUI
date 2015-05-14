@@ -320,6 +320,7 @@ public class RecentTasksLoader implements View.OnTouchListener {
 
     private void clearFirstTask() {
         synchronized (mFirstTaskLock) {
+        	Log.d(TAG, " clearFirstTask() locked mFirstTaskLock");
             mFirstTask = null;
             mFirstTaskLoaded = false;
         }
@@ -330,6 +331,7 @@ public class RecentTasksLoader implements View.OnTouchListener {
             public void run() {
                 TaskDescription first = loadFirstTask();
                 synchronized(mFirstTaskLock) {
+                	Log.d(TAG, " preloadFirstTask() run bgLoad locked mFirstTaskLock");
                     if (mCancelPreloadingFirstTask) {
                         clearFirstTask();
                     } else {
@@ -341,6 +343,7 @@ public class RecentTasksLoader implements View.OnTouchListener {
             }
         };
         synchronized(mFirstTaskLock) {
+        	Log.d(TAG, " preloadFirstTask() locked mFirstTaskLock");
             if (!mPreloadingFirstTask) {
                 clearFirstTask();
                 mPreloadingFirstTask = true;
@@ -351,6 +354,7 @@ public class RecentTasksLoader implements View.OnTouchListener {
 
     public void cancelPreloadingFirstTask() {
         synchronized(mFirstTaskLock) {
+        	Log.d(TAG, " cancelPreloadingFirstTask() locked mFirstTaskLock");
             if (mPreloadingFirstTask) {
                 mCancelPreloadingFirstTask = true;
             } else {
@@ -364,6 +368,7 @@ public class RecentTasksLoader implements View.OnTouchListener {
     public TaskDescription getFirstTask() {
         while(true) {
             synchronized(mFirstTaskLock) {
+            	Log.d(TAG, " getFirstTask() locked mFirstTaskLock");
                 if (mFirstTaskLoaded) {
                     return mFirstTask;
                 } else if (!mFirstTaskLoaded && !mPreloadingFirstTask) {
@@ -443,6 +448,7 @@ public class RecentTasksLoader implements View.OnTouchListener {
         loadTasksInBackground(false);
     }
     public void loadTasksInBackground(final boolean zeroeth) {
+    	Log.d(TAG, " loadTasksInBackground: mState != State.CANCELLED = " + (mState != State.CANCELLED));
         if (mState != State.CANCELLED) {
             return;
         }
