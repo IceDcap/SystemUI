@@ -3697,7 +3697,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             	if (state == PanelBar.STATE_CLOSED) {
             		mStatusBarWindowManager.setStatusBarExpanded(false);
                     mStatusBarView.setFocusable(true);
-            	} else if (state == PanelBar.STATE_OPEN) {
+            	} else {
             		mStatusBarWindowManager.setStatusBarExpanded(true);
                     mStatusBarView.setFocusable(false);
             	}
