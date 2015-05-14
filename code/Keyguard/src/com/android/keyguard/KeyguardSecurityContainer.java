@@ -39,6 +39,7 @@ import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 
 import com.amigo.navi.keyguard.DebugLog;
+import com.amigo.navi.keyguard.KeyguardViewHostManager;
 import com.android.internal.widget.LockPatternUtils;
 import com.android.keyguard.KeyguardSecurityModel.SecurityMode;
 
@@ -67,6 +68,7 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
     public static final int FINGERPRINT_UNUSED=-1;
     public static final int FINGERPRINT_FAILED=0;
     public static final int FINGERPRINT_SUCCESS=1;
+    private SecurityViewRemoveCallback mSecurityViewRemoveCallback;
 
     // Used to notify the container when something interesting happens.
     public interface SecurityCallback {
@@ -437,6 +439,13 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
         if (finish) {
         	// unlock animation
         	runRemovewSecurityViewAnimation();
+        }else{
+            //jingyn <2015-05-13> add for CR01478984 begin
+            SecurityMode securityMode = mSecurityModel.getSecurityMode();
+            if(!(securityMode==SecurityMode.SimPin|| securityMode == SecurityMode.SimPuk)){
+                KeyguardViewHostManager.getInstance().startFingerIdentify();
+            }
+            //jingyn <2015-05-13> add for CR01478984 end
         }
         return finish;
     }
@@ -444,24 +453,22 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
     // guosb add for removeSecuityView animation begin
     
     private boolean animationIsRunning = false;
+	private ValueAnimator mSecurityViewRemoveValueAnimator= null;
 
 	@SuppressLint("NewApi")
 	public void runRemovewSecurityViewAnimation() {
 		if(DEBUG){
 			DebugLog.d(TAG, "removeSecurityView");
 		}
-		
-		if(animationIsRunning){
+		if(mSecurityViewRemoveValueAnimator != null && mSecurityViewRemoveValueAnimator.isRunning()){
 			if(DebugLog.DEBUG){
 				DebugLog.d(TAG, "removeSecurityView mSecurityViewRemoveValueAnimator is running");
 			}
 			return;
 		}
-		
 		if(mSecurityViewFlipper == null){
 			return;
 		}
-		
 		final View currentSecurityView = mSecurityViewFlipper.getCurrentView();
 		
 		if(currentSecurityView == null){
@@ -469,53 +476,24 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
 		}
 
 		final int h = currentSecurityView.getMeasuredHeight();
-		AlphaAnimation alpha = new AlphaAnimation(1, 0);
-		TranslateAnimation trans = new TranslateAnimation(0, 0, 0, -h);
-		AnimationSet set = new AnimationSet(false);
-		set.setDuration(300);
-		set.addAnimation(alpha);
-		set.addAnimation(trans);
-		set.setAnimationListener(new AnimationListener() {
-			
-			@Override
-			public void onAnimationStart(Animation animation) {
-				// TODO Auto-generated method stub
-				animationIsRunning = true;
-			}
-			
-			@Override
-			public void onAnimationRepeat(Animation animation) {
-				// TODO Auto-generated method stub
-			}
-			
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				// TODO Auto-generated method stub
-				mSecurityCallback.finish();
-				animationIsRunning = false;
-				currentSecurityView.setVisibility(View.INVISIBLE);
-			}
-		});
-		currentSecurityView.startAnimation(set);
+		if(DebugLog.DEBUG){
+			DebugLog.d(TAG, "removeSecurityView mSecurityViewRemoveValueAnimatorh="+h);
+		}
 		
-		
-		/* ValueAnimator mSecurityViewRemoveValueAnimator= null;
-
-		final int h1 = currentSecurityView.getMeasuredHeight();
 		mSecurityViewRemoveValueAnimator = ValueAnimator.ofFloat(0,1);
 		mSecurityViewRemoveValueAnimator.setDuration(300);
 		mSecurityViewRemoveValueAnimator.addUpdateListener(new AnimatorUpdateListener() {
 			@Override
 			public void onAnimationUpdate(ValueAnimator animation) {
 				float f = animation.getAnimatedFraction();
-				currentSecurityView.setTranslationY(-h1*f);
+				currentSecurityView.setTranslationY(-h*f);
 				currentSecurityView.setAlpha(1-f);
+				mSecurityViewRemoveCallback.executeRemoveAmimation((int) (h*f));
 			}
 		});
 		mSecurityViewRemoveValueAnimator.addListener(new AnimatorListener() {
 			@Override
 			public void onAnimationStart(Animator animation) {
-				animationIsRunning = true;
 			}
 			
 			@Override
@@ -524,18 +502,29 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
 			
 			@Override
 			public void onAnimationEnd(Animator animation) {
+				//remove view before keyguardDone instead of postDelay
 				mSecurityCallback.finish();
-				animationIsRunning = false;
+				resetSecurityView(currentSecurityView, h);
+				currentSecurityView.setVisibility(View.INVISIBLE);
+				mSecurityViewRemoveValueAnimator = null;
 			}
 			
 			@Override
 			public void onAnimationCancel(Animator animation) {
 				mSecurityCallback.finish();
-				animationIsRunning = false;
+				resetSecurityView(currentSecurityView, h);
+				currentSecurityView.setVisibility(View.INVISIBLE);
+				mSecurityViewRemoveValueAnimator = null;
 			}
 		});
-		mSecurityViewRemoveValueAnimator.start();*/
+		mSecurityViewRemoveValueAnimator.start();
 	}
+	
+	
+	 private void resetSecurityView(View currentSecurityView ,int  h) {
+		   currentSecurityView.setTranslationY(0);
+		   currentSecurityView.setAlpha(1f);
+	 }
 	
 	// guosb add for removeSecuityView animation end
 
@@ -796,12 +785,25 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
         }
     	return false;
     }
-
+    
     public boolean isPinPukViewId(int viewId) {
         if (viewId == R.layout.amigo_keyguard_sim_pin_view || viewId == R.layout.amigo_keyguard_sim_puk_view) {
             return true;
         }
         return false;
     }
+
+  //GIONEE <Amigo_Keyguard>  jiating <2015-05-12> modify for keyguardBg change when excute SecurityView animation begin
+    public interface SecurityViewRemoveCallback {
+
+        public void executeRemoveAmimation(int top);
+    }
+    
+    public void setSecurityViewRemoveCallback(SecurityViewRemoveCallback  callback){
+    	mSecurityViewRemoveCallback=callback;
+    }
+    
+    //GIONEE <Amigo_Keyguard>  jiating <2015-05-12> modify for keyguardBg change when excute SecurityView animation end
+
 }
 

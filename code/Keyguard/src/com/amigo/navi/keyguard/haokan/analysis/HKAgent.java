@@ -15,7 +15,7 @@ public class HKAgent {
         mLog = LoggerThread.getInstance();
     }
     
- 
+    
     public static void onEvent(final Context context, final EventLogger userLog) {
         mLog.onEvent(context, userLog);
     }
@@ -91,8 +91,10 @@ public class HKAgent {
     }
     
     public static void onEventIMGShow(final Context context, final Wallpaper wallpaper) {
-        onEvent(context, wallpaper.getImgId(), wallpaper.getCategory().getTypeId(), Event.IMG_SHOW);
-    }
+//        onEvent(context, wallpaper.getImgId(), wallpaper.getCategory().getTypeId(), Event.IMG_SHOW);
+        onEvent(context, new EventLogger(Common.currentTimeTime(), wallpaper.getImgId(), wallpaper
+                .getCategory().getTypeId(), Event.IMG_SHOW, 1, wallpaper.getUrlPv()));
+ }
     
     public static void onEventIMGSwitch(final Context context, final Wallpaper wallpaper) {
         onEvent(context, wallpaper.getImgId(), wallpaper.getCategory().getTypeId(), Event.IMG_SWITCH);

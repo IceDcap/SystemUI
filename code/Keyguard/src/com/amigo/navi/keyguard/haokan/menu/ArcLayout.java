@@ -314,7 +314,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
         PropertyValuesHolder pvhscaleY = PropertyValuesHolder.ofFloat("scaleY", 1.0f, 0f);
         PropertyValuesHolder pvhalpha = PropertyValuesHolder.ofFloat("alpha", 1.0f, 0f);
         
-        ObjectAnimator Alpha = ObjectAnimator.ofFloat(child.getmTextView(), "alpha", 0f).setDuration(10); 
+        ObjectAnimator Alpha = ObjectAnimator.ofFloat(child.getmTextView(), "alpha", 0.001f).setDuration(10); 
         
         ObjectAnimator rotation = ObjectAnimator.ofFloat(child, "rotation", -180f); 
         
@@ -324,13 +324,15 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
         set.setStartDelay(startOffset);
         set.setInterpolator(interpolator);
         set.setDuration(280);
+ 
+        
         set.play(Alpha);
         set.play(translation).with(rotation).after(Alpha);
         set.addListener(new AnimatorListener() {
             
             @Override
             public void onAnimationStart(Animator arg0) {
-                
+                 
             }
             
             @Override
@@ -552,7 +554,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
         
         PropertyValuesHolder scaleXNarrow = PropertyValuesHolder.ofFloat("scaleX", 1.0f, 0f);
         PropertyValuesHolder scaleYNarrow = PropertyValuesHolder.ofFloat("scaleY", 1.0f, 0f);
-        PropertyValuesHolder alphaFadeOut = PropertyValuesHolder.ofFloat("alpha", 0f);
+        PropertyValuesHolder alphaFadeOut = PropertyValuesHolder.ofFloat("alpha", 0.001f);
         List<Animator> list = new ArrayList<Animator>();
         
         clickView.setClickable(false);

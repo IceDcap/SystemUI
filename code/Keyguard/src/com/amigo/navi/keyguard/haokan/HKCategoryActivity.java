@@ -183,17 +183,12 @@ public class HKCategoryActivity extends Activity{
  
 
     public void onFillUI() {
-//        mHandler.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-                mGridView.setLayoutAnimation(getAnimationController());
-                mGridView.setAdapter(mCategoryAdapter);
-                mCategoryAdapter.notifyDataSetChanged();
-//            }
-//        }, 30);
+
+        mGridView.setLayoutAnimation(getAnimationController());
+        mGridView.setAdapter(mCategoryAdapter);
+        mCategoryAdapter.notifyDataSetChanged();
 
     }
-    
     
     protected LayoutAnimationController getAnimationController() {  
         AnimationSet set = new AnimationSet(true);  

@@ -28,6 +28,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Scroller;
 
+import com.android.keyguard.KeyguardSecurityContainer.SecurityViewRemoveCallback;
 import com.android.keyguard.KeyguardSecurityView;
 import com.android.keyguard.KeyguardViewBase;
 import com.android.keyguard.KeyguardSecurityModel.SecurityMode;
@@ -50,7 +51,7 @@ import com.android.internal.widget.LockPatternUtils;
 import static com.android.keyguard.KeyguardHostView.OnDismissAction;
 import com.android.internal.widget.LockPatternUtils;
 
-public class AmigoKeyguardHostView extends LinearLayout {
+public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewRemoveCallback{
     private static final String TAG = "AmigoKeyguardHostView";
 	private static final String LOG_TAG = "NaviKg_HostView";
 	
@@ -184,7 +185,7 @@ public class AmigoKeyguardHostView extends LinearLayout {
 
 	public void initKeyguard(ViewMediatorCallback callback,LockPatternUtils lockPatternUtils){
     	setViewMediatorCallback(callback);
-    	mKeyguardBouncer.initKeyguardBouncer(callback, lockPatternUtils);
+    	mKeyguardBouncer.initKeyguardBouncer(callback, lockPatternUtils,this);
     	
     }
     public void setViewMediatorCallback(ViewMediatorCallback viewMediatorCallback) {
@@ -1445,6 +1446,12 @@ public class AmigoKeyguardHostView extends LinearLayout {
         }
         return false;
     }
+
+	@Override
+	public void executeRemoveAmimation(int top) {
+		mUIController.onSecutityViewScrollChanged(top, mMaxBoundY);
+		
+	}
 
 }
 

@@ -81,7 +81,7 @@ public class StatisticsDB extends BaseDB{
             cursor.close();
         }
  
-        Log.v(TAG, "Statistics  >  insertId = " + insertId + " " + event.toString());
+//        Log.v(TAG, "Statistics  >  insertId = " + insertId + " " + event.toString());
         return insertId;
     }
     

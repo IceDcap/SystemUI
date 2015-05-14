@@ -383,6 +383,12 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 
         return child;
     }
+    
+    //
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        return false;//never accept touch event by parent dispatch
+    }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
@@ -555,9 +561,9 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         int scrollToX = page * mChildWidth; 
         smoothScrollTo(scrollToX, 0);
         if (mTouchlListener != null) {
-            if (Math.abs(motionX - mDownMotionX) > 2 * mTouchSlop) {
+//            if (Math.abs(motionX - mDownMotionX) > 2 * mTouchSlop) {
                 mTouchlListener.OnTouchUp();
-            }
+//            }
         }
     }
     
@@ -670,13 +676,11 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         DebugLog.d(TAG,"testscroll scrollTo");
         if (scrollOutFirstPageBound(x)) {
             DebugLog.d(TAG,"testscroll scrollTo1");
-            scrollTo(getMaxScrollX(), getScrollY());
-            return;
+            x = getMaxScrollX();
         }
         if (scrollOutLastPageBound(x)) {
             DebugLog.d(TAG,"testscroll scrollTo2");
-            scrollTo(0, getScrollY());
-            return;
+            x = 0;
         }
         DebugLog.d(TAG,"testscroll scrollTo x:" + x);
         super.scrollTo(x, y);

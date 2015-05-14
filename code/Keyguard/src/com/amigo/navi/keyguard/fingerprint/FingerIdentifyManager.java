@@ -12,6 +12,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.provider.Settings;
 import android.util.Log;
 
 
@@ -22,7 +23,7 @@ public class FingerIdentifyManager {
     private static final int MSG_FINGER_NO_MATCH=0;
     private static final int MSG_FINGER_IDENTIFY=1;
     
-    
+    public static final String FINGERPRINT_FOR_UNLOCK_SWITCH_KEY = "fingerprint_used_for_unlock";
     private static final String CLASS_GNFPMANAGER = "com.gionee.fingerprint.GnFingerPrintManager";       
     
     private Context mContext;
@@ -31,6 +32,7 @@ public class FingerIdentifyManager {
     private static FingerIdentifyManager sInstance=null;
     
     private int mIdentifyFailedTimes=0;
+    private boolean mFingerprintSwitchOpen=false;
     
     public FingerIdentifyManager(Context  context){
         mContext=context;
@@ -47,7 +49,6 @@ public class FingerIdentifyManager {
             switch (msg.what) {
             case MSG_FINGER_NO_MATCH:
                 onFingerNoMatch(msg.arg1);
-                startIdentifyIfNeed();
                 break;
             case MSG_FINGER_IDENTIFY:
                 onFingerIdentify();
@@ -61,7 +62,7 @@ public class FingerIdentifyManager {
     
     public void startIdentifyIfNeed(){
         boolean isStartFingerPrint=isActiveFingerPrint();
-        
+        DebugLog.d(LOG_TAG, "startIdentifyIfNeed  isStartFingerPrint:"+isStartFingerPrint);
         if(isStartFingerPrint){
             int[] ids=getIds();
             if(ids!=null){
@@ -79,7 +80,19 @@ public class FingerIdentifyManager {
         boolean isKeyguardShown = manager.isShowingAndNotOccluded();
         boolean isSimRequired = manager.needsFullscreenBouncer();
         
-        return !isSkylightShown && isKeyguardShown && !isSimRequired;
+        return mFingerprintSwitchOpen&&!isSkylightShown && isKeyguardShown && !isSimRequired;
+    }
+    
+    public void readFingerprintSwitchValue(){
+        //0 is close;1 is open
+        int unlockValue = Settings.Secure.getInt(mContext.getContentResolver(),
+                FINGERPRINT_FOR_UNLOCK_SWITCH_KEY, 0);
+        if(unlockValue==0){
+            mFingerprintSwitchOpen=false;
+        }else{
+            mFingerprintSwitchOpen=true;
+        }
+        
     }
     
     
@@ -211,9 +224,10 @@ public class FingerIdentifyManager {
             }
             VibatorUtil.amigoVibrate(mContext, VibatorUtil.LOCKSCREEN_UNLOCK_CODE_ERROR,
                     VibatorUtil.UNLOCK_ERROR_VIBRATE_TIME);
-        } else if (reason == 1) {
-
-        } else if (reason == 2) {
+            startIdentifyIfNeed();
+        } else if (reason == 1) {//timeout&exception
+            startIdentifyIfNeed();
+        } else if (reason == 2) {//cancel
 
         }
     }

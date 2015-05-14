@@ -109,6 +109,7 @@ public class CaptionsView extends LinearLayout {
     public void onScreenTurnedOff() {
         setContentVisible(false);
         setTranslationY(mInitialTranslationY + mTitleHeight);
+        getTitleContainer().setAlpha(0);
     }
     
     public int getInitialTranslationY() {
@@ -509,6 +510,12 @@ public class CaptionsView extends LinearLayout {
             mTextViewContent.invalidate();
         }
     }
+
+    public RelativeLayout getTitleContainer() {
+        return mTitleContainer;
+    }
+
+     
     
     
     

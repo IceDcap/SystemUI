@@ -3,19 +3,13 @@ package com.amigo.navi.keyguard.haokan;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Color;
-import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.webkit.JsResult;
-import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.android.keyguard.R;
 
@@ -43,7 +37,6 @@ public class HKWebLayout extends RelativeLayout {
         
     }
 
-    @SuppressLint("JavascriptInterface")
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
@@ -59,24 +52,18 @@ public class HKWebLayout extends RelativeLayout {
         });
         
         mWebView = (WebView) findViewById(R.id.haokan_layout_webview);
-        mWebView.setFocusable(true);
-        mWebView.setBackgroundColor(Color.TRANSPARENT);
      
         UIController.getInstance().setmWebView(mWebView);
         
         setSettings(mWebView.getSettings());
-        mWebView.addJavascriptInterface(new WebAppInterface(getContext()), "Android");
-
-        mWebView.setWebViewClient(new HKWebViewClient());
-
-        mWebView.setWebChromeClient(new WebChromeClient() {
-            @Override
-            public void onProgressChanged(WebView view, int newProgress) {
-
-            }
-        });
         
- 
+        mWebView.setWebViewClient(new WebViewClient() {  
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {  
+                view.loadUrl(url);  
+                return true;  
+            }  
+  
+        });
 
     }
     
@@ -103,54 +90,16 @@ public class HKWebLayout extends RelativeLayout {
         if (mWebView == null) {
             mWebView = (WebView) findViewById(R.id.haokan_layout_webview);
         }
+        
         mWebView.loadUrl(link);
     }
 
-    public class WebAppInterface {
-        Context mContext;
+  
 
-        /** Instantiate the interface and set the context */
-        WebAppInterface(Context c) {
-            mContext = c;
-        }
+ 
 
-        /** Show a toast from the web page */
-        public void showToast(String toast) {
-            Toast.makeText(mContext, toast, Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    final class DemoJavaScriptInterface {
-
-        DemoJavaScriptInterface() {
-        }
-
-        /**
-         * This is not called on the UI thread. Post a runnable to invoke
-         * loadUrl on the UI thread.
-         */
-        public void clickOnAndroid() {
-            new Handler().post(new Runnable() {
-                public void run() {
-                    // mWebView.loadUrl("javascript:wave()");
-                }
-            });
-
-        }
-    }
-
-    /**
-     * Provides a hook for calling "alert" from javascript. Useful for debugging
-     * your javascript.
-     */
-    final class MyWebChromeClient extends WebChromeClient {
-        @Override
-        public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
-
-            result.confirm();
-            return true;
-        }
-    }
+ 
+ 
     
     @SuppressLint("NewApi")
     private void setSettings(WebSettings setting) {
@@ -163,7 +112,11 @@ public class HKWebLayout extends RelativeLayout {
 //        setting.setDatabaseEnabled(true);
         
 //        setting.setLoadWithOverviewMode(true);
-        setting.setUseWideViewPort(true);
+//        setting.setUseWideViewPort(true);
+        setting.setDatabaseEnabled(false);   
+        setting.setDomStorageEnabled(false);
+        setting.setAppCacheEnabled(false);
+        setting.setCacheMode(WebSettings.LOAD_NO_CACHE);
         
     }
     

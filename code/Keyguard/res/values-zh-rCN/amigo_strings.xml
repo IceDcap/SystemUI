@@ -120,6 +120,11 @@
     <string name="keyguard_pattern_enter_code">"请输入密码锁或者使用指纹识别"</string>
     <string name="keyguard_password_enter_code">"请输入密码锁或者使用指纹识别"</string>
     <string name="forget_password">忘记密码</string>
+    <string name="forget_password_content">很遗憾，因为未绑定Amigo帐号，密码无法重置。若要继续使用手机，你可以通过以下步骤将手机恢复出厂设置：</string>
+    <string name="forget_password_first">1.关机</string>
+    <string name="forget_password_second">2.同时长按关机键和音量上键进入恢复出厂设置模式</string>
+    <string name="forget_password_third">3.恢复出厂设置</string>
+    <string name="forget_password_end">你的所有数据将被抹去！ </string>
     <string name="kg_complex_number_notnull">密码为空，请输入密码</string>
     <string name="hour">小时</string>
     <string name="minute">分</string>

@@ -196,13 +196,14 @@ public class AmigoKeyguardInfoZone extends FrameLayout{
 		
 		mWidgetTimeMiddle = (TextView) view
                 .findViewById(R.id.newwidget41_weathertime_middle);
-		mWidgetTimeMiddle.setTypeface(mFontTypeThin);
+		mWidgetTimeMiddle.setTypeface(mFontTypeRegular);
 		
 		mWidgetTimeMiddle.setText(":");
 		
 		mWidgetTimeMiddle_US = (TextView) view
         .findViewById(R.id.newwidget41_weathertime_middle_us);
 		mWidgetTimeMiddle_US.setText(":");
+		mWidgetTimeMiddle_US.setTypeface(mFontTypeRegular);
 		
 		mTimeLayout = (LinearLayout) view
 				.findViewById(R.id.newwidget41_weathertime);

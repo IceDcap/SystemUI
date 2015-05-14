@@ -14,6 +14,9 @@ import com.amigo.navi.keyguard.haokan.entity.Category;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -283,6 +286,67 @@ public class JsonUtil {
         }
         return jsonObject.toString();
 
+    }
+    
+    
+    public static WallpaperList getDefaultWallpaperList(Context context) {
+        
+        String jsonString = null;
+        WallpaperList list = null;
+        InputStream is = null;
+        try {
+            is = context.getAssets().open("wallpaper.xml");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            Log.v("zhaowei", "size = " + size);
+            is.read(buffer);
+            jsonString = new String(buffer, "utf-8");
+            Log.v("zhaowei", "jsonString = " + jsonString);
+            if (jsonString != null) {
+                
+                list = new WallpaperList();
+                JSONObject jsonObject = new JSONObject(jsonString);
+                JSONArray jsonArray = jsonObject.optJSONArray("imgs");
+                int len = jsonArray.length();
+                for (int i = 0; i < len; i++) {
+                    JSONObject jsonObjectImg = jsonArray.optJSONObject(i);
+                    
+                    Wallpaper wallpaper = new Wallpaper();
+                    String imageName = jsonObjectImg.optString("ImageName");
+                    String imageTitle = jsonObjectImg.optString("ImageTitle");
+                    String imageContent = jsonObjectImg.optString("ImageContent");
+                    String imageSource = jsonObjectImg.optString("ImageSource");
+                    String background = jsonObjectImg.optString("Background");
+                    String showTimeBegin = jsonObjectImg.optString("ShowTimeBegin");
+                    String showTimeEnd = jsonObjectImg.optString("ShowTimeEnd");
+                    
+                    Log.v("zhaowei", "imageName = " + imageName + " imageTitle="+imageTitle + " imageContent="+imageContent + " imageSource = " + imageSource + " background="+background);
+                    
+                    wallpaper.setDisplayName(imageName);
+                    wallpaper.setImgName(imageTitle);
+                    wallpaper.setImgContent(imageContent);
+                    wallpaper.setImgSource(imageSource);
+                    wallpaper.setBackgroundColor(background);
+                    wallpaper.setShowTimeBegin(showTimeBegin);
+                    wallpaper.setShowTimeEnd(showTimeEnd);
+                    
+                    list.add(wallpaper);
+                }
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return list;
     }
     
 

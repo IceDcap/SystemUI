@@ -44,6 +44,7 @@ import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
@@ -100,8 +101,8 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
             R.id.key9
     };
     private ArrayList<Button> mKeyButtons = new ArrayList<Button>();
-    private TextView forgetButton;
-    private GioneeAccount gioneeAccount;
+    private TextView mForgetButton;
+    private GioneeAccount mGioneeAccount;
 
     public AmigoKeyguardSimpleNumView(Context context) {
         this(context, null);
@@ -190,7 +191,7 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
         mSecurityMessageDisplay.setTimeout(0); // don't show ownerinfo/charging status by default
         resetState();
         setForgetPasswordButton();
-        gioneeAccount = GioneeAccount.getInstance(mContext);
+        mGioneeAccount = GioneeAccount.getInstance(mContext);
         setVisibility(INVISIBLE);
     }
 
@@ -207,12 +208,12 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
     
 
     private void setForgetPasswordButton() {
-	   	 forgetButton = (TextView) this.findViewById(R.id.forget_password);
-	     if(forgetButton == null) return;
+	   	 mForgetButton = (TextView) this.findViewById(R.id.forget_password);
+	     if(mForgetButton == null) return;
 	     if(getTimeOutSize()>=5){
-	    	 forgetButton.setVisibility(View.VISIBLE);
+	    	 mForgetButton.setVisibility(View.VISIBLE);
 	     }
-         forgetButton.setOnClickListener(new View.OnClickListener() {
+         mForgetButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
 				if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "forgetButton button clicked  ");
@@ -230,7 +231,7 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
 	}
     
     private void logAccount(LoginInfo  loginInfo) {
-		gioneeAccount.verifyForSP(mContext, loginInfo,
+		mGioneeAccount.verifyForSP(mContext, loginInfo,
 				new verifyListener() {
 
 					@Override
@@ -353,7 +354,7 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
 	}
 
 	private void unLockDone() {
-		forgetButton.setVisibility(View.INVISIBLE);
+		mForgetButton.setVisibility(View.INVISIBLE);
 		mCallback.reportUnlockAttempt(true);
 		if(mCallback.getFingerPrintResult()!=KeyguardSecurityContainer.FINGERPRINT_SUCCESS){
 			mCallback.dismiss(true);
@@ -367,7 +368,7 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
 		if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "onUnlockFail failReason :"+failReason);
 		
 		if(failReason == UNLOCK_FAIL_REASON_TIMEOUT) {
-			forgetButton.setVisibility(View.VISIBLE);
+			mForgetButton.setVisibility(View.VISIBLE);
 			 failShake(UNLOCK_FAIL_REASON_TIMEOUT);
 			long deadline = mKeyguardUpdateMonitor.getDeadline();
 			if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "onUnlockFail deadline :"+deadline);
@@ -389,6 +390,7 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
 	
 	 public void handleAttemptLockout(long elapsedRealtimeDeadline) {
 
+		    setKeyButtonClickEnable(false);
 	        final int index = getTimeOutSize();
 	        final long elapsedRealtime =System.currentTimeMillis();
 	        if(DebugLog.DEBUGMAYBE) DebugLog.d(LOG_TAG, "handleAttemptLockout mSimpleNumViewCountdownTimer=:"+(mSimpleNumViewCountdownTimer==null));
@@ -610,6 +612,15 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
     	setVisibility(View.INVISIBLE);
     }
     
+    
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+    	if(ev.getY()>=mForgetButton.getTop()){
+            Log.d("KeyguardPatternUnlockView", "onInterceptTouchEvent.......=");
+            requestDisallowInterceptTouchEvent(true);
+        }
+    	return super.onInterceptTouchEvent(ev);
+    }
     
     
 }

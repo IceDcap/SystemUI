@@ -75,4 +75,5 @@
     <color name="keyguard_setting_firstline_color">#ccffffff</color>
     <color name="keyguard_setting_secondline_color">#50ffffff</color>    
     <color name="keyguard_setting_line_color">#50ffffff</color> 
+    <color name="amigo_unbind_acount_text_color">#cc000000</color>
 </resources>

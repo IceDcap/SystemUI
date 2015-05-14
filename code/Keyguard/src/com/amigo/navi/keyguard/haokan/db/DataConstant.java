@@ -3,6 +3,7 @@ package com.amigo.navi.keyguard.haokan.db;
 
 import com.amigo.navi.keyguard.haokan.entity.Category;
 
+
 public class DataConstant {
     
  
@@ -19,9 +20,9 @@ public class DataConstant {
             "type_icon_url text," +
             "favorite integer not null default 1," +
             CategoryColumns.DOWNLOAD_PICTURE + " integer default 0,"+
-            CategoryColumns.TODAY_IMAGE + " integer default 1," + 
             CategoryColumns.SAVE_TYPE + " integer default 0," + 
             CategoryColumns.EN_NAME + " text," + 
+            CategoryColumns.TODAY_IMAGE + " integer default 1" + 
             ")";
     
     

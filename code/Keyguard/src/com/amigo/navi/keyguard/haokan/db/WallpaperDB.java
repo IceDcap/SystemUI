@@ -59,7 +59,7 @@ public class WallpaperDB extends BaseDB{
      * @param list
      * @param db
      */
-    private synchronized  void insertWallpapersNoTransaction(WallpaperList list) {
+    private synchronized void insertWallpapersNoTransaction(WallpaperList list) {
         final SQLiteDatabase db = mWritableDatabase;
         int index = 1;
         for (Wallpaper wallpaper : list) {
@@ -334,14 +334,14 @@ public class WallpaperDB extends BaseDB{
         return wallpaper;
     }
     
-    public  synchronized  void deleteAllExcludeLock() {
+    public synchronized void deleteAllExcludeLock() {
         final SQLiteDatabase db = mWritableDatabase;
         String sql = "delete from wallpaper where " + DataConstant.WallpaperColumns.LOCK +
                 " = " + DataConstant.WALLPAPER_NOT_LOCK;
         db.execSQL(sql);
     }
     
-    public  synchronized  void insertAfterDeleteAll(WallpaperList list){
+    public synchronized void insertAfterDeleteAll(WallpaperList list){
         DebugLog.d(TAG,"insertAfterDeleteAll 1");         
         final SQLiteDatabase db = mWritableDatabase;
         db.beginTransaction();
@@ -446,7 +446,7 @@ public class WallpaperDB extends BaseDB{
         }
     }
     
-    public  synchronized void deleteWallpaperNotTodayAndNotLock(){
+    public synchronized void deleteWallpaperNotTodayAndNotLock(){
         final SQLiteDatabase db = mWritableDatabase;
         String sql = "delete from wallpaper where " + DataConstant.WallpaperColumns.LOCK +
                 " = " + DataConstant.WALLPAPER_NOT_LOCK + " and " + DataConstant.WallpaperColumns.TODAY_IMAGE
@@ -464,7 +464,7 @@ public class WallpaperDB extends BaseDB{
         });
     }
     
-    public synchronized  void clearLock(){
+    public synchronized void clearLock(){
         final SQLiteDatabase db = mWritableDatabase;
         ContentValues values = new ContentValues();
         values.put(DataConstant.WallpaperColumns.LOCK, DataConstant.WALLPAPER_NOT_LOCK);

@@ -41,11 +41,13 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -69,6 +71,7 @@ public class AmigoKeyguardSimPinView extends AmigoKeyguardSimPinPukBaseView {
 
     private AlertDialog mRemainingAttemptsDialog;
     private int mSubId;
+    private LinearLayout  mKeyguardBouncerFrame;
     
     KeyguardUpdateMonitorCallback mUpdateMonitorCallback = new KeyguardUpdateMonitorCallback() {
         @Override
@@ -89,6 +92,7 @@ public class AmigoKeyguardSimPinView extends AmigoKeyguardSimPinPukBaseView {
     public void resetState() {
         super.resetState();
         if (DEBUG) Log.v(TAG, "Resetting state");
+        resetPasswordText(true /* animate */);
         KeyguardUpdateMonitor monitor = KeyguardUpdateMonitor.getInstance(mContext);
         mSubId = monitor.getNextSubIdForState(IccCardConstants.State.PIN_REQUIRED);
         if (SubscriptionManager.isValidSubscriptionId(mSubId)) {
@@ -165,6 +169,7 @@ public class AmigoKeyguardSimPinView extends AmigoKeyguardSimPinPukBaseView {
         }
         setPasswordEntry();
         setIgnoreButton();
+        mKeyguardBouncerFrame=(LinearLayout)findViewById(R.id.keyguard_bouncer_frame);
     }
 
     @Override
@@ -457,5 +462,15 @@ public class AmigoKeyguardSimPinView extends AmigoKeyguardSimPinPukBaseView {
 			}
 		});
 	}
+	
+	
+	   @Override
+	    public boolean onInterceptTouchEvent(MotionEvent ev) {
+	    	if(ev.getY()>=mKeyguardBouncerFrame.getTop()){
+	            Log.d("KeyguardPatternUnlockView", "onInterceptTouchEvent.......=");
+	            requestDisallowInterceptTouchEvent(true);
+	        }
+	    	return super.onInterceptTouchEvent(ev);
+	    }
 }
 

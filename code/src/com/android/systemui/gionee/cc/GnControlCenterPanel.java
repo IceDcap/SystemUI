@@ -43,9 +43,9 @@ public class GnControlCenterPanel extends ViewGroup implements GestureDetector.O
 
     private static final int TAP_THRESHOLD = 6;
     private static final float MAXIMUM_TAP_VELOCITY = 50.0f;
-    private static final float MAXIMUM_MINOR_VELOCITY = 75.0f;
-    private static final float MAXIMUM_MAJOR_VELOCITY = 100.0f;
-    private static final float MAXIMUM_ACCELERATION = 1000.0f;
+    private static final float MAXIMUM_MINOR_VELOCITY = 225.0f;
+    private static final float MAXIMUM_MAJOR_VELOCITY = 300.0f;
+    private static final float MAXIMUM_ACCELERATION = 5000.0f;
     private static final int VELOCITY_UNITS = 500;
     private static final int MSG_ANIMATE = 1000;
     private static final int MSG_SHAKE_ANIMATE = 1001;
@@ -460,12 +460,12 @@ public class GnControlCenterPanel extends ViewGroup implements GestureDetector.O
 
     private void animateClose(int position) {
         prepareTracking(position);
-        performFling(position, mMaximumAcceleration, true);
+        performFling(position, mMaximumMajorVelocity, true);
     }
 
     public void animateOpen(int position) {
         prepareTracking(position);
-        performFling(position, -mMaximumAcceleration, true);
+        performFling(position, -mMaximumMajorVelocity, true);
     }
 
     private void performFling(int position, float velocity, boolean always) {
@@ -732,10 +732,18 @@ public class GnControlCenterPanel extends ViewGroup implements GestureDetector.O
                     mCurrentAnimationTime);
             mShakeDeltaIndex++;
         } else {
-            mShakeDeltaIndex = 0;
-            mAnimating = false;
-            mFling = false;
-            openDrawer();
+            Log.d(TAG, "top = " + mHandle.getTop() + " mTopOffset = " + mTopOffset);
+            if (mHandle.getTop() - 5 * mAnimatedVelocityRatio < mTopOffset) {
+                mShakeDeltaIndex = 0;
+                mAnimating = false;
+                mFling = false;
+                openDrawer();
+            } else {
+                invalidateRegion(mHandle, (int)(-5 * mAnimatedVelocityRatio));
+                mCurrentAnimationTime += ANIMATION_FRAME_DURATION;
+                mHandler.sendMessageAtTime(mHandler.obtainMessage(MSG_SHAKE_ANIMATE),
+                        mCurrentAnimationTime);
+            }
         }
     }
 

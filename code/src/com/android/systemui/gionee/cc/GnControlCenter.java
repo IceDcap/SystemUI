@@ -104,6 +104,7 @@ public class GnControlCenter extends FrameLayout{
         @Override
         public void onReceive(Context context, Intent intent) {
             String actions = intent.getAction();
+            Log.d(TAG, "onReceive actions " + actions);
             if (Intent.ACTION_SCREEN_OFF.equals(actions)) {
                 if (mControlCenterView != null) {
                     mControlCenterView.setVisibility(GONE);

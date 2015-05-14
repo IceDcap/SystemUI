@@ -153,4 +153,33 @@
    	<string name="shenghuo">LOHAS</string>
    	<string name="yule">Entertainment</string>
    	<string name="jinxuan">amigo Selected</string>
+	
+	       <string name="kg_wrong_password_time">Wrong password, you can try <xliff:g id="number">%d</xliff:g> more times</string>
+     <string name="kg_wrong_pattern_time">Wrong password, you can try <xliff:g id="number">%d</xliff:g> more times</string>
+     <string name="kg_wrong_pattern_onetime">Wrong password, you can try <xliff:g id="number">%d</xliff:g> time</string>
+     <string name="kg_wrong_point_num">Connect at least 4 dots,please try again</string>
+     <string name="kg_too_many_failed_simple_attempts_dialog_message">
+        You have incorrectly typed your digit password <xliff:g id="number">%d</xliff:g> times.
+        \n\nTry again in <xliff:g id="number">%d</xliff:g> seconds.
+    </string>
+    
+     <string name="kg_too_many_failed_mixed_password_attempts_dialog_message">
+        You have incorrectly typed your mixed password <xliff:g id="number">%d</xliff:g> times.
+        \n\nTry again in <xliff:g id="number">%d</xliff:g> seconds.
+    </string>
+     <string name="amigo_kg_too_many_failed_attempts_countdown">"Exceeded <xliff:g id="number">%d</xliff:g> times of password attempts allowed, please try in <xliff:g id="number">%s</xliff:g> .</string>
+     <string name="keyguard_pattern_enter_code">"请输入密码锁或者使用指纹识别"</string>
+     <string name="keyguard_password_enter_code">"请输入密码锁或者使用指纹识别"</string>
+     <string name="forget_password">忘记密码</string>
+     <string name="forget_password_content">Unfortunately, because the Amigo account has not been bound, the passwords can not be reset.  Please kindly try following steps to restore to factory defaults for proceeding:</string>
+     <string name="forget_password_first">1. Switch-off the phone</string>
+     <string name="forget_password_second">2. Long press the poweroff button and the volumn up button at the same time to enter recovery mode</string>
+      <string name="forget_password_third">3. wipe data/factory reset</string>
+       <string name="forget_password_end">All your data will be erased! </string>
+     <string name="kg_complex_number_notnull">The password is blank, enter the password</string>
+     
+      <string name="finger_identify_fail_tip">fingerprint identify failed,try again</string>
+      <string name="hour">h</string>
+      <string name="minute">m</string>
+      <string name="second">s</string>
 </resources>

@@ -15,8 +15,10 @@ public class ShutdownBroadcastReceiver extends BroadcastReceiver {
     @Override 
     public void onReceive(Context context, Intent intent) {  
           
-        if (intent.getAction().equals(ACTION_SHUTDOWN)) {  
-        	mUpdatePage.update();
+        if (intent.getAction().equals(ACTION_SHUTDOWN)) { 
+        	if(mUpdatePage != null){
+        		mUpdatePage.update();
+        	}
         }  
     }  
     

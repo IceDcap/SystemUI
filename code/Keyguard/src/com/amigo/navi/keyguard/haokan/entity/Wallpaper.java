@@ -13,6 +13,8 @@ public class Wallpaper implements Serializable{
     
     private int imgId;
     
+    private String displayName;
+    
     private String imgName;
     
     private String imgContent;
@@ -210,12 +212,12 @@ public class Wallpaper implements Serializable{
     public Caption getCaption() {
         if (caption == null) {
             String backgroundColor = getBackgroundColor();
-            int color = 0xFFFF0000;
-            int contentColor = 0x40FF0000;
+            int color = 0xff4d4d4d;
+            int contentColor = 0x404d4d4d;
             if (!TextUtils.isEmpty(backgroundColor)) {
                  color = Color.parseColor(backgroundColor);
-                 int fiftyPercent = ((((color & 0xff000000) >> 24) & 0x0000ff ) / 10 * 4) << 24;
-                 contentColor = (color & 0x00ffffff) | fiftyPercent;
+                 int fortyPercent = ((((color & 0xff000000) >> 24) & 0x0000ff ) / 10 * 4) << 24;
+                 contentColor = (color & 0x00ffffff) | fortyPercent;
             }
             caption = new Caption(getImgName(), getImgContent(), getUrlClick(), color, contentColor, getImgSource());
         }
@@ -300,5 +302,15 @@ public class Wallpaper implements Serializable{
     public void setShowTimeEnd(String showTimeEnd) {
         this.showTimeEnd = showTimeEnd;
     }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+    
+    
 
 }

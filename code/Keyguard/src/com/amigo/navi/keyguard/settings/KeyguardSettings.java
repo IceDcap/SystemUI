@@ -1,8 +1,10 @@
 package com.amigo.navi.keyguard.settings;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.util.Log;
 
 public class KeyguardSettings {
     public static final String NET_CONNECT = "NetConnect";
@@ -30,6 +32,7 @@ public class KeyguardSettings {
 
 	public static final String CLEARNOTIFICATION = "clearNotification_KeyguardSettingsActivity";
 	public static final int NOTIFICATION_ID_SETTING = 1007;
+	private static final String TAG = "KeyguardSettings";
 	
 	
     
@@ -106,6 +109,16 @@ public class KeyguardSettings {
                 Context.MODE_PRIVATE);
         return sp.getBoolean(PF_KEYGUARD_CONNECT,
         		SWITCH_WALLPAPER_UPDATE);
+    }
+    
+    public static void cancelNotification(Context context) {
+        Log.v(TAG, "cancelNotification");
+        NotificationManager mNotificationManager;
+        mNotificationManager = (NotificationManager)context.getSystemService("notification");
+        try {
+            mNotificationManager.cancel(NOTIFICATION_ID_SETTING);
+        } catch (Exception e) {
+        }
     }
 
 }

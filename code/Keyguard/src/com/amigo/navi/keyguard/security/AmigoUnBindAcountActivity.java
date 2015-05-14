@@ -18,32 +18,56 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import amigo.app.AmigoActivity;
+import android.view.View.OnClickListener;
+import amigo.app.AmigoActionBar;
 
-public class AmigoUnBindAcountActivity  extends Activity{
+
+public class AmigoUnBindAcountActivity  extends AmigoActivity{
 	
 	  private Bitmap mWindowBackgroud;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		 if(Build.VERSION.SDK_INT  >=  21){
-	            this.getWindow().getAttributes().systemUiVisibility |= (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-	                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-	            this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-	            this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-
-	            this.getWindow().setStatusBarColor(Color.TRANSPARENT);
-	            this.getWindow().setNavigationBarColor(Color.TRANSPARENT);
-	      }
-		
+		getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);          
+        getWindow().setStatusBarColor(Color.TRANSPARENT);
+//
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-		setContentView(R.layout.unbind_account);
-		setBlurBackground();
+        AmigoActionBar actionBar = getAmigoActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(false);
+        actionBar.setTitle(R.string.forget_password);
+		setContentView(R.layout.amigo_unbind_account);
+	}
+	
+	private void setActionBar(){
+		  AmigoActionBar actionBar = getAmigoActionBar();
 
+	      // 设置true，ActionBar会出现返回箭头，点击执行finish()。
+	      actionBar.setDisplayHomeAsUpEnabled(true);
+	      actionBar.setDisplayShowCustomEnabled(true);
+	      actionBar.setTitle(R.string.forget_password);
+	      actionBar.setOnBackClickListener(new OnClickListener() {
+	          @Override
+	          public void onClick(View v) {
+	        		finish();
+	          }
+	      });
+	}
+	
+	@Override
+	protected void onPause() {
+        Log.i("jiating","AmigoUnBindAcountActivity...onPause");
+		super.onPause();
+		finish();
 	}
 	
 	private void setBlurBackground() {

@@ -55,4 +55,9 @@
         <item name="android:windowNoTitle">true</item>
     </style>
     
+    
+      <style name="GnAmiogUnbindActivityLightTheme" parent="@amigo:style/Theme.Amigo.Light">
+    </style>
+    
+    
 </resources>

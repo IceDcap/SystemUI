@@ -21,8 +21,10 @@ import com.android.keyguard.R;
 
 public class CaptionSpannableString extends SpannableStringBuilder{
 
-    private static final String SPACE = "   ";
+    private static final String SPACE_LINK = "    ";
+    private static final String SPACE_SOURCE = " ";
     
+    private static final int IMG_SOURCE_TEXT_COLOR = 0xffff9000;
     
     private Caption mCaption;
     
@@ -47,48 +49,52 @@ public class CaptionSpannableString extends SpannableStringBuilder{
         
         isEmptyLink = TextUtils.isEmpty(mCaption.getLink());
         
+        int start = 0;
+        int end = 0;
         if (!isEmptyLink) {
         
             if (!isEmptyImgSource) {
-                append(" ");
+                append(SPACE_SOURCE);
                 append(caption.getImgSource());
             }
 
-            append(SPACE);
-            
-            
-            setSpan(new BackgroundColorSpan(caption.getContentBackgroundColor()), 0,
-                    length() - SPACE.length() - caption.getImgSource().length() - 1,
-                    Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
-
+            append(SPACE_LINK);
+            end = length() - SPACE_LINK.length() - caption.getImgSource().length() - SPACE_SOURCE.length();
+            setSpan(new BackgroundColorSpan(caption.getContentBackgroundColor()), start, end,Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+           
             if (!isEmptyImgSource) {
-                
-                setSpan(new ForegroundColorSpan(0xffff9000), caption.getContent().length(), caption
-                        .getContent().length() + caption.getImgSource().length() + 1,
-                        Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+            
+                start = caption.getContent().length() + SPACE_SOURCE.length();
+                end = start + caption.getImgSource().length();
+                setSpan(new ForegroundColorSpan(IMG_SOURCE_TEXT_COLOR), start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+            
             }
+            
             mContentLinkDrawable.setBounds(linkRect);
-//            mContentLinkDrawable.setBounds(5, 5, 33, 33);
+            
             ImageSpan imageSpan = new ImageSpan(mContentLinkDrawable, ImageSpan.ALIGN_BASELINE);
 
-            setSpan(imageSpan, length() - 1, length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
-            setSpan(new WebURLSpan(caption.getLink()), length() - 2, length(),
+            setSpan(imageSpan, length() - 2, length()-1, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+            
+            setSpan(new WebURLSpan(caption.getLink()), length() - 3, length(),
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         }else {
             
             if (!isEmptyImgSource) {
-                append(" ");
+                append(SPACE_SOURCE);
                 append(caption.getImgSource());
             }
-            setSpan(new BackgroundColorSpan(caption.getContentBackgroundColor()), 0,
-                    caption.getContent().length(),
-                    Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+            
+            end = caption.getContent().length();
+            
+            setSpan(new BackgroundColorSpan(caption.getContentBackgroundColor()), start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
             
             if (!isEmptyImgSource) {
                 
-                setSpan(new ForegroundColorSpan(0xffff9000), caption.getContent().length(), caption
-                        .getContent().length() + caption.getImgSource().length() + 1,
-                        Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+                start = caption.getContent().length() + SPACE_SOURCE.length();
+                end = start + caption.getImgSource().length();
+                setSpan(new ForegroundColorSpan(IMG_SOURCE_TEXT_COLOR), start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+                
             }
             
             

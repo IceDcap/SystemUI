@@ -102,7 +102,7 @@ public class GnQSTileHost implements GnQSTile.Host {
     
     @Override
     public void startSettingsActivity(final Intent intent) {
-        mGnControlCenterView.postStartSettingsActivity(intent, 400); // 400: time for collapse controlcenter 
+        mGnControlCenterView.postStartSettingsActivity(intent, 250); // 250: time for collapse controlcenter 
     }
 
     @Override

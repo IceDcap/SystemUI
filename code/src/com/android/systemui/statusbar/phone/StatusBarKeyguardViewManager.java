@@ -46,6 +46,8 @@ import static com.android.keyguard.KeyguardHostView.OnDismissAction;
 import com.amigo.navi.keyguard.AmigoKeyguardBouncer.KeyguardBouncerCallback;
 import com.amigo.navi.keyguard.KeyguardViewHostManager.KeyguardNotificationCallback;
 
+import com.amigo.navi.keyguard.KeyguardViewHost;
+
 /**
  * Manages creating, showing, hiding and resetting the keyguard within the status bar. Calls back
  * via {@link ViewMediatorCallback} to poke the wake lock and report that the keyguard is done,
@@ -85,6 +87,8 @@ public class StatusBarKeyguardViewManager implements KeyguardBouncerCallback ,Ke
     private boolean mLastBouncerShowing;
     private boolean mLastBouncerDismissible;
     private OnDismissAction mAfterKeyguardGoneAction;
+    
+    private KeyguardViewHost mKeyguardViewHost = null;
 
     public StatusBarKeyguardViewManager(Context context, ViewMediatorCallback callback,
             LockPatternUtils lockPatternUtils) {
@@ -100,7 +104,8 @@ public class StatusBarKeyguardViewManager implements KeyguardBouncerCallback ,Ke
         mContainer = container;
         mStatusBarWindowManager = statusBarWindowManager;
         mScrimController = scrimController;
-        mKeyguardViewHostManager=new KeyguardViewHostManager(mContext,phoneStatusBar.getmKeyguardViewHost(),phoneStatusBar.getSkylightHost(),mLockPatternUtils,mViewMediatorCallback);
+        mKeyguardViewHost = phoneStatusBar.getmKeyguardViewHost();
+        mKeyguardViewHostManager=new KeyguardViewHostManager(mContext,mKeyguardViewHost,phoneStatusBar.getSkylightHost(),mLockPatternUtils,mViewMediatorCallback);
         mKeyguardViewHostManager.registerBouncerCallback(this);
         mKeyguardViewHostManager.registerKeyguardNotificationCallback(this);
 //        mBouncer = new KeyguardBouncer(mContext, mViewMediatorCallback, mLockPatternUtils,
@@ -268,7 +273,13 @@ public class StatusBarKeyguardViewManager implements KeyguardBouncerCallback ,Ke
         }
         //<Amigo_Keyguard>  jingyn <2015-05-12> modify for fingerIdentify end
         mOccluded = occluded;
-        mPhoneStatusBar.setOccluded(mOccluded);
+        if(mShowing){
+	        if(occluded){
+	        	mKeyguardViewHost.setVisibility(View.INVISIBLE);
+	        }else{
+	        	mKeyguardViewHost.setVisibility(View.VISIBLE);
+	        }
+        }
     	//jiating modify for keyguard end
         mStatusBarWindowManager.setKeyguardOccluded(occluded);
         reset();

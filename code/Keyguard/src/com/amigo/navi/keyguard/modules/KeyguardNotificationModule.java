@@ -75,14 +75,14 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
 	private IStatusBarService mBarService;
 	// Notification type share preference name
 	private static final String NOTIFICATION_TYPE_PREFRENCE = "notification_types";
-	private static HashMap<String, Integer> mImportantNotificationMap = new HashMap<String, Integer>();
+//	private static HashMap<String, Integer> mImportantNotificationMap = new HashMap<String, Integer>();
 	
     private final SparseBooleanArray mUsersAllowingPrivateNotifications = new SparseBooleanArray();
 //    protected int mCurrentUserId = UserHandle.USER_ALL;
     protected DevicePolicyManager mDevicePolicyManager;
 //    private UserManager mUserManager;
     private boolean mShowLockscreenNotifications;
-    private static final String SYSTEMUISHARED_CHANGE = "gn.notification.type.changed";
+//    private static final String SYSTEMUISHARED_CHANGE = "gn.notification.type.changed";
     private static final String SYSTEMUI_NOTIFY_PANEL_STATE_CHANGE = "gn.intent.action.NOTIFY_PANEL_STATE";
     private static final String SYSTEMUI_PACKAGE_NAME = "com.android.systemui";
     private long mLastKeyguardShowTime=0;
@@ -98,7 +98,8 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
 	 * initial the maps early, this is the default type for notifications.
 	 * Add other default types here
 	 * */
-	static {
+  //GIONEE <Amigo_Keyguard>  jiating <2015-05-13> modify for user another method  begin
+/*	static {
 		// Initial Important notification map
 		mImportantNotificationMap.put("android",
 				NotificationType.IMPORTANT.getType());
@@ -113,8 +114,9 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
 		mImportantNotificationMap.put("com.android.systemui",
 				NotificationType.IMPORTANT.getType());
 		// Initial other's
-	}
+	}*/
 	
+    //GIONEE <Amigo_Keyguard>  jiating <2015-05-13> modify for user another method  end
 	private NotificationListenerService mNotificationListener = new NotificationListenerService() {
 		@Override
 		public void onNotificationPosted(StatusBarNotification sbn,
@@ -157,9 +159,9 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
                     mUsersAllowingPrivateNotifications.clear();
                     updateLockscreenNotificationSetting();
                     updateNotifications();
-    			}else if(SYSTEMUISHARED_CHANGE.equals(action)){
+    			}/*else if(SYSTEMUISHARED_CHANGE.equals(action)){
     				onSystemUisharedChanged();
-    			}else if(SYSTEMUI_NOTIFY_PANEL_STATE_CHANGE.equals(action)){
+    			}*/else if(SYSTEMUI_NOTIFY_PANEL_STATE_CHANGE.equals(action)){
     				int state_code = intent.getIntExtra("panel_state", -1);
     				handleCode(state_code);
     			}
@@ -168,7 +170,7 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
         
         mFilter = new IntentFilter();
         mFilter.addAction(DevicePolicyManager.ACTION_DEVICE_POLICY_MANAGER_STATE_CHANGED);
-        mFilter.addAction(SYSTEMUISHARED_CHANGE);
+//        mFilter.addAction(SYSTEMUISHARED_CHANGE);
         mFilter.addAction(SYSTEMUI_NOTIFY_PANEL_STATE_CHANGE);
 	}
 	
@@ -198,7 +200,7 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
 
 	public void init() {
 		if(DebugLog.DEBUG) DebugLog.d(TAG, "init");
-        loadNotificationTypes();
+//        loadNotificationTypes();
         mSettingsObserver.onChange(false); // set up
         mContext.getContentResolver().registerContentObserver(
                 Settings.Secure.getUriFor(Settings.Secure.LOCK_SCREEN_SHOW_NOTIFICATIONS), false,
@@ -965,12 +967,15 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
 		if(DebugLog.DEBUGMAYBE) DebugLog.d(TAG, "isImportantNotification --sbn " +(sbn==null));
 		if (sbn == null)
 			return false;
-		String pkgName = sbn.getPackageName();
-		if(DebugLog.DEBUGMAYBE) DebugLog.d(TAG, "isImportantNotification --sbn...pkgName " +pkgName);
+//		String pkgName = sbn.getPackageName();
+//		if(DebugLog.DEBUGMAYBE) DebugLog.d(TAG, "isImportantNotification --sbn...pkgName " +pkgName);
 
-		if (mImportantNotificationMap.containsKey(pkgName)) {
+		if(sbn.getNotification().priority==Notification.PRIORITY_MAX){
 			return true;
 		}
+		/*if (mImportantNotificationMap.containsKey(pkgName)) {
+			return true;
+		}*/
 		return false;
 	}
 	
@@ -996,15 +1001,15 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
 //    	}
 	}
 
-	private void onSystemUisharedChanged(){
+	/*private void onSystemUisharedChanged(){
 		loadNotificationTypes();
 		updateNotifications();
-	}
+	}*/
 	
 	/**
 	 * Load notification type informations from share preference
 	 * */
-	@SuppressWarnings("unchecked")
+	/*@SuppressWarnings("unchecked")
 	private void loadNotificationTypes() {
 		try {
 			Context friendContext = mContext.createPackageContext("com.android.systemui",Context.CONTEXT_IGNORE_SECURITY);
@@ -1017,7 +1022,7 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
 				java.util.Map.Entry<String, Integer> entry = iterator.next();
 				String pkgName = entry.getKey();
 				if(DebugLog.DEBUGMAYBE) DebugLog.d(TAG, "loadNotificationTypes,pkgName:"+pkgName+"Type="+entry.getValue());
-				if (entry.getValue() == Notification.PRIORITY_MAX /*NotificationType.IMPORTANT.getType()*/) {
+				if (entry.getValue() == Notification.PRIORITY_MAX NotificationType.IMPORTANT.getType()) {
 					mImportantNotificationMap.put(pkgName, NotificationType.IMPORTANT.getType());
 				} else {
 					mImportantNotificationMap.remove(pkgName);
@@ -1026,7 +1031,7 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
 		} catch (NameNotFoundException e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 	
 
 	public void registerCallback(NotificationCallback callBack) {

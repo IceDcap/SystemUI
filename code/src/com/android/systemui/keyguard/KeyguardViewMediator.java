@@ -866,9 +866,9 @@ public class KeyguardViewMediator extends SystemUI {
      * @see android.app.KeyguardManager#exitKeyguardSecurely
      */
     public void verifyUnlock(IKeyguardExitCallback callback) {
+        if (DEBUG) Log.d(TAG, "verifyUnlock  getIsSkylightShown: "+getIsSkylightShown());
         if (getIsSkylightShown()) {return;}
         synchronized (this) {
-            if (DEBUG) Log.d(TAG, "verifyUnlock");
             if (shouldWaitForProvisioning()) {
                 // don't allow this api when the device isn't provisioned
                 if (DEBUG) Log.d(TAG, "ignoring because device isn't provisioned");
@@ -950,6 +950,7 @@ public class KeyguardViewMediator extends SystemUI {
      * This must be safe to call from any thread and with any window manager locks held.
      */
     public void doKeyguardTimeout(Bundle options) {
+        if(DEBUG){Log.d(TAG, "doKeyguardTimeout  options: "+options);}
         mHandler.removeMessages(KEYGUARD_TIMEOUT);
         Message msg = mHandler.obtainMessage(KEYGUARD_TIMEOUT, options);
         mHandler.sendMessage(msg);
@@ -1061,12 +1062,14 @@ public class KeyguardViewMediator extends SystemUI {
      * Dismiss the keyguard through the security layers.
      */
     public void handleDismiss() {
+        if (DEBUG) Log.d(TAG, "handleDismiss  mShowing: "+mShowing+" mOccluded: "+mOccluded);
         if (mShowing && !mOccluded) {
             mStatusBarKeyguardViewManager.dismiss();
         }
     }
 
     public void dismiss() {
+        if(DEBUG){Log.d(TAG, "dismiss isSkylightShown: "+getIsSkylightShown());}
         if (getIsSkylightShown()) {return;}
         mHandler.sendEmptyMessage(DISMISS);
     }
@@ -1180,7 +1183,7 @@ public class KeyguardViewMediator extends SystemUI {
     };
 
     public void keyguardDone(boolean authenticated, boolean wakeup) {
-        if (DEBUG) Log.d(TAG, "keyguardDone(" + authenticated + ")");
+        if (DEBUG) Log.d(TAG, "keyguardDone(" + authenticated + ")"+"  isSkylightShown: "+getIsSkylightShown());
         if (getIsSkylightShown()) {return;}
         EventLog.writeEvent(70000, 2);
         Message msg = mHandler.obtainMessage(KEYGUARD_DONE, authenticated ? 1 : 0, wakeup ? 1 : 0);
@@ -1575,6 +1578,7 @@ public class KeyguardViewMediator extends SystemUI {
     }
 
     public void onBootCompleted() {
+        if(DEBUG){Log.d(TAG, "onBootCompleted");}
         mUpdateMonitor.dispatchBootCompleted();
         readSkylightConfigs();
         synchronized (this) {
@@ -1594,12 +1598,14 @@ public class KeyguardViewMediator extends SystemUI {
     }
 
     public void startKeyguardExitAnimation(long startTime, long fadeoutDuration) {
+        if(DEBUG){Log.d(TAG, "startKeyguardExitAnimation");}
         Message msg = mHandler.obtainMessage(START_KEYGUARD_EXIT_ANIM,
                 new StartKeyguardExitAnimParams(startTime, fadeoutDuration));
         mHandler.sendMessage(msg);
     }
 
     public void onActivityDrawn() {
+        if(DEBUG){Log.d(TAG, "onActivityDrawn");}
         mHandler.sendEmptyMessage(ON_ACTIVITY_DRAWN);
     }
     public ViewMediatorCallback getViewMediatorCallback() {
@@ -1634,6 +1640,7 @@ public class KeyguardViewMediator extends SystemUI {
     }
 
     public void addStateMonitorCallback(IKeyguardStateCallback callback) {
+        if(DEBUG){Log.d(TAG, "addStateMonitorCallback ");}
         synchronized (this) {
             mKeyguardStateCallbacks.add(callback);
             try {

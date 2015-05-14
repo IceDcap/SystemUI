@@ -1019,6 +1019,13 @@ public class NetworkControllerImpl extends BroadcastReceiver
         private SignalStrength mSignalStrength;
         private MobileIconGroup mDefaultIcons;
         private Config mConfig;
+        
+      //signal strength delay 10s feature
+        private static final int MSG_SIGNAL_DELAY = 0;
+        private static long DELAY_TIME = 10000; // 10s
+        private SignalStrength mLastSignalStrength;
+        private SignalStrength mNextSignalStrength;
+        private int mLastSignalLevel;
 
         // TODO: Reduce number of vars passed in, if we have the NetworkController, probably don't
         // need listener lists anymore.
@@ -1377,9 +1384,9 @@ public class NetworkControllerImpl extends BroadcastReceiver
             mCurrentState.connected = hasService() && mSignalStrength != null;
             if (mCurrentState.connected) {
                 if (!mSignalStrength.isGsm() && mConfig.alwaysShowCdmaRssi) {
-                    mCurrentState.level = mSignalStrength.getCdmaLevel();
+                    mLastSignalLevel = mCurrentState.level = mSignalStrength.getCdmaLevel();
                 } else {
-                    mCurrentState.level = mSignalStrength.getLevel();
+                    mLastSignalLevel = mCurrentState.level = mSignalStrength.getLevel();
                 }
             }
             if (mNetworkToIconLookup.indexOfKey(mDataNetType) >= 0) {
@@ -1532,6 +1539,44 @@ public class NetworkControllerImpl extends BroadcastReceiver
                         && ((MobileState) o).airplaneMode == airplaneMode
                         && ((MobileState) o).inetForNetwork == inetForNetwork;
             }
+        }
+        
+        //signal strength delay 10s feature
+        private void compareLevel(final int nowLevel, final SignalStrength signalStrength) {
+            if (DEBUG) {
+                Log.d(TAG, "mLastSignalLevel = " + mLastSignalLevel + "; nowLevel = " + nowLevel);
+            }
+
+            if (mLastSignalLevel < nowLevel || mLastSignalLevel == nowLevel) {
+                mGNHandler.removeMessages(MSG_SIGNAL_DELAY);
+                mLastSignalStrength = signalStrength;
+                updateLevel();
+            } else {
+                mNextSignalStrength = signalStrength;
+
+                if (DEBUG) {
+                    Log.d(TAG, "send message, level = " + nowLevel);
+                }
+                Message msg = mGNHandler.obtainMessage(MSG_SIGNAL_DELAY);
+                mGNHandler.sendMessageDelayed(msg, DELAY_TIME);
+            }
+        }
+        
+        private Handler mGNHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case MSG_SIGNAL_DELAY:
+                        mLastSignalStrength = mNextSignalStrength;
+                        updateLevel();
+                        break;
+                }
+            }
+        };
+        
+        private void updateLevel() {
+            mSignalStrength = mLastSignalStrength;
+            updateTelephony();
         }
     }
 

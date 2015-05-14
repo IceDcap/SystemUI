@@ -180,38 +180,35 @@ public class PlayerManager {
     
     private void createNotification() {
         
-        if(mCurrentMusic != null){
-            if (mNotification == null) {
-                mNotification = new Notification();
-                mNotification.icon = R.drawable.haokan_music_normal;
-                mNotification.when = System.currentTimeMillis();
-                mNotification.flags = Notification.FLAG_ONGOING_EVENT; 
-            }
-            
-            mNotification.tickerText = mCurrentMusic.getDisplayName();
-             
-            if (mNotification.contentView == null) {
-                
-                Intent intent = new Intent(NotificationReceiver.ACTION_MUSIC_CLOSE);
-                PendingIntent pendingIntentClose = PendingIntent.getBroadcast(mApplicationContext, 0, intent, 0);
-
-                Intent intent2 = new Intent(NotificationReceiver.ACTION_PLAYER_OR_PAUSE);
-                PendingIntent pendingIntentPlayerOrPause = PendingIntent.getBroadcast(mApplicationContext, 0, intent2, 0);
-                
-                RemoteViews mRemoteViews = new RemoteViews(mApplicationContext.getPackageName(),
-                        R.layout.haokan_notification_layout);
-                mRemoteViews.setOnClickPendingIntent(R.id.haokan_notification_close, pendingIntentClose);
-                mRemoteViews.setOnClickPendingIntent(R.id.haokan_notification_player_or_pause, pendingIntentPlayerOrPause);
-                mNotification.contentView = mRemoteViews;
-            }
-            
-            mNotification.contentView.setTextViewText(R.id.haokan_main_layout_music, mCurrentMusic.getmMusicName());
-            mNotification.contentView.setTextViewText(R.id.haokan_main_layout_Artist, mCurrentMusic.getmArtist());
-            
-            mNotification.contentView.setImageViewBitmap(R.id.haokan_notification_image,
-                    Common.compBitmap(UIController.getInstance().getCurrentWallpaperBitmap()));
-    
+        if (mCurrentMusic == null) {
+            return;
         }
+        
+        Intent intent = new Intent(NotificationReceiver.ACTION_MUSIC_CLOSE);
+        PendingIntent pendingIntentClose = PendingIntent.getBroadcast(mApplicationContext, 0, intent, 0);
+
+        Intent intent2 = new Intent(NotificationReceiver.ACTION_PLAYER_OR_PAUSE);
+        PendingIntent pendingIntentPlayerOrPause = PendingIntent.getBroadcast(mApplicationContext, 0, intent2, 0);
+        RemoteViews remoteViews = new RemoteViews(mApplicationContext.getPackageName(),
+              R.layout.haokan_notification_layout);
+        remoteViews.setOnClickPendingIntent(R.id.haokan_notification_close, pendingIntentClose);
+        remoteViews.setOnClickPendingIntent(R.id.haokan_notification_player_or_pause, pendingIntentPlayerOrPause);
+        
+        final Notification.Builder builder = new Notification.Builder(mApplicationContext)
+        .setSmallIcon(R.drawable.haokan_music_normal)
+        .setWhen(0)
+        .setShowWhen(false)
+        .setOngoing(true)
+        .setContent(remoteViews)
+        .setAutoCancel(false)
+        .setVisibility(Notification.VISIBILITY_SECRET);
+        
+        remoteViews.setTextViewText(R.id.haokan_main_layout_music, mCurrentMusic.getmMusicName());
+        remoteViews.setTextViewText(R.id.haokan_main_layout_Artist, mCurrentMusic.getmArtist());
+        remoteViews.setImageViewBitmap(R.id.haokan_notification_image,
+                Common.compBitmap(UIController.getInstance().getCurrentWallpaperBitmap()));
+        
+        mNotification = builder.build();
         
     }
     
@@ -244,14 +241,6 @@ public class PlayerManager {
             mMediaPlayer.stop();
         }
         
-//        if (Integer.parseInt(mCurrentMusic.getMusicId()) == mListMusics.size() - 1) {
-//            mCurrentMusic = mListMusics.get(0);
-//        }else {
-//            mCurrentMusic = mListMusics.get(Integer.parseInt(mCurrentMusic.getMusicId()) + 1);
-//        }
-        
-        
-//        getmHkMainLayout().setCurrentMusic(false, null);
     }
     
     public void prev() {
@@ -265,15 +254,6 @@ public class PlayerManager {
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
         }
-
-        
-//        if (Integer.parseInt(mCurrentMusic.getMusicId()) == 0) {
-//            mCurrentMusic = mListMusics.get(mListMusics.size() - 1);
-//        }else {
-//            mCurrentMusic = mListMusics.get(Integer.parseInt(mCurrentMusic.getMusicId()) - 1);
-//        }
-        
-//        getmHkMainLayout().setCurrentMusic(false, null);
     }
     
     public void pause() {
@@ -330,14 +310,7 @@ public class PlayerManager {
     
     private void start() {
         requestAudioFocus();
-//        if (VOLUME_SLOWLY) {
-//            mMediaPlayer.setVolume(0f,0f);
-//            ValueAnimator va = new ValueAnimator();
-//            va.setFloatValues(0f, 1f);
-//            va.setDuration(2000);
-//            va.addUpdateListener(mAnimatorUpdateListener);
-//            va.start();
-//        }
+ 
         if (mState != State.PLAYER) {
             initTimeTask();
         }

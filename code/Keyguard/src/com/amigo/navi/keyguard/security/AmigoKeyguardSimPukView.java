@@ -33,11 +33,13 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amigo.navi.keyguard.DebugLog;
@@ -70,6 +72,7 @@ public class AmigoKeyguardSimPukView extends AmigoKeyguardSimPinPukBaseView {
     private StateMachine mStateMachine = new StateMachine();
     private AlertDialog mRemainingAttemptsDialog;
     private int mSubId;
+    private LinearLayout  mKeyguardBouncerFrame;
 
     KeyguardUpdateMonitorCallback mUpdateMonitorCallback = new KeyguardUpdateMonitorCallback() {
         @Override
@@ -191,7 +194,9 @@ public class AmigoKeyguardSimPukView extends AmigoKeyguardSimPinPukBaseView {
     }
 
     public void resetState() {
+    	 if (DEBUG) Log.d(LOG_TAG, "resetState");
         super.resetState();
+        resetPasswordText(true /* animate */);
         mStateMachine.reset();
     }
 
@@ -217,6 +222,7 @@ public class AmigoKeyguardSimPukView extends AmigoKeyguardSimPinPukBaseView {
         addClickListenerToDeleteButton();
         setPasswordEntry();
         setIgnoreButton();
+        mKeyguardBouncerFrame=(LinearLayout)findViewById(R.id.keyguard_bouncer_frame);
     }
     
     
@@ -523,6 +529,16 @@ public class AmigoKeyguardSimPukView extends AmigoKeyguardSimPinPukBaseView {
 			}
 		});
 	}
+	
+	
+	 @Override
+	    public boolean onInterceptTouchEvent(MotionEvent ev) {
+	    	if(ev.getY()>=mKeyguardBouncerFrame.getTop()){
+	            Log.d("KeyguardPatternUnlockView", "onInterceptTouchEvent.......=");
+	            requestDisallowInterceptTouchEvent(true);
+	        }
+	    	return super.onInterceptTouchEvent(ev);
+	    }
 }
 
 

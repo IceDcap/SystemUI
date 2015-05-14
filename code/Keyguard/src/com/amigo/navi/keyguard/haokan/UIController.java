@@ -6,7 +6,9 @@ import android.animation.AnimatorSet;
 import android.animation.Keyframe;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
+import android.animation.ValueAnimator;
 import android.animation.Animator.AnimatorListener;
+import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +18,8 @@ import android.graphics.Bitmap.Config;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
@@ -110,7 +114,7 @@ public class UIController implements OnTouchlListener{
     
     private float mInfozoneTranslationX = 0f;
     
-    private ObjectAnimator[] infoZoneAnimators = new ObjectAnimator[3];
+    private ObjectAnimator[] infoZoneAnimators = new ObjectAnimator[4];
     
     private boolean mHasMusic = false;
     
@@ -120,13 +124,15 @@ public class UIController implements OnTouchlListener{
     
     private HKWebLayout mWebLayout = null;
     
-    private Bitmap mWebLayoutBackground = null;
     
     private RelativeLayout mArcMenu;
     
     private HKCategoryActivity categoryActivity;
+    private KeyguardSettingsActivity mKeyguardSettingsActivity;
     
     private AmigoKeyguardHostView mAmigoKeyguardHostView;
+    
+    private WakeLock mWakeLock = null;
     
     public RelativeLayout getmArcMenu() {
         return mArcMenu;
@@ -199,6 +205,20 @@ public class UIController implements OnTouchlListener{
     
     }
     
+   
+    
+    public void wakeLockRelease(){
+        if(mWakeLock != null && mWakeLock.isHeld()){
+            mWakeLock.release();
+        }
+    }
+    
+    public void wakeLockAcquire(){
+        if(mWakeLock != null){
+            mWakeLock.acquire(30000);
+        }
+    }
+    
     
     public void showWebView(Context context,String link) {
         
@@ -214,6 +234,13 @@ public class UIController implements OnTouchlListener{
         if (keyguardHostView.indexOfChild(mWebLayout) != -1) {
             keyguardHostView.removeView(mWebLayout);
         }
+        
+        if (mWakeLock == null) {
+            PowerManager powerManager = (PowerManager)context.getApplicationContext().getSystemService(Context.POWER_SERVICE);
+            mWakeLock = powerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "keyguard_webview"); 
+            mWakeLock.setReferenceCounted(false);
+        }
+        wakeLockAcquire();
         
         WebView webView = mWebLayout.getmWebView();
  
@@ -284,7 +311,7 @@ public class UIController implements OnTouchlListener{
     
     public void removeWebView() {
         
-        
+        wakeLockRelease();
         mWebViewShowing = false;
         
         final CaptionsView captionsView = getmCaptionsView();
@@ -314,6 +341,7 @@ public class UIController implements OnTouchlListener{
             public void onAnimationEnd(Animator arg0) {
                 
                 final KeyguardViewHost keyguardHostView = getmKeyguardViewHost();
+
                 if (mWebLayout != null) {
                     mWebLayout.setVisibility(View.GONE);
                     if (keyguardHostView.indexOfChild(mWebLayout) != -1) {
@@ -321,12 +349,8 @@ public class UIController implements OnTouchlListener{
                     }
                 }
                 
-                if (mWebLayoutBackground != null && !mWebLayoutBackground.isRecycled()) {
-                    mWebLayoutBackground.recycle();
-                }
-                
                 mWebView.loadUrl("about:blank");
-                
+  
             }
             
             @Override
@@ -382,7 +406,7 @@ public class UIController implements OnTouchlListener{
             if (mCaptionsView.animatorSet != null) {
                 mCaptionsView.animatorSet.cancel();
             }
-            int len = infoZoneAnimators.length;
+            int len = infoZoneAnimators.length - 1;
             for (int i = 0; i < len; i++) {
                 ObjectAnimator animator = infoZoneAnimators[i];
                 if (animator != null) {
@@ -450,6 +474,9 @@ public class UIController implements OnTouchlListener{
     public void onScreenTurnedOn() {
         if (isScreenOff()) {
             setScreenOff(false);
+            if (mWebViewShowing) {
+                wakeLockAcquire();
+            }
             onScreenTurnedOnAnimation();
         }
     }
@@ -475,6 +502,15 @@ public class UIController implements OnTouchlListener{
                 categoryActivity = null;
             }
         }
+        
+        if (mKeyguardSettingsActivity != null) {
+            if (!mKeyguardSettingsActivity.isDestroyed()) {
+                Log.v(TAG, "mKeyguardSettingsActivity is not destroyed()");
+                mKeyguardSettingsActivity.finish();
+                mKeyguardSettingsActivity = null;
+            }
+        }
+        
         
         onScreenTurnedOffAnimation();
         
@@ -511,14 +547,7 @@ public class UIController implements OnTouchlListener{
         if (wallpaper == null) {
             return;
         }
-        
-        if (getmCurrentWallpaper() != null) {
-            if (getmCurrentWallpaper().getImgId() == wallpaper.getImgId()) {
-                Log.v(TAG, "mCurrentWallpaper.getImgId() == wallpaper.getImgId()  return");
-                return;
-            }
-        }
-        
+ 
         setmCurrentWallpaper(wallpaper);
         
         PlayerManager playerManager = PlayerManager.getInstance();
@@ -569,9 +598,10 @@ public class UIController implements OnTouchlListener{
     }
     
     public void onLongPress(float motionDowmX,float motionDowmY) {
-        isArcExpanding = true;
         
-        if (mArcLayout.animatorRunning() || mArcLayout.isExpanded()) {
+        
+        if (mArcLayout.animatorRunning() || mArcLayout.isExpanded()
+                || getAmigoKeyguardHostView().getScrollY() != 0) {
             return;
         }
         
@@ -608,7 +638,7 @@ public class UIController implements OnTouchlListener{
         
         mArcLayout.refreshItemState();
         
-
+        isArcExpanding = true;
         mArcLayout.startShow();
 
     }
@@ -661,7 +691,9 @@ public class UIController implements OnTouchlListener{
             mInfozone.setAlpha(1f);
             mCaptionsView.setAlpha(1f);
             mPlayerLayout.setAlpha(1f);
-            mKeyguardNotificationView.setAlpha(1f);
+            if (!mCaptionsView.isContentVisible()) {
+                mKeyguardNotificationView.setAlpha(1f);
+            }
         }
          
         if (!isSecure) {
@@ -671,6 +703,9 @@ public class UIController implements OnTouchlListener{
         mKeyguardWallpaperContainer.onKeyguardScrollChanged(top, maxBoundY,isSecure);
     }
     
+    public void onSecutityViewScrollChanged(int top,int maxBoundY){
+    	mKeyguardWallpaperContainer.onSecutityViewScrollChanged(top, maxBoundY);
+    }
     
     public void hideKeyguardNotification() {
 
@@ -730,6 +765,15 @@ public class UIController implements OnTouchlListener{
 
             @Override
             public void run() {
+                
+                int len = infoZoneAnimators.length;
+                for (int i = 0; i < len; i++) {
+                    ObjectAnimator animator = infoZoneAnimators[i];
+                    if (animator != null) {
+                        animator.cancel();
+                    }
+                }
+                
 
                 final AmigoKeyguardInfoZone infoZone = getmInfozone();
 
@@ -869,18 +913,30 @@ public class UIController implements OnTouchlListener{
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.play(animationUp).with(animationDate).with(animationWeek).with(alphaWeek);
 
-        if (hkCaptionsView != null) {
-            int titleFormTranslationY = hkCaptionsView.getAnimFormTranslationY();
-            PropertyValuesHolder alpha = PropertyValuesHolder.ofFloat("alpha", 0f, 1f);
-            PropertyValuesHolder pvhTranslationY = PropertyValuesHolder.ofFloat("translationY", titleFormTranslationY, hkCaptionsView.getInitialTranslationY()); 
-            ObjectAnimator animationTitle = ObjectAnimator.ofPropertyValuesHolder(hkCaptionsView, alpha, pvhTranslationY).setDuration(333);  
-            animationTitle.setStartDelay(733);
-            animatorSet.play(animationTitle);
-        }
-        
         infoZoneAnimators[0] = animationUp;
         infoZoneAnimators[1] = animationWeek;
         infoZoneAnimators[2] = animationDate;
+        if (hkCaptionsView != null) {
+            int titleFormTranslationY = hkCaptionsView.getAnimFormTranslationY();
+          
+            PropertyValuesHolder pvhTranslationY = PropertyValuesHolder.ofFloat("translationY", titleFormTranslationY, hkCaptionsView.getInitialTranslationY()); 
+            ObjectAnimator animationTitle = ObjectAnimator.ofPropertyValuesHolder(hkCaptionsView, pvhTranslationY).setDuration(333);  
+         
+            final View view = hkCaptionsView.getTitleContainer();
+            
+            animationTitle.setStartDelay(733);
+            
+            animationTitle.addUpdateListener(new AnimatorUpdateListener() {
+                
+                @Override
+                public void onAnimationUpdate(ValueAnimator arg0) {
+                    view.setAlpha(arg0.getAnimatedFraction());
+                }
+            });
+            infoZoneAnimators[3] = animationTitle;
+            animatorSet.play(animationTitle);
+        }
+        
         if (getmCurrentWallpaper() != null) {
             if (getmCurrentWallpaper().getMusic() != null) {
                 ObjectAnimator playerButtonAlpha = ObjectAnimator.ofFloat(mPlayerLayout, "alpha", 1f).setDuration(200);
@@ -1045,8 +1101,10 @@ public class UIController implements OnTouchlListener{
         this.mScreenOff = mScreenOff;
     }
      
-    
-    
+ 
+    public void setKeyguardSettingsActivity(KeyguardSettingsActivity mKeyguardSettingsActivity) {
+        this.mKeyguardSettingsActivity = mKeyguardSettingsActivity;
+    }
     public AmigoKeyguardHostView getAmigoKeyguardHostView() {
         return mAmigoKeyguardHostView;
     }
@@ -1058,7 +1116,9 @@ public class UIController implements OnTouchlListener{
         DebugLog.d(TAG,"save wallpaper setOnClickListener wallpaper url:" + wallpaper.getImgUrl());
         WallpaperDB wallpaperDB = WallpaperDB.getInstance(context.getApplicationContext());
         boolean success = false;
+        DebugLog.d(TAG,"save wallpaper setOnClickListener wallpaper 1");
         Wallpaper oldWallpaper = wallpaperDB.queryPicturesDownLoadedLock();
+        DebugLog.d(TAG,"save wallpaper setOnClickListener wallpaper oldWallpaper:" + oldWallpaper);
         if(oldWallpaper != null){
             oldWallpaper.setShowOrder(oldWallpaper.getRealOrder());
             wallpaperDB.updateShowOrder(oldWallpaper);
@@ -1067,6 +1127,7 @@ public class UIController implements OnTouchlListener{
             clearAllLock();
         }
         wallpaper.setLocked(true);
+        DebugLog.d(TAG,"save wallpaper setOnClickListener wallpaper wallpaper id:" + wallpaper.getImgId());
         success = WallpaperDB.getInstance(context.getApplicationContext()).updateLock(wallpaper);
         DebugLog.d(TAG,"save wallpaper setOnClickListener success:" + success);
         delNotTodayWallpaper(context);

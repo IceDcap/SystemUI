@@ -124,6 +124,8 @@
     <style name="skylightTheme" parent="@android:style/Theme.Black.NoTitleBar">  
          <item name="android:windowAnimationStyle">@style/noAnimation</item>  
      </style>  
+     
+
    
     <style name="noAnimation">  
         <item name="android:activityOpenEnterAnimation">@null</item>  

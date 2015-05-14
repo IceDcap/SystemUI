@@ -44,6 +44,7 @@ import android.widget.FrameLayout;
 import com.android.internal.widget.LockPatternUtils;
 import com.android.keyguard.KeyguardHostView.OnDismissAction;
 import com.android.keyguard.KeyguardSecurityContainer.SecurityCallback;
+import com.android.keyguard.KeyguardSecurityContainer.SecurityViewRemoveCallback;
 import com.android.keyguard.KeyguardSecurityModel.SecurityMode;
 
 import java.io.File;
@@ -507,6 +508,10 @@ public abstract class KeyguardViewBase extends FrameLayout implements SecurityCa
     }
     public boolean passwordViewIsForzen(){
     	return mSecurityContainer.isFrozen();
+    }
+    
+    public void setSecurityViewRemoveCallback(SecurityViewRemoveCallback  callback){
+    	mSecurityContainer.setSecurityViewRemoveCallback(callback);
     }
 
 }

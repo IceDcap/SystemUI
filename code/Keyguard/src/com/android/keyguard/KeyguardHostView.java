@@ -384,9 +384,6 @@ public class KeyguardHostView extends KeyguardViewBase {
             if (mSlidingChallengeLayout != null) {
                 mSlidingChallengeLayout.setChallengeInteractive(!isFullScreen);
             }
-            if(!(securityMode==SecurityMode.SimPin|| securityMode == SecurityMode.SimPuk)){
-                KeyguardViewHostManager.getInstance().startFingerIdentify();
-            }
         }
         return finished;
     }

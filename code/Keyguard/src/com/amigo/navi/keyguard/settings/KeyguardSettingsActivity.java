@@ -83,7 +83,7 @@ public class KeyguardSettingsActivity extends AmigoActivity {
 //		mActionBar.hide();
 		Intent intent = getIntent();
 		if (KeyguardSettings.CLEARNOTIFICATION.equals(intent.getStringExtra(KeyguardSettings.CLEARNOTIFICATION))){
-			cancelNotification();
+			KeyguardSettings.cancelNotification(getApplicationContext());
 		}
 		
         if (Build.VERSION.SDK_INT >= 21) {
@@ -389,7 +389,7 @@ public class KeyguardSettingsActivity extends AmigoActivity {
     
     private void saveConnectState(boolean connect){
     	if (connect){
-    		cancelNotification();
+    		KeyguardSettings.cancelNotification(getApplicationContext());
     	}
     	changeWallpaperUpdateData(connect);
 		connectNet = connect;
@@ -447,13 +447,5 @@ public class KeyguardSettingsActivity extends AmigoActivity {
 		networkDialog.setCanceledOnTouchOutside(false);
 	}   
     
-    private void cancelNotification() {
-        Log.v(TAG, "cancelNotification");
-        NotificationManager mNotificationManager;
-        mNotificationManager = (NotificationManager)getApplicationContext().getSystemService("notification");
-        try {
-            mNotificationManager.cancel(KeyguardSettings.NOTIFICATION_ID_SETTING);
-        } catch (Exception e) {
-        }
-    }
+
 }

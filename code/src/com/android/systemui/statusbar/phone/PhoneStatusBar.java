@@ -1006,7 +1006,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 		final TextView  networkSpeedTextView = (TextView) mNetworkSpeedView.findViewById(R.id.networkspeed);
 		GnFontHelper.resetAmigoFont(newConfig, mCarrierLabel, emptyTextView, percentageTextView,batteryTextView,networkSpeedTextView);
 		FontSizeUtils.updateFontSize(percentageTextView, R.dimen.gn_status_bar_clock_size);
-		FontSizeUtils.updateFontSize(batteryTextView, R.dimen.gn_status_bar_clock_size);
 		FontSizeUtils.updateFontSize(networkSpeedTextView, R.dimen.gn_status_bar_clock_size);
     }
     //GIONEE <wujj> <2015-01-24> modify for CR01438299 end
@@ -4182,16 +4181,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }*/
         //jiating modify for keyguard end
     }
-    
-  //GIONEE <Amigo_Keyguard>  jiating <2015-05-12> modify for click emgenceButton or show alarmClock on KeyguradView  begin
-    public void setOccluded(boolean occluded) {
-    	if(occluded){
-            mKeyguardViewHost.setVisibility(View.GONE);
-    	}else{
-    		 mKeyguardViewHost.setVisibility(View.VISIBLE);
-    	}
-    }
-    //GIONEE <Amigo_Keyguard>  jiating <2015-05-12> modify for click emgenceButton or show alarmClock on KeyguradView  end
+
     public boolean isCollapsing() {
         return mNotificationPanel.isCollapsing();
     }

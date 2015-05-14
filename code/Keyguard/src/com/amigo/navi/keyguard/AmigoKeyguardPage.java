@@ -90,7 +90,6 @@ public class AmigoKeyguardPage extends RelativeLayout {
 		addNotificationClickTipView();
 		addNotificationView();
 
-		addArcLayout();
 
 		addFingerIdentifyTip();
 		
@@ -211,24 +210,6 @@ public class AmigoKeyguardPage extends RelativeLayout {
         module.init();
 	}
 	
-	private void addArcLayout() {
-	    
-	    
-	    RelativeLayout relativeLayout = new RelativeLayout(getContext());
-	    ArcLayout arcLayout = new ArcLayout(getContext());
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
-        relativeLayout.addView(arcLayout, params);
-	    
-        params = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-        addView(relativeLayout, params);
-        relativeLayout.setVisibility(GONE);
-        relativeLayout.setBackgroundColor(0x10000000);
-        UIController.getInstance().setmArcMenu(relativeLayout);
- 
-    }
 	
     public Rect getNotificationContentRect() {
         Rect rect = new Rect(0, 0, 0, 0);

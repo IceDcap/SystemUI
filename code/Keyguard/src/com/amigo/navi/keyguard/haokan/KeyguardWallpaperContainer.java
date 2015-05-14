@@ -32,7 +32,7 @@ public class KeyguardWallpaperContainer extends FrameLayout {
     float cx,cy;
     
     Bitmap mBitmap = null;
-    private float mBlind=1;
+    private float mBlind=0;
     private boolean mIsSecure;
     
     public KeyguardWallpaperContainer(Context context) {
@@ -69,6 +69,7 @@ public class KeyguardWallpaperContainer extends FrameLayout {
     
     public void reset() {
         mTop = mScreenHeight;
+		mBlind=0;
         invalidate();
     }
     
@@ -108,5 +109,13 @@ public class KeyguardWallpaperContainer extends FrameLayout {
         }
         postInvalidate();
     }
+   
+   public void onSecutityViewScrollChanged(int top,int maxBoundY) {
+	   mIsSecure=false;
+       int bitmapHeight = mBitmap.getHeight();
+       mTop = (int) (mScreenHeight - top * (bitmapHeight / (float)maxBoundY));
+       mBlind= (float)1-top/maxBoundY;
+       postInvalidate();
+   }
     
 }

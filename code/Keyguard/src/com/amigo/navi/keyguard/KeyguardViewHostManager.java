@@ -20,6 +20,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.widget.RelativeLayout;
 import android.widget.FrameLayout.LayoutParams;
 
 import com.amigo.navi.keyguard.AmigoKeyguardBouncer.KeyguardBouncerCallback;
@@ -33,6 +34,7 @@ import com.amigo.navi.keyguard.haokan.analysis.HKAgent;
 import com.amigo.navi.keyguard.haokan.db.WallpaperDB;
 import com.amigo.navi.keyguard.haokan.entity.Wallpaper;
 import com.amigo.navi.keyguard.haokan.entity.WallpaperList;
+import com.amigo.navi.keyguard.haokan.menu.ArcLayout;
 import com.amigo.navi.keyguard.network.ImageLoader;
 import com.amigo.navi.keyguard.network.theardpool.ThreadUtil;
 import com.amigo.navi.keyguard.picturepage.adapter.HorizontalAdapter;
@@ -102,6 +104,7 @@ public class KeyguardViewHostManager {
         mKeyguardViewHost.setOnViewTouchListener(mViewTouchListener);
         initThreadUtil();
         initHorizontalListView();
+        addKeyguardArcMenu();
         mFingerIdentifyManager=new FingerIdentifyManager(context);
     }
   
@@ -144,6 +147,7 @@ public class KeyguardViewHostManager {
     public void show(Bundle options){
 //        initSkylightHost();
         mKeyguardViewHost.show(options);
+        mFingerIdentifyManager.readFingerprintSwitchValue();
         
     }
     
@@ -542,6 +546,31 @@ public class KeyguardViewHostManager {
             }
         });
     }
+    
+    
+    private void addKeyguardArcMenu() {
+
+        
+        RelativeLayout keyguardArcMenu = new RelativeLayout(mContext);
+        ArcLayout arcLayout = new ArcLayout(mContext);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+        keyguardArcMenu.addView(arcLayout, params);
+        
+        params = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+        mKeyguardViewHost.addView(keyguardArcMenu, params);
+        keyguardArcMenu.setVisibility(View.GONE);
+        keyguardArcMenu.setBackgroundColor(0x10000000);
+        UIController.getInstance().setmArcMenu(keyguardArcMenu);
+        
+        
+    }
+    
+    
+    
+    
     public void showBouncerOrKeyguardDone(){
         if ( mKeyguardViewHost!=null) {
             mKeyguardViewHost.showBouncerOrKeyguardDone(); 
