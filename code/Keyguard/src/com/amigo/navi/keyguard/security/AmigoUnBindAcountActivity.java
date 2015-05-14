@@ -51,7 +51,6 @@ public class AmigoUnBindAcountActivity  extends AmigoActivity{
 	private void setActionBar(){
 		  AmigoActionBar actionBar = getAmigoActionBar();
 
-	      // 设置true，ActionBar会出现返回箭头，点击执行finish()。
 	      actionBar.setDisplayHomeAsUpEnabled(true);
 	      actionBar.setDisplayShowCustomEnabled(true);
 	      actionBar.setTitle(R.string.forget_password);
