@@ -9,24 +9,18 @@ package com.android.systemui.gionee.cc;
 
 import com.android.systemui.R;
 import com.android.systemui.gionee.GnFontHelper;
+import com.android.systemui.gionee.GnStorageHepler;
 import com.android.systemui.gionee.cc.camera.GnBlindShootActivity;
 import com.android.systemui.gionee.cc.fakecall.GnFakeCallHelper;
 import com.android.systemui.gionee.cc.qs.policy.GnTorchController;
 import com.android.systemui.gionee.cc.torch.GnTorchHelper;
-import com.android.systemui.gionee.cc.util.GnVibrateUtil;
-import com.android.systemui.statusbar.policy.FlashlightController;
 
-import android.app.ActivityManager;
-import android.app.ActivityOptions;
-import android.content.ActivityNotFoundException;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
-import android.os.Bundle;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -37,7 +31,6 @@ import android.view.View.OnLongClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.SimpleAdapter.ViewBinder;
 import android.widget.TextView;
 
 import com.android.systemui.gionee.GnYouJu;
@@ -84,6 +77,8 @@ public class GnControlCenterShortcut extends LinearLayout implements
     private final static String CAMERA_CLS = "com.android.camera.CameraLauncher";
     
     private static final String AMIGO_SYSTEM_UI_CC = "Amigo_SystemUI_CC";
+    
+    private static final int NOTIFICATON_ID = 95766219;
 
     public GnControlCenterShortcut(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -218,12 +213,30 @@ public class GnControlCenterShortcut extends LinearLayout implements
     @Override
     public boolean onLongClick(View v) {
         if (v == mCamera) {
-            if (mGnTorchController.isCameraAvailable()) {
+            boolean isSpaceAvai = GnStorageHepler.isSpaceAvai();
+            if (mGnTorchController.isCameraAvailable() && isSpaceAvai) {
                 GnYouJu.onEvent(mContext, AMIGO_SYSTEM_UI_CC, "mCamera_longClicked");
                 // GnVibrateUtil.vibrate(mContext);
                 Intent intent = new Intent(mContext, GnBlindShootActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mContext.startActivity(intent);
+            } else if (!isSpaceAvai) {
+                NotificationManager notificationManager = (NotificationManager) mContext
+                        .getSystemService(Context.NOTIFICATION_SERVICE);
+
+                CharSequence tickerText = getResources().getString(R.string.gn_camera_blind_shoot_fail);
+                CharSequence contentTitle = getResources().getString(R.string.gn_camera_blind_shoot_fail);
+                CharSequence contentText = getResources().getString(R.string.gn_camera_blind_shoot_mem_full);
+
+                Notification.Builder builder = new Notification.Builder(mContext);
+                Notification notification = builder.setContentTitle(contentTitle)
+                        .setContentText(contentText)
+                        .setTicker(tickerText)
+                        .setSmallIcon(R.drawable.gn_sc_contact_pic)
+                        .build();
+                notification.flags = (Notification.FLAG_AUTO_CANCEL);
+                notificationManager.cancel(NOTIFICATON_ID);
+                notificationManager.notify(NOTIFICATON_ID, notification);
             }
         }
         

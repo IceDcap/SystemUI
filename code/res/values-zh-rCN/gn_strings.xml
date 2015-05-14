@@ -20,8 +20,10 @@
     <string name="gn_sc_fake_call">虚拟来电</string>
 
     <!-- Control center shotcut camera -->
-    <string name="gn_camera_blind_shoot_success" >拍照成功</string>
-    <string name="gn_camera_blind_shoot_open" >点击可查看您的图片</string>
+    <string name="gn_camera_blind_shoot_success">拍照成功</string>
+    <string name="gn_camera_blind_shoot_open">点击可查看您的图片</string>
+    <string name="gn_camera_blind_shoot_fail">拍照失败</string>
+    <string name="gn_camera_blind_shoot_mem_full">存储空间不足</string>
 
     <!-- Control center shotcut fake call -->
     <string name="gn_fc_cancel_phone">取消来电</string>

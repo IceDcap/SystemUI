@@ -20,8 +20,10 @@
     <string name="gn_sc_fake_call">FakeCall</string>
 
     <!-- Control center shotcut camera -->
-    <string name="gn_camera_blind_shoot_success" >Shoot success</string>
-    <string name="gn_camera_blind_shoot_open" >Click to view your picture</string>
+    <string name="gn_camera_blind_shoot_success">Shoot success</string>
+    <string name="gn_camera_blind_shoot_open">Click to view your picture</string>
+    <string name="gn_camera_blind_shoot_fail">Shoot fail</string>
+    <string name="gn_camera_blind_shoot_mem_full">Memory full</string>
 	
     <!-- Control center shotcut fake call -->
     <string name="gn_fc_cancel_phone">Cancel the call</string>
