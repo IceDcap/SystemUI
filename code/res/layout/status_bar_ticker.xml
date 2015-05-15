@@ -25,25 +25,27 @@
 
     <ImageSwitcher android:id="@+id/tickerIcon"
         android:layout_width="@dimen/status_bar_icon_size"
-        android:layout_height="@dimen/status_bar_icon_size"
+        android:layout_height="@dimen/gn_status_bar_icon_size"
         android:layout_marginEnd="4dip"
+        android:scaleType="centerInside"
+        android:layout_gravity="center_vertical"
         >
         <com.android.systemui.statusbar.AnimatedImageView
             android:layout_width="@dimen/status_bar_icon_size"
-            android:layout_height="@dimen/status_bar_icon_size"
-            android:scaleType="center"
+            android:layout_height="@dimen/gn_status_bar_icon_size"
+            android:scaleType="centerInside"
             />
         <com.android.systemui.statusbar.AnimatedImageView
             android:layout_width="@dimen/status_bar_icon_size"
-            android:layout_height="@dimen/status_bar_icon_size"
-            android:scaleType="center"
+            android:layout_height="@dimen/gn_status_bar_icon_size"
+            android:scaleType="centerInside"
             />
     </ImageSwitcher>
     <com.android.systemui.statusbar.phone.TickerView android:id="@+id/tickerText"
         android:layout_width="0dip"
         android:layout_weight="1"
         android:layout_height="wrap_content"
-        android:paddingTop="2dip"
+        android:layout_gravity="center_vertical"
         android:paddingEnd="10dip">
         <TextView
             android:textAppearance="@style/TextAppearance.StatusBar.PhoneTicker"
