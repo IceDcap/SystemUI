@@ -1654,6 +1654,7 @@ public class KeyguardViewMediator extends SystemUI {
     
     
     private void showSkylightIfNeed() {
+        if(!SkylightHost.isSkylightSizeExist()){return;}
         mHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -1667,14 +1668,13 @@ public class KeyguardViewMediator extends SystemUI {
     }
     
     private void showSkylight() {
+        if(!SkylightHost.isSkylightSizeExist()){return;}
         synchronized (this) {
             boolean isLockDisabled = mLockPatternUtils.isLockScreenDisabled();
             if (isLockDisabled || !isShowing()) {
                 Bundle options = new Bundle();
                 options.putBoolean(AmigoKeyguardHostView.KEY_LOCK_BY_SKYLIGHT, true);
-                if(SkylightHost.isSkylightSizeExist()){
                     doKeyguardLocked(options);
-                }
             }
         }
         if(!mOccluded){

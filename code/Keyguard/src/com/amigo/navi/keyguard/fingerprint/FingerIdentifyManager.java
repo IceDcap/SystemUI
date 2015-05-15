@@ -76,11 +76,26 @@ public class FingerIdentifyManager {
         if (manager == null) {
             return false;
         }
+        if (!mFingerprintSwitchOpen) {
+            return false;
+        }
+        boolean isSecure = manager.isSecure();
+        if (!isSecure) {
+            return false;
+        }
         boolean isSkylightShown = manager.getIsSkylightShown();
+        if (isSkylightShown) {
+            return false;
+        }
         boolean isKeyguardShown = manager.isShowingAndNotOccluded();
+        if (!isKeyguardShown) {
+            return false;
+        }
         boolean isSimRequired = manager.needsFullscreenBouncer();
-        
-        return mFingerprintSwitchOpen&&!isSkylightShown && isKeyguardShown && !isSimRequired;
+        if (isSimRequired) {
+            return false;
+        }
+        return true;
     }
     
     public void readFingerprintSwitchValue(){
@@ -206,30 +221,34 @@ public class FingerIdentifyManager {
     };
 
     private void onFingerNoMatch(int reason) {
-        if (reason == 0) {
+        if (reason == 2) {// cancel&exception
+            return;
+        } else if (reason == 1) {// timeout
+            startIdentifyIfNeed();
+            
+        } else if (reason == 0) {
             DebugLog.d(LOG_TAG, "onFingerNoMatch mIdentifyFailedTimes: " + mIdentifyFailedTimes);
-
-            boolean isSecureFrozen = KeyguardViewHostManager.getInstance().passwordViewIsForzen();
-            if (mIdentifyFailedTimes < 2&&!isSecureFrozen) {
-                mIdentifyFailedTimes++;
-                boolean isAtHomePosition = KeyguardViewHostManager.getInstance().isAmigoHostYAtHomePostion();
-                if (isAtHomePosition) {
-                    KeyguardViewHostManager.getInstance().shakeFingerIdentifyTip();
-                } else {
-                    KeyguardViewHostManager.getInstance().fingerPrintFailed();
-                }
-            } else {
-                mIdentifyFailedTimes = 0;
-                KeyguardViewHostManager.getInstance().scrollToUnlockHeightByOther(true);
-            }
-            VibatorUtil.amigoVibrate(mContext, VibatorUtil.LOCKSCREEN_UNLOCK_CODE_ERROR,
-                    VibatorUtil.UNLOCK_ERROR_VIBRATE_TIME);
-            startIdentifyIfNeed();
-        } else if (reason == 1) {//timeout&exception
-            startIdentifyIfNeed();
-        } else if (reason == 2) {//cancel
-
+            fingerMatchFail();
         }
+    }
+
+    private void fingerMatchFail() {
+        boolean isSecureFrozen = KeyguardViewHostManager.getInstance().passwordViewIsForzen();
+        if (mIdentifyFailedTimes < 2 && !isSecureFrozen) {
+            mIdentifyFailedTimes++;
+            boolean isAtHomePosition = KeyguardViewHostManager.getInstance().isAmigoHostYAtHomePostion();
+            if (isAtHomePosition) {
+                KeyguardViewHostManager.getInstance().shakeFingerIdentifyTip();
+            } else {
+                KeyguardViewHostManager.getInstance().fingerPrintFailed();
+            }
+        } else {
+            mIdentifyFailedTimes = 0;
+            KeyguardViewHostManager.getInstance().scrollToUnlockHeightByOther(true);
+        }
+        VibatorUtil.amigoVibrate(mContext, VibatorUtil.LOCKSCREEN_UNLOCK_CODE_ERROR,
+                VibatorUtil.UNLOCK_ERROR_VIBRATE_TIME);
+        startIdentifyIfNeed();
     }
     
     private void onFingerIdentify() {

@@ -291,9 +291,6 @@ public class KeyguardViewHostManager {
     }
 
     private void handleShowSkylight() {
-        if (!SkylightHost.isSkylightSizeExist()) {
-            return;
-        }
 
         if (SkylightUtil.getIsHallOpen(mContext)) {
             return;
