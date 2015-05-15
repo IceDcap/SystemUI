@@ -613,14 +613,14 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
     }
     
     
-    @Override
+ /*   @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
     	if(ev.getY()>=mForgetButton.getTop()){
             Log.d("KeyguardPatternUnlockView", "onInterceptTouchEvent.......=");
             requestDisallowInterceptTouchEvent(true);
         }
     	return super.onInterceptTouchEvent(ev);
-    }
+    }*/
     
     
 }

@@ -193,7 +193,7 @@ public class AmigoMSimCarrierLayout extends LinearLayout {
         for (int i = 0; i < mSlotCount; i++) {
             int subId=getSubIdBySubIndex(i);
             mSimState[i] = mUpdateMonitor.getSimState(subId);
-            mStatusMode[i] = getStatusForIccState(mSimState[i]);
+            mStatusMode[i] = getStatusModeForState(mSimState[i]);
             mDataNetType[i] = mPhone.getNetworkType(subId);
         }
         mCarrierText = new String[4];
@@ -237,7 +237,7 @@ public class AmigoMSimCarrierLayout extends LinearLayout {
                 if (isValidSlotId(slotId)) {
                     mServiceState[slotId] = state;
                     mDataNetType[slotId] = mPhone.getNetworkType(subId);
-                    mCarrierText[slotId] = updateOperatorText(slotId, subId).toString();
+                    mCarrierText[slotId] = getCarrierTextForOperator(slotId, subId).toString();
                     DebugLog.d(LOG_TAG, "onServiceStateChanged state: " + state.getRoaming() + "  networkType: "
                             + mDataNetType[slotId]);
                     refreshViews();
@@ -250,7 +250,7 @@ public class AmigoMSimCarrierLayout extends LinearLayout {
                 DebugLog.d(LOG_TAG, "onDataConnectionStateChanged networkType: " + networkType + " slotId: " + slotId);
                 if (isValidSlotId(slotId)) {
                     mDataNetType[slotId] = networkType;
-                    mCarrierText[slotId] = updateOperatorText(slotId, subId).toString();
+                    mCarrierText[slotId] = getCarrierTextForOperator(slotId, subId).toString();
                     refreshViews();
                 }
             }
@@ -260,7 +260,7 @@ public class AmigoMSimCarrierLayout extends LinearLayout {
                 super.onDataActivity(direction);
                 if (isValidSlotId(slotId)) {
                     mDataNetType[slotId] = mPhone.getNetworkType(subId);
-                    mCarrierText[slotId] = updateOperatorText(slotId, subId).toString();
+                    mCarrierText[slotId] = getCarrierTextForOperator(slotId, subId).toString();
                     refreshViews();
                     DebugLog.d(LOG_TAG, "onDataActivity direction: " + direction + "  networkType: " + mDataNetType[slotId]
                             + " slotId: " + slotId);
@@ -272,7 +272,7 @@ public class AmigoMSimCarrierLayout extends LinearLayout {
             public void onSignalStrengthsChanged(SignalStrength signalStrength) {
                 super.onSignalStrengthsChanged(signalStrength);
                 mDataNetType[slotId] = mPhone.getNetworkType(subId);
-                mCarrierText[slotId] = updateOperatorText(slotId, subId).toString();
+                mCarrierText[slotId] = getCarrierTextForOperator(slotId, subId).toString();
                 DebugLog.d(LOG_TAG, "onSignalStrengthsChanged slotId: " + slotId + "  networkType: " + mDataNetType[slotId]);
                 refreshViews();
             }
@@ -300,13 +300,12 @@ public class AmigoMSimCarrierLayout extends LinearLayout {
             DebugLog.d(LOG_TAG, "updateCarrierText, invalidate slotId=" + slotId);
             return;
         }
-        DebugLog.d(LOG_TAG, "updateCarrierText, simState=" + simState + " subId=" + subId + " slotId: " + slotId);
 
         mSimState[slotId] = simState;
         mDataNetType[slotId] = mPhone.getDataNetworkType(subId);
         CharSequence text = getCarrierTextForSimState(slotId, subId, simState);
         mCarrierText[slotId] = text.toString();
-        DebugLog.d(LOG_TAG, "slotId: " + slotId + "  carrierText: " + text);
+        DebugLog.d(LOG_TAG, "updateCarrierText, simState=" + simState + " subId=" + subId + " slotId: " + slotId+ "  carrierText: " + text);
         refreshViews();
     }
 
@@ -319,7 +318,7 @@ public class AmigoMSimCarrierLayout extends LinearLayout {
      */
     private CharSequence getCarrierTextForSimState(int slotId, int subId, IccCardConstants.State simState) {
         CharSequence carrierText = "";
-        StatusMode status = getStatusForIccState(simState);
+        StatusMode status = getStatusModeForState(simState);
 
         mStatusMode[slotId] = status;
         switch (status) {
@@ -328,7 +327,7 @@ public class AmigoMSimCarrierLayout extends LinearLayout {
                 carrierText = getResources().getString(R.string.no_service);
                 mStatusMode[slotId] = StatusMode.NetworkLocked;
             } else {
-                carrierText = updateOperatorText(slotId, subId);
+                carrierText = getCarrierTextForOperator(slotId, subId);
             }
             break;
 
@@ -348,7 +347,7 @@ public class AmigoMSimCarrierLayout extends LinearLayout {
             carrierText = getResources().getString(R.string.no_sim_card);
             break;
         }
-        DebugLog.d(LOG_TAG, "getCarrierTextForSimState statusMode: " + status + "  carrierText: " + carrierText
+        DebugLog.d(LOG_TAG, "getCarrierTextForSimState statusMode: " + status+" state: "+simState + "  carrierText: " + carrierText
                 + "  slotId: " + slotId);
         return carrierText;
     }
@@ -454,11 +453,11 @@ public class AmigoMSimCarrierLayout extends LinearLayout {
      * Determine the current status of the lock screen given the SIM state and
      * other stuff.
      */
-    private StatusMode getStatusForIccState(IccCardConstants.State simState) {
+    private StatusMode getStatusModeForState(IccCardConstants.State simState) {
         // Since reading the SIM may take a while, we assume it is present until
         // told otherwise.
         if (simState == null) {
-            return StatusMode.SimUnknown;
+            return StatusMode.SimMissing;
         }
 
         final boolean missingAndNotProvisioned = !KeyguardUpdateMonitor.getInstance(mContext).isDeviceProvisioned()
@@ -498,7 +497,7 @@ public class AmigoMSimCarrierLayout extends LinearLayout {
         return StatusMode.SimMissing;
     }
 
-    private String updateOperatorText(int slotId, int subId) {
+    private String getCarrierTextForOperator(int slotId, int subId) {
         String operatorName = "";
         if (mServiceState[slotId] != null) {
             mDataNetType[slotId] = getNWTypeByPriority(mServiceState[slotId].getVoiceNetworkType(),
@@ -506,11 +505,11 @@ public class AmigoMSimCarrierLayout extends LinearLayout {
             DebugLog.d(LOG_TAG, "getNWTypeByPriority networkTye: " + mDataNetType[slotId]);
         }
         IccCardConstants.State state = mSimState[slotId];
-        if (state != IccCardConstants.State.ABSENT) {
-            if(mIsCustomMade){
+        if (state != IccCardConstants.State.ABSENT && state != IccCardConstants.State.UNKNOWN) {
+            if (mIsCustomMade) {
                 String operator = mPhone.getNetworkOperatorForSubscription(subId);
-                OperatorMode mode=getOperatorMode(operator);
-                DebugLog.d(LOG_TAG, "updateDataNetType  operator: " + operator );
+                OperatorMode mode = getOperatorMode(operator);
+                DebugLog.d(LOG_TAG, "updateDataNetType  operator: " + operator + "  state: " + state);
                 switch (mode) {
                 case CMCC:
                     operatorName = getCmccOperatorName(slotId, subId);
@@ -525,16 +524,14 @@ public class AmigoMSimCarrierLayout extends LinearLayout {
                     operatorName = getResources().getString(R.string.no_service);
                     break;
                 default:
-                    
+
                     break;
                 }
             }
-           
+
         } else {
             operatorName = getResources().getString(R.string.no_sim_card);
         }
-        DebugLog.d(LOG_TAG, "updateDataNetType  operatorName: " + operatorName + " slotId: "
-                + slotId);
         return operatorName;
     }
 
@@ -670,21 +667,32 @@ public class AmigoMSimCarrierLayout extends LinearLayout {
             if (!noSimCard.equals(carrierText)) {
                 isAllSimCardDismiss = false;
             }
-            if (!noService.equals(carrierText) && !noSimCard.equals(carrierText)) {
+            if (!noService.equals(carrierText)&&!noSimCard.equals(carrierText)) {
                 isAllSimCardNoService = false;
             } else if (noService.equals(carrierText)) {
                 noServiceIndex = i;
             }
         }
         if (isAllSimCardDismiss) {
-            mCarrierView[0].setVisibility(View.VISIBLE);
+            refreshCarrierVisibleOne(0);
             return;
         }
 
         if (isAllSimCardNoService) {
-            mCarrierView[noServiceIndex].setVisibility(View.VISIBLE);
+            refreshCarrierVisibleOne(noServiceIndex);
+            return;
         }
 
+    }
+    
+    private void refreshCarrierVisibleOne(int index){
+        for(int i = 0; i < mSlotCount; i++){
+            mCarrierView[i].setVisibility(View.GONE);
+            if(i<mSlotCount-1){
+                mCarrierDivider[i].setVisibility(View.GONE);
+            }
+        }
+        mCarrierView[index].setVisibility(View.VISIBLE);
     }
 
     public static int getFirstSubInSlot(int slotId) {

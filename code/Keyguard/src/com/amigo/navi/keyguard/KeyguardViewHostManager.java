@@ -797,4 +797,15 @@ public class KeyguardViewHostManager {
     public boolean passwordViewIsForzen() {
         return mKeyguardViewHost.passwordViewIsForzen();
     }
+	
+	
+	    public void reset(boolean occluded){
+    	 if (occluded) {
+  	        mKeyguardViewHost.setVisibility(View.GONE);      
+         } else {
+         	mKeyguardViewHost.setVisibility(View.VISIBLE);
+         	showBouncerOrKeyguard();
+         }
+    	
+    }
 }

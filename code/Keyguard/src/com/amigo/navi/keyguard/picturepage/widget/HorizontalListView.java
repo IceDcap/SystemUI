@@ -384,7 +384,6 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         return child;
     }
     
-    //
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         return false;//never accept touch event by parent dispatch

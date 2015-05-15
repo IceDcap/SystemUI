@@ -308,14 +308,14 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
 				});
 	}
     
-    @Override
+ /*   @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         if(ev.getY()>=mPasswordEntry.getTop()){
            Log.d("KeyguardPatternUnlockView", "onInterceptTouchEvent.......=");
            requestDisallowInterceptTouchEvent(true);
        }
         return super.onInterceptTouchEvent(ev);
-    }
+    }*/
 
     @Override
     protected boolean onRequestFocusInDescendants(int direction, Rect previouslyFocusedRect) {

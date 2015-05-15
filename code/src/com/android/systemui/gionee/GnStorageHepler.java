@@ -7,6 +7,8 @@ import android.os.StatFs;
 import android.util.Log;
 
 public class GnStorageHepler {
+    
+    private static final String TAG = "GnStorageHepler";
 
     private static final String STORAGE_SDCARD0_DIR = File.separator + "storage" + File.separator + "sdcard0";
     private static final String STORAGE_SDCARD1_DIR = File.separator + "storage" + File.separator + "sdcard1";
@@ -14,7 +16,7 @@ public class GnStorageHepler {
 
     public static boolean isSpaceAvai() {
         long remainedSize = getRemainedSize() / 1204 / 1024;
-        Log.d("hwt", "remainedSize = " + remainedSize);
+        Log.d(TAG, "remainedSize = " + remainedSize);
         if (remainedSize > 2) {
             return true;
         } else {

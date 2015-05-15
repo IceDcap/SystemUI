@@ -229,14 +229,14 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
 				});
 	}
 
-    @Override
+  /*  @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         if(ev.getY()>=mLockPatternView.getTop()){
            Log.d("KeyguardPatternUnlockView", "onInterceptTouchEvent.......=");
            requestDisallowInterceptTouchEvent(true);
        }
         return super.onInterceptTouchEvent(ev);
-    }
+    }*/
     
     @Override
     public boolean onTouchEvent(MotionEvent ev) {

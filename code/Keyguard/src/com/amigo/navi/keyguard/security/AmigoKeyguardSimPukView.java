@@ -531,14 +531,14 @@ public class AmigoKeyguardSimPukView extends AmigoKeyguardSimPinPukBaseView {
 	}
 	
 	
-	 @Override
+/*	 @Override
 	    public boolean onInterceptTouchEvent(MotionEvent ev) {
 	    	if(ev.getY()>=mKeyguardBouncerFrame.getTop()){
 	            Log.d("KeyguardPatternUnlockView", "onInterceptTouchEvent.......=");
 	            requestDisallowInterceptTouchEvent(true);
 	        }
 	    	return super.onInterceptTouchEvent(ev);
-	    }
+	    }*/
 }
 
 

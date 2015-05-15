@@ -539,11 +539,9 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 			case MotionEvent.ACTION_UP:
 			case MotionEvent.ACTION_CANCEL:
 				 if(DebugLog.DEBUGMAYBE){
-					DebugLog.d(LOG_TAG, "ddddd=========:"+ onInterceptActionUp(event));
+					DebugLog.d(LOG_TAG, "ddddd=========:");
 				}
-				if(onInterceptActionUp(event)) {
-					return true;
-				}
+				onInterceptActionUp(event);
 				break;
 				default:
 					break;
@@ -551,10 +549,11 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 		 if(DebugLog.DEBUGMAYBE){
 			 Log.d("jings", "onInterceptTouchEvent return "+mScrollDirection );
 		 }
-	    if(mOnViewTouchListener != null){
+	  /*  if(mOnViewTouchListener != null){
 	        mOnViewTouchListener.onInterceptTouch(event);
-	    }
-		return (mScrollDirection != DIRECTION_NONE);
+	    }*/
+//		return (mScrollDirection != DIRECTION_NONE);
+		 return super.onInterceptTouchEvent(event);
 	}
 	
     private void gotoSleepIfDoubleTap(MotionEvent event) {
@@ -590,18 +589,17 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 		}
 	}
 	
-	private boolean onInterceptActionUp(MotionEvent event) {
+	private void onInterceptActionUp(MotionEvent event) {
 		mScrollDirectionConfirmed = false;
 //		mShouldAddLauncherShot = true;
-		if(mScrollDirection == DIRECTION_UP) {
+	/*	if(mScrollDirection == DIRECTION_UP) {
 			int x = (int) event.getX();
 			int y = (int) event.getY();
 			if(!isTouchedInViewport(x, y)) {
 				return true;
 			}
-		}
+		}*/
         releaseVelocityTracker();
-		return false;
 	}
 	
 	private void confirmScrollDirection(float currY, float currX) {

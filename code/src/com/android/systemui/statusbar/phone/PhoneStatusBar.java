@@ -680,8 +680,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         PanelHolder holder = (PanelHolder) mStatusBarWindow.findViewById(R.id.panel_holder);
         mStatusBarView.setPanelHolder(holder);
 
-        mKeyguardViewHost = (KeyguardViewHost) mStatusBarWindow.findViewById(R.id.keyguardViewHost);
-        mSkylightHost = (SkylightHost) mStatusBarWindow.findViewById(R.id.skylightHost);
+       
         mNotificationPanel = (NotificationPanelView) mStatusBarWindow.findViewById(
                 R.id.notification_panel);
         mNotificationPanel.setStatusBar(this);
@@ -4956,8 +4955,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
         return hasNavi;
     }
+    
     // jiating modify for keyguard begin
-    public KeyguardViewHost getmKeyguardViewHost() {
+/*    public KeyguardViewHost getmKeyguardViewHost() {
         return mKeyguardViewHost;
     }
     public SkylightHost getSkylightHost() {
@@ -4966,7 +4966,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     public void setmKeyguardViewHost(KeyguardViewHost mKeyguardViewHost) {
         this.mKeyguardViewHost = mKeyguardViewHost;
-    }
+    }*/
 
     public void gotoBouncer() {
         setBarState(StatusBarState.SHADE_LOCKED);
