@@ -31,9 +31,11 @@ public class PlayerButton extends View {
     private Drawable mDrawableNormal;
     
     
-    
     private Paint mPaintCirle;
     
+    public float getMaxTranslationX() {
+        return Common.getScreenWidth(getContext()) - getLeft();
+    }
     
     public void setState(State mState) {
         this.mState = mState;
@@ -70,6 +72,8 @@ public class PlayerButton extends View {
         
         mPaintCirle.setStrokeWidth(mProgressStroke); 
         mPaintCirle.setColor(Color.RED);
+        
+
     }
 
     @Override

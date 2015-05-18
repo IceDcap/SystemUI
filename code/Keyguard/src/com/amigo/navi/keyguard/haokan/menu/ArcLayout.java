@@ -125,6 +125,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
         addArcHomeButton(arcHomeButton);
         controller = UIController.getInstance();
         controller.setmArcLayout(this);
+        
     }
     
 
@@ -314,7 +315,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
         PropertyValuesHolder pvhscaleY = PropertyValuesHolder.ofFloat("scaleY", 1.0f, 0f);
         PropertyValuesHolder pvhalpha = PropertyValuesHolder.ofFloat("alpha", 1.0f, 0f);
         
-        ObjectAnimator Alpha = ObjectAnimator.ofFloat(child.getmTextView(), "alpha", 0.001f).setDuration(10); 
+        ObjectAnimator Alpha = ObjectAnimator.ofFloat(child.getmTextView(), "alpha", 0f).setDuration(10); 
         
         ObjectAnimator rotation = ObjectAnimator.ofFloat(child, "rotation", -180f); 
         
@@ -325,14 +326,14 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
         set.setInterpolator(interpolator);
         set.setDuration(280);
  
-        
+        child.getmImageView().setClickable(false);
         set.play(Alpha);
         set.play(translation).with(rotation).after(Alpha);
         set.addListener(new AnimatorListener() {
             
             @Override
             public void onAnimationStart(Animator arg0) {
-                 
+                
             }
             
             @Override
@@ -342,12 +343,14 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
             
             @Override
             public void onAnimationEnd(Animator arg0) {
-                child.getmTextView().setVisibility(GONE);
+//                child.getmTextView().setVisibility(GONE);
                 if (isLast) {
                     mShrinkAnimatorRunning = false;
                     mExpanded = false;
                     controller.showKeyguardNotification();
                 }
+                
+                child.getmImageView().setClickable(true);
             }
             
             @Override
@@ -533,12 +536,11 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
     
  
     /**
-     * 点击一个选项
      * 
      * @param clickView
      * @param arcItemButton
      */
-    private void bindClickItemAnimator(final View clickView, final ArcItemButton arcItemButton) {
+    private void bindClickItemAnimator(final View clickView, final ArcItemButton arcItemButton,final ArcMenuAnimatorListener listener) {
         
         mClicKItemAnimatorRunning = true;
         AnimatorSet set = new AnimatorSet();
@@ -554,7 +556,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
         
         PropertyValuesHolder scaleXNarrow = PropertyValuesHolder.ofFloat("scaleX", 1.0f, 0f);
         PropertyValuesHolder scaleYNarrow = PropertyValuesHolder.ofFloat("scaleY", 1.0f, 0f);
-        PropertyValuesHolder alphaFadeOut = PropertyValuesHolder.ofFloat("alpha", 0.001f);
+        PropertyValuesHolder alphaFadeOut = PropertyValuesHolder.ofFloat("alpha", 0f);
         List<Animator> list = new ArrayList<Animator>();
         
         clickView.setClickable(false);
@@ -599,6 +601,10 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
             
             @Override
             public void onAnimationEnd(Animator arg0) {
+                
+                if (listener != null) {
+                    listener.onAnimatorEnd();
+                }
 
                 controller.hideArcMenu();
                 mArcHomeButton.getmImageView().setScaleX(0.4f);
@@ -711,7 +717,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                            
                             bindClickItemFeekBackAnimator(arcItemButton, true, R.string.haokan_arc_menu_favorite_ok);
                         }
-                    }, 500);
+                    }, 300);
                     
                 }else {
 
@@ -765,13 +771,13 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
     @Override
     public void onClick(View view) {
         
-        if (animatorRunning()) {
+        if (animatorRunning() || !isExpanded()) {
             return;
         }
 
         Log.v(TAG, "onClick  view = " + view.getId());
         removeCallbacks(mCloseMenuRunnable);
-        int viewId = view.getId();
+        final int viewId = view.getId();
         
         final ArcItemButton arcItemButton = mArcItems.get(viewId);
         
@@ -792,20 +798,34 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                 DebugLog.d(TAG,"onLongPress wallpaper lock:" + mWallpaper.isLocked());
                 onClickLocked(arcItemButton);
                 break;
-            case 2:
-                controller.startCategoryActivity(getContext().getApplicationContext());
-                break;
-            case 3:
-                controller.startSettingsActivity(getContext().getApplicationContext());
-                break;
             default:
                 break;
         }
         
         VibatorUtil.amigoVibrate(getContext().getApplicationContext(),
                 VibatorUtil.LOCKSCREEN_STORYMODE_CLICK, 20);
-        bindClickItemAnimator(view, arcItemButton);
+        bindClickItemAnimator(view, arcItemButton, new ArcMenuAnimatorListener() {
+            
+            @Override
+            public void onAnimatorEnd() {
+                switch (viewId) {
+                    case 2:
+                        controller.startCategoryActivity(getContext().getApplicationContext());
+                        break;
+                    case 3:
+                        controller.startSettingsActivity(getContext().getApplicationContext());
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        });
         
+    }
+    
+    interface ArcMenuAnimatorListener{
+        void onAnimatorEnd();
     }
     
  
@@ -864,7 +884,8 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
             
             @Override
             public void onAnimationEnd(Animator arg0) {
-                setVisibility(GONE);
+//                setVisibility(GONE);
+                UIController.getInstance().hideArcMenu();
                 arcItemButton.getmImageView().setClickable(true);
                 arcItemButton.setTranslationX(0);
                 arcItemButton.setTranslationY(0);

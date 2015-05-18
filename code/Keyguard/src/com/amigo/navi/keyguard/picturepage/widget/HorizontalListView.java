@@ -558,12 +558,13 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         mNextPage = reviseFinalPage(mNextPage);
         DebugLog.d(TAG, "testscroll snapToPage mNextPage = " + mNextPage);
         int scrollToX = page * mChildWidth; 
-        smoothScrollTo(scrollToX, 0);
-        if (mTouchlListener != null) {
+        if (mTouchlListener != null && getScrollX() != scrollToX) {
 //            if (Math.abs(motionX - mDownMotionX) > 2 * mTouchSlop) {
-                mTouchlListener.OnTouchUp();
+            mTouchlListener.OnTouchUp();
 //            }
         }
+        smoothScrollTo(scrollToX, 0);
+        
     }
     
     protected int getFinalScrollX(int scrollX) {

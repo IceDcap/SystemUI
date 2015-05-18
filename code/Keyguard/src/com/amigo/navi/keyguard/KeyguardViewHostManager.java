@@ -53,6 +53,7 @@ import com.android.keyguard.ViewMediatorCallback;
 import com.android.keyguard.KeyguardHostView.OnDismissAction;
 import com.android.internal.widget.LockPatternUtils;
 import com.gionee.fingerprint.IGnIdentifyCallback;
+import android.os.SystemProperties;
 
 public class KeyguardViewHostManager {
     private static final String TAG = "KeyguardViewHostManager";
@@ -85,8 +86,11 @@ public class KeyguardViewHostManager {
     private long timeOnKeyguard = -1;
     private long timeOnKeyguardStart = -1;
     private boolean IsClearLock = false;
+    private static boolean isSuppotFinger=false;
     
-    public KeyguardViewHostManager(Context context,KeyguardViewHost host,SkylightHost skylight,LockPatternUtils lockPatternUtils,ViewMediatorCallback callback){
+
+
+	public KeyguardViewHostManager(Context context,KeyguardViewHost host,SkylightHost skylight,LockPatternUtils lockPatternUtils,ViewMediatorCallback callback){
         DebugLog.d(TAG,"KeyguardViewHostManager");
         initVersionName(context);
         KeyguardDataModelInit.getInstance(context).initData();
@@ -106,6 +110,8 @@ public class KeyguardViewHostManager {
         initHorizontalListView();
         addKeyguardArcMenu();
         mFingerIdentifyManager=new FingerIdentifyManager(context);
+        isSuppotFinger=SystemProperties.get("ro.gn.fingerprint.support").equals("FPC");
+        Log.i(TAG,"isSuppotFinger....isSuppotFinger="+isSuppotFinger);
     }
   
 	private void initVersionName(Context context) {
@@ -805,4 +811,13 @@ public class KeyguardViewHostManager {
          }
     	
     }
+	    
+	    public static boolean isSuppotFinger() {
+	    	Log.i(TAG,"isSuppotFinger....isSuppotFinger="+isSuppotFinger);
+			return isSuppotFinger;
+		}
+
+		public static void setSuppotFinger(boolean isSuppotFinger) {
+			KeyguardViewHostManager.isSuppotFinger = isSuppotFinger;
+		}
 }

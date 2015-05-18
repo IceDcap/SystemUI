@@ -35,7 +35,8 @@ public class NavilSettings {
 	public static final String UPDATE_WALLPAPER_DATE = "wallpaper_date";
 	public static final String DATA_VERSION = "data_version";
 	public static final String IS_DATA_INIT = "data_init";
-	
+	public static final String DATABASE_VERSION = "database_ver";
+
 	public static void setVersionName(String versionName ){
 		sVersionName = versionName;
 	}

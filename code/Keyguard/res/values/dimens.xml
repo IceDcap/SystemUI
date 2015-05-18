@@ -204,7 +204,7 @@
     <!-- <dimen name="kg_infozone_margin_bottom">10dp</dimen> -->
     <dimen name="kg_infozone_margin_bottom">26dp</dimen>
     <dimen name="kg_infozone_margin_top_at_desk">12dp</dimen>
-    <dimen name="widget_left_margin">16dp</dimen>
+    <dimen name="widget_left_margin">15dp</dimen>
     <dimen name="kg_infozone_height">79dp</dimen>
     <dimen name="zzzzz_gn_navil_edge_swipe_region_size">48dp</dimen>
     
@@ -301,8 +301,8 @@
 	
 	<dimen name="haokan_main_layout_marginbottom">93dp</dimen>
 	<dimen name="haokan_music_player_button_size">30dp</dimen>
-	<dimen name="haokan_music_player_button_marginleft">16dp</dimen>
-	<dimen name="haokan_music_player_button_margintop">28dp</dimen>
+	<dimen name="haokan_music_player_button_marginleft">13dp</dimen>
+	<dimen name="haokan_music_player_button_margintop">30dp</dimen>
 	<dimen name="haokan_music_player_button_stroke">2dp</dimen>
 	<dimen name="haokan_music_player_button_padding">1.5dp</dimen>
 	<dimen name="haokan_music_player_musicname_textsize">14dp</dimen>
@@ -346,7 +346,9 @@
     <dimen name="menuHomeButtonSize">80dp</dimen>
 	<dimen name="haokan_arcmenu_radius">113dp</dimen>
 	<dimen name="haokan_arcmenu_radius_max">123dp</dimen>
+	<!-- 
 	<dimen name="haokan_infozone_max_translationX">33dp</dimen>
+	 -->
 	<dimen name="haokan_circle_imageview_radius">49dp</dimen>
 	<dimen name="haokan_wallpaper_alpha_offset">50dp</dimen>
 	<dimen name="haokan_webview_close_height">48dp</dimen>
@@ -357,6 +359,7 @@
 	<dimen name="keyguard_infozone_time_textsize">55dp</dimen>
 	<dimen name="keyguard_infozone_week_textsize">20dp</dimen>
 	<dimen name="keyguard_infozone_date_textsize">14dp</dimen>
+	<dimen name="keyguard_infozone_max_translationX">33dp</dimen>
 	
 	
 			

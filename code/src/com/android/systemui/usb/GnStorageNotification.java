@@ -264,11 +264,15 @@ public class GnStorageNotification extends SystemUI {
                 OTG_UNMOUNTED_NOTIFICATION_ID
            	);
             mAsyncEventHandler.sendMessageDelayed(new Message(),NOTIFICATION_KEEP_TIME);
-        } else if(newState.equals(Environment.MEDIA_BAD_REMOVAL) || newState.equals(Environment.MEDIA_REMOVED)){
+        } else if(newState.equals(Environment.MEDIA_REMOVED)){
             cancelOtgNotification(OTG_PREPARE_NOTIFICATION_ID);
             cancelOtgNotification(OTG_MOUNTED_NOTIFICATION_ID);
-            mAsyncEventHandler.sendMessageDelayed(new Message(),NOTIFICATION_KEEP_TIME);
-        }
+            mAsyncEventHandler.sendMessageDelayed(new Message(),NOTIFICATION_KEEP_TIME);            
+	    } else if(newState.equals(Environment.MEDIA_BAD_REMOVAL) ){
+	        cancelOtgNotification(OTG_PREPARE_NOTIFICATION_ID);
+	        cancelOtgNotification(OTG_MOUNTED_NOTIFICATION_ID);
+	        cancelOtgNotification(OTG_UNMOUNTED_NOTIFICATION_ID);	        	        
+	    }
     }
 
     public void showOtgNotification(int titleId, int messageId, int icon, int notificationid) {

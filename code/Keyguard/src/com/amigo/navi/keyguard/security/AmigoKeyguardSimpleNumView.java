@@ -210,7 +210,7 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
     private void setForgetPasswordButton() {
 	   	 mForgetButton = (TextView) this.findViewById(R.id.forget_password);
 	     if(mForgetButton == null) return;
-	     if(getTimeOutSize()>=5){
+	     if(KeyguardViewHostManager.isSuppotFinger() && getTimeOutSize()>=5){
 	    	 mForgetButton.setVisibility(View.VISIBLE);
 	     }
          mForgetButton.setOnClickListener(new View.OnClickListener() {
@@ -354,7 +354,9 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
 	}
 
 	private void unLockDone() {
-		mForgetButton.setVisibility(View.INVISIBLE);
+		if(KeyguardViewHostManager.isSuppotFinger()){
+			mForgetButton.setVisibility(View.INVISIBLE);
+		}
 		mCallback.reportUnlockAttempt(true);
 		if(mCallback.getFingerPrintResult()!=KeyguardSecurityContainer.FINGERPRINT_SUCCESS){
 			mCallback.dismiss(true);
@@ -368,7 +370,9 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
 		if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "onUnlockFail failReason :"+failReason);
 		
 		if(failReason == UNLOCK_FAIL_REASON_TIMEOUT) {
-			mForgetButton.setVisibility(View.VISIBLE);
+			if(KeyguardViewHostManager.isSuppotFinger()){
+				mForgetButton.setVisibility(View.VISIBLE);
+			}
 			 failShake(UNLOCK_FAIL_REASON_TIMEOUT);
 			long deadline = mKeyguardUpdateMonitor.getDeadline();
 			if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "onUnlockFail deadline :"+deadline);
@@ -429,7 +433,11 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
     }
 	
 	  private void displayDefaultSecurityMessage() {
-	    	mSecurityMessageDisplay.setMessage(R.string.keyguard_password_enter_code, true);
+		  if(KeyguardViewHostManager.isSuppotFinger()){
+	    		mSecurityMessageDisplay.setMessage(R.string.keyguard_password_enter_code_finger, true);
+	    	}else{ 		
+	    		mSecurityMessageDisplay.setMessage(R.string.keyguard_password_enter_code, true);
+	    	}
 	    }
 
 
@@ -613,14 +621,14 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
     }
     
     
- /*   @Override
+    @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
     	if(ev.getY()>=mForgetButton.getTop()){
             Log.d("KeyguardPatternUnlockView", "onInterceptTouchEvent.......=");
             requestDisallowInterceptTouchEvent(true);
         }
     	return super.onInterceptTouchEvent(ev);
-    }*/
+    }
     
     
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.amigo.navi.keyguard.haokan.HKWebLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.amigo.navi.keyguard.haokan.WebLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
@@ -17,10 +17,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentTop="true"
-            android:translationY="512dp" />
-        <!-- 
             android:layerType="software"
-         -->
+            android:translationY="512dp" />
+        
     </FrameLayout>
 
     <RelativeLayout
@@ -39,4 +38,4 @@
             android:gravity="center" />
     </RelativeLayout>
 
-</com.amigo.navi.keyguard.haokan.HKWebLayout>
+</com.amigo.navi.keyguard.haokan.WebLayout>

@@ -48,7 +48,7 @@ import org.w3c.dom.Text;
 
 import com.android.keyguard.R;
 
-public class HKCategoryActivity extends Activity{
+public class CategoryActivity extends Activity{
     
     private static final String TAG = "HKCategoryActivity";
     
@@ -138,7 +138,7 @@ public class HKCategoryActivity extends Activity{
     
     private void setBlurBackground() {
         this.getWindow().setBackgroundDrawable(null);
-
+//        Bitmap bitmap = UIController.getInstance().getCurrentWallpaperBitmap(this);
         Bitmap bitmap = UIController.getInstance().getCurrentWallpaperBitmap();
         mWindowBackgroud = KeyguardWallpaper.getBlurBitmap(bitmap.copy(Bitmap.Config.ARGB_8888, true), 5.0f);
         if (mWindowBackgroud == null) {
@@ -159,7 +159,7 @@ public class HKCategoryActivity extends Activity{
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        
+        NicePicturesInit.getInstance(this.getApplicationContext()).registerData();
         if (mWindowBackgroud != null && !mWindowBackgroud.isRecycled()) {
             mWindowBackgroud.recycle();
         }
@@ -187,7 +187,7 @@ public class HKCategoryActivity extends Activity{
         mGridView.setLayoutAnimation(getAnimationController());
         mGridView.setAdapter(mCategoryAdapter);
         mCategoryAdapter.notifyDataSetChanged();
-
+        startTextViewAnimation();
     }
     
     protected LayoutAnimationController getAnimationController() {  
@@ -200,25 +200,7 @@ public class HKCategoryActivity extends Activity{
         animation.setDuration(300);  
         set.addAnimation(animation);  
         set.setInterpolator(new DecelerateInterpolator());
-        set.setAnimationListener(new AnimationListener() {
-            
-            @Override
-            public void onAnimationStart(Animation arg0) {
-                
-                startTextViewAnimation();
-                
-            }
-            
-            @Override
-            public void onAnimationRepeat(Animation arg0) {
-                
-            }
-            
-            @Override
-            public void onAnimationEnd(Animation arg0) {
-                
-            }
-        });
+ 
         LayoutAnimationController controller = new LayoutAnimationController(set, 0.2f);  
         controller.setOrder(LayoutAnimationController.ORDER_NORMAL);  
         return controller;  
@@ -293,9 +275,13 @@ public class HKCategoryActivity extends Activity{
 //            }else {
 //                holder.title.setText(category.getTypeName());
 //            }
-            
+            holder.title.setText("");
             if(!TextUtils.isEmpty(category.getNameID())){
-            	holder.title.setText(getResId(category.getNameID()));
+            	try {
+                	holder.title.setText(getResId(category.getNameID()));
+				} catch (Exception e) {
+		            DebugLog.d(TAG,"getView setText error:" + e.getStackTrace());
+				}
             }else{
             	holder.title.setText(category.getTypeName());
             }
@@ -304,7 +290,7 @@ public class HKCategoryActivity extends Activity{
                 
                 @Override
                 public void onClick(View arg0) {
-                    holder.image.bindClickAnimator();
+//                    holder.image.bindClickAnimator();
                     startAlphaAnim(holder.favorite, !category.isFavorite());
                     onItemClick(position);
                 }

@@ -19,9 +19,11 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 
+import com.amigo.navi.keyguard.DebugLog;
 import com.android.keyguard.R;
 
 
@@ -77,7 +79,7 @@ public class CircleImageView extends ImageView {
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setColor(0xff000000);
-        
+        mPaint.setAlpha(150);
         mRadius = getResources().getDimensionPixelSize(R.dimen.haokan_circle_imageview_radius);
     }
 
@@ -154,17 +156,7 @@ public class CircleImageView extends ImageView {
         setup();
     }
  
-
-//    @Override
-//    public void setColorFilter(ColorFilter cf) {
-//        if (cf == mColorFilter) {
-//            return;
-//        }
-//
-//        mColorFilter = cf;
-//        mBitmapPaint.setColorFilter(mColorFilter);
-//        invalidate();
-//    }
+ 
 
     private Bitmap getBitmapFromDrawable(Drawable drawable) {
         if (drawable == null) {
@@ -238,6 +230,27 @@ public class CircleImageView extends ImageView {
 
         mBitmapShader.setLocalMatrix(mShaderMatrix);
     }
+    
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        int action = event.getActionMasked();
+        switch (action) {
+            case MotionEvent.ACTION_DOWN:
+                AnimatorRunning = true;
+                invalidate();
+                break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                AnimatorRunning = false;
+                invalidate();
+                break;
+                default:
+                    break;
+        }
+        
+        return super.onTouchEvent(event);
+    }
+    
     
     public void bindClickAnimator() {
         ValueAnimator animator = ValueAnimator.ofFloat(150, 0).setDuration(100);  

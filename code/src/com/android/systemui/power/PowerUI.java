@@ -16,6 +16,7 @@
 
 package com.android.systemui.power;
 
+import amigo.provider.AmigoSettings;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -62,6 +63,8 @@ public class PowerUI extends SystemUI {
     private long mScreenOffTime = -1;
     private GnNotificationService mNotificationService = null;
 
+    private final String AMIGO_LOW_BATTERY_ALERT_VALUE = "low_battery_alert_value";
+
     public void start() {
         mPowerManager = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
         mScreenOffTime = mPowerManager.isScreenOn() ? -1 : SystemClock.elapsedRealtime();
@@ -77,6 +80,11 @@ public class PowerUI extends SystemUI {
         resolver.registerContentObserver(Settings.Global.getUriFor(
                 Settings.Global.LOW_POWER_MODE_TRIGGER_LEVEL),
                 false, obs, UserHandle.USER_ALL);
+
+        resolver.registerContentObserver(
+                AmigoSettings.getUriFor(AMIGO_LOW_BATTERY_ALERT_VALUE), false,
+                amigoObs, UserHandle.USER_ALL);
+
         updateBatteryWarningLevels();
         mReceiver.init();
     }
@@ -84,6 +92,13 @@ public class PowerUI extends SystemUI {
     private void setSaverMode(boolean mode) {
         mWarnings.showSaverMode(mode);
     }
+
+    ContentObserver amigoObs = new ContentObserver(mHandler) {
+        @Override
+        public void onChange(boolean selfChange) {
+            updateBatteryWarningLevels();
+        }
+    };
 
     void updateBatteryWarningLevels() {
 		// GIONEE <wujj> <2015-03-19> modify for CR01455754 begin
@@ -95,6 +110,10 @@ public class PowerUI extends SystemUI {
         final ContentResolver resolver = mContext.getContentResolver();
         int defWarnLevel = mContext.getResources().getInteger(
                 com.android.internal.R.integer.config_lowBatteryWarningLevel);
+		
+        defWarnLevel = AmigoSettings.getInt(resolver,
+                AMIGO_LOW_BATTERY_ALERT_VALUE, defWarnLevel);
+       
         int warnLevel = Settings.Global.getInt(resolver,
                 Settings.Global.LOW_POWER_MODE_TRIGGER_LEVEL, defWarnLevel);
         if (warnLevel == 0) {
@@ -325,7 +344,7 @@ public class PowerUI extends SystemUI {
     	
     	boolean shouldNotify() {
     		boolean notify = false;
-    		if ((level == 15 || level == 4) && !isNotified) {
+    		if ((level == mLowBatteryReminderLevels[0]  || level == 4) && !isNotified) {
     			notify = true;
     			isNotified = notify;
     		}
@@ -333,7 +352,7 @@ public class PowerUI extends SystemUI {
     	}
     	
     	void updateState() {
-    		if ((level != 15 && level != 4) ) {
+    		if ((level != mLowBatteryReminderLevels[0]  && level != 4) ) {
     			isNotified = false;
     		}
     	}

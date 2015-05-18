@@ -23,8 +23,6 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
- 
-import com.amigo.navi.keyguard.haokan.CaptionSpannableString.OnClickLinkListener;
 import com.amigo.navi.keyguard.haokan.analysis.HKAgent;
 import com.amigo.navi.keyguard.haokan.entity.Caption;
 import com.amigo.navi.keyguard.haokan.entity.Wallpaper;
@@ -65,6 +63,8 @@ public class CaptionsView extends LinearLayout {
     private boolean mClickLink = false;
     
     private Rect mLinkDrawablebounds = new Rect();
+    
+    AnimatorSet animatorSet;
     
     public void setContentVisible(boolean visible) {
         if (mContentVisible != visible) {
@@ -165,7 +165,8 @@ public class CaptionsView extends LinearLayout {
         mTitleLeftView = (RelativeLayout) findViewById(R.id.haokan_captions_title_left);
         mTitleRightView = (RelativeLayout) findViewById(R.id.haokan_captions_title_right);
         
-        mTextViewTitle.setOnClickListener(new OnClickListener() {
+//        mTextViewTitle.setOnClickListener(new OnClickListener() {
+        mTitleContainer.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -246,19 +247,16 @@ public class CaptionsView extends LinearLayout {
         return mTextViewTitle;
     }
     
-    
-//    float mTranslationX;
-    
     float mScale;
     float mAlpha;
     /**
      * 
      * @param translationX
      */
-    public void move(float translationX) {
+    public void onHorizontalMove(float translationX) {
         
         
-        // 1.整体向左上角收缩
+         
         float percent = translationX / (Common.getScreenWidth(getContext().getApplicationContext())/2);
         float x = (float) (percent * 0.2);
         float scale = 1 - x;
@@ -266,7 +264,7 @@ public class CaptionsView extends LinearLayout {
         setScaleX(scale);
         setScaleY(scale);
         
-        //2.移动
+     
         float t = -translationX / 10;
         mTitleParentView.setTranslationX(t);
         mTitleLeftView.setTranslationX(-t);
@@ -278,13 +276,13 @@ public class CaptionsView extends LinearLayout {
         if (alpha <= 1f && alpha >= 0f) {
             mAlpha = alpha;
         }
-        //3.透明度变化
+         
         setAlpha(mAlpha);
 
     }
     
    
-    AnimatorSet animatorSet;
+    
     public void OnTouchUpAnimator() {
         
         animRuning = true;
@@ -302,13 +300,6 @@ public class CaptionsView extends LinearLayout {
         PropertyValuesHolder pvhtime= PropertyValuesHolder.ofKeyframe(View.TRANSLATION_X,  
                 
                 Keyframe.ofFloat(0f, infoZoneTranslationX),  
-//                Keyframe.ofFloat(.22859f, -3.3f * 3f),  
-//                Keyframe.ofFloat(.399828f, 1.4f * 3f), 
-//                Keyframe.ofFloat(.571061f, -0.6f * 3f), 
-//                Keyframe.ofFloat(.714041f, 0f), 
-//                Keyframe.ofFloat(.857020f, -0.6f * 3f),
-//                Keyframe.ofFloat(1f, 0f)   
-                
                 
                 Keyframe.ofFloat(.22859f, -4f * 3f),  
                 Keyframe.ofFloat(.399828f, 3f * 3f), 
@@ -321,12 +312,6 @@ public class CaptionsView extends LinearLayout {
         );  
         PropertyValuesHolder pvhdate = PropertyValuesHolder.ofKeyframe(View.TRANSLATION_X,  
                 Keyframe.ofFloat(0f, infoZoneTranslationX),  
-//                Keyframe.ofFloat(.22859f, -3.3f * 3f),  
-//                Keyframe.ofFloat(.399828f, 1.4f * 3f), 
-//                Keyframe.ofFloat(.571061f, -0.6f * 3f), 
-//                Keyframe.ofFloat(.714041f, 0f), 
-//                Keyframe.ofFloat(.857020f, -0.6f * 3f),
-//                Keyframe.ofFloat(1f, 0f)  
                 
                 Keyframe.ofFloat(.22859f, -4f * 3f),  
                 Keyframe.ofFloat(.399828f, 3f * 3f), 
@@ -341,19 +326,15 @@ public class CaptionsView extends LinearLayout {
  
         float translationX = mTitleParentView.getTranslationX();
         
-        //背景移动动画
         ObjectAnimator objectAnimator1 = ObjectAnimator.ofFloat(mTitleParentView, "translationX", translationX , 0f).setDuration(400);
         
-        /**
-         * 标题移动动画
-         */
+     
         ObjectAnimator animatorTitle = ObjectAnimator.ofFloat(mTextViewTitle, "translationX", 2 * translationX , 0).setDuration(500);
         
         ObjectAnimator animationDate = ObjectAnimator.ofPropertyValuesHolder(date, pvhdate).setDuration(1168);
         ObjectAnimator animationTime = ObjectAnimator.ofPropertyValuesHolder(time, pvhtime).setDuration(1168);
         
-        final View playerLayout = UIController.getInstance().getmLayoutPlayer();
-        
+        final View playerLayout = UIController.getInstance().getmLayoutPlayer();        
         animationTime.addUpdateListener(new AnimatorUpdateListener() {
             
             @Override

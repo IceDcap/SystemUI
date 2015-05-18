@@ -317,19 +317,6 @@ public class GnUsbStorageActivity extends AmigoActivity implements View.OnClickL
             }
             // It was disconnected from the plug, so finish
             if (!connected) {
-                mDebugState = Settings.Secure.getInt(getContentResolver(), Settings.Secure.ADB_ENABLED, 0) != 0;
-                boolean flagOfShownDebugView = Settings.Secure.getInt(getContentResolver(),
-                        "real_debug_state", 0) == 0;
-                if (flagOfShownDebugView && mDebugState) {
-                    String imei = null;
-                    if(mTelephonyManager != null){
-                        imei = mTelephonyManager.getDeviceId();
-                        Log.d(TAG, "handleUsbStateChanged:imei=" + imei);
-                    }
-                    if(imei != null && imei.length() == 15){
-                        Settings.Secure.putInt(getContentResolver(), Settings.Secure.ADB_ENABLED, 0);
-                    }
-                }
                 this.finish();
             }
         }

@@ -28,7 +28,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Scroller;
 
-import com.android.keyguard.KeyguardSecurityContainer.SecurityViewRemoveCallback;
+import com.android.keyguard.KeyguardSecurityContainer.SecurityViewRemoveAnimationUpdateCallback;
 import com.android.keyguard.KeyguardSecurityView;
 import com.android.keyguard.KeyguardViewBase;
 import com.android.keyguard.KeyguardSecurityModel.SecurityMode;
@@ -51,7 +51,7 @@ import com.android.internal.widget.LockPatternUtils;
 import static com.android.keyguard.KeyguardHostView.OnDismissAction;
 import com.android.internal.widget.LockPatternUtils;
 
-public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewRemoveCallback{
+public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewRemoveAnimationUpdateCallback{
     private static final String TAG = "AmigoKeyguardHostView";
 	private static final String LOG_TAG = "NaviKg_HostView";
 	
@@ -541,7 +541,9 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 				 if(DebugLog.DEBUGMAYBE){
 					DebugLog.d(LOG_TAG, "ddddd=========:");
 				}
-				onInterceptActionUp(event);
+				 if(onInterceptActionUp(event)) {
+						return true;
+					}
 				break;
 				default:
 					break;
@@ -549,11 +551,10 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 		 if(DebugLog.DEBUGMAYBE){
 			 Log.d("jings", "onInterceptTouchEvent return "+mScrollDirection );
 		 }
-	  /*  if(mOnViewTouchListener != null){
+	    if(mOnViewTouchListener != null){
 	        mOnViewTouchListener.onInterceptTouch(event);
-	    }*/
-//		return (mScrollDirection != DIRECTION_NONE);
-		 return super.onInterceptTouchEvent(event);
+	    }
+		return (mScrollDirection != DIRECTION_NONE);
 	}
 	
     private void gotoSleepIfDoubleTap(MotionEvent event) {
@@ -589,17 +590,18 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 		}
 	}
 	
-	private void onInterceptActionUp(MotionEvent event) {
+	private boolean onInterceptActionUp(MotionEvent event) {
 		mScrollDirectionConfirmed = false;
 //		mShouldAddLauncherShot = true;
-	/*	if(mScrollDirection == DIRECTION_UP) {
+		if(mScrollDirection == DIRECTION_UP) {
 			int x = (int) event.getX();
 			int y = (int) event.getY();
 			if(!isTouchedInViewport(x, y)) {
 				return true;
 			}
-		}*/
+		}
         releaseVelocityTracker();
+        return false;
 	}
 	
 	private void confirmScrollDirection(float currY, float currX) {
@@ -1009,7 +1011,11 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 		}
 //		Log.e("ddd", "========-top=========" + top);
 		//use owner wallpaper
-		mUIController.onKeyguardScrollChanged(top, mMaxBoundY,isSecure());
+		if(isSecure()){
+			mUIController.onKeyguardScrollChanged(top, mMaxBoundY, UIController.SCROLL_TO_SECURTY);
+		}else{
+			mUIController.onKeyguardScrollChanged(top, mMaxBoundY, UIController.SCROLL_TO_UNLOCK);
+		}
 	}
 	
 	public void onScreenTurnedOff() {
@@ -1446,8 +1452,8 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
     }
 
 	@Override
-	public void executeRemoveAmimation(int top) {
-		mUIController.onSecutityViewScrollChanged(top, mMaxBoundY);
+	public void securityViewRemoveAnimationUpdating(int top ,int maxBoundY) {
+		mUIController.securityViewRemoveAnimationUpdating(top, maxBoundY);
 		
 	}
 

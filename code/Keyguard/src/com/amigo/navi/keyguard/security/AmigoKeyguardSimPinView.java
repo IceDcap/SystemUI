@@ -121,7 +121,7 @@ public class AmigoKeyguardSimPinView extends AmigoKeyguardSimPinPukBaseView {
     
 
     private String getPinPasswordErrorMessage(int attemptsRemaining) {
-        String displayMessage;
+        String displayMessage="";
 
 //        if (attemptsRemaining == 0) {
 //            displayMessage = getContext().getString(R.string.kg_password_wrong_pin_code_pukked);
@@ -140,7 +140,7 @@ public class AmigoKeyguardSimPinView extends AmigoKeyguardSimPinPukBaseView {
 //            displayMessage = getContext().getResources()
 //                    .getQuantityString(R.plurals.kg_password_wrong_pin_code, attemptsRemaining,
 //                            attemptsRemaining);
-        } else {
+        } else if(attemptsRemaining<0){
             displayMessage = getContext().getString(R.string.kg_password_pin_failed);
         }
         if (DEBUG) Log.d(LOG_TAG, "getPinPasswordErrorMessage:"
@@ -356,8 +356,8 @@ public class AmigoKeyguardSimPinView extends AmigoKeyguardSimPinPukBaseView {
                                 } else {
                                     // "PIN operation failed!" - no idea what this was and no way to
                                     // find out. :/
-//                                    mSecurityMessageDisplay.setMessage(getContext().getString(
-//                                            R.string.kg_password_pin_failed), true);
+                                    mSecurityMessageDisplay.setMessage(getContext().getString(
+                                            R.string.kg_password_pin_failed), true);
                                 }
                                 if (DEBUG) Log.d(LOG_TAG, "verifyPasswordAndUnlock "
                                         + " CheckSimPin.onSimCheckResponse: " + result
@@ -464,13 +464,13 @@ public class AmigoKeyguardSimPinView extends AmigoKeyguardSimPinPukBaseView {
 	}
 	
 	
-	 /*  @Override
+	   @Override
 	    public boolean onInterceptTouchEvent(MotionEvent ev) {
 	    	if(ev.getY()>=mKeyguardBouncerFrame.getTop()){
 	            Log.d("KeyguardPatternUnlockView", "onInterceptTouchEvent.......=");
 	            requestDisallowInterceptTouchEvent(true);
 	        }
 	    	return super.onInterceptTouchEvent(ev);
-	    }*/
+	    }
 }
 

@@ -266,8 +266,8 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
     private void setForgetPasswordButton() {
    	    forgetButton = (TextView) this.findViewById(R.id.forget_password);
         if(forgetButton == null) return;
-        if(getTimeOutSize()>=5){
-       	 forgetButton.setVisibility(View.VISIBLE);
+        if(KeyguardViewHostManager.isSuppotFinger() && getTimeOutSize()>=5){
+       	 	forgetButton.setVisibility(View.VISIBLE);
         }
         forgetButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -308,14 +308,14 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
 				});
 	}
     
- /*   @Override
+    @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         if(ev.getY()>=mPasswordEntry.getTop()){
            Log.d("KeyguardPatternUnlockView", "onInterceptTouchEvent.......=");
            requestDisallowInterceptTouchEvent(true);
        }
         return super.onInterceptTouchEvent(ev);
-    }*/
+    }
 
     @Override
     protected boolean onRequestFocusInDescendants(int direction, Rect previouslyFocusedRect) {
@@ -511,14 +511,18 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
 		}
         hiddenInput();
 		mCallback.reset();
-		forgetButton.setVisibility(View.INVISIBLE);
+		if(KeyguardViewHostManager.isSuppotFinger()){			
+			forgetButton.setVisibility(View.INVISIBLE);
+		}
 	}
     
     public void onUnlockFail(int failReason) {
 		if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "onUnlockFail failReason :"+failReason);
 		
 		if(failReason == UNLOCK_FAIL_REASON_TIMEOUT) {
-			forgetButton.setVisibility(View.VISIBLE);
+			if(KeyguardViewHostManager.isSuppotFinger()){
+				forgetButton.setVisibility(View.VISIBLE);
+			}
 			long deadline = mKeyguardUpdateMonitor.getDeadline();
 			if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "onUnlockFail deadline :"+deadline);
         	handleAttemptLockout(deadline);	
@@ -575,7 +579,11 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
 		}
 		
 		  private void displayDefaultSecurityMessage() {
-		    	mSecurityMessageDisplay.setMessage(R.string.keyguard_password_enter_code, true);
+				if(KeyguardViewHostManager.isSuppotFinger()){
+		    		mSecurityMessageDisplay.setMessage(R.string.keyguard_password_enter_code_finger, true);
+		    	}else{ 		
+		    		mSecurityMessageDisplay.setMessage(R.string.keyguard_password_enter_code, true);
+		    	}
 		    }
 		
 		

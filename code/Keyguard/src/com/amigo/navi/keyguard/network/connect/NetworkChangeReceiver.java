@@ -3,6 +3,7 @@ package com.amigo.navi.keyguard.network.connect;
 
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.haokan.NicePicturesInit;
+import com.amigo.navi.keyguard.haokan.PlayerManager;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -17,6 +18,7 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
 	    DebugLog.d(TAG,"test onReceive");
 		mContext=context;
 		boolean networkState = isNetworkAvailable(mContext);
+		PlayerManager.getInstance().netStateChange(networkState);
         DebugLog.d(TAG,"test onReceive networkState:" + networkState);
         NicePicturesInit nicePicturesInit = NicePicturesInit.getInstance(context);
 		if(networkState){

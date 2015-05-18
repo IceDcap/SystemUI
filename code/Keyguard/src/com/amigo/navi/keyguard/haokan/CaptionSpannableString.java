@@ -3,11 +3,14 @@ package com.amigo.navi.keyguard.haokan;
 import android.content.Context;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Parcel;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.style.BackgroundColorSpan;
+import android.text.style.CharacterStyle;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.ImageSpan;
 import android.text.style.URLSpan;
@@ -21,10 +24,12 @@ import com.android.keyguard.R;
 
 public class CaptionSpannableString extends SpannableStringBuilder{
 
-    private static final String SPACE_LINK = "    ";
+    private static final String SPACE_LINK = "     ";
     private static final String SPACE_SOURCE = " ";
     
     private static final int IMG_SOURCE_TEXT_COLOR = 0xffff9000;
+    
+    private static long mLastClickTime = 0;
     
     private Caption mCaption;
     
@@ -74,9 +79,9 @@ public class CaptionSpannableString extends SpannableStringBuilder{
             
             ImageSpan imageSpan = new ImageSpan(mContentLinkDrawable, ImageSpan.ALIGN_BASELINE);
 
-            setSpan(imageSpan, length() - 2, length()-1, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+            setSpan(imageSpan, length() - 3, length()-2, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
             
-            setSpan(new WebURLSpan(caption.getLink()), length() - 3, length(),
+            setSpan(new WebURLSpan(caption.getLink()), length() - 4, length()-1,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         }else {
             
@@ -112,6 +117,10 @@ public class CaptionSpannableString extends SpannableStringBuilder{
         @Override
         public void onClick(View widget) {
 
+            if (isFastClick()) {
+                return;
+            }
+            
             Log.v("haokan", "Link onClick " + widget.getId());
             mCaptionsView.setClickLink(true);
             if (isEmptyLink) {
@@ -127,13 +136,16 @@ public class CaptionSpannableString extends SpannableStringBuilder{
             HKAgent.onEventIMGLink(mContext, UIController.getInstance().getmCurrentWallpaper());
             
         }
-    }
-    
-    
-    public interface OnClickLinkListener{
-        void onClickLink(View widget, String link);
-    }
 
+
+        @Override
+        public void updateDrawState(TextPaint ds) {
+      
+            super.updateDrawState(ds);
+        }
+        
+    }
+    
 
     public CaptionsView getmCaptionsView() {
         return mCaptionsView;
@@ -142,6 +154,18 @@ public class CaptionSpannableString extends SpannableStringBuilder{
 
     public void setmCaptionsView(CaptionsView mCaptionsView) {
         this.mCaptionsView = mCaptionsView;
+    }
+    
+    
+    
+    public static boolean isFastClick() {
+        long time = System.currentTimeMillis();
+        long timeD = time - mLastClickTime;
+        mLastClickTime = time;
+        if (0 <= timeD && timeD < 1500) {
+            return true;
+        }
+        return false;
     }
     
 }

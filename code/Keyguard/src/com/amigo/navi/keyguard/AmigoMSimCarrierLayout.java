@@ -509,7 +509,7 @@ public class AmigoMSimCarrierLayout extends LinearLayout {
             if (mIsCustomMade) {
                 String operator = mPhone.getNetworkOperatorForSubscription(subId);
                 OperatorMode mode = getOperatorMode(operator);
-                DebugLog.d(LOG_TAG, "updateDataNetType  operator: " + operator + "  state: " + state);
+                DebugLog.d(LOG_TAG, "updateDataNetType  operator: " + operator + "  state: " + state+" mode: "+mode+" slotId: "+slotId);
                 switch (mode) {
                 case CMCC:
                     operatorName = getCmccOperatorName(slotId, subId);
@@ -540,8 +540,6 @@ public class AmigoMSimCarrierLayout extends LinearLayout {
 
         int networkType = mDataNetType[slotId];
         IccCardConstants.State state = mSimState[slotId];
-        DebugLog.d(LOG_TAG, "getCmccOperatorName  sim state: " + state + " networkType: " + networkType + "  slotId: "
-                + slotId);
         mStatusMode[slotId] = StatusMode.Normal;
         if (networkType == TelephonyManager.NETWORK_TYPE_LTE) {
             operateName = getResources().getString(R.string.cmcc_4g);
@@ -636,6 +634,7 @@ public class AmigoMSimCarrierLayout extends LinearLayout {
     private void refreshMutiCardViews() {
         boolean isAllSimCardDismiss = true;
         boolean isAllSimCardNoService = true;
+        refreshCarrierGone();
         for (int i = 0; i < mSlotCount; i++) {
             mCarrierView[i].setText(mCarrierText[i]);
             boolean isSimExit = mStatusMode[i] == StatusMode.Normal && mSimState[i] == IccCardConstants.State.READY;
@@ -693,6 +692,14 @@ public class AmigoMSimCarrierLayout extends LinearLayout {
             }
         }
         mCarrierView[index].setVisibility(View.VISIBLE);
+    }
+    private void refreshCarrierGone(){
+        for(int i = 0; i < mSlotCount; i++){
+            mCarrierView[i].setVisibility(View.GONE);
+            if(i<mSlotCount-1){
+                mCarrierDivider[i].setVisibility(View.GONE);
+            }
+        }
     }
 
     public static int getFirstSubInSlot(int slotId) {

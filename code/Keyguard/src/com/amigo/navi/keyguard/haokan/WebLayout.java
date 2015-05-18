@@ -1,7 +1,6 @@
 
 package com.amigo.navi.keyguard.haokan;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
@@ -13,26 +12,26 @@ import android.widget.RelativeLayout;
 
 import com.android.keyguard.R;
 
-public class HKWebLayout extends RelativeLayout {
+public class WebLayout extends RelativeLayout {
 
     
     private WebView mWebView;
     
     private ImageView mButtonCloseLink;
     
-    public HKWebLayout(Context context) {
+    public WebLayout(Context context) {
         super(context);
     }
 
-    public HKWebLayout(Context context, AttributeSet attrs) {
+    public WebLayout(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public HKWebLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public WebLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         this(context, attrs, defStyleAttr, 0);
     }
 
-    public HKWebLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public WebLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         
     }
@@ -64,11 +63,8 @@ public class HKWebLayout extends RelativeLayout {
             }  
   
         });
-
+         
     }
-    
-    
-    
     
     public WebView getmWebView() {
         return mWebView;
@@ -90,36 +86,16 @@ public class HKWebLayout extends RelativeLayout {
         if (mWebView == null) {
             mWebView = (WebView) findViewById(R.id.haokan_layout_webview);
         }
-        
         mWebView.loadUrl(link);
     }
-
-  
-
- 
-
- 
- 
     
-    @SuppressLint("NewApi")
     private void setSettings(WebSettings setting) {
         setting.setJavaScriptEnabled(true);
-//        setting.setBuiltInZoomControls(true);
-//        setting.setDisplayZoomControls(false);
-//        setting.setSupportZoom(true);
-
-//        setting.setDomStorageEnabled(true);
-//        setting.setDatabaseEnabled(true);
-        
-//        setting.setLoadWithOverviewMode(true);
-//        setting.setUseWideViewPort(true);
         setting.setDatabaseEnabled(false);   
         setting.setDomStorageEnabled(false);
         setting.setAppCacheEnabled(false);
         setting.setCacheMode(WebSettings.LOAD_NO_CACHE);
         
     }
-    
- 
 
 }

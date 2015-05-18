@@ -184,7 +184,8 @@ public class SignalClusterView
         }
         final int n = subs.size();
         for (int i = 0; i < n; i++) {
-            inflatePhoneState(subs.get(i).getSubscriptionId());
+            //inflatePhoneState(subs.get(i).getSubscriptionId());
+        	inflatePhoneState(subs.get(i).getSimSlotIndex());
         }
     }
 
@@ -351,7 +352,7 @@ public class SignalClusterView
             if (mMobileVisible && !mIsAirplaneMode) {
                 mMobile.setImageResource(mMobileStrengthId);
                 mMobileType.setImageResource(mMobileTypeId);
-                mSlotIndicator.setImageResource(getSlotIndicator(isSecondaryIcon));
+                mSlotIndicator.setImageResource(getSlotIndicator(mSubId));
                 mNetworkType.setImageResource(mNetworkTypeId);
                 mMobileInOut.setImageResource(mMobileInOutId);
                 mMobileGroup.setContentDescription(mMobileTypeDescription
@@ -383,12 +384,13 @@ public class SignalClusterView
         }
     }
     
-    private int getSlotIndicator(boolean isSecondarySlot) {
-		if (isSecondarySlot) {
-			return R.drawable.gn_sim_indicator_2;
-		} else {
+    private int getSlotIndicator(int slotId) {
+		if (slotId == 0) {
 			return R.drawable.gn_sim_indicator_1;
+		} else if(slotId == 1) {
+			return R.drawable.gn_sim_indicator_2;
 		}
+		return 0;
 	}
 
 	@Override

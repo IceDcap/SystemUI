@@ -3,6 +3,8 @@ package com.amigo.navi.keyguard.haokan;
 
 import android.graphics.Bitmap;
 import android.os.Environment;
+import android.util.Log;
+
 import com.amigo.navi.keyguard.haokan.entity.Wallpaper;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,13 +13,20 @@ import java.io.IOException;
 
 public class FileUtil {
     
-    public static final String DIRECTORY_MUSIC        = "/Amigo/ScreenLock/Music/";
-    public static final String DIRECTORY_FAVORITE     = "/Amigo/ScreenLock/Favorite";
+    public static final String DIRECTORY_MUSIC          = "/Amigo/ScreenLock/Music/";
+    public static final String DIRECTORY_FAVORITE       = "/Amigo/ScreenLock/Favorite";
+    public static final String WALLPAPER_LOCATION_FILE  = "/system/etc/ScreenLock/wallpaper.xml";
     
     
+    private static final String TAG = "haokan";
+    
+    /**
+     * 
+     */
     public static void deleteMusic() {
         String musicPath = Common.getSdCardPath() + DIRECTORY_MUSIC;
-        deleteDirectory(musicPath);
+        boolean flag = deleteDirectory(musicPath);
+        Log.v(TAG, "deleteMusic  flag = " + flag);
     }
     
     

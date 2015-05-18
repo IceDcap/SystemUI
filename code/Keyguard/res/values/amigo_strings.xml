@@ -168,8 +168,10 @@
         \n\nTry again in <xliff:g id="number">%d</xliff:g> seconds.
     </string>
      <string name="amigo_kg_too_many_failed_attempts_countdown">"Exceeded <xliff:g id="number">%d</xliff:g> times of password attempts allowed, please try in <xliff:g id="number">%s</xliff:g> .</string>
-     <string name="keyguard_pattern_enter_code">"请输入密码锁或者使用指纹识别"</string>
-     <string name="keyguard_password_enter_code">"请输入密码锁或者使用指纹识别"</string>
+     <string name="keyguard_pattern_enter_code_finger">"请输入密码或者使用指纹识别"</string>
+    <string name="keyguard_password_enter_code_finger">"请输入密码或者使用指纹识别"</string>
+    <string name="keyguard_pattern_enter_code">"请输入密码"</string>
+    <string name="keyguard_password_enter_code">"请输入密码"</string>
      <string name="forget_password">忘记密码</string>
      <string name="forget_password_content">Unfortunately, because the Amigo account has not been bound, the passwords can not be reset.  Please kindly try following steps to restore to factory defaults for proceeding:</string>
      <string name="forget_password_first">1. Switch-off the phone</string>

@@ -279,7 +279,9 @@ public class Wallpaper implements Serializable{
         stringBuffer.append("  ImgName : ").append(getImgName());
         stringBuffer.append(", favorite : ").append(isFavorite());
         stringBuffer.append(", Locked : ").append(isLocked());
-        stringBuffer.append(", categoryName : ").append(getCategory().getTypeName());
+        if(getCategory() != null){
+        	stringBuffer.append(", categoryName : ").append(getCategory().getTypeName());
+        }
         stringBuffer.append(", hasMusic : ").append(getMusic() != null);
         if (getMusic() != null) {
             stringBuffer.append(", MusicName : ").append(getMusic().getmMusicName());

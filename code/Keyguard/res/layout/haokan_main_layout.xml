@@ -1,93 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.amigo.navi.keyguard.haokan.HKMainLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/haokan_main_layout"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/haokan_page_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
     <RelativeLayout
-        android:id="@+id/haokan_page_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/haokan_main_layout_marginbottom" >
+        android:id="@+id/haokan_page_layout_player"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/haokan_music_player_button_margintop"
+        android:gravity="center_vertical"
+        android:visibility="gone" >
 
-        <include
-            android:id="@+id/haokan_page_layout_player"
+        <com.amigo.navi.keyguard.haokan.PlayerButton
+            android:id="@+id/haokan_page_layout_imageButton"
+            android:layout_width="@dimen/haokan_music_player_button_size"
+            android:layout_height="@dimen/haokan_music_player_button_size"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/haokan_music_player_button_marginleft" />
+
+        <LinearLayout
+            android:id="@+id/haokan_page_layout_music_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/haokan_music_player_button_margintop"
-            layout="@layout/haokan_player_layout"
-            android:gravity="center_vertical" />
-
-        <com.amigo.navi.keyguard.haokan.CaptionsView
-            android:id="@+id/haokan_page_layout_captions"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:orientation="vertical"
-            android:paddingLeft="@dimen/haokan_caption_layout_padding"
-            android:paddingRight="@dimen/haokan_caption_layout_padding"
-            android:translationY="@dimen/haokan_caption_layout_translationY" >
-
-            <RelativeLayout
-                android:id="@+id/haokan_captions_title_container"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
-
-                <RelativeLayout
-                    android:id="@+id/haokan_captions_title_parent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/haokan_caption_layout_title_height" >
-
-                    <TextView
-                        android:id="@+id/haokan_captions_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="@dimen/haokan_caption_layout_title_height"
-                        android:layout_marginLeft="@dimen/haokan_caption_layout_title_padding"
-                        android:singleLine="true"
-                        android:textColor="#ffffff"
-                        android:textSize="@dimen/haokan_caption_layout_title_textsize" />
-
-                    <RelativeLayout
-                        android:id="@+id/haokan_captions_title_left"
-                        android:layout_width="@dimen/haokan_caption_layout_title_padding"
-                        android:layout_height="@dimen/haokan_caption_layout_title_height"
-                        android:layout_alignParentLeft="true" />
-
-                    <RelativeLayout
-                        android:id="@+id/haokan_captions_title_right"
-                        android:layout_width="@dimen/haokan_caption_layout_title_padding"
-                        android:layout_height="@dimen/haokan_caption_layout_title_height"
-                        android:layout_toRightOf="@id/haokan_captions_title" />
-                </RelativeLayout>
-            </RelativeLayout>
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/haokan_music_player_music_marginright"
+            android:layout_toLeftOf="@+id/haokan_page_layout_imageButton"
+            android:gravity="right"
+            android:orientation="vertical" >
 
             <TextView
-                android:id="@+id/haokan_captions_content"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/haokan_caption_layout_content_height"
-                android:layout_marginTop="@dimen/haokan_caption_layout_content_margintop"
-                android:gravity="top"
-                android:includeFontPadding="false"
-                android:lineSpacingExtra="1dp"
-                android:textColor="#ffffff"
-                android:textSize="@dimen/haokan_caption_layout_content_textsize"
-                android:visibility="visible" />
-        </com.amigo.navi.keyguard.haokan.CaptionsView>
+                android:id="@+id/haokan_page_layout_music"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:shadowColor="@color/haokan_music_name_shadowcolor"
+                android:shadowDx="0"
+                android:shadowDy="1"
+                android:shadowRadius="1"
+                android:alpha="0"
+                android:textColor="@color/haokan_music_name_color"
+                android:textSize="@dimen/haokan_music_player_musicname_textsize" />
 
-        <TextView
-            android:id="@+id/haokan_page_layout_tip"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="425dp"
-            android:gravity="center"
-            android:shadowColor="#80000000"
-            android:shadowDx="0"
-            android:shadowDy="1"
-            android:shadowRadius="1"
-            android:singleLine="true"
-            android:textColor="#ff0000"
-            android:textSize="14dp"
-            android:visibility="gone" />
+            <TextView
+                android:id="@+id/haokan_page_layout_Artist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:shadowColor="@color/haokan_music_name_shadowcolor"
+                android:shadowDx="0"
+                android:shadowDy="1"
+                android:shadowRadius="1"
+                android:alpha="0"
+                android:textColor="@color/haokan_music_singer_color"
+                android:textSize="@dimen/haokan_music_player_artist_textsize" />
+        </LinearLayout>
     </RelativeLayout>
 
-</com.amigo.navi.keyguard.haokan.HKMainLayout>
+    <com.amigo.navi.keyguard.haokan.CaptionsView
+        android:id="@+id/haokan_page_layout_captions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/haokan_caption_layout_padding"
+        android:paddingRight="@dimen/haokan_caption_layout_padding"
+        android:translationY="@dimen/haokan_caption_layout_translationY" >
+
+        <RelativeLayout
+            android:id="@+id/haokan_captions_title_container"
+            android:layout_width="wrap_content"
+            android:paddingBottom="@dimen/haokan_caption_layout_content_margintop"
+            android:layout_height="wrap_content" >
+
+            <RelativeLayout
+                android:id="@+id/haokan_captions_title_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/haokan_caption_layout_title_height" >
+
+                <TextView
+                    android:id="@+id/haokan_captions_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/haokan_caption_layout_title_height"
+                    android:layout_marginLeft="@dimen/haokan_caption_layout_title_padding"
+                    android:singleLine="true"
+                    android:textColor="#ffffff"
+                    android:textSize="@dimen/haokan_caption_layout_title_textsize" />
+
+                <RelativeLayout
+                    android:id="@+id/haokan_captions_title_left"
+                    android:layout_width="@dimen/haokan_caption_layout_title_padding"
+                    android:layout_height="@dimen/haokan_caption_layout_title_height"
+                    android:layout_alignParentLeft="true" />
+
+                <RelativeLayout
+                    android:id="@+id/haokan_captions_title_right"
+                    android:layout_width="@dimen/haokan_caption_layout_title_padding"
+                    android:layout_height="@dimen/haokan_caption_layout_title_height"
+                    android:layout_toRightOf="@id/haokan_captions_title" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/haokan_captions_content"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/haokan_caption_layout_content_height"
+            
+            android:gravity="top"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="1dp"
+            android:textColor="#ffffff"
+            android:textSize="@dimen/haokan_caption_layout_content_textsize"
+            android:visibility="visible" />
+    </com.amigo.navi.keyguard.haokan.CaptionsView>
+
+    <TextView
+        android:id="@+id/haokan_page_layout_tip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="425dp"
+        android:gravity="center"
+        android:shadowColor="@color/haokan_music_name_shadowcolor"
+        android:shadowDx="0"
+        android:shadowDy="1"
+        android:shadowRadius="1"
+        android:singleLine="true"
+        android:textColor="#ff0000"
+        android:textSize="14dp"
+        android:visibility="gone" />
+
+</RelativeLayout>

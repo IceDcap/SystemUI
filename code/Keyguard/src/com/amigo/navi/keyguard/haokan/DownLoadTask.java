@@ -7,12 +7,10 @@ import com.amigo.navi.keyguard.haokan.entity.Music;
 
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
 import java.net.URL;
 
 
@@ -71,11 +69,9 @@ public class DownLoadTask extends AsyncTask<Void, Void, Boolean>{
             connection.setReadTimeout(DOWNLOAD_TIMEOUT);
             connection.setRequestMethod("GET");
             connection.setUseCaches(false);
-//            connection.setRequestProperty("Accept","image/gif, image/jpeg, image/pjpeg, image/pjpeg, application/x-shockwave-flash, application/xaml+xml, application/vnd.ms-xpsdocument, application/x-ms-xbap, application/x-ms-application, application/vnd.ms-excel, application/vnd.ms-powerpoint, application/msword, */*");
             connection.setRequestProperty("Accept-Language","zh-CN");
             connection.setRequestProperty("Referer",music.getDownLoadUrl());
             connection.setRequestProperty("Charset", "UTF-8");
-//            connection.setRequestProperty("User-Agent","Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.2; Trident/4.0; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)");
             connection.setRequestProperty("Connection","Keep-Alive");
 
             randomAccessFile = new RandomAccessFile(musicPath, "rwd");
@@ -95,20 +91,14 @@ public class DownLoadTask extends AsyncTask<Void, Void, Boolean>{
             }
             if (completeSize == totalSize) {
                 Log.v(TAG, music.getmMusicName() + " download over!");
-//                renameFileName(file);
                 success = true;
             }
             
-        } catch (SocketTimeoutException e) { 
-            Log.v(TAG, "SocketTimeoutException");
+        } catch (Exception e) { 
             success = false;
-        } catch (FileNotFoundException e) { 
-            Log.v(TAG, "FileNotFoundException");
-            success = false;
-        } catch (IOException e) { 
-            success = false;
-            Log.v(TAG, "IOException");
-        } finally {
+            FileUtil.deleteFile(localPath);
+            Log.v(TAG, "Exception deleteFile " + localPath);
+        }  finally {
             try {
                 if (in != null){
                     in.close();
@@ -124,17 +114,6 @@ public class DownLoadTask extends AsyncTask<Void, Void, Boolean>{
             }
         }
         return success;
-    }
-    
-   
-    
-    private boolean renameFileName(File file) {
-        String path = file.getPath();
-        int i = file.getPath().lastIndexOf('.');
-        if(i != -1){
-            return file.renameTo(new File(path.substring(0,i)));
-        }
-        return false;
     }
     
     private File createNewFile(Music music) {

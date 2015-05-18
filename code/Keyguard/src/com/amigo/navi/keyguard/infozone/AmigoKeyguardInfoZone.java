@@ -87,6 +87,8 @@ public class AmigoKeyguardInfoZone extends FrameLayout{
 	
 	private Handler mHandler = new Handler();
 	
+	private float mMaxTranslationX;
+	
 	public AmigoKeyguardInfoZone(Context context) {
 		super(context);
 		init(context);
@@ -109,7 +111,12 @@ public class AmigoKeyguardInfoZone extends FrameLayout{
 		
 		mTimeFormatObserver = new TimeFormatObserver(mContext, mHandler);
 		UIController.getInstance().setmInfozone(this);
+		mMaxTranslationX = getResources().getDimensionPixelSize(R.dimen.keyguard_infozone_max_translationX);
 	}
+	
+	public float getMaxTranslationX() {
+	    return mMaxTranslationX;
+    }
 
 	private class LanguageReveicer extends BroadcastReceiver {
 

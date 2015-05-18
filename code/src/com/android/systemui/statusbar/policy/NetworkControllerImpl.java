@@ -1210,7 +1210,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
                         dataContentDescription,
                         // Only wide if actually showing something.
                         icons.mIsWide && typeIcon != 0,
-                        mSubscriptionInfo.getSubscriptionId());
+                        mSubscriptionInfo.getSimSlotIndex());
             }
             // Only send data sim callbacks to QS.
             if (mCurrentState.dataSim) {
@@ -1442,8 +1442,9 @@ public class NetworkControllerImpl extends BroadcastReceiver
                     Log.d(mTag, "onSignalStrengthsChanged signalStrength=" + signalStrength +
                             ((signalStrength == null) ? "" : (" level=" + signalStrength.getLevel())));
                 }
-                mSignalStrength = signalStrength;
-                updateTelephony();
+                //mSignalStrength = signalStrength;
+                //updateTelephony();
+                compareLevel(signalStrength.getLevel(), signalStrength);
             }
 
             @Override

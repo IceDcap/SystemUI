@@ -77,10 +77,15 @@ public class KeyguardDataModelInit {
     
     private final static String DBNAME = "haokan.db";
     private final static String ADDSTR = "/data/data/com.android.systemui/databases/";
+    private final static String DB_VERSION = "20150513";
     public boolean saveInitDataToClientDB(Context context) {
         File dbFile = new File(ADDSTR + DBNAME);
         if(dbFile.exists()){
-            return true;
+        	if(!DB_VERSION.equals(Common.getDatabaseVersion(mContext))){
+        		dbFile.delete();
+        	}else{
+                return true;
+        	}
         }
         InputStream assetsDB;
         try {
@@ -105,6 +110,7 @@ public class KeyguardDataModelInit {
                 dbOut.flush();
                 dbOut.close();
                 assetsDB.close();
+            	Common.setDatabaseVersion(mContext, DB_VERSION);
                 return true;
         } catch (IOException e) {
             DebugLog.d(TAG,"saveInitDataToClientDB error:" + e);

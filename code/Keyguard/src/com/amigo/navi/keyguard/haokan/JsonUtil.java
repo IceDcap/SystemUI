@@ -15,6 +15,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ import java.util.Map.Entry;
 import com.amigo.navi.keyguard.haokan.entity.Category;
 import com.amigo.navi.keyguard.haokan.entity.WallpaperList;
 import com.amigo.navi.keyguard.haokan.entity.Music;
+
 
 public class JsonUtil {
 	private static final String TAG = "JsonUtil";
@@ -289,13 +291,14 @@ public class JsonUtil {
     }
     
     
-    public static WallpaperList getDefaultWallpaperList(Context context) {
+    public static WallpaperList getDefaultWallpaperList() {
         
         String jsonString = null;
         WallpaperList list = null;
-        InputStream is = null;
+        FileInputStream is = null;
         try {
-            is = context.getAssets().open("wallpaper.xml");
+            is = new FileInputStream(FileUtil.WALLPAPER_LOCATION_FILE);
+//            is = context.getAssets().open("wallpaper.xml");
             int size = is.available();
             byte[] buffer = new byte[size];
             Log.v("zhaowei", "size = " + size);
@@ -321,7 +324,11 @@ public class JsonUtil {
                     String showTimeEnd = jsonObjectImg.optString("ShowTimeEnd");
                     
                     Log.v("zhaowei", "imageName = " + imageName + " imageTitle="+imageTitle + " imageContent="+imageContent + " imageSource = " + imageSource + " background="+background);
-                    
+                    Category category = new Category();
+                    category.setTypeId(1);
+                    category.setTypeName("inlay");
+                    wallpaper.setCategory(category);
+                    wallpaper.setImgId(i);
                     wallpaper.setDisplayName(imageName);
                     wallpaper.setImgName(imageTitle);
                     wallpaper.setImgContent(imageContent);
@@ -329,7 +336,11 @@ public class JsonUtil {
                     wallpaper.setBackgroundColor(background);
                     wallpaper.setShowTimeBegin(showTimeBegin);
                     wallpaper.setShowTimeEnd(showTimeEnd);
-                    
+                    wallpaper.setImgUrl(imageName);
+                    wallpaper.setType(Wallpaper.WALLPAPER_FROM_FIXED_FOLDER);
+                    wallpaper.setRealOrder(i);
+                    wallpaper.setShowOrder(i); 
+                    wallpaper.setLocked(false);
                     list.add(wallpaper);
                 }
             }

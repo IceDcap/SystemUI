@@ -2,15 +2,11 @@ package com.amigo.navi.keyguard.settings;
 
 import java.util.ArrayList;
 
-import amigo.app.AmigoActivity;
 import amigo.app.AmigoAlertDialog;
-import amigo.changecolors.ChameleonColorManager;
-import amigo.preference.AmigoPreferenceActivity;
-import amigo.preference.AmigoSwitchPreference;
-import amigo.preference.AmigoPreferenceFrameLayout.LayoutParams;
 import amigo.widget.AmigoSwitch;
 import amigo.widget.AmigoTextView;
-import amigo.app.AmigoActionBar;
+
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -32,8 +28,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.TranslateAnimation;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
@@ -50,9 +51,10 @@ import android.content.Intent;
 
 
 
-public class KeyguardSettingsActivity extends AmigoActivity {
+public class KeyguardSettingsActivity extends Activity {
 	private final String TAG = "KeyguardSettingsActivity";
-	Bitmap wallpaper;
+	
+	private Bitmap wallpaper;
 
     private AmigoSwitch mDoubleDesktopLock;
     private AmigoSwitch mKeyguardWallpaperUpdate;
@@ -70,17 +72,13 @@ public class KeyguardSettingsActivity extends AmigoActivity {
 
 	@Override
 	protected void onCreate(Bundle arg0) {
-//        requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
-//		//        set it to be no title 
-//        requestWindowFeature(Window.FEATURE_NO_TITLE);   
-//         
-////        set it to be full screen 
-        setTheme(android.R.style.Theme_Material_Light);
-//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,    
-//        WindowManager.LayoutParams.FLAG_FULLSCREEN); 
+ 
 		super.onCreate(arg0); 
-//		AmigoActionBar mActionBar = getAmigoActionBar();
-//		mActionBar.hide();
+		
+		initView();
+		
+		UIController.getInstance().setKeyguardSettingsActivity(this);
+ 
 		Intent intent = getIntent();
 		if (KeyguardSettings.CLEARNOTIFICATION.equals(intent.getStringExtra(KeyguardSettings.CLEARNOTIFICATION))){
 			KeyguardSettings.cancelNotification(getApplicationContext());
@@ -99,27 +97,8 @@ public class KeyguardSettingsActivity extends AmigoActivity {
 		
 		setBlurBackground();
 		
-		initView();
-
-/*		int topMargin = KWDataCache.getStatusBarHeight();
-		end = System.currentTimeMillis();
-		last = end - start;
-		start = end;
-		DebugLog.e(TAG, "KeyguardSettingsActivity onCreate topMargin"+ last);
 		
-		mSettingTitle = (TextView)findViewById(R.id.setting_title);
-
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-				LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-		params.topMargin=topMargin;
-		params.height = getResources().getDimensionPixelSize(R.dimen.settings_titlebar_height);
-		mSettingTitle.setLayoutParams(params);
-		end = System.currentTimeMillis();
-		last = end - start;
-		start = end;
-		DebugLog.e(TAG, "KeyguardSettingsActivity onCreate setLayoutParams"+ last);*/
 		
-		startAppearAnimation();
 
 	}
 	
@@ -132,20 +111,24 @@ public class KeyguardSettingsActivity extends AmigoActivity {
         }
     }
 	
-	private void findViewForAnim(){
+	private void findView(){
 		mSettingTitle = (TextView)findViewById(R.id.setting_title);
 	    mWallpaperUpdateTitle = (AmigoTextView)findViewById(R.id.wallpaper_update_title);
 	    mWallpaperUpdateFirstline = (TextView)findViewById(R.id.wallpaper_update_firstline);
 	    mWallpaperUpdateSecondline = (TextView)findViewById(R.id.wallpaper_update_secondline);
+	    mKeyguardWallpaperUpdate = (AmigoSwitch) findViewById(R.id.settings_switch_wallpaper_update);
 	    mOnlyWlanSwitchFirstLine = (TextView)findViewById(R.id.only_wlan_firstline);
+	    mOnlyWlanSwitch = (AmigoSwitch) findViewById(R.id.settings_switch_only_wlan);
 	    mDivider = (View)findViewById(R.id.settings_divider);
 	    mDoubleDesktopLockTitle = (AmigoTextView)findViewById(R.id.double_desktop_lock_title);
 	    mDoubleDesktopLockFirstline = (TextView)findViewById(R.id.double_desktop_lock_firstline);
 	    mDoubleDesktopLockSecondline = (TextView)findViewById(R.id.double_desktop_lock_secondline);
+	    mDoubleDesktopLock = (AmigoSwitch) findViewById(R.id.settings_switch_double_desktop_lock);
+ 
 	}
 	
 	private ArrayList<View> getViewGroup(){
-		findViewForAnim();
+		
 		ArrayList<View> viewGroup = new ArrayList<View>();
 		viewGroup.add(mSettingTitle);
 		viewGroup.add(mWallpaperUpdateTitle);
@@ -163,78 +146,62 @@ public class KeyguardSettingsActivity extends AmigoActivity {
 	}
 		
 	private void startAppearAnimation(){
+	    
 		ArrayList<View> viewGroup = getViewGroup();
+		
 		for (int index = 0; index < viewGroup.size(); index++) {
-			Animation animation = (Animation) AnimationUtils.loadAnimation(KeyguardSettingsActivity.this, R.anim.keyguard_settings_translate_enter); 
-			animation.setStartOffset(KeyguardSettings.ANIMATION_DELAY * index);
-			viewGroup.get(index).startAnimation(animation);
+		    
+		    final View v = viewGroup.get(index);
+
+		    AnimationSet set = new AnimationSet(true);  
+		    
+	        Animation animation = new AlphaAnimation(0.0f, 1.0f);  
+	        animation.setDuration(300);  
+	        set.addAnimation(animation);  
+	        animation = new TranslateAnimation(0, 0, 300, 0); 
+	        animation.setDuration(300);  
+	        set.addAnimation(animation);  
+	        set.setInterpolator(new DecelerateInterpolator());
+	        set.setStartOffset(KeyguardSettings.ANIMATION_DELAY * index);
+	        set.setAnimationListener(new AnimationListener() {
+                
+                @Override
+                public void onAnimationStart(Animation arg0) {
+                    v.setVisibility(View.VISIBLE);
+                }
+                
+                @Override
+                public void onAnimationRepeat(Animation arg0) {
+                    
+                }
+                
+                @Override
+                public void onAnimationEnd(Animation arg0) {
+                    
+                }
+            });
+	        v.startAnimation(set);
 		}
 	}
 	
-//	private void finishAppearAnimation(){
-//		ArrayList<View> viewGroup = getViewGroup();
-//		for (int index = 0; index < viewGroup.size(); index++) {
-//			Animation animation = (Animation) AnimationUtils.loadAnimation(KeyguardSettingsActivity.this, R.anim.keyguard_settings_translate_exit); 
-////			animation.setStartOffset(KeyguardSettings.ANIMATION_DELAY * index);
-//			viewGroup.get(index).startAnimation(animation);
-//		}
-//	}
-//	
-//	private void finishAppearAnimation(){
-//		View rootView = ((ViewGroup)this.findViewById(android.R.id.content)).getChildAt(0);
-//		Animation animation = (Animation) AnimationUtils.loadAnimation(KeyguardSettingsActivity.this, R.anim.keyguard_settings_translate_exit);
-//		rootView.startAnimation(animation);
-//	}
 	
     private void initView() {
     	LinearLayout view = (LinearLayout)LayoutInflater.from(this).inflate(
     			R.layout.keyguard_settings_view, null); 
-//		LayoutParams viewParams = new LayoutParams(
-//		LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-//////        LayoutParams params = new LayoutParams(0, 0);
-//////        params.width = 800;
-//////        params.height =1920;
-//		int bgColor = getResources().getColor(R.color.keyguard_setting_bg_color); 
-//		view.setBackgroundColor(bgColor);
-//		
-////		LinearLayout layout = new LinearLayout(this);		
-////		int bgColor = getResources().getColor(R.color.keyguard_setting_bg_color); 
-////		layout.setBackgroundColor(bgColor);
-////		ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
-////				LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-////		layout.addView(view,params);
-////	
-////        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-////        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);          
-////        getWindow().setStatusBarColor(Color.TRANSPARENT);
-   
-		setContentView(view/*,viewParams*/);
-		
+		setContentView(view);
+		findView();
 		initWallpaperUpdate();
 		initDoubleDesktopLock();
-        //getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-		 getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-
+		
+		view.postDelayed(new Runnable() {
+            
+            @Override
+            public void run() {
+                startAppearAnimation();
+            }
+        }, 50);
     }
 
-	@Override
-	protected void onResume() {
-//		overridePendingTransition(android.R.anim.fade_in, 0);
-		super.onResume();
-	}
-
-	@Override
-	protected void onPause() {
-//		overridePendingTransition(0, android.R.anim.fade_out);
-//		overridePendingTransition(0, R.anim.keyguard_settings_translate_exit);
-		super.onPause();
-	}
-
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onDestroy()
-	 */
- 
-	
 	
 	
 	private void setBlurBackground() {
@@ -256,41 +223,6 @@ public class KeyguardSettingsActivity extends AmigoActivity {
             this.getWindow().setBackgroundDrawable(drawable);
         }
     }
-
-	/**
-	 * 
-	private void setBlurBackground() {
-		this.getWindow().setBackgroundDrawable(null);
-
-		if (wallpaper != null) {
-			wallpaper.recycle();
-			wallpaper = null;
-		}
-
-//		wallpaper = KeyguardWallpaper.getWallpaperBmp(this);
-		wallpaper = UIController.getInstance().getCurrentWallpaperBitmap();
-		if (wallpaper == null) {
-			DebugLog.mustLog(TAG, "getWallpaperBmp null");
-			return;
-		}
-		wallpaper = KeyguardWallpaper.getBlurBitmap(wallpaper, 5.0f);
-		// ViewUtil.saveMyBitmap("getBlurBitmap", screenBmp);
-		if (wallpaper == null) {
-			DebugLog.mustLog(TAG, "getBlurBitmap null");
-			return;
-		}
-		Drawable drawable = new BitmapDrawable(getResources(), wallpaper);
-
-		if (drawable != null) {
-			ColorMatrix cm = new ColorMatrix();
-			float mBlind = 0.6f;
-			cm.set(new float[] { mBlind, 0, 0, 0, 0, 0, mBlind, 0, 0, 0, 0, 0,
-					mBlind, 0, 0, 0, 0, 0, 1, 0 });
-			drawable.setColorFilter(new ColorMatrixColorFilter(cm));
-			this.getWindow().setBackgroundDrawable(drawable);
-		}
-	}
-	 */
 	
     private void changeWallpaperUpdateData(boolean isopen){
     	if(isopen){
@@ -317,7 +249,7 @@ public class KeyguardSettingsActivity extends AmigoActivity {
     }
     
     private void initKeyguardWallpaperUpdate(){
-    	mKeyguardWallpaperUpdate = (AmigoSwitch) findViewById(R.id.settings_switch_wallpaper_update);
+    	
         mKeyguardWallpaperUpdate.setChecked(connectNet);
         if (connectNet){
         	HKAgent.onEventWallpaperUpdate(getApplicationContext(),Event.SETTING_UPDATE, KeyguardSettings.SWITCH_WALLPAPER_UPDATE_ON);
@@ -348,7 +280,7 @@ public class KeyguardSettingsActivity extends AmigoActivity {
     }
     
     public void initOnlyWlan(){
-    	mOnlyWlanSwitch = (AmigoSwitch) findViewById(R.id.settings_switch_only_wlan);
+    	
         boolean isopen = KeyguardSettings.getOnlyWlanState(this.getApplicationContext());
         mOnlyWlanSwitch.setChecked(isopen);
         if (isopen){
@@ -372,7 +304,7 @@ public class KeyguardSettingsActivity extends AmigoActivity {
     }
    
     private void initDoubleDesktopLock() {
-    	mDoubleDesktopLock = (AmigoSwitch) findViewById(R.id.settings_switch_double_desktop_lock);
+    	
         boolean isopen = KeyguardSettings.getDoubleDesktopLockState(this.getApplicationContext());
         mDoubleDesktopLock.setChecked(isopen);
         changeDoubleDesktopLockData(isopen);

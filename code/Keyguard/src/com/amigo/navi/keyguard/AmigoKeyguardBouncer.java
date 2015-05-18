@@ -16,7 +16,7 @@ import android.view.accessibility.AccessibilityEvent;
 import android.widget.FrameLayout.LayoutParams;
 
 import com.android.keyguard.KeyguardHostView.OnDismissAction;
-import com.android.keyguard.KeyguardSecurityContainer.SecurityViewRemoveCallback;
+import com.android.keyguard.KeyguardSecurityContainer.SecurityViewRemoveAnimationUpdateCallback;
 import com.android.keyguard.KeyguardSecurityView;
 import com.android.keyguard.ViewMediatorCallback;
 import com.android.keyguard.R;
@@ -54,11 +54,11 @@ public class AmigoKeyguardBouncer {
 	        mRoot.setSystemUiVisibility(View.STATUS_BAR_DISABLE_HOME);
 	    }
 	  
-	 public void  initKeyguardBouncer(ViewMediatorCallback callback,LockPatternUtils lockPatternUtils,SecurityViewRemoveCallback removeViewCallback){
+	 public void  initKeyguardBouncer(ViewMediatorCallback callback,LockPatternUtils lockPatternUtils,SecurityViewRemoveAnimationUpdateCallback removeViewCallback){
 		    mLockPatternUtils=lockPatternUtils;
 	    	setViewMediatorCallback(callback);
 	    	mKeyguardView.setViewMediatorCallback(mCallback);
-	    	mKeyguardView.setSecurityViewRemoveCallback(removeViewCallback);
+	    	mKeyguardView.setSecurityViewRemoveAnimationUpdateCallback(removeViewCallback);
 	    	mKeyguardView.setLockPatternUtils(mLockPatternUtils);  
 	    	
 	 }

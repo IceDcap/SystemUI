@@ -33,7 +33,7 @@ public class KeyguardWallpaperContainer extends FrameLayout {
     
     Bitmap mBitmap = null;
     private float mBlind=0;
-    private boolean mIsSecure;
+    private int mModel;
     
     public KeyguardWallpaperContainer(Context context) {
         this(context,null);
@@ -82,7 +82,7 @@ public class KeyguardWallpaperContainer extends FrameLayout {
     @Override
     protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
-        if (!mIsSecure && mTop != mScreenHeight) {
+        if (mModel!=UIController.SCROLL_TO_SECURTY && mTop != mScreenHeight) {
             canvas.drawBitmap(mBitmap, 0, mTop, mPaint);
         }
         
@@ -90,32 +90,23 @@ public class KeyguardWallpaperContainer extends FrameLayout {
 		canvas.drawColor(color);
     }
     
-    public void onKeyguardScrollChanged(int top,int maxBoundY) {
-        
-        int bitmapHeight = mBitmap.getHeight();
-        mTop = (int) (mScreenHeight - top * (bitmapHeight / (float)maxBoundY));
-        postInvalidate();
-    }
+
     
-   public void onKeyguardScrollChanged(int top,int maxBoundY, boolean isSecure) {
+   public void onKeyguardModelChanged(int top,int maxBoundY, int  model) {
         
         int bitmapHeight = mBitmap.getHeight();
         mTop = (int) (mScreenHeight - top * (bitmapHeight / (float)maxBoundY));
-        mIsSecure=isSecure;
-        if(isSecure){
+        mModel=model;
+        if(model==UIController.SCROLL_TO_SECURTY){
         	mBlind= (float)top/maxBoundY;
+        }else if(model==UIController.SECURITY_SUCCESS_UNLOCK){
+        	float blind=(float)top/maxBoundY;
+        	mBlind= 1-blind;
         }else{
         	mBlind=0;
         }
         postInvalidate();
     }
-   
-   public void onSecutityViewScrollChanged(int top,int maxBoundY) {
-	   mIsSecure=false;
-       int bitmapHeight = mBitmap.getHeight();
-       mTop = (int) (mScreenHeight - top * (bitmapHeight / (float)maxBoundY));
-       mBlind= (float)1-top/maxBoundY;
-       postInvalidate();
-   }
+
     
 }

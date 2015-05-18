@@ -379,4 +379,14 @@ public class Common {
         return formatForRequset.format(new Date());
     }
     
+    public static void setDatabaseVersion(Context context, String version) {
+        NavilSettings
+                .setStringSharedConfig(context, NavilSettings.DATABASE_VERSION, version);
+    }
+    
+    public static String getDatabaseVersion(Context context) {
+        String version = "";
+        version = NavilSettings.getStringSharedConfig(context, NavilSettings.DATABASE_VERSION, "");
+        return version;
+    }
 }

@@ -186,7 +186,7 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
     private void setForgetPasswordButton() {
     	 forgetButton = (TextView) this.findViewById(R.id.forget_password);
          if(forgetButton == null) return;
-         if(getTimeOutSize()>=5){
+         if(KeyguardViewHostManager.isSuppotFinger() && getTimeOutSize()>=5){
         	 forgetButton.setVisibility(View.VISIBLE);
          }
         forgetButton.setOnClickListener(new View.OnClickListener() {
@@ -229,14 +229,14 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
 				});
 	}
 
-  /*  @Override
+    @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         if(ev.getY()>=mLockPatternView.getTop()){
            Log.d("KeyguardPatternUnlockView", "onInterceptTouchEvent.......=");
            requestDisallowInterceptTouchEvent(true);
        }
         return super.onInterceptTouchEvent(ev);
-    }*/
+    }
     
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
@@ -287,8 +287,11 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
         } else {
             mSecurityMessageDisplay.setMessage(R.string.kg_pattern_instructions, false);
         }*/
-    	
-    	mSecurityMessageDisplay.setMessage(R.string.keyguard_pattern_enter_code, true);
+    	if(KeyguardViewHostManager.isSuppotFinger()){
+    		mSecurityMessageDisplay.setMessage(R.string.keyguard_pattern_enter_code_finger, true);
+    	}else{ 		
+    		mSecurityMessageDisplay.setMessage(R.string.keyguard_pattern_enter_code, true);
+    	}
     }
 
     @Override
@@ -382,7 +385,9 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
 			mCallback.dismiss(true);
 		}
 		mCallback.reset();
-		forgetButton.setVisibility(View.INVISIBLE);
+		if(KeyguardViewHostManager.isSuppotFinger()){			
+			forgetButton.setVisibility(View.INVISIBLE);
+		}
 	}
 
 
@@ -391,7 +396,9 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
 		mLockPatternView.setDisplayMode(LockPatternView.DisplayMode.Wrong);	
 		if(DebugLog.DEBUG) DebugLog.d(TAG, "onUnlockFail failReason :"+failReason);
 		if(failReason == UNLOCK_FAIL_REASON_TIMEOUT) {
-			forgetButton.setVisibility(View.VISIBLE);
+			if(KeyguardViewHostManager.isSuppotFinger()){				
+				forgetButton.setVisibility(View.VISIBLE);
+			}
 		    VibatorUtil.amigoVibrate(mContext, VibatorUtil.LOCKSCREEN_UNLOCK_CODE_ERROR, VibatorUtil.UNLOCK_ERROR_VIBRATE_TIME);
 			long deadline = mKeyguardUpdateMonitor.getDeadline();
 			if(DebugLog.DEBUG) DebugLog.d(TAG, "onUnlockFail deadline :"+deadline+"LockPatternUtils.FAILED_ATTEMPT_TIMEOUT_MS="+LockPatternUtils.FAILED_ATTEMPT_TIMEOUT_MS);

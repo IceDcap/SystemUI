@@ -20,7 +20,7 @@
         xmlns:androidprv="http://schemas.android.com/apk/prv/res/android"
         package="com.android.systemui"
         android:sharedUserId="android.uid.systemui"
-		android:versionName="6.1.0.g"
+		android:versionName="6.1.0.h"
         coreApp="true">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -470,14 +470,14 @@
         <activity
             android:name="com.amigo.navi.keyguard.settings.KeyguardSettingsActivity"
             android:excludeFromRecents="true"
-            android:theme="@android:style/Theme.Material.Light.NoActionBar">
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Material.Wallpaper.NoTitleBar">
         </activity>
         <activity
-            android:name="com.amigo.navi.keyguard.haokan.HKCategoryActivity"
+            android:name="com.amigo.navi.keyguard.haokan.CategoryActivity"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Material.Light.NoActionBar"
+            android:theme="@android:style/Theme.Wallpaper.NoTitleBar"
             android:excludeFromRecents="true" >
-          
         </activity>
         <receiver android:name="com.amigo.navi.keyguard.settings.KeyguardSettingsSetupwizardReceiver">
             <intent-filter>

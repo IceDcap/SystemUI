@@ -24,7 +24,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.amigo.navi.keyguard.haokan.HKMainLayout;
+import com.amigo.navi.keyguard.haokan.CaptionsView;
+import com.amigo.navi.keyguard.haokan.PlayerButton;
 import com.amigo.navi.keyguard.haokan.UIController;
 import com.amigo.navi.keyguard.modules.AmigoBatteryStatus;
 import com.android.keyguard.KeyguardUpdateMonitor;
@@ -140,13 +141,37 @@ public class AmigoKeyguardPage extends RelativeLayout {
 	private void addHKMainLayout() {
 
 	    LayoutInflater inflater=LayoutInflater.from(mContext);
-        HKMainLayout mainLayout = (HKMainLayout)inflater.inflate(R.layout.haokan_main_layout, null);
+        RelativeLayout mainLayout = (RelativeLayout)inflater.inflate(R.layout.haokan_main_layout, null);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+        params.bottomMargin = getResources().getDimensionPixelSize(R.dimen.haokan_main_layout_marginbottom);
+        RelativeLayout playerRelativeLayout = (RelativeLayout) mainLayout.findViewById(R.id.haokan_page_layout_player);
+        CaptionsView captionsView = (CaptionsView) mainLayout.findViewById(R.id.haokan_page_layout_captions);
+        PlayerButton playerButton = (PlayerButton) playerRelativeLayout.findViewById(R.id.haokan_page_layout_imageButton);
+        TextView textViewTip = (TextView) mainLayout.findViewById(R.id.haokan_page_layout_tip);
+        
+        TextView musicName = (TextView) playerRelativeLayout.findViewById(R.id.haokan_page_layout_music);
+        TextView musicArtist = (TextView) playerRelativeLayout.findViewById(R.id.haokan_page_layout_Artist);
+        
+        UIController controller = UIController.getInstance();
+        controller.setmLayoutPlayer(playerRelativeLayout);
+        controller.setmCaptionsView(captionsView);
+        controller.setmPlayerButton(playerButton);
+        controller.setmTextViewTip(textViewTip);
+        controller.setmTextViewMusicName(musicName);
+        controller.setmTextViewArtist(musicArtist);
+        playerButton.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View arg0) {
+                PlayerManager.getInstance().pauseOrPlayer();
+            }
+        });
+        PlayerManager.getInstance().setPlayerButton(playerButton);
+        PlayerManager.getInstance().init(getContext().getApplicationContext());
         addView(mainLayout, params);
         
     }
-	
 	
 	private void addCarrierView(){
 	    LayoutInflater inflater=LayoutInflater.from(mContext);

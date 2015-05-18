@@ -20,6 +20,8 @@ import android.media.MediaPlayer.OnBufferingUpdateListener;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.telephony.TelephonyManager;
@@ -47,7 +49,6 @@ public class PlayerManager {
     
     private State mState = State.NULL;
     
-    private HKMainLayout mHkMainLayout;
     private PlayerButton mPlayerButton;
     
     private static final int NOTIFICATION_ID = 1005;
@@ -65,16 +66,31 @@ public class PlayerManager {
     
     private int mDuration;
     private static final boolean VOLUME_SLOWLY = true;
-    private boolean  isKeepCalling = false;
-    private boolean mAudiofocusLossPause = false;
+    private boolean isPausedByCalling = false;
+    private boolean isPausedByAudiofocusLoss = false;
     private int mCurrentDuration = 0;
     
     private Timer mTimer = null; 
     private TimerTask mTimerTask = null;
     
     private static PlayerManager instance = null;
-
     
+    private NotificationReceiver mNotificationReceiver;
+    
+    private PhoneStateReceiver mPhoneStateReceiver;
+
+    private boolean isLocalMusic = false;
+    
+    
+    
+    public boolean isLocalMusic() {
+        return isLocalMusic;
+    }
+
+    public void setLocalMusic(boolean isLocalMusic) {
+        this.isLocalMusic = isLocalMusic;
+    }
+
     public static PlayerManager getInstance(){
         if(instance == null){
             instance = new PlayerManager();
@@ -97,8 +113,7 @@ public class PlayerManager {
 
 
 
-    private NotificationReceiver mNotificationReceiver;
-    private PhoneStateReceiver mPhoneStateReceiver;
+   
     
     public void init(Context applicationContext) {
         
@@ -127,6 +142,8 @@ public class PlayerManager {
         
         mAudioManager.registerAudioFocusListener(mAudioFocusListener);
         
+ 
+        
     }
    
     public void closeHaokan() {
@@ -136,13 +153,13 @@ public class PlayerManager {
     }
     
     
-    public void player() {
+    public void player(boolean IsAvailable, boolean isLocal) {
 
         initMediaPlayer();
         
-        
         if (mState != State.PAUSE) {
             
+            UIController.getInstance().showMusicPlayer(getCurrentMusic());
             if (mMediaPlayer.isPlaying()) {
                 mMediaPlayer.stop();
             }
@@ -150,26 +167,18 @@ public class PlayerManager {
             
             String dataSource = mCurrentMusic.getLocalPath();
  
-            if (!mCurrentMusic.isLocal()) {
+            if (!isLocal && IsAvailable) {
                 Log.v(TAG, "is not Local music & download music");
                 dataSource = mCurrentMusic.getPlayerUrl();
                 new DownLoadJob(mApplicationContext, mCurrentMusic).start();
-            }else {
-                Log.v(TAG, "is Local music");
-                if (!new File(dataSource).exists()) {
-                    Log.v(TAG, "music file is not exists & download music");
-                    dataSource = mCurrentMusic.getPlayerUrl();
-                    new DownLoadJob(mApplicationContext, mCurrentMusic).start();
-                }
             } 
             Log.v(TAG, "dataSource = " + dataSource);
             
             try {
                 mMediaPlayer.setDataSource(dataSource);
-                mMediaPlayer.prepare();
-                mDuration = mMediaPlayer.getDuration();
+                mMediaPlayer.prepareAsync();
                 setState(State.PREPARE);
-            } catch (IllegalArgumentException | SecurityException | IllegalStateException | IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             
@@ -223,46 +232,19 @@ public class PlayerManager {
     
     private void cancelNotification() {
         Log.v(TAG, "cancelNotification");
-        try {
-            mNotificationManager.cancel(NOTIFICATION_ID);
-        } catch (Exception e) {
-        }
+
+        mNotificationManager.cancel(NOTIFICATION_ID);
+
     }
     
-    public void next() {
-       
-        if (State.NULL != mState) {
-            cancelTimeTask();
-            cancelNotification();
-            setState(State.NULL);
-        }
-        
-        if (mMediaPlayer != null) {
-            mMediaPlayer.stop();
-        }
-        
-    }
-    
-    public void prev() {
-        
-        if (State.NULL != mState) {
-            cancelTimeTask();
-            cancelNotification();
-            setState(State.NULL);
-        }
-        
-        if (mMediaPlayer != null) {
-            mMediaPlayer.stop();
-        }
-    }
     
     public void pause() {
 
         if (mMediaPlayer.isPlaying() && mState == State.PLAYER) {
             
 
-            mMediaPlayer.pause();
             cancelTimeTask();
+            mMediaPlayer.pause();
             abandonAudioFocusIfNeed();
             setState(State.PAUSE);
             notifyNotification();
@@ -290,30 +272,39 @@ public class PlayerManager {
         }
         Log.v(TAG, mCurrentMusic.getmMusicName());
         
-        if (mState == State.PAUSE || mCurrentMusic.getmState() == State.PAUSE) {
+        if (mState == State.PAUSE) {
             Log.v(TAG, "pauseOrPlayer  start");
             start();
             
         }else if (mState == State.PLAYER) {
             Log.v(TAG, "pauseOrPlayer  pause");
             pause();
-        }else {
-            if (mCurrentMusic.isLocal() || Common.getNetIsAvailable(mApplicationContext)) {
-                Log.v(TAG, "pauseOrPlayer  player");
-                player();
+        }else if (mState == State.NULL){
+        
+            boolean IsAvailable = Common.getNetIsAvailable(mApplicationContext);
+             
+            setLocalMusic(mCurrentMusic.isLocal() && new File(mCurrentMusic.getLocalPath()).exists());
+            
+            if (isLocalMusic || IsAvailable) {
+                player(IsAvailable, isLocalMusic);
+            } else {
+                UIController.getInstance().showTip(R.string.haokan_tip_check_net);
             }
+             
         }
-        isKeepCalling = false;
+        isPausedByCalling = false;
     }
     
     
     
     private void start() {
+        
         requestAudioFocus();
- 
+        mDuration = mMediaPlayer.getDuration();
         if (mState != State.PLAYER) {
             initTimeTask();
         }
+        
         mMediaPlayer.start();
         setState(State.PLAYER);
         notifyNotification();
@@ -332,6 +323,7 @@ public class PlayerManager {
             mMediaPlayer.setOnErrorListener(mErrorListener);
             mMediaPlayer.setOnPreparedListener(mOnPreparedListener);
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            
         }
     }
     
@@ -346,7 +338,7 @@ public class PlayerManager {
                 mMediaPlayer.setVolume(0f,0f);
                 ValueAnimator va = new ValueAnimator();
                 va.setFloatValues(1f, 0f);
-                va.setDuration(2000);
+                va.setDuration(800);
                 va.addUpdateListener(mAnimatorUpdateListener);
                 va.addListener(new AnimatorListener() {
                     
@@ -382,7 +374,8 @@ public class PlayerManager {
  
     public void stopAndRelease() {
         
-
+        cancelTimeTask();
+        mBufferingPercent = 0;
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
             mMediaPlayer.release();
@@ -391,12 +384,9 @@ public class PlayerManager {
         }
         if (State.NULL != mState) {
             setState(State.NULL);
-            cancelTimeTask();
             cancelNotification();
         }
-        
-        
-//        getmHkMainLayout().hideMusicPlayer(false);
+ 
     }
     
     
@@ -411,15 +401,19 @@ public class PlayerManager {
     private OnCompletionListener mCompletionListener = new OnCompletionListener() {
         @Override
         public void onCompletion(MediaPlayer mp) {
+            Log.v("haokan", "onCompletion ");
             stopAndRelease();
-            getmHkMainLayout().hideMusicPlayer(true);
+            UIController.getInstance().hideMusicPlayer(true);
         }
     };
+    
+    private int mBufferingPercent = 0;
     
     private OnBufferingUpdateListener mBufferingUpdateListener = new OnBufferingUpdateListener() {
         @Override
         public void onBufferingUpdate(MediaPlayer mp, int percent) {
-            
+            //Log.v("haokan", "onBufferingUpdate  percent = " + percent);
+            mBufferingPercent = percent;
         }
     };
     
@@ -427,14 +421,7 @@ public class PlayerManager {
 
         @Override
         public boolean onError(MediaPlayer mp, int what, int extra) {
-            Log.v(TAG, "onError  what = " + what);
  
-            if (Common.getNetIsAvailable(mApplicationContext)) {
-                Log.e(TAG, "onError  网络断开");
-            }
-            if(what == MediaPlayer.MEDIA_ERROR_UNKNOWN){
-                return true;
-            }
             return true;
         }
     };
@@ -448,8 +435,7 @@ public class PlayerManager {
         public void onPrepared(MediaPlayer arg0) {
             createNotification();
             start();
-            getmHkMainLayout().showMusicPlayer(getCurrentMusic());
-            
+
         }
     };
     
@@ -463,8 +449,10 @@ public class PlayerManager {
             @Override
             public void run() {
                 if (mMediaPlayer != null){
-                    if (mMediaPlayer.isPlaying()) {
+//                    if (mMediaPlayer.isPlaying()) {
+                        if (getState() == State.PLAYER) {
                         mCurrentDuration = mMediaPlayer.getCurrentPosition();
+                        Log.v("haokan", "mCurrentDuration  = " + mCurrentDuration);
                         mHandler.sendEmptyMessage(0);
                     }
                 }
@@ -479,9 +467,6 @@ public class PlayerManager {
         
         public void handleMessage(android.os.Message msg) {
             final int position = mCurrentDuration;
-//            if (mMediaPlayer != null) {
-//                position = mMediaPlayer.getCurrentPosition();
-//            }
             int duration = mDuration;
             if (duration > 0) {
                 mPlayerButton.setProgress(position / (float)duration);
@@ -500,13 +485,6 @@ public class PlayerManager {
         }
     };
 
-    public HKMainLayout getmHkMainLayout() {
-        return mHkMainLayout;
-    }
-
-    public void setmHkMainLayout(HKMainLayout mHkMainLayout) {
-        this.mHkMainLayout = mHkMainLayout;
-    }
     
     public PlayerButton getPlayerButton() {
         return mPlayerButton;
@@ -531,7 +509,7 @@ public class PlayerManager {
     public void closeNotificationAndMusic() {
         cancelNotification();
         stopAndRelease();
-        getmHkMainLayout().hideMusicPlayer(false);
+        UIController.getInstance().hideMusicPlayer(false);
     }
     
     
@@ -542,12 +520,12 @@ public class PlayerManager {
                 case AudioManager.AUDIOFOCUS_LOSS:
                     Log.d(TAG, "AUDIOFOCUS_LOSS");
 
-                    mAudiofocusLossPause = true;
+                    isPausedByAudiofocusLoss = true;
                     pause();
                     break;
                 case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
                     Log.d(TAG, "AUDIOFOCUS_LOSS_TRANSIENT");
-                    mAudiofocusLossPause = true;
+                    isPausedByAudiofocusLoss = true;
                     //闹钟
                     pause();
                     
@@ -581,7 +559,7 @@ public class PlayerManager {
 
     
     private void abandonAudioFocusIfNeed() {
-        if (!mAudiofocusLossPause) {
+        if (!isPausedByAudiofocusLoss) {
 
             int abandonAudioFocusCode = mAudioManager.abandonAudioFocus(mAudioFocusListener);
 
@@ -591,7 +569,7 @@ public class PlayerManager {
                                     : "FAILED"));
 
         }
-        mAudiofocusLossPause = false;
+        isPausedByAudiofocusLoss = false;
     }
     
     private class PhoneStateReceiver extends BroadcastReceiver{
@@ -602,24 +580,37 @@ public class PlayerManager {
             if (intent.getAction().equals(Intent.ACTION_NEW_OUTGOING_CALL)
                     || mTelephonyManager.getCallState() == TelephonyManager.CALL_STATE_RINGING) {
                 if (mState == State.PLAYER) {
+                    
                     pause();
+                    isPausedByCalling = true;
                 }
-                isKeepCalling = true;
 
             } else if (mTelephonyManager.getCallState() == TelephonyManager.CALL_STATE_IDLE) {
-                if (mState == State.PAUSE && isKeepCalling) {
+                if (mState == State.PAUSE && isPausedByCalling) {
                     start();
-                    isKeepCalling = false;
                 }
+                isPausedByCalling = false;
             }
         }
     }
+    
+    
 
     public State getState() {
         return mState;
     }
 
    
+    public void netStateChange(boolean connect) {
+
+        Log.v("haokan", "netStateChange " + connect);
+        if (!connect) {
+            if (mState == State.PLAYER && !isLocalMusic() && mBufferingPercent != 100) {
+                stopAndRelease();
+                UIController.getInstance().hideMusicPlayer(true);
+            }
+        }
+    }
     
     
     

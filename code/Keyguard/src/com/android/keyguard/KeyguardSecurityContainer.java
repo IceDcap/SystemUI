@@ -68,7 +68,7 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
     public static final int FINGERPRINT_UNUSED=-1;
     public static final int FINGERPRINT_FAILED=0;
     public static final int FINGERPRINT_SUCCESS=1;
-    private SecurityViewRemoveCallback mSecurityViewRemoveCallback;
+    private SecurityViewRemoveAnimationUpdateCallback mSecurityViewRemoveCallback;
 
     // Used to notify the container when something interesting happens.
     public interface SecurityCallback {
@@ -488,7 +488,7 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
 				float f = animation.getAnimatedFraction();
 				currentSecurityView.setTranslationY(-h*f);
 				currentSecurityView.setAlpha(1-f);
-				mSecurityViewRemoveCallback.executeRemoveAmimation((int) (h*f));
+				mSecurityViewRemoveCallback.securityViewRemoveAnimationUpdating((int) (h*f),h);
 			}
 		});
 		mSecurityViewRemoveValueAnimator.addListener(new AnimatorListener() {
@@ -794,16 +794,16 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
     }
 
   //GIONEE <Amigo_Keyguard>  jiating <2015-05-12> modify for keyguardBg change when excute SecurityView animation begin
-    public interface SecurityViewRemoveCallback {
+    public interface SecurityViewRemoveAnimationUpdateCallback {
 
-        public void executeRemoveAmimation(int top);
+        public void securityViewRemoveAnimationUpdating(int top,int maxBoundY);
+        
     }
     
-    public void setSecurityViewRemoveCallback(SecurityViewRemoveCallback  callback){
+    public void setSecurityViewRemoveAnimationUpdateCallback(SecurityViewRemoveAnimationUpdateCallback  callback){
     	mSecurityViewRemoveCallback=callback;
     }
     
     //GIONEE <Amigo_Keyguard>  jiating <2015-05-12> modify for keyguardBg change when excute SecurityView animation end
-
 }
 
