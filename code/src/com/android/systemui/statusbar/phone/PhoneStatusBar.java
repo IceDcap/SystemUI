@@ -2037,9 +2037,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 continue;
             }
             
-            if (ent.notification.getNotification().priority != Notification.PRIORITY_DEFAULT) {
+            // GIONEE <wujj> <2015-05-18> modify for CR01480943 begin
+            if ((ent.notification.getNotification().priority != Notification.PRIORITY_DEFAULT)
+            		|| mGnNotificationService.isOnGoingNotification(ent.notification.getNotification(), ent.notification.getPackageName())) {
             	toShow.add(ent.icon);
             }
+            // GIONEE <wujj> <2015-05-18> modify for CR01480943 end
         }
 
         if (DEBUG) {

@@ -207,7 +207,7 @@ public class GnNotificationService {
         return (appid == Process.SYSTEM_UID || appid == Process.PHONE_UID || uid == 0);
     }
     
-    private boolean isOnGoingNotification(Notification n, String pkg) {
+    public boolean isOnGoingNotification(Notification n, String pkg) {
     	if(mOnGoingNotificationList.contains(pkg) &&
     			(n.flags & Notification.FLAG_ONGOING_EVENT) != 0)
     		return true;
