@@ -831,6 +831,7 @@ public abstract class BaseStatusBar extends SystemUI implements
     
     protected View updateNotificationVetoButton(View row, StatusBarNotification n) {
         View vetoButton = row.findViewById(R.id.veto);
+        Log.v("wujiujiu", "n.isClearable() = "+n.isClearable());
         if (n.isClearable() || (mHeadsUpNotificationView.getEntry() != null
                 && mHeadsUpNotificationView.getEntry().row == row)) {
             final String _pkg = n.getPackageName();
