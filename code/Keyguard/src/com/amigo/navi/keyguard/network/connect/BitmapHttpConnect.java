@@ -55,6 +55,32 @@ public class BitmapHttpConnect {
         return bitmap;
     }
 
+    public byte[] loadImageFromInternetByByte(URL conUrl) {
+        InputStream inputStream = null;
+        Bitmap bitmap = null;
+        byte[] result = null;
+        try {
+            int reqCode = ConnectionStatus.NETWORK_EXCEPTION;
+            HttpURLConnection urlConn = (HttpURLConnection) conUrl
+                    .openConnection();
+            urlConn.setRequestMethod(mRequestType);
+            urlConn.setConnectTimeout(mTimeOut);
+            urlConn.setReadTimeout(mTimeOut);
+            reqCode = urlConn.getResponseCode();
+            DebugLog.d(TAG,"loadImageFromInternet conUrl:" + conUrl.toString());
+            DebugLog.d(TAG,"loadImageFromInternet reqCode:" + reqCode);
+            if (reqCode == HttpStatus.SC_OK) {
+                inputStream = urlConn.getInputStream();
+                result = readInputStream(inputStream);
+            }
+        } catch (Exception e) {
+            DebugLog.d(TAG,"loadImageFromInternet e:" + e);
+        } finally {
+            closeStream(inputStream);
+        }
+        return result;
+    }
+    
     private void closeStream(InputStream inputStream) {
         if (null != inputStream) {
             try {
@@ -92,7 +118,6 @@ public class BitmapHttpConnect {
         }  
         baos.close();  
         in.close();  
-        return baos.toByteArray();  
-  
+        return baos.toByteArray();
     }  
 }

@@ -215,7 +215,7 @@ public class PlayerManager {
         remoteViews.setTextViewText(R.id.haokan_main_layout_music, mCurrentMusic.getmMusicName());
         remoteViews.setTextViewText(R.id.haokan_main_layout_Artist, mCurrentMusic.getmArtist());
         remoteViews.setImageViewBitmap(R.id.haokan_notification_image,
-                Common.compBitmap(UIController.getInstance().getCurrentWallpaperBitmap()));
+                Common.compBitmap(UIController.getInstance().getCurrentWallpaperBitmap(mApplicationContext)));
         
         mNotification = builder.build();
         

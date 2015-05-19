@@ -57,13 +57,13 @@ public class TimeControlManager {
         calendar.set(Calendar.MILLISECOND, 0);
         Calendar newCalendar = getTime(calendar);
        long alarmTime =  newCalendar.getTimeInMillis();   
-       long tempTime = alarmTime - System.currentTimeMillis();
-       long amendTime = tempTime < 0?(alarmTime + DAY) : alarmTime;
+//       long tempTime = alarmTime - System.currentTimeMillis();
+       long amendTime = alarmTime + DAY;
        Date d = new Date(amendTime);
        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
        String time = sdf.format(d);  
        DebugLog.d(TAG,"getTime time:" + time);
-       alarmManager.set(AlarmManager.RTC, amendTime,pendingActivityIntent);
+       alarmManager.set(AlarmManager.RTC_WAKEUP, amendTime,pendingActivityIntent);
 	}
 	
 	public void cancelUpdateAlarm(){

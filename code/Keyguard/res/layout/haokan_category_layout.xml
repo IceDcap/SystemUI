@@ -8,12 +8,12 @@
     <TextView
         android:id="@+id/TextView"
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_marginLeft="20dp"
+        android:layout_height="@dimen/haokan_category_title_height"
+        android:layout_marginLeft="@dimen/haokan_category_title_margin_left"
         android:gravity="center_vertical"
         android:text="@string/haokan_wallpaper_subscription"
         android:textColor="#ffffff"
-        android:textSize="18dp" />
+        android:textSize="@dimen/haokan_category_title_textsize" />
 
     <GridView
         android:id="@+id/haokan_gridview"

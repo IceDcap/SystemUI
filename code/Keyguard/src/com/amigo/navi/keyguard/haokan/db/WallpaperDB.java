@@ -94,10 +94,10 @@ public class WallpaperDB extends BaseDB{
         }
     }
     
-    public synchronized  void addMusicLocalPath(Music music) {
+    public void addMusicLocalPath(Music music) {
 
         final SQLiteDatabase db = mWritableDatabase;
-
+ 
         db.execSQL("update wallpaper set music_localpath = '" + music.getLocalPath()
                 + "' where type_id = ? and img_id = ? and music_id = ? ", new Object[] {
                 music.getTypeId(), music.getImgId(), music.getMusicId()
@@ -378,9 +378,7 @@ public class WallpaperDB extends BaseDB{
         final SQLiteDatabase db = mWritableDatabase;
         ContentValues values = new ContentValues();
         values.put(DataConstant.WallpaperColumns.TODAY_IMAGE, DataConstant.NOT_TODAY_IMAGE);
-        db.update(TABLE_NAME, values, DataConstant.WallpaperColumns.LOCK + " = ?",
-        		new String[] {
-                String.valueOf(DataConstant.WALLPAPER_NOT_LOCK)});
+        db.update(TABLE_NAME, values, null,null);
     }
     
 
@@ -483,35 +481,42 @@ public class WallpaperDB extends BaseDB{
     
     public   Wallpaper queryDynamicShowWallpaper(String timeNow){
         final SQLiteDatabase db = mReadableDatabase;
-        String sqlCurrentTime = "select * from " + TABLE_NAME + " where " + 
-                DataConstant.WallpaperColumns.SHOW_TIME_BEGIN + "<='" + timeNow + 
-                "' and " + DataConstant.WallpaperColumns.SHOW_TIME_END + ">'" + timeNow + 
-                "' order by " + DataConstant.WallpaperColumns.SHOW_TIME_BEGIN + " asc Limit 1 Offset 0";
-        String sqlPreTime = "select * from " + TABLE_NAME + " where " + 
-                DataConstant.WallpaperColumns.SHOW_TIME_END + "<='" + timeNow +     
-                "' order by " + DataConstant.WallpaperColumns.SHOW_TIME_END + " desc Limit 1 Offset 0";
-        String sqlNextTime = "select * from " + TABLE_NAME + " where " + 
-                DataConstant.WallpaperColumns.SHOW_TIME_BEGIN + ">='" + timeNow +     
-                "' order by " + DataConstant.WallpaperColumns.SHOW_TIME_BEGIN + " asc Limit 1 Offset 0";
+        String sqlCurrentTime = "select * from " + TABLE_NAME + " where strftime('%H%M'," + 
+                DataConstant.WallpaperColumns.SHOW_TIME_BEGIN + ")<=strftime('%H%M','" + timeNow + 
+                "') and strftime('%H%M'," + DataConstant.WallpaperColumns.SHOW_TIME_END + ")>strftime('%H%M','" + timeNow + 
+                "') order by strftime('%H%M'," + DataConstant.WallpaperColumns.SHOW_TIME_BEGIN + ") asc Limit 1 Offset 0";
+        String sqlPreTime = "select * from " + TABLE_NAME + " where strftime('%H%M'," + 
+                DataConstant.WallpaperColumns.SHOW_TIME_END + ")<=strftime('%H%M','" + timeNow +     
+                "') order by strftime('%H%M'," + DataConstant.WallpaperColumns.SHOW_TIME_END + ") desc Limit 1 Offset 0";
+        String sqlNextTime = "select * from " + TABLE_NAME + " where strftime('%H%M'," + 
+                DataConstant.WallpaperColumns.SHOW_TIME_BEGIN + ")>=strftime('%H%M','" + timeNow +     
+                "') order by strftime('%H%M'," + DataConstant.WallpaperColumns.SHOW_TIME_BEGIN + ") asc Limit 1 Offset 0";
+        DebugLog.d(TAG,"queryDynamicShowWallpaper sqlCurrentTime:" + sqlCurrentTime);
+        DebugLog.d(TAG,"queryDynamicShowWallpaper sqlPreTime:" + sqlPreTime);
+        DebugLog.d(TAG,"queryDynamicShowWallpaper sqlNextTime:" + sqlNextTime);
         Cursor cursor = db.rawQuery(sqlCurrentTime,null);
         if(cursor != null){
             Wallpaper wallpaper = null;
             if(cursor.getCount() != 0){
                 cursor.moveToFirst();
                 wallpaper = queryWallpaper(cursor);
+                closeCursor(cursor);
+                return wallpaper;
             }
             closeCursor(cursor);
-            return wallpaper;
         }
         Cursor preTimeCursor = db.rawQuery(sqlPreTime,null);
+        DebugLog.d(TAG,"queryDynamicShowWallpaper preTimeCursor:" + preTimeCursor);
         if(preTimeCursor != null){
             Wallpaper wallpaper = null;
+            DebugLog.d(TAG,"queryDynamicShowWallpaper preTimeCursor.getCount():" + preTimeCursor.getCount());
             if(preTimeCursor.getCount() > 0){
                 preTimeCursor.moveToFirst();
                 wallpaper = queryWallpaper(preTimeCursor);
+                closeCursor(preTimeCursor);
+                return wallpaper;
             }
             closeCursor(preTimeCursor);
-            return wallpaper;
         }
         Cursor nextTimeCursor = db.rawQuery(sqlNextTime,null);
         if(nextTimeCursor != null){
@@ -519,9 +524,10 @@ public class WallpaperDB extends BaseDB{
             if(nextTimeCursor.getCount() != 0){
                 nextTimeCursor.moveToFirst();
                 wallpaper = queryWallpaper(nextTimeCursor);
+                closeCursor(nextTimeCursor);
+                return wallpaper;
             }
             closeCursor(nextTimeCursor);
-            return wallpaper;
         }
         return null;
     }

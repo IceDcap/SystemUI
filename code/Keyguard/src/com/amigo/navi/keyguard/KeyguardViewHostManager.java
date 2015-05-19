@@ -25,10 +25,12 @@ import android.widget.FrameLayout.LayoutParams;
 
 import com.amigo.navi.keyguard.AmigoKeyguardBouncer.KeyguardBouncerCallback;
 import com.amigo.navi.keyguard.haokan.Common;
+import com.amigo.navi.keyguard.haokan.JsonUtil;
 import com.amigo.navi.keyguard.haokan.KeyguardDataModelInit;
 import com.amigo.navi.keyguard.haokan.KeyguardWallpaperContainer;
 import com.amigo.navi.keyguard.haokan.NicePicturesInit;
 import com.amigo.navi.keyguard.haokan.NicePicturesInit.DataChangedInterface;
+import com.amigo.navi.keyguard.haokan.ShutdownBroadcastReceiver;
 import com.amigo.navi.keyguard.haokan.UIController;
 import com.amigo.navi.keyguard.haokan.analysis.HKAgent;
 import com.amigo.navi.keyguard.haokan.db.WallpaperDB;
@@ -80,22 +82,21 @@ public class KeyguardViewHostManager {
     private MyHandler mHandler=new MyHandler();
     private ViewHostReceiver mReceiver=new ViewHostReceiver();
     private KeyguardNotificationCallback mKeyguardNotificationCallback;
-    private NicePicturesInit mNicePicturesInit;
     private FingerIdentifyManager mFingerIdentifyManager;
     // for statistics
     private long timeOnKeyguard = -1;
     private long timeOnKeyguardStart = -1;
     private boolean IsClearLock = false;
+    private WallpaperList mDefaultWallpaperList = null;
     private static boolean isSuppotFinger=false;
     
 
-
 	public KeyguardViewHostManager(Context context,KeyguardViewHost host,SkylightHost skylight,LockPatternUtils lockPatternUtils,ViewMediatorCallback callback){
         DebugLog.d(TAG,"KeyguardViewHostManager");
-        initVersionName(context);
+      	initVersionName(context);
         KeyguardDataModelInit.getInstance(context).initData();
-        mNicePicturesInit = NicePicturesInit.getInstance(context.getApplicationContext());
-        mNicePicturesInit.init();
+        NicePicturesInit nicePicturesInit = NicePicturesInit.getInstance(context.getApplicationContext());
+        nicePicturesInit.init();
         mContext=context;
         mKeyguardViewHost=host;
         mSkylightHost=skylight;
@@ -107,13 +108,61 @@ public class KeyguardViewHostManager {
         initKeyguard(callback);
         mKeyguardViewHost.setOnViewTouchListener(mViewTouchListener);
         initThreadUtil();
+        mDefaultWallpaperList = JsonUtil.getDefaultWallpaperList();
+        sortDefaultWallpaperList(mDefaultWallpaperList);
         initHorizontalListView();
         addKeyguardArcMenu();
+		ShutdownBroadcastReceiver.setUpdatePage(mUpdatePage);
         mFingerIdentifyManager=new FingerIdentifyManager(context);
         isSuppotFinger=SystemProperties.get("ro.gn.fingerprint.support").equals("FPC");
         Log.i(TAG,"isSuppotFinger....isSuppotFinger="+isSuppotFinger);
     }
-  
+
+    private void sortDefaultWallpaperList(WallpaperList wallpaperList){
+    	int lockPos = Common.getLockPostion(mContext);
+    	if(lockPos == -1){
+    		return;
+    	}
+    	int lockID = Common.getLockPostion(mContext);
+    	if(lockID == -1){
+    		return;
+    	}
+    	int pos = -1;
+    	for(int index = 0;index < wallpaperList.size();index++){
+    		if(lockID == wallpaperList.get(index).getImgId()){
+    			pos = index;
+    			break;
+    		}
+    	}
+    	if(pos != -1){
+    		Wallpaper wallpaper = wallpaperList.get(pos);
+    		if(wallpaper != null){
+    			wallpaper.setLocked(true);
+    		}
+    		wallpaperList.remove(pos);
+    		wallpaperList.add(lockPos, wallpaper);
+    		UIController.getInstance().setLockWallpaper(wallpaper);
+    		mShowPage = lockPos;
+    	}
+    }
+    
+    KeyguardViewHost.ConfigChangeCallback mConfigChangeCallback = new KeyguardViewHost.ConfigChangeCallback() {
+		
+		@Override
+		public void onConfigChange() {
+	        initHorizontalListView();
+	        addKeyguardArcMenu();
+		}
+	};
+    
+    ShutdownBroadcastReceiver.UpdatePage mUpdatePage = new ShutdownBroadcastReceiver.UpdatePage() {
+		
+		@Override
+		public void update() {
+			savePage(true);
+		}
+	};
+    
 	private void initVersionName(Context context) {
 		try{
             PackageManager packageManager = context.getPackageManager();
@@ -174,11 +223,20 @@ public class KeyguardViewHostManager {
         IsClearLock = true;
         cancelFingerIdentify();
         updateNotifiOnkeyguard(false);
+        releaseCache();
     }
-    
+
+	private void releaseCache() {
+		if(mImageLoader != null){
+        	mImageLoader.clearCache();
+        }
+	}
     
     public void onScreenTurnedOff(){
         mKeyguardViewHost.onScreenTurnedOff();
+        savePage(false);
+        updateHorizontalListViewWhenScreenChanged();
+        releaseCache();
         if (!IsClearLock){
         	timeOnKeyguard = System.currentTimeMillis() - timeOnKeyguardStart;
         	HKAgent.onEventTimeSceenOff(mContext, (int) timeOnKeyguard);
@@ -192,6 +250,9 @@ public class KeyguardViewHostManager {
     }
     
     public void onScreenTurnedOn(){
+    	if(mWallpaperAdapter != null){
+    		mWallpaperAdapter.notifyDataSetChanged();
+    	}
         mKeyguardViewHost.onScreenTurnedOn();
         Wallpaper wallpaper= UIController.getInstance().getmCurrentWallpaper();
         if (wallpaper != null){
@@ -203,7 +264,6 @@ public class KeyguardViewHostManager {
 //      if(mWallpaperAdapter != null){
 //      mWallpaperAdapter.notifyDataSetChanged();
 //   }
-     updateHorizontalListViewWhenScreenChanged();
         startFingerIdentify();
     }
     
@@ -424,10 +484,12 @@ public class KeyguardViewHostManager {
                 DebugLog.d(TAG,"update listview mHandler");
                 WallpaperList wallpaperList = (WallpaperList) msg.obj;
                 refreshHorizontalListView(wallpaperList); 
-                UIController.getInstance().refreshWallpaperInfo();
                 break;
             case MSG_UPDATE_HAOKAN_LIST_SCREEN_ON:
                 WallpaperList wallpapers = (WallpaperList) msg.obj;
+//                if(wallpapers == null || wallpapers.size() ==0){
+//                	wallpapers = mDefaultWallpaperList;
+//                }
                 refreshHorizontalListView(wallpapers); 
                 mKeyguardListView.setPosition(mShowPage);
                 UIController.getInstance().refreshWallpaperInfo();
@@ -519,28 +581,6 @@ public class KeyguardViewHostManager {
     	return false;
     }
     
-    private ImageLoader mImageLoader = null;
-    private KeyguardListView mKeyguardListView;
-    private HorizontalAdapter mWallpaperAdapter;
-    protected int mShowPage;
-    private void initHorizontalListView(){
-        DebugLog.d(TAG,"initHorizontalListView wallpaperList");
-      KeyguardWallpaperContainer container = new KeyguardWallpaperContainer(mContext.getApplicationContext());
-      mKeyguardListView = new KeyguardListView(mContext.getApplicationContext());
-      mImageLoader = new ImageLoader(mContext.getApplicationContext());
-      WallpaperList wallpaperList = new WallpaperList();
-      mWallpaperAdapter = new HorizontalAdapter(mContext.getApplicationContext(), wallpaperList,mImageLoader);
-      UIController.getInstance().setmKeyguardListView(mKeyguardListView);
-      mKeyguardListView.setAdapter(mWallpaperAdapter);
-      updateDataAndRefreshKeyguardListView();
-      mKeyguardListView.setOnScrollListener(mKeyguardListViewScrollListener);
-      container.addView(mKeyguardListView, 0);
-      mKeyguardViewHost.addView(container, 0);
-//      mKeyguardViewHost.addView(mKeyguardListView, 0);
-      NicePicturesInit.getInstance(mContext).setDataChangedListener(mDataChangedListener);
-      UIController controller = UIController.getInstance();
-      mKeyguardListView.setTouchlListener(controller);
-    }
     public void updateSKylightLocation() {
         mHandler.post(new Runnable() {
             @Override
@@ -550,6 +590,35 @@ public class KeyguardViewHostManager {
         });
     }
     
+    private ImageLoader mImageLoader = null;
+    private KeyguardListView mKeyguardListView;
+    private HorizontalAdapter mWallpaperAdapter;
+    protected int mShowPage;
+	private KeyguardWallpaperContainer mContainer = null;
+    private void initHorizontalListView(){
+        DebugLog.d(TAG,"initHorizontalListView wallpaperList");
+      mKeyguardViewHost.setOnViewTouchListener(mViewTouchListener);
+      if(mContainer != null){
+          mKeyguardViewHost.addView(mContainer, 0);
+          mContainer.reset();
+          return;
+      }
+      mContainer  = new KeyguardWallpaperContainer(mContext.getApplicationContext());
+      mKeyguardListView = new KeyguardListView(mContext.getApplicationContext());
+      mImageLoader = new ImageLoader(mContext.getApplicationContext());
+      WallpaperList wallpaperList = new WallpaperList();
+      mWallpaperAdapter = new HorizontalAdapter(mContext.getApplicationContext(), wallpaperList,mImageLoader);
+      UIController.getInstance().setmKeyguardListView(mKeyguardListView);
+      mKeyguardListView.setAdapter(mWallpaperAdapter);
+      updateDataAndRefreshKeyguardListView(true);
+      mKeyguardListView.setOnScrollListener(mKeyguardListViewScrollListener);
+      mContainer.addView(mKeyguardListView, 0);
+      mKeyguardViewHost.addView(mContainer, 0);
+//      mKeyguardViewHost.addView(mKeyguardListView, 0);
+      NicePicturesInit.getInstance(mContext).setDataChangedListener(mDataChangedListener);
+      UIController controller = UIController.getInstance();
+      mKeyguardListView.setTouchlListener(controller);
+    }
     
     private void addKeyguardArcMenu() {
 
@@ -598,7 +667,7 @@ public class KeyguardViewHostManager {
 //        }
     }
     
-    private void updateDataAndRefreshKeyguardListView(){
+    private void updateDataAndRefreshKeyguardListView(final boolean isInit){
         DebugLog.d(TAG,"update listview updateDataAndRefreshKeyguardListView");
             new Thread(new Runnable() {
                 
@@ -611,27 +680,69 @@ public class KeyguardViewHostManager {
                     WallpaperList wallpaperList = queryWallpaperList();
                     DebugLog.d(TAG,"updateDataAndRefreshKeyguardListView isLock:" + isLock);
                     DebugLog.d(TAG,"updateDataAndRefreshKeyguardListView size:" + wallpaperList.size());
-                    if(isLock){
-                        querySelectionPageWhenLock(wallpaperList);
-                        Message msg = mHandler.obtainMessage(MSG_UPDATE_HAOKAN_LIST_SCREEN_ON);
-                        msg.obj = wallpaperList;
-                        mHandler.sendMessage(msg);
+                    Message msg = mHandler.obtainMessage(MSG_UPDATE_HAOKAN_LIST_SCREEN_ON);
+                    if((wallpaperList == null || wallpaperList.size() == 0)
+                    		&& mDefaultWallpaperList != null){
+                    	UIController.getInstance().setLocalData(true);
+                    	wallpaperList = mDefaultWallpaperList;
+                    	if(isInit){
+                    		mWallpaperAdapter.updateDataList(wallpaperList);
+                    	}
+                    	querySelectionPageOnLocalData(wallpaperList,isInit);
                     }else{
-                        String currentTime = Common.formatCurrentTime();
-                        Wallpaper wallpaper = wallpaperDB.queryDynamicShowWallpaper(currentTime);
-                        if(wallpaper != null){
-                            querySelectionPageWhenNotLock(wallpaperList,wallpaper);
-                        }
-                        Message msg = mHandler.obtainMessage(MSG_UPDATE_HAOKAN_LIST_SCREEN_ON);
-                        msg.obj = wallpaperList;
-                        mHandler.sendMessage(msg);
+                    	UIController.getInstance().setLocalData(false);
+                    	UIController.getInstance().setLockWallpaper(null);
+                    	if(isInit){
+                    		mWallpaperAdapter.updateDataList(wallpaperList);
+                    	}
+                        dataNotLocal(wallpaperDB, isLock, wallpaperList);
                     }
+
+                    msg.obj = wallpaperList;
+                    mHandler.sendMessage(msg);
                 }
+
+				private void dataNotLocal(WallpaperDB wallpaperDB,
+						boolean isLock, WallpaperList wallpaperList) {
+					if(isLock){
+					    querySelectionPageWhenLock(wallpaperList);
+					}else{
+					    String currentTime = Common.formatCurrentTime();
+					    Wallpaper wallpaper = wallpaperDB.queryDynamicShowWallpaper(currentTime);
+					    DebugLog.d(TAG,"updateDataAndRefreshKeyguardListView wallpaper:" + wallpaper);
+					    if(wallpaper != null){
+					        querySelectionPageWhenNotLock(wallpaperList,wallpaper);
+					    }
+					}
+				}
             }).start();
-//            refreshHorizontalListView(wallpaperList);
-//            mKeyguardListView.setPosition(mShowPage);
     }
 
+    private synchronized void querySelectionPageOnLocalData(WallpaperList wallpaperList,boolean isInit){
+    	Wallpaper wallpaper = UIController.getInstance().getLockWallpaper();
+    	DebugLog.d(TAG,"querySelectionPageOnLocalData wallpaper:" + wallpaper);
+    	if(wallpaper == null){
+    		updateDynamicWallpaperOnLocalData(wallpaperList);
+    	}else{
+    		if(!isInit){
+    			updateLockWallpaperOnLocalData();
+    		}
+    	}
+    }
+    
+    private synchronized  void updateDynamicWallpaperOnLocalData(WallpaperList wallpaperList){
+    	String time = Common.formatCurrentTime();
+    	for(int index = 0;index < wallpaperList.size();index++){
+    		String beginTime = wallpaperList.get(index).getShowTimeBegin();
+    		String endTime = wallpaperList.get(index).getShowTimeEnd();
+    		if(time.compareTo(beginTime) >= 0 && time.compareTo(endTime) < 0){
+    			mShowPage = index;
+    			break;
+    		}
+    	}
+    }
+    
+    
     private void querySelectionPageWhenNotLock(WallpaperList wallpaperList,Wallpaper wallpaper) {
 //        DebugLog.d(TAG,"querySelectionPageWhenNotLock 1");
 //        DebugLog.d(TAG,"querySelectionPageWhenNotLock currentTime:" + currentTime);
@@ -663,7 +774,7 @@ public class KeyguardViewHostManager {
         if(mKeyguardListView == null){
             return;
         }
-        updateDataAndRefreshKeyguardListView();
+        updateDataAndRefreshKeyguardListView(false);
     }
     
     /**
@@ -697,8 +808,14 @@ public class KeyguardViewHostManager {
         @Override
         public void onScrollMoving(int motionX) {
             DebugLog.d(TAG,"onScrollMoving");
-            mWallpaperAdapter.lock();
+//            mWallpaperAdapter.lock();
             QuickSleepUtil.updateWallPaperScrollingState(false);
+            Object obj = mKeyguardListView.getCurrentItem();
+            Wallpaper wallpaper = null;
+            if(obj != null){
+                wallpaper = (Wallpaper) obj;
+            	HKAgent.onEventIMGShow(mContext.getApplicationContext(), wallpaper);
+            }
         }
         
         @Override
@@ -709,21 +826,8 @@ public class KeyguardViewHostManager {
             Object obj = mKeyguardListView.getCurrentItem();
             if(obj != null){
                 wallpaper = (Wallpaper) obj;
-            	HKAgent.onEventIMGShow(mContext.getApplicationContext(), wallpaper);
+        		HKAgent.onEventIMGSwitch(mContext.getApplicationContext(), wallpaper);
             }
-            WallpaperDB wallpaperDB = WallpaperDB.getInstance(mContext.getApplicationContext());
-            Wallpaper lockWallpaper = wallpaperDB.queryPicturesDownLoadedLock();
-            if(lockWallpaper != null && wallpaper != null && lockWallpaper.getImgId() != wallpaper.getImgId()){
-                DebugLog.d(TAG,"onScrollEnd url:" + wallpaper.getImgUrl());
-                float order = wallpaper.getShowOrder();
-                float floorOrder = (float) Math.floor(order);
-                DebugLog.d(TAG,"onScrollEnd floorOrder:" + floorOrder);
-                float showOrder = floorOrder + 0.5f;
-                lockWallpaper.setShowOrder(showOrder);
-                wallpaperDB.updateShowOrder(lockWallpaper);
-        		HKAgent.onEventIMGSwitch(mContext.getApplicationContext(), lockWallpaper);
-            }      	
-//            mThreadUtil.releaseWorkThread();
         }
         
         @Override
@@ -731,7 +835,6 @@ public class KeyguardViewHostManager {
             DebugLog.d(TAG,"onScrollBegin");
             mWallpaperAdapter.lock();
             QuickSleepUtil.updateWallPaperScrollingState(true);
-//            mThreadUtil.occupyWorkThread();
         }
     };
     
@@ -787,7 +890,59 @@ public class KeyguardViewHostManager {
           }
     }
     
+    private void savePage(boolean isShutDown){
+    			if(UIController.getInstance().getLocalData() == false){
+		            Wallpaper wallpaper = null;
+		            Object obj = mKeyguardListView.getCurrentItem();
+		            
+		            if(obj != null){
+		                wallpaper = (Wallpaper) obj;
+		            }
+		            WallpaperDB wallpaperDB = WallpaperDB.getInstance(mContext.getApplicationContext());
+		            Wallpaper lockWallpaper = wallpaperDB.queryPicturesDownLoadedLock();
+		            if(lockWallpaper != null && wallpaper != null && lockWallpaper.getImgId() != wallpaper.getImgId()){
+		                DebugLog.d(TAG,"onScrollEnd url:" + wallpaper.getImgUrl());
+		                float order = wallpaper.getShowOrder();
+		                float floorOrder = (float) Math.floor(order);
+		                DebugLog.d(TAG,"onScrollEnd floorOrder:" + floorOrder);
+		                float showOrder = floorOrder + 0.5f;
+		                lockWallpaper.setShowOrder(showOrder);
+		                wallpaperDB.updateShowOrder(lockWallpaper);
+		            }      
+    			}else{
+    				if(isShutDown){
+    					int savedPage = getSavePosition();
+    					if(savedPage != -1){
+        					Wallpaper lockWallpaper = UIController.getInstance().getLockWallpaper();
+        					Common.setLockPosition(mContext, savedPage);
+        					Common.setLockID(mContext, lockWallpaper.getImgId());
+    					}
+    				}
+    			}
+    }
     
+
+    private int getSavePosition(){
+    	WallpaperList wallpaperList = mWallpaperAdapter.getWallpaperList();
+    	Wallpaper lockWallpaper = UIController.getInstance().getLockWallpaper();
+    	if(lockWallpaper == null){
+    		return 0;
+    	}
+    	int curPage = mKeyguardListView.getPage();
+    	int tempPos = wallpaperList.indexOf(lockWallpaper);
+    	int pos = -1;
+    	if(curPage < tempPos){
+        	wallpaperList.remove(lockWallpaper);
+        	pos = curPage + 1;
+        	wallpaperList.add(pos,lockWallpaper);
+        	mShowPage = pos;
+    	}
+    	if(curPage > tempPos){
+        	wallpaperList.remove(lockWallpaper);
+        	pos = curPage;
+    	}
+    	return pos;
+    }
     
     public void fingerPrintFailed() {
         mKeyguardViewHost.fingerPrintFailed();
@@ -811,7 +966,33 @@ public class KeyguardViewHostManager {
          }
     	
     }
-	    
+    
+    private void updateLockWallpaperOnLocalData(){
+    	DebugLog.d(TAG,"updateLockWallpaperOnLocalData");
+    	WallpaperList wallpaperList = mWallpaperAdapter.getWallpaperList();
+    	Wallpaper lockWallpaper = UIController.getInstance().getLockWallpaper();
+    	if(lockWallpaper == null){
+    		return;
+    	}
+    	int curPage = mKeyguardListView.getPage();
+    	int tempPos = wallpaperList.indexOf(lockWallpaper);
+    	mShowPage = curPage;
+    	if(curPage < tempPos){
+        	wallpaperList.remove(lockWallpaper);
+        	int pos = curPage + 1;
+        	wallpaperList.add(pos,lockWallpaper);
+        	mShowPage = pos;
+    	}
+    	if(curPage > tempPos){
+        	wallpaperList.remove(lockWallpaper);
+        	int pos = curPage;
+        	wallpaperList.add(pos,lockWallpaper);
+        	mShowPage = pos;
+    	}
+    	DebugLog.d(TAG,"updateLockWallpaperOnLocalData:" + mShowPage);
+
+    }
+	
 	    public static boolean isSuppotFinger() {
 	    	Log.i(TAG,"isSuppotFinger....isSuppotFinger="+isSuppotFinger);
 			return isSuppotFinger;

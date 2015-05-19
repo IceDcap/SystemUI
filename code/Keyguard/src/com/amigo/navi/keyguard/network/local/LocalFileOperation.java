@@ -26,26 +26,25 @@ public class LocalFileOperation implements LocalFileOperationInterface {
 
     @Override
     public boolean saveFile(Object obj, OutputStream os) {
+    	boolean flag = false;
         if(obj == null){
-            return false;
+            return flag;
         }
         try {
-            InputStream assetsDB = mContext.getAssets().open((String) obj);
-//            byte[] buffer = new byte[1024];
-//            int length;
-//            while ((length = assetsDB.read(buffer)) > 0) {
-//                os.write(buffer, 0, length);
-//            }
-//            os.flush();
-            ByteArrayOutputStream output = new ByteArrayOutputStream();
-            
+            InputStream assetsDB = mContext.getAssets().open((String) obj);     
             byte[] bts = DiskUtils.Stream2Byte(assetsDB);
             DiskUtils.saveBitmap(bts,os);
             assetsDB.close();
+            flag = true;
         }catch (IOException e) {
             DebugLog.d(TAG, "saveFile ioerror:" + e);
-            return false;
+            flag = false;
         }
-        return true;
+        return flag;
     }
+
+	@Override
+	public boolean saveFileByByte(byte[] bytes, OutputStream os) {
+		return false;
+	}
 }

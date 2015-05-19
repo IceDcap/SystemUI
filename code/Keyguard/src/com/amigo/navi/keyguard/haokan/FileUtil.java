@@ -30,16 +30,14 @@ public class FileUtil {
     }
     
     
-    public static String saveWallpaper(Bitmap bitmap,Wallpaper wallpaper) {
+    public static String saveWallpaper(Bitmap bitmap,String imageFileName) {
         
         String localfile = getSdCardPath() + DIRECTORY_FAVORITE;
         isExistDirectory(localfile);
         
         FileOutputStream out = null;
         
-        StringBuffer sb = new StringBuffer(localfile).append("/")
-                .append(Common.currentTimeDate()).append("_")
-                .append(wallpaper.getImgId()).append(".jpg");
+        StringBuffer sb = new StringBuffer(localfile).append("/").append(imageFileName);
  
         File file = new File(sb.toString());
         

@@ -92,7 +92,7 @@ public class CategoryActivity extends Activity{
         
         onInitUI();
         setBlurBackground();
-       LocalBitmapOperation localFileOperation = new LocalBitmapOperation();
+       LocalBitmapOperation localFileOperation = new LocalBitmapOperation(this);
        final ReadFileFromSD dealWithFileFromLocal = new ReadFileFromSD(this, DiskUtils.CATEGORY_BITMAP_FOLDER,
                 DiskUtils.getCachePath(this), localFileOperation);
         new Thread(new Runnable(){
@@ -138,8 +138,7 @@ public class CategoryActivity extends Activity{
     
     private void setBlurBackground() {
         this.getWindow().setBackgroundDrawable(null);
-//        Bitmap bitmap = UIController.getInstance().getCurrentWallpaperBitmap(this);
-        Bitmap bitmap = UIController.getInstance().getCurrentWallpaperBitmap();
+        Bitmap bitmap = UIController.getInstance().getCurrentWallpaperBitmap(this);
         mWindowBackgroud = KeyguardWallpaper.getBlurBitmap(bitmap.copy(Bitmap.Config.ARGB_8888, true), 5.0f);
         if (mWindowBackgroud == null) {
             return;
@@ -255,7 +254,7 @@ public class CategoryActivity extends Activity{
                 convertView = mInflater.inflate(R.layout.haokan_category_item, null);
                 holder = new ViewHolder();
                 holder.title = (TextView) convertView.findViewById(R.id.haokan_category_item_text);
-                holder.favorite = (ImageView) convertView.findViewById(R.id.haokan_category_item_jiaobiao);
+                holder.favorite = (ImageView) convertView.findViewById(R.id.haokan_category_item_flag);
                 holder.image = (CircleImageView) convertView.findViewById(R.id.haokan_category_item_image);
                 convertView.setTag(holder); 
             }else {

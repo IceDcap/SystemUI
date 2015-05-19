@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="110dp"
-    android:layout_height="110dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:background="@null" >
 
     <com.amigo.navi.keyguard.haokan.CircleImageView
         android:id="@+id/haokan_category_item_image"
-        android:layout_width="110dp"
-        android:layout_height="110dp" />
+        android:layout_width="@dimen/haokan_category_item_image_size"
+        android:layout_height="@dimen/haokan_category_item_image_size" />
 
     <TextView
         android:id="@+id/haokan_category_item_text"
@@ -20,9 +20,9 @@
         android:textSize="14dp" />
 
     <ImageView
-        android:id="@+id/haokan_category_item_jiaobiao"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:id="@+id/haokan_category_item_flag"
+        android:layout_width="@dimen/haokan_category_item_flag_size"
+        android:layout_height="@dimen/haokan_category_item_flag_size"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_marginRight="5dp"

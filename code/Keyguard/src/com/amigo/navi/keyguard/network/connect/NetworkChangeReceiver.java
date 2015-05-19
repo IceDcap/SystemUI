@@ -17,35 +17,15 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 	    DebugLog.d(TAG,"test onReceive");
 		mContext=context;
-		boolean networkState = isNetworkAvailable(mContext);
+		boolean networkState = NetWorkUtils.isNetworkAvailable(mContext);
 		PlayerManager.getInstance().netStateChange(networkState);
         DebugLog.d(TAG,"test onReceive networkState:" + networkState);
         NicePicturesInit nicePicturesInit = NicePicturesInit.getInstance(context);
 		if(networkState){
 		    nicePicturesInit.registerData();
+		}else{
+	        nicePicturesInit.shutDownWorkPool();
+	        
 		}
-//		else{
-//	        nicePicturesInit.shutDownWorkPool();
-//		}
 	}
-	
-	// 网路是否可用
-		public boolean isNetworkAvailable(Context context) {
-			try {
-				ConnectivityManager cn = (ConnectivityManager) context
-						.getSystemService(Context.CONNECTIVITY_SERVICE);
-				if (cn != null) {
-					NetworkInfo info = cn.getActiveNetworkInfo();
-					if (info != null && info.isConnected()) {
-						if (info.getState() == NetworkInfo.State.CONNECTED) {
-							return true;
-						}
-					}
-				}
-			} catch (Exception e) {
-				return false;
-			}
-			return false;
-
-		}
 }

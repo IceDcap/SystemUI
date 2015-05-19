@@ -301,25 +301,41 @@ public class CaptionsView extends LinearLayout {
                 
                 Keyframe.ofFloat(0f, infoZoneTranslationX),  
                 
-                Keyframe.ofFloat(.22859f, -4f * 3f),  
-                Keyframe.ofFloat(.399828f, 3f * 3f), 
-                Keyframe.ofFloat(.571061f, -2f * 3f), 
-                Keyframe.ofFloat(.714041f, 1f), 
-                Keyframe.ofFloat(.857020f, -0.5f * 3f),
-                Keyframe.ofFloat(.927020f, 0.2f * 3f),
-                Keyframe.ofFloat(1f, 0f)   
+//                Keyframe.ofFloat(.22859f, -4f * 3f),  
+//                Keyframe.ofFloat(.399828f, 3f * 3f), 
+//                Keyframe.ofFloat(.571061f, -2f * 3f), 
+//                Keyframe.ofFloat(.714041f, 1f), 
+//                Keyframe.ofFloat(.857020f, -0.5f * 3f),
+//                Keyframe.ofFloat(.927020f, 0.2f * 3f),
+//                Keyframe.ofFloat(1f, 0f)   
+                
+                Keyframe.ofFloat(.22859f, -9f),  
+                Keyframe.ofFloat(.399828f, 6f), 
+                Keyframe.ofFloat(.571061f, -3f), 
+                Keyframe.ofFloat(.714041f, 0.5f), 
+                Keyframe.ofFloat(.857020f, -1f),
+                Keyframe.ofFloat(.927020f, 0.2f),
+                Keyframe.ofFloat(1f, 0f) 
                 
         );  
         PropertyValuesHolder pvhdate = PropertyValuesHolder.ofKeyframe(View.TRANSLATION_X,  
                 Keyframe.ofFloat(0f, infoZoneTranslationX),  
                 
-                Keyframe.ofFloat(.22859f, -4f * 3f),  
-                Keyframe.ofFloat(.399828f, 3f * 3f), 
-                Keyframe.ofFloat(.571061f, -2f * 3f), 
-                Keyframe.ofFloat(.714041f, 1f), 
-                Keyframe.ofFloat(.857020f, -0.5f * 3f),
-                Keyframe.ofFloat(.927020f, 0.2f * 3f),
-                Keyframe.ofFloat(1f, 0f)   
+//                Keyframe.ofFloat(.22859f, -4f * 3f),  
+//                Keyframe.ofFloat(.399828f, 3f * 3f), 
+//                Keyframe.ofFloat(.571061f, -2f * 3f), 
+//                Keyframe.ofFloat(.714041f, 1f), 
+//                Keyframe.ofFloat(.857020f, -0.5f * 3f),
+//                Keyframe.ofFloat(.927020f, 0.2f * 3f),
+//                Keyframe.ofFloat(1f, 0f)  
+                
+                Keyframe.ofFloat(.22859f, -9f),  
+                Keyframe.ofFloat(.399828f, 6f), 
+                Keyframe.ofFloat(.571061f, -3f), 
+                Keyframe.ofFloat(.714041f, 0.5f), 
+                Keyframe.ofFloat(.857020f, -1f),
+                Keyframe.ofFloat(.927020f, 0.2f),
+                Keyframe.ofFloat(1f, 0f) 
                 
         
         );  

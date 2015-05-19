@@ -69,11 +69,14 @@ public class DiskManager {
         if(mLocalFileOperationInterface == null){
             return false;
         }
-        DebugLog.d(TAG,"saveBitmap");
+        DebugLog.d(TAG,"saveFile");
+        DebugLog.d(TAG,"saveFile key:" + key);
         boolean flag = false;
+        OutputStream outputStream = null;
         try {
+            DebugLog.d(TAG,"saveFile begin");
             DiskLruCache.Editor editor = cache.edit(key);
-            OutputStream outputStream = null;
+            DebugLog.d(TAG,"saveBitmap editor:" + editor);
             if (editor != null) {
               outputStream = editor.newOutputStream(0);
               if (mLocalFileOperationInterface.saveFile(obj, outputStream)) {
@@ -88,8 +91,61 @@ public class DiskManager {
                 outputStream.close();
             }
           } catch (IOException e) {
+        	DebugLog.d(TAG,"saveFile error:" + e);
             e.printStackTrace();
             flag = false;
+          }finally{
+        	  if(outputStream != null){
+        		  try {
+					outputStream.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+        	  }
+          }
+        return flag;
+    }
+    
+    public synchronized boolean saveFileByByte(DiskLruCache cache,String key,byte[] bytes){
+        if(mLocalFileOperationInterface == null){
+            return false;
+        }
+        DebugLog.d(TAG,"saveFile");
+        DebugLog.d(TAG,"saveFile key:" + key);
+        boolean flag = false;
+        OutputStream outputStream = null;
+        try {
+            DebugLog.d(TAG,"saveFile begin");
+            DiskLruCache.Editor editor = cache.edit(key);
+            DebugLog.d(TAG,"saveFile editor:" + editor);
+            DebugLog.d(TAG,"saveFile bytes:" + bytes.length);
+            if (editor != null) {
+              outputStream = editor.newOutputStream(0);
+              if (mLocalFileOperationInterface.saveFileByByte(bytes, outputStream)) {
+                flag = true;
+                editor.commit();
+              } else {
+                editor.abort();
+              }
+            }
+            cache.flush();
+            if(outputStream != null){
+                outputStream.close();
+            }
+          } catch (IOException e) {
+        	DebugLog.d(TAG,"saveFile error:" + e);
+            e.printStackTrace();
+            flag = false;
+          }finally{
+              if(outputStream != null){
+                  try {
+					outputStream.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+              }
           }
         return flag;
     }
@@ -99,6 +155,7 @@ public class DiskManager {
         if(mLocalFileOperationInterface == null){
             return null;
         }
+        InputStream is = null;
         try {
             DebugLog.d("HorizontalListView","makeAndAddView readBitmapFromLocal key:" + key);
             DiskLruCache.Snapshot snapShot = cache.get(key);
@@ -106,14 +163,23 @@ public class DiskManager {
             DebugLog.d("HorizontalListView","makeAndAddView readBitmapFromLocal snapShot:" + snapShot);
             if (snapShot != null) {
               DebugLog.d(TAG,"readBitmapFromLocal begin");
-              InputStream is = snapShot.getInputStream(0);
+              is = snapShot.getInputStream(0);
               Object obj = mLocalFileOperationInterface.readFile(is);
+              is.close();
               return obj;
             }
           } catch (IOException e) {
             Log.d("testDiskCache","getImage error");
             DebugLog.d("HorizontalListView","makeAndAddView readBitmapFromLocal error:");
             e.printStackTrace();
+          }finally{
+        	  if(is != null){
+        		  try {
+					is.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+        	  }
           }
         return null;
     }

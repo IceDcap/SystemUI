@@ -36,13 +36,6 @@ import com.amigo.navi.keyguard.haokan.entity.Wallpaper;
 import com.amigo.navi.keyguard.haokan.entity.WallpaperList;
 import com.amigo.navi.keyguard.haokan.menu.ArcLayout;
 import com.amigo.navi.keyguard.infozone.AmigoKeyguardInfoZone;
-import com.amigo.navi.keyguard.network.ImageLoader;
-import com.amigo.navi.keyguard.network.ImageLoadingListener;
-import com.amigo.navi.keyguard.network.local.LocalBitmapOperation;
-import com.amigo.navi.keyguard.network.local.LocalFileOperationInterface;
-import com.amigo.navi.keyguard.network.local.ReadFileFromSD;
-import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
-import com.amigo.navi.keyguard.network.FailReason;
 import com.amigo.navi.keyguard.picturepage.adapter.HorizontalAdapter;
 import com.amigo.navi.keyguard.picturepage.widget.KeyguardListView;
 import com.amigo.navi.keyguard.picturepage.widget.HorizontalListView.OnTouchlListener;
@@ -508,6 +501,7 @@ public class UIController implements OnTouchlListener{
     /** Screen Turned Off */
     public void onScreenTurnedOff() {
 
+        Log.v(TAG, "UIController onScreenTurnedOff");
         setScreenOff(true);
         
         if (mArcLayout != null) {
@@ -517,6 +511,14 @@ public class UIController implements OnTouchlListener{
             }
         }
         
+        onKeyguardLocked();
+        
+        onScreenTurnedOffAnimation();
+        
+    }
+    
+    public void onKeyguardLocked() {
+     
         if (categoryActivity != null) {
             if (!categoryActivity.isDestroyed()) {
                 Log.v(TAG, "categoryActivity is not destroyed()");
@@ -533,11 +535,21 @@ public class UIController implements OnTouchlListener{
             }
         }
         
-        
-        onScreenTurnedOffAnimation();
-        
+        if (mWebViewShowing) {
+            final KeyguardViewHost keyguardHostView = getmKeyguardViewHost();
+
+            if (mWebLayout != null) {
+                if (keyguardHostView.indexOfChild(mWebLayout) != -1) {
+                    keyguardHostView.removeView(mWebLayout);
+                }
+            }
+            mWebViewShowing = false;
+            getmInfozone().setAlpha(1.0f);
+            getmInfozone().setTranslationY(0f);
+            getmCaptionsView().setAlpha(1.0f);
+        }
+
     }
-    
     
     
     public void refreshWallpaperInfo() {
@@ -647,7 +659,7 @@ public class UIController implements OnTouchlListener{
         getmArcMenu().setVisibility(View.VISIBLE);
         
         VibatorUtil.amigoVibrate(mArcLayout.getContext().getApplicationContext(),
-                VibatorUtil.LOCKSCREEN_MENU_LONG_PRESS, 100);
+                VibatorUtil.LOCKSCREEN_STORYMODE_DISPLAY, 100);
         
         hideKeyguardNotification();
         
@@ -665,15 +677,21 @@ public class UIController implements OnTouchlListener{
     }
     
     public Bitmap getCurrentWallpaperBitmap(Wallpaper wallpaper) {
-
+    	if(wallpaper == null){
+    		return null;
+    	}
         HorizontalAdapter mWallpaperAdapter = (HorizontalAdapter) getmKeyguardListView().getAdapter(); 
         Bitmap bitmap = mWallpaperAdapter.getWallpaperByUrl(wallpaper.getImgUrl());
         return bitmap;
         
     }
     
-    public Bitmap getCurrentWallpaperBitmap() {
-        return getCurrentWallpaperBitmap(mCurrentWallpaper);
+    public Bitmap getCurrentWallpaperBitmap(Context context) {
+    	Bitmap bitmap = getCurrentWallpaperBitmap(mCurrentWallpaper);
+    	if(bitmap == null){
+    		bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.loading);
+    	}
+        return bitmap;
     }
     
     
@@ -1198,7 +1216,36 @@ public class UIController implements OnTouchlListener{
     }
     
     public boolean lockWallpaper(final Context context,final Wallpaper wallpaper) {
-        boolean saveSuccess = false;
+    	boolean success = false;
+    	if(isLocalData){
+    		success = lockWhenLocalData(context,wallpaper);
+    	}else{
+            success = lockWhenNotLocalData(context, wallpaper);
+    	}
+        return success;
+    }
+    
+    private boolean lockWhenLocalData(Context context,Wallpaper wallpaper){
+    	if(mLockWallpaper == null || (mLockWallpaper.getImgId() != wallpaper.getImgId())){
+        	if(mLockWallpaper != null){
+        		HorizontalAdapter adapter = (HorizontalAdapter) mKeyguardListView.getAdapter();
+        		WallpaperList wallpaperList = adapter.getWallpaperList();
+        		wallpaperList.remove(mLockWallpaper);
+        		wallpaperList.add(mLockWallpaper.getImgId(),mLockWallpaper);
+        		mLockWallpaper.setLocked(false);
+        	}
+        	wallpaper.setLocked(true);
+        	mLockWallpaper = wallpaper;
+    		Common.setLockID(context, wallpaper.getImgId());
+    		int page = mKeyguardListView.getPage();
+    		Common.setLockPosition(context, page);
+    	}
+    	return true;
+    }
+    
+	private boolean lockWhenNotLocalData(final Context context,
+			final Wallpaper wallpaper) {
+		boolean saveSuccess = false;
         DebugLog.d(TAG,"save wallpaper setOnClickListener wallpaper url:" + wallpaper.getImgUrl());
         WallpaperDB wallpaperDB = WallpaperDB.getInstance(context.getApplicationContext());
         boolean success = false;
@@ -1217,60 +1264,25 @@ public class UIController implements OnTouchlListener{
         success = WallpaperDB.getInstance(context.getApplicationContext()).updateLock(wallpaper);
         DebugLog.d(TAG,"save wallpaper setOnClickListener success:" + success);
         delNotTodayWallpaper(context);
-        return success;
-    }
-    /**
-     * @param context
-     * @param wallpaper
-     */
-    private void loadBitmap(final Context context, final Wallpaper wallpaper) {
-        final ImageLoader imageLoader = new ImageLoader(context.getApplicationContext());
-        imageLoader.removeItem(DiskUtils.WALLPAPER_Image_KEY);
-        LocalFileOperationInterface localFileOperationInterface = new LocalBitmapOperation();
-        ReadFileFromSD dealWithFromLocalInterface = new ReadFileFromSD(context.getApplicationContext(), 
-                  DiskUtils.WALLPAPER_BITMAP_FOLDER, DiskUtils.getCachePath(context.getApplicationContext()),
-                  localFileOperationInterface);
-
-        ImageLoadingListener mImageLoadingListener = new ImageLoadingListener() {
-            
-            @Override
-            public void onLoadingStarted(String imageUri) {
-                
-            }
-            
-            @Override
-            public void onLoadingFailed(String imageUri, FailReason failReason) {
-                
-            }
-            
-            @Override
-            public void onLoadingComplete(String imageUri, Bitmap loadedImage) {
-                DebugLog.d(TAG,"save wallpaper setOnClickListener onLoadingComplete");
-                LocalFileOperationInterface localFileOperationInterface = new LocalBitmapOperation();
-                ReadFileFromSD dealWithFromLocalInterface = new ReadFileFromSD(context.getApplicationContext(), 
-                        DiskUtils.WALLPAPER_OBJECT_FILE_FOLDER, DiskUtils.getSDPath(context.getApplicationContext()),
-                        localFileOperationInterface);
-                if(loadedImage != null){
-                    boolean success = dealWithFromLocalInterface.writeToLocal(DiskUtils.WALLPAPER_Image_KEY, loadedImage);
-                    DebugLog.d(TAG,"save wallpaper setOnClickListener onLoadingComplete success:" + success);
-                }
-            }
-            
-            @Override
-            public void onLoadingCancelled(String imageUri) {
-                
-            }
-        };
-        imageLoader.loadImage(wallpaper.getImgUrl(), mImageLoadingListener, dealWithFromLocalInterface, false);
-    }
+		return success;
+	}
         
     public boolean clearLock(Context context,Wallpaper wallpaper){
-        WallpaperDB wallpaperDB = WallpaperDB.getInstance(context.getApplicationContext());
-        wallpaper.setLocked(false);
-        boolean success = wallpaperDB.updateLock(wallpaper);
-        wallpaper.setShowOrder(wallpaper.getRealOrder());
-        wallpaperDB.updateShowOrder(wallpaper);
-        delNotTodayWallpaper(context);
+    	boolean success = false;
+    	if(isLocalData){
+    		Common.setLockID(context, -1);
+    		Common.setLockPosition(context, -1);
+    		mLockWallpaper.setLocked(false);
+    		mLockWallpaper = null;
+    		success = true;
+    	}else{
+            WallpaperDB wallpaperDB = WallpaperDB.getInstance(context.getApplicationContext());
+            wallpaper.setLocked(false);
+            success = wallpaperDB.updateLock(wallpaper);
+            wallpaper.setShowOrder(wallpaper.getRealOrder());
+            wallpaperDB.updateShowOrder(wallpaper);
+            delNotTodayWallpaper(context);
+    	}
         return success;
     }
     
@@ -1283,8 +1295,26 @@ public class UIController implements OnTouchlListener{
     }
     
     private void clearAllLock(){
-    	HorizontalAdapter adapter = (HorizontalAdapter) mKeyguardListView.getAdapter();
-    	adapter.clearAllLock();
+        	HorizontalAdapter adapter = (HorizontalAdapter) mKeyguardListView.getAdapter();
+        	adapter.clearAllLock();
+    }
+    
+    private Wallpaper mLockWallpaper = null;
+    public void setLockWallpaper(Wallpaper wallpaper){
+    	mLockWallpaper = wallpaper;
+    }
+    
+    public Wallpaper getLockWallpaper(){
+    	return mLockWallpaper;
+    }
+    
+    private boolean isLocalData = false;
+    public void setLocalData(boolean isLocal){
+    	isLocalData = isLocal;
+    }
+    
+    public boolean getLocalData(){
+    	return isLocalData;
     }
     
 }

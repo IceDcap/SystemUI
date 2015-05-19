@@ -681,6 +681,7 @@ public class NotificationStackScrollLayout extends ViewGroup
     public boolean onTouchEvent(MotionEvent ev) {
         boolean isCancelOrUp = ev.getActionMasked() == MotionEvent.ACTION_CANCEL
                 || ev.getActionMasked()== MotionEvent.ACTION_UP;
+        	
         if (mDelegateToScrollView) {
             if (isCancelOrUp) {
                 mDelegateToScrollView = false;
@@ -711,7 +712,11 @@ public class NotificationStackScrollLayout extends ViewGroup
                 && !mOnlyScrollingInThisMotion) {
             horizontalSwipeWantsIt = mSwipeHelper.onTouchEvent(ev);
         }
-        mGestureDetector.onTouchEvent(ev);
+//        mGestureDetector.onTouchEvent(ev);
+        View childOnClick = getChildAtPosition(ev);
+    	if(childOnClick == null){
+    		return false;
+    	}
         return horizontalSwipeWantsIt || scrollerWantsIt || expandWantsIt || super.onTouchEvent(ev);
     }
 
@@ -2533,6 +2538,7 @@ public class NotificationStackScrollLayout extends ViewGroup
                 new GestureDetector.SimpleOnGestureListener() {
                     @Override
                     public void onLongPress(MotionEvent event) {
+                    	DebugLog.d(TAG,"initLongPressListener onLongPress notification");
                         int[] location = new int[2];
                         getLocationOnScreen(location);
                         UIController.getInstance().onLongPress(event.getX() + location[0], event.getY() + location[1]);

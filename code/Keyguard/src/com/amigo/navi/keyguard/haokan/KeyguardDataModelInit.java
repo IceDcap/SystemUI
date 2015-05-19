@@ -60,24 +60,11 @@ public class KeyguardDataModelInit {
     
     public void initData(){
         saveInitDataToClientDB(mContext);
-//                new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        boolean flag = Common.getHaoKanDataInit(mContext);
-//                        DebugLog.d(TAG,"initData flag:" + flag);
-//                        if(!flag){
-//                            boolean copySuccess = copyDataToSD(mContext);
-//                            if(savedSuccess && copySuccess){
-//                                Common.setHaoKanDataInit(mContext, true);
-//                            }
-//                        } 
-//                    }
-//                }).start();
     }  
     
     private final static String DBNAME = "haokan.db";
     private final static String ADDSTR = "/data/data/com.android.systemui/databases/";
-    private final static String DB_VERSION = "20150513";
+    private final static String DB_VERSION = "20150516";
     public boolean saveInitDataToClientDB(Context context) {
         File dbFile = new File(ADDSTR + DBNAME);
         if(dbFile.exists()){
@@ -118,44 +105,5 @@ public class KeyguardDataModelInit {
         }
         return false;
     }
-    private static final String WALLPAPER_FILE_NAME = "wallpaper_pics";
-    private static final String CATEGORY_FILE_NAME = "category_pics";
-    public boolean copyDataToSD(Context context) {
-        boolean success = true;
-        try {
-            String[] strs = context.getAssets().list(WALLPAPER_FILE_NAME);
-            DebugLog.d(TAG,"copyDataToSD strs.length:" + strs.length);
-            for(int index = 0;index < strs.length;index++){
-                if(TextUtils.isEmpty(strs[index])){
-                    continue;
-                }
-                DebugLog.d(TAG,"copyDataToSD strs[index]:" + strs[index]);
-               String openPath = WALLPAPER_FILE_NAME + "/" + strs[index];
-               boolean flag = mDealWithWallpaperFile.writeToLocal(strs[index], openPath);
-               DebugLog.d(TAG,"copyDataToSD flag:" + flag);
-            }
-        } catch (Exception e) {
-            DebugLog.d(TAG,"copyDataToSD error:" + e);
-            e.printStackTrace();
-            success = false;
-        }
-        
-        try {
-            String[] strs = context.getAssets().list(CATEGORY_FILE_NAME);
-            for(int index = 0;index < strs.length;index++){
-                if(TextUtils.isEmpty(strs[index])){
-                    continue;
-                }
-                String openPath = CATEGORY_FILE_NAME + "/" + strs[index];
-                mDealWithCategoryFile.writeToLocal(strs[index], openPath);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            success = false;
-        }
-        return success;
-    }
-
-    
     
 }

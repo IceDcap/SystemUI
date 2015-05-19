@@ -3,6 +3,7 @@ package com.amigo.navi.keyguard.network.local;
 import java.io.File;
 
 import com.amigo.navi.keyguard.DebugLog;
+import com.amigo.navi.keyguard.KWDataCache;
 import com.amigo.navi.keyguard.network.local.manager.DiskLruCache;
 import com.amigo.navi.keyguard.network.local.manager.DiskManager;
 import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
@@ -19,11 +20,14 @@ public class ReadFileFromAssets implements DealWithFromLocalInterface{
     	mPath = path;
     }
     
+    private static final String SYSTEM_FILE_PATH = "/system/etc/ScreenLock/";
     @Override
     public Object readFromLocal(String key) {
-    	String path = mPath + File.separator + key + ".jpg";
-    	Bitmap bitmap = DiskUtils.getImageFromAssetsFile(mContext.getApplicationContext(),path);
-        return bitmap;
+//    	String path = mPath + File.separator + key + ".jpg";
+//    	Bitmap bitmap = DiskUtils.getImageFromAssetsFile(mContext.getApplicationContext(),path);
+     	String path = SYSTEM_FILE_PATH + key;
+    	Bitmap bitmap = DiskUtils.getImageFromSystem(mContext.getApplicationContext(),path);
+    	return bitmap;
     }
 
     @Override
@@ -41,5 +45,10 @@ public class ReadFileFromAssets implements DealWithFromLocalInterface{
     public boolean deleteFile(String key) {
     	return false;
     }
+ 
+	@Override
+	public void closeCache() {
+
+	}
     
 }

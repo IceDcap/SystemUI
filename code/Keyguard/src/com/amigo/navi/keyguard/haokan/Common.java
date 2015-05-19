@@ -350,17 +350,6 @@ public class Common {
         return url;
     }
     
-    public static void setHaoKanSavedUrl(Context context, String url) {
-        NavilSettings
-                .setStringSharedConfig(context, NavilSettings.HAOKAN_SAVED_PAGE_URL, url);
-    }
-    
-    public static boolean getHaoKanDataInit(Context context) {
-        boolean isInit = false;
-        isInit = NavilSettings.getBooleanSharedConfig(context, NavilSettings.IS_DATA_INIT, false);
-        return isInit;
-    }
-    
     public static void setHaoKanDataInit(Context context, boolean flag) {
         NavilSettings
                 .setBooleanSharedConfig(context, NavilSettings.IS_DATA_INIT, flag);
@@ -379,6 +368,18 @@ public class Common {
         return formatForRequset.format(new Date());
     }
     
+    public static void setHaoKanSavedUrl(Context context, String url) {
+        NavilSettings
+                .setStringSharedConfig(context, NavilSettings.HAOKAN_SAVED_PAGE_URL, url);
+    }
+    
+    public static boolean getHaoKanDataInit(Context context) {
+        boolean isInit = false;
+        isInit = NavilSettings.getBooleanSharedConfig(context, NavilSettings.IS_DATA_INIT, false);
+        return isInit;
+    }
+    
+    
     public static void setDatabaseVersion(Context context, String version) {
         NavilSettings
                 .setStringSharedConfig(context, NavilSettings.DATABASE_VERSION, version);
@@ -389,4 +390,27 @@ public class Common {
         version = NavilSettings.getStringSharedConfig(context, NavilSettings.DATABASE_VERSION, "");
         return version;
     }
+    
+    public static void setLockPosition(Context context, int pos) {
+        NavilSettings
+                .setIntSharedConfig(context, NavilSettings.LOCK_POSITION, pos);
+    }
+    
+    public static int getLockPostion(Context context) {
+        int pos = 0;
+        pos = NavilSettings.getIntSharedConfig(context, NavilSettings.LOCK_POSITION, -1);
+        return pos;
+    }
+    
+    public static void setLockID(Context context, int pos) {
+        NavilSettings
+                .setIntSharedConfig(context, NavilSettings.LOCK_ID, pos);
+    }
+    
+    public static int getLockID(Context context) {
+        int pos = 0;
+        pos = NavilSettings.getIntSharedConfig(context, NavilSettings.LOCK_ID, -1);
+        return pos;
+    }
+    
 }

@@ -19,6 +19,8 @@ public class ArcItemButton extends RelativeLayout{
 	 
     private int toXDelta;
     private int toYDelta;
+    
+    private boolean needFeekBack;
      
     private boolean itemSelected = false;//已收藏
     
@@ -120,6 +122,16 @@ public class ArcItemButton extends RelativeLayout{
 
     public void setToYDelta(int toYDelta) {
         this.toYDelta = toYDelta;
+    }
+
+
+    public boolean isNeedFeekBack() {
+        return needFeekBack;
+    }
+
+
+    public void setNeedFeekBack(boolean needFeekBack) {
+        this.needFeekBack = needFeekBack;
     }
 	
      

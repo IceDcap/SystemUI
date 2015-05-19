@@ -117,7 +117,7 @@
         android:id="@+id/haokan_page_layout_tip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="425dp"
+        android:layout_marginTop="@dimen/haokan_tip_margin_top"
         android:gravity="center"
         android:shadowColor="@color/haokan_music_name_shadowcolor"
         android:shadowDx="0"

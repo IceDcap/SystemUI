@@ -1,5 +1,6 @@
 package com.amigo.navi.keyguard.network;
 import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.WeakHashMap;
@@ -9,6 +10,7 @@ import com.amigo.navi.keyguard.network.FailReason.FailType;
 import com.amigo.navi.keyguard.network.local.DealWithFromLocalInterface;
 import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
 
+import android.app.ActionBar.Tab;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.text.TextUtils;
@@ -16,10 +18,10 @@ import android.util.LruCache;
 
 public class ImageLoader implements ImageLoaderInterface{
     private static final String LOG_TAG = "ImageLoader";
-    private int mSecondMaxCapacity = 8;
+    private int mSecondMaxCapacity = 4;
     private Context mContext;
     int maxMemory = (int) Runtime.getRuntime().maxMemory();
-    int mCacheSize = maxMemory / 4;  
+    int mCacheSize = maxMemory / 2;  
     public ImageLoader(Context context) {
         mContext = context.getApplicationContext();
     }
@@ -38,6 +40,7 @@ public class ImageLoader implements ImageLoaderInterface{
                         Bitmap oldValue, Bitmap newValue) {
                     // TODO Auto-generated method stub
             super.entryRemoved(evicted, key, oldValue, newValue);
+            DebugLog.d(LOG_TAG,"entryRemoved oldValue:" + oldValue);
             if (oldValue != null) { 
                 mSecondLevelCache.put(key,new SoftReference<Bitmap>(oldValue));
               }
@@ -46,6 +49,24 @@ public class ImageLoader implements ImageLoaderInterface{
         
         
     };
+    
+    
+//    private HashMap<String, Bitmap> mFirstLevelCache = new LinkedHashMap<String, Bitmap>(
+//            5, 0.75f, true) {
+//        private static final long serialVersionUID = 1L;
+//
+//        protected boolean removeEldestEntry(Entry<String, Bitmap> eldest) {
+//        	DebugLog.d(LOG_TAG,"mFirstLevelCache  removeEldestEntry");
+//            if (size() > 5) {// 当超过一级缓存阈值的时候，将老的值从一级缓存搬到二级缓存
+//            	DebugLog.d(LOG_TAG,"mFirstLevelCache  removeEldestEntry1");
+//                mSecondLevelCache.put(eldest.getKey(),
+//                        new SoftReference<Bitmap>(eldest.getValue()));
+//                return true;
+//            }
+//            return false;
+//        };
+//        
+//    };
     
     // 二级缓存，采用的是软应用，只有在内存吃紧的时候软应用才会被回收，有效的避免了oom
     private WeakHashMap<String, SoftReference<Bitmap>> mSecondLevelCache = new WeakHashMap<String, SoftReference<Bitmap>>(
@@ -67,7 +88,7 @@ public class ImageLoader implements ImageLoaderInterface{
 
     public void removeItem(String url){
         mFirstLevelCache.remove(url);
-        mSecondLevelCache.remove(url);
+//        mSecondLevelCache.remove(url);
     }
     
     /**
@@ -103,12 +124,18 @@ public class ImageLoader implements ImageLoaderInterface{
         Bitmap bitmap = loadImageStepByStep(url, loadingListener,
                 dealWithFromLocalInterface); 
         DebugLog.d(LOG_TAG,"makeAndAddView loadImage url:" + url + " bitmap:" + bitmap);
+//        if(bitmap != null){
+//            DebugLog.d(LOG_TAG,"loadImage bitmap width:" + bitmap.getWidth());
+//            DebugLog.d(LOG_TAG,"loadImage bitmap height:" + bitmap.getHeight());
+//        }
         dealWithImage(url, loadingListener, isNeedCache, bitmap,dealWithFromLocalInterface);
     }
 
     private void dealWithImage(String url,
             ImageLoadingListener loadingListener, boolean isNeedCache,
             Bitmap bitmap,DealWithFromLocalInterface dealWithFromLocalInterface) {
+        DebugLog.d(LOG_TAG,"dealWithImage loadImage url:" + url + " bitmap:" + bitmap);
+        DebugLog.d(LOG_TAG,"dealWithImage loadImage isNeedCache:" + isNeedCache);
         if(bitmap != null){
             if(isNeedCache){
                 addImage2Cache(url, bitmap);
@@ -162,6 +189,17 @@ public class ImageLoader implements ImageLoaderInterface{
         return bitmap;
     }
 
+    public Bitmap getBitmap(String url,DealWithFromLocalInterface dealWithFromLocalInterface){
+
+        Bitmap bitmap = getBitmapFromCache(url);
+        DebugLog.d("HorizontalListView","makeAndAddView loadImageStepByStep1 bitmap:" + bitmap);
+        if (bitmap == null) {
+            bitmap = loadImageFromLocal(dealWithFromLocalInterface, url);
+            DebugLog.d("HorizontalListView","makeAndAddView loadImageStepByStep bitmap:" + bitmap);
+        }
+        return bitmap;
+    }
+    
     /**
      * 从二级缓存中拿
      * 
@@ -196,6 +234,12 @@ public class ImageLoader implements ImageLoaderInterface{
             }
         }
         return bitmap;
+    }
+    
+    public void printFirstCacheSize(){
+    	DebugLog.d(LOG_TAG,"printFirstCacheSize mCacheSize:" + mCacheSize);
+//    	int maxSize = mFirstLevelCache.maxSize();
+//    	DebugLog.d(LOG_TAG,"printFirstCacheSize maxSize:" + maxSize);
     }
     
 }

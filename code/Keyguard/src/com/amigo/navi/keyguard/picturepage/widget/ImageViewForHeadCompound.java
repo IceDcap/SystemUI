@@ -1,4 +1,6 @@
 package com.amigo.navi.keyguard.picturepage.widget;
+import java.util.Vector;
+
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.KWDataCache;
 import com.amigo.navi.keyguard.haokan.entity.Wallpaper;
@@ -218,27 +220,6 @@ public class ImageViewForHeadCompound extends ImageView implements OnReloadListe
             }
         };
         if (mConfig.mImageLoader != null) {
-//            Job job = new Job() {
-//                
-//                @Override
-//                public void runTask() {
-//                    mConfig.mImageLoader.loadImage(mUrl, loadingListener,
-//                            readImageFromLocal, isNeedCache);
-//                }
-//                
-//                @Override
-//                public int getProgress() {
-//                    return 0;
-//                }
-//                
-//                @Override
-//                public void cancelTask() {
-//                    
-//                }
-//            };
-//            DownLoadWorker worker = new DownLoadWorker(job);
-//            worker.setUrl(wallpaper.getImgUrl());
-//            DownLoadJsonThreadPool.getInstance().submit(worker);
             Job job = new Job() {
                 
                 @Override
@@ -249,9 +230,7 @@ public class ImageViewForHeadCompound extends ImageView implements OnReloadListe
                     if(wallpaper.getType() == Wallpaper.WALLPAPER_FROM_FIXED_FOLDER){
                 	 readImageFromLocal = new ReadFileFromAssets(getContext().getApplicationContext(), PATH);
                  }else{
-                     LocalFileOperationInterface localFileOperation = new LocalBitmapOperation();
-                     readImageFromLocal = new ReadFileFromSD(getContext().getApplicationContext(),
-                             DiskUtils.WALLPAPER_BITMAP_FOLDER,DiskUtils.getCachePath(getContext().getApplicationContext()),localFileOperation);
+                	 readImageFromLocal = mConfig.getReadFromSD();
                  }
                  
                   mConfig.mImageLoader.loadImage(wallpaper.getImgUrl(), loadingListener,
@@ -269,27 +248,10 @@ public class ImageViewForHeadCompound extends ImageView implements OnReloadListe
                     
                 }
             };
-//        	Runnable runnable = new Runnable() {
-//				
-//				@Override
-//				public void run() {
-//                    DealWithFromLocalInterface readImageFromLocal = null;
-//                    DebugLog.d(LOG_TAG,"load image thread url:" + wallpaper.getImgUrl()  + " time begin:" + System.currentTimeMillis());
-//                    DebugLog.d(LOG_TAG,"load image thread getType():" + wallpaper.getType());
-//                    if(wallpaper.getType() == Wallpaper.WALLPAPER_FROM_FIXED_FOLDER){
-//                	 readImageFromLocal = new ReadFileFromAssets(getContext().getApplicationContext(), PATH);
-//                 }else{
-//                     LocalFileOperationInterface localFileOperation = new LocalBitmapOperation();
-//                     readImageFromLocal = new ReadFileFromSD(getContext().getApplicationContext(),
-//                             DiskUtils.WALLPAPER_BITMAP_FOLDER,DiskUtils.getCachePath(getContext().getApplicationContext()),localFileOperation);
-//                 }
-//                 
-//                  mConfig.mImageLoader.loadImage(wallpaper.getImgUrl(), loadingListener,
-//                  readImageFromLocal, isNeedCache);       
-//                  DebugLog.d(LOG_TAG,"load image thread url:" + wallpaper.getImgUrl()  + " time end:" + System.currentTimeMillis());					
-//				}
-//			};
-            LoadImageThread loadImageThread = new LoadImageThread(wallpaper.getImgUrl(), job);
+        	Vector<LoadImageThread> threadList = null;
+            threadList = LoadImagePool.getInstance(getContext())
+                    .getDownLoadThreadList();
+            LoadImageThread loadImageThread = new LoadImageThread(wallpaper.getImgUrl(), job,threadList);
 			LoadImagePool.getInstance(getContext().getApplicationContext()).loadImage(loadImageThread, wallpaper.getImgUrl());
         }
     }
@@ -298,6 +260,7 @@ public class ImageViewForHeadCompound extends ImageView implements OnReloadListe
         this.setImageBitmap(bitmap);
     }
 
+    
     private void loadStartDealWith(String url) {
         Log.v(LOG_TAG, "loadImageBitmap loadStartDealWith url:" + url);
         Log.v(LOG_TAG, "loadImageBitmap loadStartDealWith this.getTag():"
@@ -312,13 +275,20 @@ public class ImageViewForHeadCompound extends ImageView implements OnReloadListe
     }
 
     private void loadStart() {
-        if (mConfig.startBitmap != null) {
-            recyleImageBitmap();
-            mImageBitmap = mConfig.startBitmap;
-            setBitmap(mImageBitmap);
-        } else {
-//            setImageResource(R.drawable.emotion_loading);
-        }
+//        if (mConfig.startBitmap != null) {
+//            recyleImageBitmap();
+//            mImageBitmap = mConfig.startBitmap;
+//            setBitmap(mImageBitmap);
+//        } else {
+////            setImageResource(R.drawable.emotion_loading);
+//        }
+    	
+  	if(mConfig.startBitmapID != 0){
+          recyleImageBitmap();
+  		  setImageResource(mConfig.startBitmapID);
+      } else {
+
+      }
     }
 
     private void setImageBackground() {
@@ -337,12 +307,19 @@ public class ImageViewForHeadCompound extends ImageView implements OnReloadListe
     }
 
     private void loadFail() {
-        if (mConfig.failBitmap != null) {
+//        if (mConfig.failBitmap != null) {
+//            recyleImageBitmap();
+//            mImageBitmap = mConfig.failBitmap;
+//            setBitmap(mImageBitmap);
+//        } else {
+////            setImageResource(R.drawable.emotion_load_fail);
+//        }
+    	
+    	if(mConfig.failBitmapID != 0){
             recyleImageBitmap();
-            mImageBitmap = mConfig.failBitmap;
-            setBitmap(mImageBitmap);
+    		setImageResource(mConfig.failBitmapID);
         } else {
-//            setImageResource(R.drawable.emotion_load_fail);
+        	
         }
     }
 
@@ -413,7 +390,10 @@ public class ImageViewForHeadCompound extends ImageView implements OnReloadListe
         private int headCompoundMode;
         private ImageLoaderInterface mImageLoader;
         private boolean isNeedReLoadByClick = true;
-
+        private DealWithFromLocalInterface readFromSD;
+        private DealWithFromLocalInterface readFromAssets;
+        public int startBitmapID;
+        public int failBitmapID;
         public Bitmap getStartBitmap() {
             return startBitmap;
         }
@@ -453,6 +433,22 @@ public class ImageViewForHeadCompound extends ImageView implements OnReloadListe
         public void setNeedReLoadByClick(boolean isNeedReLoadByClick) {
             this.isNeedReLoadByClick = isNeedReLoadByClick;
         }
+
+		public DealWithFromLocalInterface getReadFromSD() {
+			return readFromSD;
+		}
+
+		public void setReadFromSD(DealWithFromLocalInterface readFromSD) {
+			this.readFromSD = readFromSD;
+		}
+
+		public DealWithFromLocalInterface getReadFromAssets() {
+			return readFromAssets;
+		}
+
+		public void setReadFromAssets(DealWithFromLocalInterface readFromAssets) {
+			this.readFromAssets = readFromAssets;
+		}
 
     }
     

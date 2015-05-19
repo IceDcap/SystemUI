@@ -72,7 +72,7 @@ public class AmigoUnBindAcountActivity  extends AmigoActivity{
 	private void setBlurBackground() {
         this.getWindow().setBackgroundDrawable(null);
 
-        Bitmap bitmap = UIController.getInstance().getCurrentWallpaperBitmap();
+        Bitmap bitmap = UIController.getInstance().getCurrentWallpaperBitmap(this.getApplicationContext());
         mWindowBackgroud = KeyguardWallpaper.getBlurBitmap(bitmap.copy(Bitmap.Config.ARGB_8888, true), 5.0f);
         if (mWindowBackgroud == null) {
             return;

@@ -477,7 +477,9 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
             	if(DebugLog.DEBUG){
             		DebugLog.d(LOG_TAG, "AmigoKeyguardHostView dispatchTouchEvent gotoSleepIfDoubleTap action:"+action);
     			}
-                gotoSleepIfDoubleTap(event);
+            	if(isHostYAtHomePostion()){
+            	    gotoSleepIfDoubleTap(event);
+            	}
             }
         }
         return true;
@@ -531,10 +533,16 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 		switch (action) {
 			case MotionEvent.ACTION_DOWN:
 				onInterceptActionDown(event);
+			    if(mOnViewTouchListener != null){
+			        mOnViewTouchListener.onInterceptTouch(event);
+			    }
 				break;
 
 			case MotionEvent.ACTION_MOVE:
 				confirmIfIntercept(event);
+			    if(mOnViewTouchListener != null && mScrollDirection == DIRECTION_H){
+			        mOnViewTouchListener.onInterceptTouch(event);
+			    }
 				break;
 			case MotionEvent.ACTION_UP:
 			case MotionEvent.ACTION_CANCEL:
@@ -551,9 +559,7 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 		 if(DebugLog.DEBUGMAYBE){
 			 Log.d("jings", "onInterceptTouchEvent return "+mScrollDirection );
 		 }
-	    if(mOnViewTouchListener != null){
-	        mOnViewTouchListener.onInterceptTouch(event);
-	    }
+
 		return (mScrollDirection != DIRECTION_NONE);
 	}
 	
@@ -743,7 +749,7 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 			missCountShow = true;
 		}
 		
-		// 姣忔棩涓�浘鏂囨
+		// 每日一图文案
 //		rotationDayPictureComment(adjustedY);
 		
 		super.scrollTo(x, adjustedY);
@@ -809,10 +815,12 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 			if(DebugLog.DEBUG){
 				DebugLog.d(LOG_TAG, "totalY: down "+totalY+" mMinFlingDistance: "+mMinFlingDistance);
 			}
-		}else if(mScrollDirection == DIRECTION_H){
-		    if(mOnViewTouchListener != null){
-			       mOnViewTouchListener.onTouch(event);
-			}
+		}
+//		else if(mScrollDirection == DIRECTION_H){
+//
+//		}
+	    if(mOnViewTouchListener != null){
+		       mOnViewTouchListener.onTouch(event);
 		}
 		
 		if(DebugLog.DEBUG){

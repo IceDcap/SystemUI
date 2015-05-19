@@ -5,9 +5,13 @@ import android.animation.Animator.AnimatorListener;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -89,7 +93,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
     
     private static int WIDTH_PIXELS = 1080;
     private static int HEIGHT_PIXELS = 1920;
-
+    
     public ArcLayout(Context context) {
         this(context,null);
     }
@@ -104,7 +108,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
         super(context, attrs);
         mChildSize = getResources().getDimensionPixelSize(R.dimen.menuChildSize);
         mRadiusMax = getResources().getDimensionPixelSize(R.dimen.haokan_arcmenu_radius_max);
-        mHomeButtonSize = getResources().getDimensionPixelSize(R.dimen.menuHomeButtonSize);
+        mHomeButtonSize = getResources().getDimensionPixelSize(R.dimen.haokan_arcmenu_home_size);
         mRadiusNormal = getResources().getDimensionPixelSize(R.dimen.haokan_arcmenu_radius);
         WIDTH_PIXELS = Common.getScreenWidth(getContext());
         HEIGHT_PIXELS = Common.getScreenHeight(getContext());
@@ -185,6 +189,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
         
         setMeasuredDimension(size, size);
     }
+    boolean[] needFeekBack = new boolean[]{true,true, false,false };
     
     private void initArcMenu() {
         
@@ -200,6 +205,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
             item.setScaleX(0f);
             item.setScaleY(0f);
             item.setItemSelected(false);
+            item.setNeedFeekBack(needFeekBack[i]);
             addView(item);
             mArcItems.add(item);
         }
@@ -606,7 +612,18 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                     listener.onAnimatorEnd();
                 }
 
-                controller.hideArcMenu();
+                if (!arcItemButton.isNeedFeekBack()) {
+                    postDelayed(new Runnable() {
+                        
+                        @Override
+                        public void run() {
+                            controller.hideArcMenu();
+                        }
+                    }, 1000);
+                }else {
+                    setVisibility(GONE);
+                }
+                
                 mArcHomeButton.getmImageView().setScaleX(0.4f);
                 mArcHomeButton.getmImageView().setScaleY(0.4f);
                 mArcHomeButton.getmImageView().setVisibility(GONE);
@@ -697,8 +714,12 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                 boolean success = false;
                 
                 Bitmap currentWallpaper = controller.getCurrentWallpaperBitmap(mWallpaper);
-//                String favoriteLocalPath = Common.saveWallpaper(currentWallpaper,mWallpaper);
-                String favoriteLocalPath = FileUtil.saveWallpaper(currentWallpaper, mWallpaper);
+                
+                String imageFileName = new StringBuffer().append(Common.currentTimeDate()).append("_")
+                        .append(mWallpaper.getImgId()).append(".jpg").toString();
+                
+                String favoriteLocalPath = FileUtil.saveWallpaper(currentWallpaper, imageFileName);
+                
                 if (favoriteLocalPath != null) {
                     mWallpaper.setFavoriteLocalPath(favoriteLocalPath);
                     mWallpaper.setFavorite(true);
@@ -718,6 +739,31 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                             bindClickItemFeekBackAnimator(arcItemButton, true, R.string.haokan_arc_menu_favorite_ok);
                         }
                     }, 300);
+                    
+                    long currentTimeMillis = System.currentTimeMillis();
+                    long dateSeconds = currentTimeMillis / 1000;
+                    int width = currentWallpaper.getWidth();
+                    int height = currentWallpaper.getHeight();
+                    
+                    ContentValues values = new ContentValues();
+                    ContentResolver resolver = getContext().getContentResolver();
+                    values.put(MediaStore.Images.ImageColumns.DATA, favoriteLocalPath);
+                    values.put(MediaStore.Images.ImageColumns.TITLE, imageFileName);
+                    values.put(MediaStore.Images.ImageColumns.DISPLAY_NAME, imageFileName);
+                    values.put(MediaStore.Images.ImageColumns.DATE_TAKEN, currentTimeMillis);
+                    values.put(MediaStore.Images.ImageColumns.DATE_ADDED, dateSeconds);
+                    values.put(MediaStore.Images.ImageColumns.DATE_MODIFIED, dateSeconds);
+                    values.put(MediaStore.Images.ImageColumns.MIME_TYPE, "image/jpg");
+                    values.put(MediaStore.Images.ImageColumns.WIDTH, width);
+                    values.put(MediaStore.Images.ImageColumns.HEIGHT, height);
+                    
+                    Log.v(TAG,
+                            "favoriteLocalPath = " + favoriteLocalPath + " imageFileName = "
+                                    + imageFileName + " dateSeconds = " + dateSeconds
+                                    + " width=" + width
+                                    + " height = " + height);
+                    
+                    Uri uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
                     
                 }else {
 
@@ -922,7 +968,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
         }
         return running;
     }
-    
-    
 
+
+    
 }

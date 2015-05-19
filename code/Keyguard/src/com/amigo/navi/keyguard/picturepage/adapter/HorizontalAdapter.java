@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.haokan.entity.WallpaperList;
 import com.amigo.navi.keyguard.network.ImageLoader;
+import com.amigo.navi.keyguard.network.local.LocalBitmapOperation;
+import com.amigo.navi.keyguard.network.local.LocalFileOperationInterface;
+import com.amigo.navi.keyguard.network.local.ReadFileFromSD;
+import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
 import com.amigo.navi.keyguard.picturepage.interfacers.OnReloadListener;
 import com.amigo.navi.keyguard.picturepage.widget.ImageViewForHeadCompound;
 
@@ -29,18 +33,33 @@ public class HorizontalAdapter extends BaseAdapter {
    private ArrayList<OnReloadListener> mReloadListeners = new ArrayList<OnReloadListener>();
 //   private int[] mIDList = new int[]{R.drawable.a,R.drawable.b,R.drawable.c,R.drawable.d};
 //   ArrayList<Bitmap> bitmapList = new ArrayList<Bitmap>();
+   private ReadFileFromSD mDealWithFromLocalInterface = null;
+   ImageViewForHeadCompound.Config mConfig = null;
    public HorizontalAdapter(Context context,WallpaperList wallpaperList,ImageLoader imageLoader){
        this.mInflater = LayoutInflater.from(context);
        updateDataList(wallpaperList);
        this.mImageLoader = imageLoader;
+       LocalFileOperationInterface localFileOperationInterface = new LocalBitmapOperation(context);
+       mDealWithFromLocalInterface = new ReadFileFromSD(context.getApplicationContext(), 
+                 DiskUtils.WALLPAPER_BITMAP_FOLDER, DiskUtils.getCachePath(context.getApplicationContext()),
+                 localFileOperationInterface);
+       mConfig = new ImageViewForHeadCompound.Config();
+       mConfig.startBitmapID = R.drawable.loading;
+       mConfig.failBitmapID = R.drawable.loading;
+       mConfig.setImageLoader(mImageLoader);
+       mConfig.setReadFromSD(mDealWithFromLocalInterface);
 //       Bitmap bitmap1 = BitmapFactory.decodeResource(context.getResources(), R.drawable.a);
 //       Bitmap bitmap2 = BitmapFactory.decodeResource(context.getResources(), R.drawable.b);
 //       Bitmap bitmap3 = BitmapFactory.decodeResource(context.getResources(), R.drawable.c);
 //       Bitmap bitmap4 = BitmapFactory.decodeResource(context.getResources(), R.drawable.d);
+//       Bitmap bitmap5 = BitmapFactory.decodeResource(context.getResources(), R.drawable.e);
+//       Bitmap bitmap6 = BitmapFactory.decodeResource(context.getResources(), R.drawable.f);
 //       bitmapList.add(bitmap1);
 //       bitmapList.add(bitmap2);
 //       bitmapList.add(bitmap3);
 //       bitmapList.add(bitmap4);
+//       bitmapList.add(bitmap5);
+//       bitmapList.add(bitmap6);
    }
 
    public void updateDataList(WallpaperList wallpaperList) {
@@ -74,14 +93,14 @@ public class HorizontalAdapter extends BaseAdapter {
 //        DebugLog.d(TAG, "getView mWallpaperList size:" + mWallpaperList.size());
 //        DebugLog.d(TAG, "getView img url :" + mWallpaperList.get(position).getImgUrl());
         ViewHolder holder = null;
+        DebugLog.d(TAG, "getView convertView:" + convertView);
         if (convertView == null) {
-            ImageViewForHeadCompound.Config config = new ImageViewForHeadCompound.Config();
-            config.setImageLoader(mImageLoader);
+
             holder=new ViewHolder();  
              
             convertView = mInflater.inflate(R.layout.image_view_show, null);
             holder.img = (ImageViewForHeadCompound)convertView.findViewById(R.id.image);
-            holder.img.setConfig(config);
+            holder.img.setConfig(mConfig);
             convertView.setTag(holder);             
         }else {
              
@@ -93,7 +112,6 @@ public class HorizontalAdapter extends BaseAdapter {
             }
             mReloadListeners.add((OnReloadListener) holder.img);
         }
-//        isAllowLoad = true;
         DebugLog.d("HorizontalListView","makeAndAddView getView begin");
         holder.img.loadImageBitmap(mWallpaperList.get(position),true,isAllowLoad);
 //        holder.img.setImageResource(mIDList[position]);
@@ -103,6 +121,7 @@ public class HorizontalAdapter extends BaseAdapter {
 
     public final class ViewHolder{
         public ImageViewForHeadCompound img;
+//        public ImageView img;
     }
  
     public void restore() {
@@ -110,10 +129,12 @@ public class HorizontalAdapter extends BaseAdapter {
     }
 
     public void lock() {
+    	DebugLog.d(TAG,"lock img");
         this.isAllowLoad = false;
     }
 
     public void unlock() {
+    	DebugLog.d(TAG,"lock img no");
         this.isAllowLoad = true;
 
         for(OnReloadListener listerner : mReloadListeners){

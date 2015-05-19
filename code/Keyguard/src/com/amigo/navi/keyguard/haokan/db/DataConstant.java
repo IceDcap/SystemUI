@@ -14,6 +14,8 @@ public class DataConstant {
     public static final String TABLE_FAVORITE = "favorite";
     public static final int LOCAL = 1;
     public static final int INTERNET = 0;
+    public static final int DOWNLOAD_FINISH = 1;
+    public static final int NOT_DOWNLOAD = 0;
     public static final String CREATE_CATEGORY_SQL = "create table category (" +
             "type_id integer primary key," +
             "type_name text," +

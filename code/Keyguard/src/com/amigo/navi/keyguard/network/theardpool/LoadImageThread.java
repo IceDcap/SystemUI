@@ -22,6 +22,7 @@
 package com.amigo.navi.keyguard.network.theardpool;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 import android.content.Context;
 import android.util.Log;
@@ -31,10 +32,13 @@ public class LoadImageThread implements Runnable {
     public String mUrl;
     protected Context mCxt;
     private Job mJob = null;
-    public LoadImageThread(String url,Job job) {
+    private Vector<LoadImageThread> mThreadList = null;
+    public LoadImageThread(String url,Job job,Vector<LoadImageThread> threadList) {
         this.mUrl = url;
         mJob = job;
+        mThreadList = threadList;
     }
+    
     
     public void stop(){
     	mJob.cancelTask();
@@ -53,11 +57,8 @@ public class LoadImageThread implements Runnable {
     @Override
     public void run() {
     	mJob.runTask();
-        ArrayList<LoadImageThread> threadList = null;
-        threadList = LoadImagePool.getInstance(mCxt)
-                .getDownLoadThreadList();
         boolean ret = false;
-        ret = threadList.remove(this);
+        ret = mThreadList.remove(this);
         Log.d(LOG_TAG, "run() end ret=" + ret);
     }
     

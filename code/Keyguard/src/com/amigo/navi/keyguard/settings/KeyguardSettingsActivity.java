@@ -43,6 +43,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amigo.navi.keyguard.DebugLog;
+import com.amigo.navi.keyguard.haokan.NicePicturesInit;
 import com.amigo.navi.keyguard.haokan.UIController;
 import com.amigo.navi.keyguard.haokan.analysis.Event;
 import com.amigo.navi.keyguard.haokan.analysis.HKAgent;
@@ -207,7 +208,7 @@ public class KeyguardSettingsActivity extends Activity {
 	private void setBlurBackground() {
         this.getWindow().setBackgroundDrawable(null);
 
-        Bitmap bitmap = UIController.getInstance().getCurrentWallpaperBitmap();
+        Bitmap bitmap = UIController.getInstance().getCurrentWallpaperBitmap(this);
         mWindowBackgroud = KeyguardWallpaper.getBlurBitmap(bitmap.copy(Bitmap.Config.ARGB_8888, true), 5.0f);
         if (mWindowBackgroud == null) {
             return;
@@ -299,6 +300,7 @@ public class KeyguardSettingsActivity extends Activity {
 				}else{
 	        		HKAgent.onEventOnlyWlan(getApplicationContext(),Event.SETTING_DOWNLOAD, KeyguardSettings.SWITCH_ONLY_WLAN_OFF);
 				}
+				NicePicturesInit.getInstance(getApplicationContext()).registerData();
 			}});
 
     }
@@ -357,7 +359,7 @@ public class KeyguardSettingsActivity extends Activity {
 //				KeyguardSettings.setDialogAlertState(getApplicationContext(), !cbDontShowAgain.isChecked());
 				
 				saveConnectState(true);
-				
+				NicePicturesInit.getInstance(getApplicationContext()).registerData();
 				dialog.dismiss();
 			}
 		}).setNegativeButton(R.string.dialog_cancle, new DialogInterface.OnClickListener() {

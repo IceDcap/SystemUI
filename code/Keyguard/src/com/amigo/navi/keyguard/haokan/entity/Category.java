@@ -36,7 +36,10 @@ public class Category implements Serializable{
     public static final int WALLPAPER_FROM_WEB = DataConstant.INTERNET;
     public static final int WALLPAPER_FROM_FIXED_FOLDER = DataConstant.LOCAL;
     private int type = WALLPAPER_FROM_WEB;
-
+    public static final int PIC_DOWNLOAD_FINISH = DataConstant.DOWNLOAD_FINISH;
+    public static final int PIC_DOWNLOAD_NOT_FINISH = DataConstant.NOT_DOWNLOAD;
+    private int isPicDownLod;
+    
     public boolean isFavorite() {
         return favorite;
     }
@@ -108,6 +111,14 @@ public class Category implements Serializable{
 
 	public void setNameID(String nameID) {
 		this.nameID = nameID;
+	}
+
+	public int getIsPicDownLod() {
+		return isPicDownLod;
+	}
+
+	public void setIsPicDownLod(int isPicDownLod) {
+		this.isPicDownLod = isPicDownLod;
 	}
 
      

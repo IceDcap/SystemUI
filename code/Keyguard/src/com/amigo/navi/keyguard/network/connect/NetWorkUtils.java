@@ -38,14 +38,14 @@ public class NetWorkUtils {
     private static final String TESTING_ENVIRONMENT_FILE_NAME = "keyguard_test";
     private static final String IMMEDIATELY_GET_WALLPAPER_FILE_NAME = "at_once";
     private static final String PATH_DIVIDE = "//";
-    public static boolean isNetworkAvailable(Context context) {
-        ConnectivityManager connectivityManager = (ConnectivityManager) context
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (null == connectivityManager.getActiveNetworkInfo()) {
-            return false;
-        }
-        return true;
-    }
+//    public static boolean isNetworkAvailable(Context context) {
+//        ConnectivityManager connectivityManager = (ConnectivityManager) context
+//                .getSystemService(Context.CONNECTIVITY_SERVICE);
+//        if (null == connectivityManager.getActiveNetworkInfo()) {
+//            return false;
+//        }
+//        return true;
+//    }
 
     public static boolean isMobileDataNetwork(Context context) {
         ConnectivityManager connectivityMgr = (ConnectivityManager) context
@@ -109,11 +109,14 @@ public class NetWorkUtils {
     
     public static boolean testFileOnSDExist(String folder){
         String sdPath = Environment.getExternalStorageDirectory().getPath();
+    	DebugLog.d(TAG,"testFileOnSDExist sdPath:" + sdPath);
         File file = new File(sdPath + PATH_DIVIDE
                 + folder);
         if (file.exists()) {
+        	DebugLog.d(TAG,"testFileOnSDExist 1");
             return true;
         }
+    	DebugLog.d(TAG,"testFileOnSDExist 2");
         return false;
     }
     
@@ -131,6 +134,26 @@ public class NetWorkUtils {
         }
         return conUrl;
     }
+    
+	// 网路是否可用
+	public static boolean isNetworkAvailable(Context context) {
+		try {
+			ConnectivityManager cn = (ConnectivityManager) context
+					.getSystemService(Context.CONNECTIVITY_SERVICE);
+			if (cn != null) {
+				NetworkInfo info = cn.getActiveNetworkInfo();
+				if (info != null && info.isConnected()) {
+					if (info.getState() == NetworkInfo.State.CONNECTED) {
+						return true;
+					}
+				}
+			}
+		} catch (Exception e) {
+			return false;
+		}
+		return false;
+
+	}
     
 }
 // Gionee <pengwei><2014-03-05> modify for CR01095632 end

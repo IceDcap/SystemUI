@@ -101,7 +101,9 @@ public class KeyguardViewHost extends FrameLayout {
 			mConfiguration.fontScale = newConfig.fontScale;
 			
 			resetKeyguardView();
-			
+			if(mConfigChangeCallback != null){
+				mConfigChangeCallback.onConfigChange();
+			}
 		} else {
 			if (DEBUG)
 				DebugLog.d(LOG_TAG, "onConfigurationChanged: congfiguration not change");
@@ -333,6 +335,10 @@ public class KeyguardViewHost extends FrameLayout {
            }
     }
     
+	    
+    public interface ConfigChangeCallback{
+    	public void onConfigChange();
+    }
 
     public void shakeFingerIdentifyTip() {
         mAmigoKeyguardView.shakeFingerIdentifyTip();
@@ -394,4 +400,9 @@ public class KeyguardViewHost extends FrameLayout {
         return mAmigoKeyguardView.passwordViewIsForzen();
     }
  
+     private ConfigChangeCallback mConfigChangeCallback = null;
+     
+    public void setConfigChangeCallback(ConfigChangeCallback callback){
+    	mConfigChangeCallback = callback;
+    }
 }

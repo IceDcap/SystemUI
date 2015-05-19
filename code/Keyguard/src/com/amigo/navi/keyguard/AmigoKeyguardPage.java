@@ -52,6 +52,8 @@ public class AmigoKeyguardPage extends RelativeLayout {
 //	private KeyguardInfoZone mInfozone = null;
 	public static MissedInfo sMsgCache = null;
 	
+	private RelativeLayout mHaoKanLayout;
+	
 	public AmigoKeyguardPage(Context context) {
 		this(context, null);
 	}
@@ -140,15 +142,22 @@ public class AmigoKeyguardPage extends RelativeLayout {
 	
 	private void addHKMainLayout() {
 
+	    
+	    
+	    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+	            RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+	    params.bottomMargin = getResources().getDimensionPixelSize(R.dimen.haokan_main_layout_marginbottom);
+	    if (mHaoKanLayout != null) {
+	        addView(mHaoKanLayout, params);
+	        return;
+        }
+	    
 	    LayoutInflater inflater=LayoutInflater.from(mContext);
-        RelativeLayout mainLayout = (RelativeLayout)inflater.inflate(R.layout.haokan_main_layout, null);
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-        params.bottomMargin = getResources().getDimensionPixelSize(R.dimen.haokan_main_layout_marginbottom);
-        RelativeLayout playerRelativeLayout = (RelativeLayout) mainLayout.findViewById(R.id.haokan_page_layout_player);
-        CaptionsView captionsView = (CaptionsView) mainLayout.findViewById(R.id.haokan_page_layout_captions);
+	    mHaoKanLayout = (RelativeLayout)inflater.inflate(R.layout.haokan_main_layout, null);
+        RelativeLayout playerRelativeLayout = (RelativeLayout) mHaoKanLayout.findViewById(R.id.haokan_page_layout_player);
+        CaptionsView captionsView = (CaptionsView) mHaoKanLayout.findViewById(R.id.haokan_page_layout_captions);
         PlayerButton playerButton = (PlayerButton) playerRelativeLayout.findViewById(R.id.haokan_page_layout_imageButton);
-        TextView textViewTip = (TextView) mainLayout.findViewById(R.id.haokan_page_layout_tip);
+        TextView textViewTip = (TextView) mHaoKanLayout.findViewById(R.id.haokan_page_layout_tip);
         
         TextView musicName = (TextView) playerRelativeLayout.findViewById(R.id.haokan_page_layout_music);
         TextView musicArtist = (TextView) playerRelativeLayout.findViewById(R.id.haokan_page_layout_Artist);
@@ -169,7 +178,7 @@ public class AmigoKeyguardPage extends RelativeLayout {
         });
         PlayerManager.getInstance().setPlayerButton(playerButton);
         PlayerManager.getInstance().init(getContext().getApplicationContext());
-        addView(mainLayout, params);
+        addView(mHaoKanLayout, params);
         
     }
 	

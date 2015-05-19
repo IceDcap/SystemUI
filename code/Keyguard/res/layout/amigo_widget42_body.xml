@@ -44,10 +44,11 @@
 
                     <TextView
                         android:id="@+id/newwidget41_weathertime_format_flag"
+                        style="@style/NewWidgetText"
                         android:layout_width="20dp"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:paddingTop="2dp"
+                        android:paddingTop="4dp"
                         android:textColor="@color/newwidget41_dateandlunar_color"
                         android:textSize="17dp" />
 
@@ -176,6 +177,7 @@
 
                     <TextView
                         android:id="@+id/newwidget41_weathertime_format_flag_us"
+                        style="@style/NewWidgetText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"

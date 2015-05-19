@@ -88,6 +88,9 @@ public class CategoryDB extends BaseDB{
             	DebugLog.d(TAG,"updateCategorysNoTransaction categoryInDB.isFavorite():" + categoryInDB.isFavorite());
             	values.put(FAVORITE, categoryInDB.isFavorite());
             }
+            if(categoryInDB != null){
+            	values.put(IS_FINISH, categoryInDB.getIsPicDownLod());
+            }
             values.put(TODAY_IMG, DataConstant.TODAY_IMAGE);
             db.replace(TABLE_NAME, null, values);
         }
@@ -105,6 +108,7 @@ public class CategoryDB extends BaseDB{
         db.beginTransaction();
         updateNotTodayImg();
         updateCategorysNoTransaction(list, db);
+        deleteNotToday();
         db.setTransactionSuccessful();  
         db.endTransaction(); 
         DebugLog.d(TAG,"insertAfterDeleteAll 2");         

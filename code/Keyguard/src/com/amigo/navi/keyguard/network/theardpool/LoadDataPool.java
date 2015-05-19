@@ -24,6 +24,7 @@ package com.amigo.navi.keyguard.network.theardpool;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Vector;
 
 import android.content.Context;
 
@@ -40,7 +41,7 @@ public class LoadDataPool {
     private Object objSync = new Object();
 
     public static ExecutorService sThreadPool;
-    private ArrayList<LoadImageThread> mThreadList = new ArrayList<LoadImageThread>();
+    private Vector<LoadImageThread> mThreadList = new Vector<LoadImageThread>();
     
 
     LoadDataPool(Context cxt) {
@@ -84,11 +85,12 @@ public class LoadDataPool {
             }
             DebugLog.d(TAG,"containInThreadPool url:" + url);
             ret = th.compareThread(url);
+            DebugLog.d(TAG,"containInThreadPool ret:" + ret);
         }
         return ret;
     }
 
-    public ArrayList<LoadImageThread> getDownLoadThreadList() {
+    public Vector<LoadImageThread> getDownLoadThreadList() {
         return mThreadList;
     }
     
