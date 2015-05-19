@@ -391,9 +391,21 @@ public class NetworkControllerImpl extends BroadcastReceiver
         		|| action.equals(TelephonyIntents.SPN_STRINGS_UPDATED_ACTION)) {
             // Notify every MobileSignalController so they can know whether they are the
             // data sim or not.
-            for (MobileSignalController controller : mMobileSignalControllers.values()) {
-                controller.handleBroadcast(intent);
+        	//GIONEE <wujj> <2015-05-19> modify for CR01479335 begin
+        	//for (MobileSignalController controller : mMobileSignalControllers.values()) {
+        	//		controller.handleBroadcast(intent);
+        	//}
+        	int subId = intent.getIntExtra(PhoneConstants.SUBSCRIPTION_KEY,
+                    SubscriptionManager.INVALID_SUBSCRIPTION_ID);
+            if (SubscriptionManager.isValidSubscriptionId(subId)) {
+                if (mMobileSignalControllers.containsKey(subId)) {
+                    mMobileSignalControllers.get(subId).handleBroadcast(intent);
+                } else {
+                    // Can't find this subscription...  We must be out of date.
+                    updateMobileControllers();
+                }
             }
+          //GIONEE <wujj> <2015-05-19> modify for CR01479335 end
         } else if (action.equals(TelephonyIntents.ACTION_SIM_STATE_CHANGED)) {
             // Might have different subscriptions now.
             updateMobileControllers();
@@ -1079,6 +1091,15 @@ public class NetworkControllerImpl extends BroadcastReceiver
                 // If data is disconnected for some other reason but wifi (or ethernet/bluetooth)
                 // is connected, we show nothing.
                 // Otherwise (nothing connected) we show "No internet connection".
+                
+                //GIONEE <wujj> <2015-05-19> modify for CR01479335 begin
+                // Rules:
+                // SIM1			SIM2		SHOWN
+                //	No Service	No Service 	No Service
+                // 	No Service  CMCC		CMCC
+                // 	CUCC		No Service	CUCC
+                // 	CUCC		CMCC		CUCC|CMCC
+                /*
                 if (mCurrentState.dataConnected) {
                     mobileLabel = mCurrentState.networkName;
                 } else if (connected || mCurrentState.isEmergency) {
@@ -1090,17 +1111,46 @@ public class NetworkControllerImpl extends BroadcastReceiver
                     mobileLabel = mContext.getString(
                             R.string.status_bar_settings_signal_meter_disconnected);
                 }
-
-                if (currentLabel.length() != 0) {
-                    currentLabel = currentLabel + mNetworkNameSeparator;
+                */
+                
+                mobileLabel = mCurrentState.networkName;
+                
+                // for cases that no card has service or only one card has service
+                if (mobileLabel.equals(mNetworkNameDefault) || currentLabel.equals(mNetworkNameDefault)) {
+                	if (!mobileLabel.equals(mNetworkNameDefault)) {
+                		return mobileLabel;
+                	} else if (currentLabel.length() != 0 && !currentLabel.equals(mNetworkNameDefault)) {
+                		return currentLabel;
+                	} else {
+                		return mNetworkNameDefault;
+                	}
                 }
-                // Now for things that should only be shown when actually using mobile data.
-                if (isMobileLabel) {
-                    return currentLabel + mobileLabel;
+                
+                // For case that both cards are on service, card one should show first and card two follow.
+                int slotId = mSubscriptionInfo.getSimSlotIndex();
+                if (slotId > 0 ) {
+	                if (currentLabel.length() != 0) {
+	                    currentLabel = currentLabel + mNetworkNameSeparator;
+	                }
+	             // Now for things that should only be shown when actually using mobile data.
+	                if (isMobileLabel) {
+	                    return currentLabel + mobileLabel;
+	                } else {
+	                    return currentLabel
+	                            + (mCurrentState.dataConnected ? mobileLabel : currentLabel);
+	                }
                 } else {
-                    return currentLabel
-                            + (mCurrentState.dataConnected ? mobileLabel : currentLabel);
+                	if (currentLabel.length() != 0 && mobileLabel.length() != 0) {
+	                    currentLabel = mNetworkNameSeparator + currentLabel;
+	                }
+                	// Now for things that should only be shown when actually using mobile data.
+                	if (isMobileLabel) {
+                		return mobileLabel+currentLabel;
+                	} else {
+                		return (mCurrentState.dataConnected ? mobileLabel : currentLabel+currentLabel);
+                	}
                 }
+              //GIONEE <wujj> <2015-05-19> modify for CR01479335 end
             }
         }
 
@@ -1360,7 +1410,10 @@ public class NetworkControllerImpl extends BroadcastReceiver
             }
             if (showSpn && spn != null) {
                 if (str.length() != 0) {
-                    str.append(mNetworkNameSeparator);
+                	//GIONEE <wujj> <2015-05-19> modify for CR01479335 begin
+                    //str.append(mNetworkNameSeparator);
+                	//GIONEE <wujj> <2015-05-19> modify for CR01479335 end
+                	str.append(" ");
                 }
                 str.append(spn);
             }
