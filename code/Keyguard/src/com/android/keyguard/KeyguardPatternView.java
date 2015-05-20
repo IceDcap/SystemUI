@@ -262,6 +262,9 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
         mLockPatternView.setEnabled(true);
         mLockPatternView.clearPattern();
 
+        // stealth mode will be the same for the life of this screen
+        mLockPatternView.setInStealthMode(!mLockPatternUtils.isVisiblePatternEnabled());
+
         // if the user is currently locked out, enforce it.
         long deadline =  mKeyguardUpdateMonitor.getCurDeadLine();
         if(DebugLog.DEBUG) DebugLog.d(TAG, "reset...deadline="+deadline);

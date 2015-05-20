@@ -2,62 +2,31 @@
 Build Notes
 ==================
 1.版本目的:
-r5192
-CR01476432 M5上代码修改合入E8M5上代码修改合入E8 
----------------------
-r5172
-CR01472927 MISC：低电量时弹出提示框不显示百分比（附图） 
----------------------
-r5163
-CR01480943  状态栏：音乐，播放一首本地歌曲，home键挂后台，状态栏不显示音乐图标 
----------------------
-r5160
-CR01459185 音乐播放crash
----------------------
-r5157
-CR01459185 merge M5代码
----------------------
-r5149
-CR01296451  来电有挂断 指纹解锁无效的bug
----------------------
-r5147
-CR01408122 加入手机是否有指纹的判断 
----------------------
-r5143
-CR01296451  merge 运营商、sim卡忽略按钮的代码
----------------------
-r5135
-CR01451044 存储已用完的32G外置T卡插入读卡器，使用OTG连接手机，拔出时，概率性出现延时10秒左右后才提示“安全移除”(附log） 
----------------------
-r5134
-CR01481541 低电量提醒用户设置 
----------------------
-r5133
-CR01476747 【工厂】设置，关于手机点击版本号，开启USB调试，连接电脑成功后，再拔掉USB线，USB调试自动关闭【10次出现4次】 
----------------------
-r5127
-CR01296451  merge sim卡代码 
----------------------
-
+全功能版本
 2.功能变更:
---
+全功能版本
 3.重点测试的问题:
---
+全功能版本
 4.应用数据库是否改变:
 No
 
 ==================
 Release Location
 ==================
-/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.i.zip
+/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.j.zip
 
 ==================
 CR List
 ==================
 [Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
-svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.p' non-existent in revision 5196
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.cc' non-existent in revision 5214
 
 svn: E200009: Could not display info for all targets because some targets don't exist
-svn: E205000: Syntax error in revision argument '5192:'
+svn: E205000: Syntax error in revision argument '5214:'
 File does not exist:  at getAppChangeSet.pl line 48
 
+==================
+Make sonar target URL:
+http://ss.alm.gionee.com/sonar
+http://ss.alm.gionee.com/sonar/dashboard/index/gionee.app:Amigo_SystemUI
+==================

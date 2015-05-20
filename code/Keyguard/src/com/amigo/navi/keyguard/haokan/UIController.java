@@ -217,17 +217,10 @@ public class UIController implements OnTouchlListener{
             mWebLayout = (WebLayout) LayoutInflater.from(context).inflate(
                     R.layout.haokan_web_layout, null, true);
         }
+        mWebLayout.addWebView();
         mWebLayout.loadurl(link);
         final WebView webView = mWebLayout.getmWebView();
 
-        webView.postDelayed(new Runnable(){
-            @Override
-            public void run(){
-                webView.clearHistory();
-            }
-        }, 1000);
-        
-        
         if (keyguardHostView.indexOfChild(mWebLayout) != -1) {
             keyguardHostView.removeView(mWebLayout);
         }
@@ -248,7 +241,7 @@ public class UIController implements OnTouchlListener{
         ObjectAnimator animatorCaptionsView = ObjectAnimator.ofFloat(captionsView, "alpha", 1f,0f).setDuration(400);
         ObjectAnimator animatorInfoZone = ObjectAnimator.ofFloat(infoZone, "translationY", 0f,infoZone.getMeasuredHeight()).setDuration(400);
         
-        ObjectAnimator animatorWebLayout = ObjectAnimator.ofFloat(mWebLayout, "alpha", 0f,1f).setDuration(800);
+        ObjectAnimator animatorWebLayout = ObjectAnimator.ofFloat(mWebLayout, "alpha", 0f, 1f).setDuration(800);
         animatorWebLayout.addListener(new AnimatorListener() {
             
             @Override
@@ -272,7 +265,8 @@ public class UIController implements OnTouchlListener{
             }
         });
         
-        ObjectAnimator animatorWebView = ObjectAnimator.ofFloat(webView, "translationY",webView.getTranslationY(),0f).setDuration(300);
+        float translationY = ((View) webView.getParent()).getMeasuredHeight();
+        ObjectAnimator animatorWebView = ObjectAnimator.ofFloat(webView, "translationY",translationY, 0f).setDuration(300);
         
         
 //        PropertyValuesHolder pvhTranslationY = PropertyValuesHolder.ofFloat("translationY", 300.0f, 0f);  
@@ -292,7 +286,7 @@ public class UIController implements OnTouchlListener{
         set.play(animatorInfoZone).with(animatorCaptionsView); 
         set.play(animatorWebLayout).after(animatorInfoZone);
         set.play(animatorWebView).after(animatorInfoZone);
-        set.play(animatorCloseLink).after(animatorWebView);
+        set.play(animatorCloseLink).after(animatorInfoZone);
         set.start();
         
     }
@@ -308,7 +302,15 @@ public class UIController implements OnTouchlListener{
     public void onBackPress() {
         
         if (mWebViewShowing) {
-            removeWebView();
+ 
+            boolean canGoBack = mWebView.canGoBack();
+             
+            if (canGoBack) {
+                mWebView.goBack();
+            }else {
+                removeWebView();
+            }
+            
         }
 
     }
@@ -347,11 +349,12 @@ public class UIController implements OnTouchlListener{
 
                 if (mWebLayout != null) {
                     mWebLayout.setVisibility(View.GONE);
+                    mWebLayout.removeWebView();
                     if (keyguardHostView.indexOfChild(mWebLayout) != -1) {
                         keyguardHostView.removeView(mWebLayout);
                     }
                 }
-//                mWebView.loadUrl("about:blank");
+ 
             }
             
             @Override
@@ -543,6 +546,7 @@ public class UIController implements OnTouchlListener{
                     keyguardHostView.removeView(mWebLayout);
                 }
             }
+            
             mWebViewShowing = false;
             getmInfozone().setAlpha(1.0f);
             getmInfozone().setTranslationY(0f);

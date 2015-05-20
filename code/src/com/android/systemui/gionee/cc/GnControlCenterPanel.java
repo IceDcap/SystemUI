@@ -732,18 +732,10 @@ public class GnControlCenterPanel extends ViewGroup implements GestureDetector.O
                     mCurrentAnimationTime);
             mShakeDeltaIndex++;
         } else {
-            Log.d(TAG, "top = " + mHandle.getTop() + " mTopOffset = " + mTopOffset);
-            if (mHandle.getTop() - 5 * mAnimatedVelocityRatio < mTopOffset) {
-                mShakeDeltaIndex = 0;
-                mAnimating = false;
-                mFling = false;
-                openDrawer();
-            } else {
-                invalidateRegion(mHandle, (int)(-5 * mAnimatedVelocityRatio));
-                mCurrentAnimationTime += ANIMATION_FRAME_DURATION;
-                mHandler.sendMessageAtTime(mHandler.obtainMessage(MSG_SHAKE_ANIMATE),
-                        mCurrentAnimationTime);
-            }
+            mShakeDeltaIndex = 0;
+            mAnimating = false;
+            mFling = false;
+            openDrawer();
         }
     }
 

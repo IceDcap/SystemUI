@@ -6,19 +6,12 @@
     android:visibility="invisible" >
 
     <FrameLayout
+        android:id="@+id/haokan_layout_webview_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:layout_marginBottom="@dimen/haokan_webview_close_height"
         android:layout_marginTop="46dp" >
-
-        <WebView
-            android:id="@+id/haokan_layout_webview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentTop="true"
-            android:layerType="software"
-            android:translationY="512dp" />
         
     </FrameLayout>
 

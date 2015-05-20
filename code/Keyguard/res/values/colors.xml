@@ -79,7 +79,8 @@
     
     <color name="haokan_music_name_color">#ffffff</color> 
     <color name="haokan_music_singer_color">#ccffffff</color> 
-    <color name="haokan_music_name_shadowcolor">#80000000</color> 
+    <color name="haokan_music_name_shadowcolor">#80000000</color>
+    <color name="haokan_arc_menu_background">#10000000</color> 
     
  
     <color name="amigo_unbind_acount_text_color">#cc000000</color>

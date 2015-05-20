@@ -51,6 +51,7 @@ import com.amigo.navi.keyguard.util.AmigoKeyguardUtils;
 import com.amigo.navi.keyguard.util.DataStatistics;
 import com.amigo.navi.keyguard.util.QuickSleepUtil;
 import com.android.keyguard.KeyguardUpdateMonitor;
+import com.android.keyguard.R;
 import com.android.keyguard.ViewMediatorCallback;
 import com.android.keyguard.KeyguardHostView.OnDismissAction;
 import com.android.internal.widget.LockPatternUtils;
@@ -634,7 +635,7 @@ public class KeyguardViewHostManager {
                 RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
         mKeyguardViewHost.addView(keyguardArcMenu, params);
         keyguardArcMenu.setVisibility(View.GONE);
-        keyguardArcMenu.setBackgroundColor(0x10000000);
+        keyguardArcMenu.setBackgroundResource(R.color.haokan_arc_menu_background);
         UIController.getInstance().setmArcMenu(keyguardArcMenu);
         
         
