@@ -55,7 +55,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
 
     private boolean mExpanded = false;
 
-//    private View mDateGroup;
+    private View mDateGroup;
     private View mClock;
     private TextView mTime;
     private TextView mAmPm;
@@ -110,7 +110,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-//        mDateGroup = findViewById(R.id.date_group);
+        mDateGroup = findViewById(R.id.date_group);
         mClock = findViewById(R.id.clock);
         mTime = (TextView) findViewById(R.id.time_view);
         mAmPm = (TextView) findViewById(R.id.am_pm_view);
@@ -175,9 +175,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         mClockExpandedSize = getResources().getDimensionPixelSize(R.dimen.qs_time_expanded_size);
         mClockCollapsedScaleFactor = (float) mClockCollapsedSize / (float) mClockExpandedSize;
 
-        //GIONEE <wujj> <2015-01-24> modify for CR01438299 Begin
-        GnFontHelper.resetAmigoFont(newConfig, mTime, mAmPm, mDateCollapsed, mDateExpanded);
-        //GIONEE <wujj> <2015-01-24> modify for CR01438299 end
         updateClockScale();
         updateClockCollapsedMargin();
     }
@@ -301,7 +298,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     }
 
     private void updateClockLp() {
-    	/*
         int marginBottom = mExpanded
                 ? mClockMarginBottomExpanded
                 : mClockMarginBottomCollapsed;
@@ -310,7 +306,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
             lp.bottomMargin = marginBottom;
             mDateGroup.setLayoutParams(lp);
         }
-        */
     }
 
     private void updateMultiUserSwitch() {
@@ -419,7 +414,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     private void captureLayoutValues(LayoutValues target) {
         target.timeScale = mExpanded ? 1f : mClockCollapsedScaleFactor;
         target.clockY = mClock.getBottom();
-//        target.dateY = mDateGroup.getTop();
+        target.dateY = mDateGroup.getTop();
         target.dateCollapsedAlpha = getAlphaForVisibility(mDateCollapsed);
         target.dateExpandedAlpha = getAlphaForVisibility(mDateExpanded);
         target.avatarScale = mMultiUserAvatar.getScaleX();
@@ -450,9 +445,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         mTime.setScaleX(values.timeScale);
         mTime.setScaleY(values.timeScale);
         mClock.setY(values.clockY - mClock.getHeight());
-//        mDateGroup.setY(values.dateY);
-        mDateCollapsed.setTranslationY(18);
-//        mDateExpanded.setTranslationY(36);
+        mDateGroup.setY(values.dateY);
         mMultiUserAvatar.setScaleX(values.avatarScale);
         mMultiUserAvatar.setScaleY(values.avatarScale);
         mMultiUserAvatar.setX(values.avatarX - mMultiUserSwitch.getLeft());
@@ -552,7 +545,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         private void handleShowingDetail(final QSTile.DetailAdapter detail) {
             final boolean showingDetail = detail != null;
             transition(mClock, !showingDetail);
-//            transition(mDateGroup, !showingDetail);
+            transition(mDateGroup, !showingDetail);
             mShowingDetail = showingDetail;
         }
 

@@ -59,26 +59,22 @@
         android:layout_marginTop="12dp"
         layout="@layout/split_clock_view" />
         
-   <!--  <FrameLayout
+    <LinearLayout
         android:id="@+id/date_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/clock"
-        android:layout_alignTop="@id/clock"
-        android:layout_alignBottom="@id/clock"
+        android:layout_marginTop="12dp"
         android:layout_marginLeft="3dp"
-        > -->
+        android:layout_alignBottom="@id/clock"
+        android:orientation="vertical"
+        >
         <com.android.systemui.statusbar.policy.DateView android:id="@+id/date_collapsed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:singleLine="true"
-            android:lineSpacingExtra="2dp"
-            android:layout_toRightOf="@id/clock"
-            android:layout_alignTop="@id/clock"
-            android:textAlignment="center"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="3dp"
-            android:layout_alignBaseline="@id/clock"
+            android:lineSpacingExtra="0dp"
+            android:paddingTop="1.5dp"
             android:textAppearance="@style/TextAppearance.StatusBar.Expanded.Date"
             systemui:datePattern="@string/gn_week_day_pattern"
             />
@@ -86,17 +82,14 @@
         <com.android.systemui.statusbar.policy.DateView android:id="@+id/date_expanded"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:layout_toRightOf="@id/clock"
-            android:layout_alignBottom="@id/clock"
+            android:layout_marginTop="1dp"
             android:singleLine="true"
-            android:lineSpacingExtra="2dp"
-            android:textAlignment="center"
-            android:layout_marginLeft="3dp"
+            android:lineSpacingExtra="0dp"
             android:textAppearance="@style/TextAppearance.StatusBar.Expanded.Date"
             systemui:datePattern="@string/gn_month_day_pattern"
             />
-    <!-- </FrameLayout> -->
+    </LinearLayout>
+
 
 <!--     <include
         android:id="@+id/qs_detail_header"

@@ -249,7 +249,6 @@ public class Clock extends TextView implements DemoMode {
     @Override
 	protected void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
-		GnFontHelper.resetAmigoFont(newConfig, this);
 	}
 }
 
