@@ -162,8 +162,13 @@ public class NotificationData {
     public ArrayList<Entry> getActiveNotifications() {
         return mSortedAndFiltered;
     }
+    
 
-    public Entry get(String key) {
+    public ArrayMap<String, Entry> getmEntries() {
+		return mEntries;
+	}
+
+	public Entry get(String key) {
         return mEntries.get(key);
     }
 

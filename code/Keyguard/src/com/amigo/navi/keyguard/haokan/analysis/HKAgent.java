@@ -54,13 +54,13 @@ public class HKAgent {
         onEvent(context, new EventLogger(Common.currentTimeDate(), evnet,  value));
     }
     
-    public static void onEventTimeClearLock(final Context context, final int value) {
-        onEvent(context,new EventLogger(Common.currentTimeTime(), Event.TIME_UNLOCK, value));
+    public static void onEventTimeOnKeyguard(final Context context, final int value) {
+        onEvent(context,new EventLogger(Common.currentTimeTime(), Event.TIME_ONKEYGUARD, value));
     }
     
-    public static void onEventTimeSceenOff(final Context context, final int value) {
-        onEvent(context, new EventLogger(Common.currentTimeTime(), Event.TIME_SRCEEN_OFF, value));
-    }
+//    public static void onEventTimeSceenOff(final Context context, final int value) {
+//        onEvent(context, new EventLogger(Common.currentTimeTime(), Event.TIME_SRCEEN_OFF, value));
+//    }
     
     /** player  Event*/
     public static void onEventPlayer(final Context context, final Wallpaper wallpaper) {

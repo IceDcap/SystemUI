@@ -860,6 +860,7 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
 	public void removeAllNotifications(){
 		if(DebugLog.DEBUG) DebugLog.d(TAG, "removeAllNotifications");
 		mNotificationData.getActiveNotifications().clear();
+		mNotificationData.getmEntries().clear();
 		notifyUpdate();
 	}
 	
@@ -969,7 +970,7 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
 			return false;
 //		String pkgName = sbn.getPackageName();
 //		if(DebugLog.DEBUGMAYBE) DebugLog.d(TAG, "isImportantNotification --sbn...pkgName " +pkgName);
-
+		if(DebugLog.DEBUGMAYBE) DebugLog.d(TAG, "isImportantNotification --sbn isImport" +sbn.getNotification().priority);
 		if(sbn.getNotification().priority==Notification.PRIORITY_MAX){
 			return true;
 		}

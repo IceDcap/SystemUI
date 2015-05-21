@@ -97,14 +97,14 @@ public class Event {
     public static final int SETTING_DOWNLOAD = 32;
     
     /**
-     * 锁屏解锁时，锁屏停留时间；（从这次亮屏到解锁的时间）单位秒
+     * 锁屏停留时间；单位毫秒
      */
-    public static final int TIME_UNLOCK = 33;
+    public static final int TIME_ONKEYGUARD = 33;
     
     /**
      * 在锁屏界面灭屏时，锁屏停留时间；（从这次亮屏到灭屏的时间）单位秒
      */
-    public static final int TIME_SRCEEN_OFF = 34;
+//    public static final int TIME_SRCEEN_OFF = 34;
     
    
 }

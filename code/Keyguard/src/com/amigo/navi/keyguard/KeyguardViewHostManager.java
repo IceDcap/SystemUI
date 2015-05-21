@@ -15,6 +15,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -87,7 +88,8 @@ public class KeyguardViewHostManager {
     // for statistics
     private long timeOnKeyguard = -1;
     private long timeOnKeyguardStart = -1;
-    private boolean IsClearLock = false;
+    private boolean mIsScreenOn = false;
+//  private boolean IsClearLock = false;
     private WallpaperList mDefaultWallpaperList = null;
     private static boolean isSuppotFinger=false;
     
@@ -199,10 +201,28 @@ public class KeyguardViewHostManager {
         mContext.registerReceiver(mReceiver, filter);
     }
     
-    
+
+	private void beginStatics() {
+		if (mIsScreenOn && !mIsSkylightShown && mViewMediatorCallback.isShowing()){
+     	   timeOnKeyguardStart = SystemClock.elapsedRealtime() ;
+     	}
+	}
+
+	private void finishStatistics() {
+		if (timeOnKeyguardStart<0){
+			return;
+		}
+		if (!mIsScreenOn || mIsSkylightShown || !mViewMediatorCallback.isShowing()){
+    		timeOnKeyguard = SystemClock.elapsedRealtime() - timeOnKeyguardStart;
+            HKAgent.onEventTimeOnKeyguard(mContext, (int) timeOnKeyguard);
+            timeOnKeyguardStart = timeOnKeyguard = -1;
+      	}
+	}
+	
     public void show(Bundle options){
 //        initSkylightHost();
         mKeyguardViewHost.show(options);
+        beginStatics();
         mFingerIdentifyManager.readFingerprintSwitchValue();
         
     }
@@ -218,10 +238,8 @@ public class KeyguardViewHostManager {
         destroyAcivityIfNeed();
         mKeyguardViewHost.hide();
         setSkylightHidden();
-		timeOnKeyguard = System.currentTimeMillis() - timeOnKeyguardStart;
-        HKAgent.onEventTimeClearLock(mContext, (int) timeOnKeyguard);
-        timeOnKeyguardStart = timeOnKeyguard = -1;
-        IsClearLock = true;
+    	
+        finishStatistics();
         cancelFingerIdentify();
         updateNotifiOnkeyguard(false);
         releaseCache();
@@ -235,14 +253,11 @@ public class KeyguardViewHostManager {
     
     public void onScreenTurnedOff(){
         mKeyguardViewHost.onScreenTurnedOff();
+        mIsScreenOn = false;
+        finishStatistics();
         savePage(false);
         updateHorizontalListViewWhenScreenChanged();
         releaseCache();
-        if (!IsClearLock){
-        	timeOnKeyguard = System.currentTimeMillis() - timeOnKeyguardStart;
-        	HKAgent.onEventTimeSceenOff(mContext, (int) timeOnKeyguard);
-        	timeOnKeyguardStart = timeOnKeyguard = -1;
-        }
 //      if(mImageLoader != null){
 //      mImageLoader.clearCache();
 //      System.gc();
@@ -260,8 +275,8 @@ public class KeyguardViewHostManager {
         	HKAgent.onEventScreenOn(mContext, UIController.getInstance().getmCurrentWallpaper());
         	HKAgent.onEventIMGShow(mContext, UIController.getInstance().getmCurrentWallpaper());
         }
-        timeOnKeyguardStart = System.currentTimeMillis();
-        IsClearLock = false;
+        mIsScreenOn = true;
+        beginStatics();
 //      if(mWallpaperAdapter != null){
 //      mWallpaperAdapter.notifyDataSetChanged();
 //   }
@@ -374,6 +389,8 @@ public class KeyguardViewHostManager {
             mIsSkylightShown=true;
             mViewMediatorCallback.adjustStatusBarLocked();
         }
+        
+        finishStatistics();
     }
     public void hideSkylight(boolean isGotoUnlock) {
         Message msg=mHandler.obtainMessage(MSG_HIDE_SKYLIGHT, isGotoUnlock);
@@ -398,8 +415,7 @@ public class KeyguardViewHostManager {
             mIsSkylightShown=false;
             mViewMediatorCallback.adjustStatusBarLocked();
         }
-        
-       startFingerIdentify();
+       beginStatics();
     }
     
     private void setSkylightHidden(){
