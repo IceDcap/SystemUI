@@ -1586,7 +1586,7 @@ public class NotificationPanelView extends PanelView implements
 	    			Paint paint = new Paint();
 	    			paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OVER));
 	    			canvas.drawBitmap(GnBlurHelper.mBlur, src, dst, paint);
-	    			canvas.drawColor(0x7F181818);
+	    			canvas.drawColor(0xCC181818);
 	    		}
 			}
     	} else {
