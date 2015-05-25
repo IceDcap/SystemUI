@@ -24,20 +24,20 @@
     android:orientation="horizontal">
 
     <ImageSwitcher android:id="@+id/tickerIcon"
-        android:layout_width="@dimen/status_bar_icon_size"
-        android:layout_height="@dimen/gn_status_bar_icon_size"
+        android:layout_width="12dip"
+        android:layout_height="12dip"
         android:layout_marginEnd="4dip"
         android:scaleType="centerInside"
         android:layout_gravity="center_vertical"
         >
         <com.android.systemui.statusbar.AnimatedImageView
-            android:layout_width="@dimen/status_bar_icon_size"
-            android:layout_height="@dimen/gn_status_bar_icon_size"
+            android:layout_width="12dip"
+            android:layout_height="12dip"
             android:scaleType="centerInside"
             />
         <com.android.systemui.statusbar.AnimatedImageView
-            android:layout_width="@dimen/status_bar_icon_size"
-            android:layout_height="@dimen/gn_status_bar_icon_size"
+            android:layout_width="12dip"
+            android:layout_height="12dip"
             android:scaleType="centerInside"
             />
     </ImageSwitcher>
