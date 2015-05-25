@@ -25,8 +25,8 @@ public class GnAirplaneModeTile extends GnQSTile<GnQSTile.BooleanState> {
 
     private boolean mListening;
 
-    public GnAirplaneModeTile(Host host) {
-        super(host);
+    public GnAirplaneModeTile(Host host, String spec) {
+        super(host, spec);
 
         mSetting = new GlobalSetting(mContext, mHandler, Global.AIRPLANE_MODE_ON) {
             @Override
@@ -44,9 +44,9 @@ public class GnAirplaneModeTile extends GnQSTile<GnQSTile.BooleanState> {
 
     @Override
     public void handleClick() {
+        GnYouJu.onEvent(mContext, "Amigo_SystemUI_CC", "GnAirplaneModeTile");
         Log.d(TAG, "mState.value = " + mState.value);
         setEnabled(!mState.value);
-        GnYouJu.onEvent(mContext, "Amigo_SystemUI_CC", "GnAirplaneModeTile");
     }
 
     @Override

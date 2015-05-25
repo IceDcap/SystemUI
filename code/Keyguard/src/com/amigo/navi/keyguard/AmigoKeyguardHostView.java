@@ -43,6 +43,7 @@ import com.android.keyguard.ViewMediatorCallback;
 //import com.gionee.navi.keyguard.amigo.wallpaper.KeyguardWallpaperManager;
 import com.amigo.navi.keyguard.AppConstants;
 import com.amigo.navi.keyguard.AmigoKeyguardBouncer.KeyguardBouncerCallback;
+import com.amigo.navi.keyguard.haokan.Common;
 import com.amigo.navi.keyguard.haokan.UIController;
 import com.amigo.navi.keyguard.picturepage.widget.OnViewTouchListener;
 import com.amigo.navi.keyguard.fingerprint.FingerIdentifyManager;
@@ -228,13 +229,13 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 	}
 	
 	
-	private void resetMaxBound() {
+	/*private void resetMaxBound() {
 		mDegreeX = mMaxBoundY / 2.3f;
 		mDegreeRatio = mDegreeX / 90;
 		if(DebugLog.DEBUG){
 			DebugLog.d(LOG_TAG, "resetMaxBound()");
 		}
-	}
+	}*/
 	
     private void setBackButtonEnabled(boolean enabled) {
         if (mContext instanceof Activity)
@@ -373,9 +374,9 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 //
 //		setMeasuredDimension(widthSize, heightSize);
 		
-		invalidPagerOffset();
+//		invalidPagerOffset();
 		
-		resetMaxBound();
+//		resetMaxBound();
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 	}
 
@@ -384,7 +385,7 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 				MeasureSpec.AT_MOST : MeasureSpec.EXACTLY;
 	}
 	
-	private int getPagerOffset(int pageId) {
+/*	private int getPagerOffset(int pageId) {
 		if (pageId < 0 || pageId >= getChildCount()) {
 			if(DebugLog.DEBUG){
 				DebugLog.e(LOG_TAG, "index out of range");
@@ -408,7 +409,7 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 			DebugLog.d(LOG_TAG, "pager offset " + offset + ", pageId=" + pageId);
 		}
 		return offset;
-	}
+	}*/
 
 	private void invalidPagerOffset() {
 		final int childCount = getChildCount();
@@ -834,7 +835,7 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 		return true;
 	}
 	
-	private void unlockWithVelocity(int velocity, boolean isUpFling) {
+/*	private void unlockWithVelocity(int velocity, boolean isUpFling) {
 		int pageId = isUpFling ? 1 : 0;
 		if(pageId == 1) {
 			mFlingDirection = DIRECTION_UP;
@@ -869,7 +870,7 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 //		mUnlockAnimStart = true;
 
 		invalidate();
-	}
+	}*/
 	
 
 	private void unlockWithVelocity(int velocity, int flingDirection) {
@@ -996,6 +997,7 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 				}
 			}
 			missCountShow = false;
+			mKeyguardBouncer.showWithDismissAction(mOnDisMissAction);
 //			mKeyguardViewManager.resetUnlockWithWindowAnimFlag();
 //			else{
 //				mKeyguardPage.hideIndicator();
@@ -1097,10 +1099,10 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
             // The keyguard might be showing (already). So we need to hide it.
             showBouncer(true);
             scrollToUnlockByOther();
-        } else {
-            // scrollToKeyguardPage(100);
-            mKeyguardBouncer.prepare();
-        }
+        }/*else{
+//        	scrollToKeyguardPage(100);
+        	mKeyguardBouncer.prepare();
+        }*/
 
     }
 
@@ -1110,6 +1112,9 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
         if(mKeyguardPage!=null)mKeyguardPage.hide();
         if(mKeyguardBouncer!=null)mKeyguardBouncer.hide(false);
 //        mGuestModeUtil.checkAndOpenGuestMode();
+        resetDisMissAction();
+        mBouncerIsShowing=false;
+       
     }
 	
     public void showBouncer(boolean resetSecuritySelection){
@@ -1182,7 +1187,7 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
     }
 	
 	
-	private void finish(){
+	public void finish(){
 	     boolean deferKeyguardDone = false;
 	        if(DebugLog.DEBUG)Log.d(LOG_TAG, "KeyguardViewBase finish  mViewMediatorCallback: "+mViewMediatorCallback+"  deferKeyguardDone: "+deferKeyguardDone);
 	        if (mOnDisMissAction != null) {
@@ -1197,59 +1202,26 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 	            }
 	        }
 	}
+	
+	/**
+	 * invoke by absent sim card
+	 */
+	public void finishIfNoSecure(){
+	    if(!isSecure()){
+	        finish();
+	    }
+	}
 
 	public void keyguardDone(){
 	    if(mViewMediatorCallback!=null){
 	        Log.d("jings", "host view  keyguardDone");
 	        mViewMediatorCallback.keyguardDone(true);
 	    }
-//	    boolean unlockWithWindowAnim=KeyguardViewManager.getInstance().getUnlockWithWindowAnimFlag();
 	    
-//	    Log.d(LOG_TAG, "unlockWithoutWindowAnim: "+unlockWithWindowAnim);
-	    
-	/*    if(unlockWithWindowAnim){
-	        
-	        try {
-	            // Don't actually hide the Keyguard at the moment, wait for window
-	            // manager until it tells us it's safe to do so with
-	            // startKeyguardExitAnimation.
-	            IWindowManager wm = WindowManagerGlobal.getWindowManagerService();
-	            wm.keyguardGoingAway(
-	                    true,
-	                    false);
-	        } catch (RemoteException e) {
-	            Log.e(LOG_TAG, "Error while calling WindowManager", e);
-	        }
-	    }*/
 		// Keyguard
 		reverseToTimeWidget();
 				
-//		boolean unLockNowByAIDLSuccess = AmigoLauncherSnapshotManager.getInstance(mContext).showLauncherByAIDL();
-//		if(DebugLog.DEBUG){
-//	    	DebugLog.d(LOG_TAG, "showLauncherByAIDL unLockNowByAIDLSuccess閿涳拷"+unLockNowByAIDLSuccess);
-//		}
-//		if(!unLockNowByAIDLSuccess){
-//			sendShowLauncher();
-//		}
-	    
-//		if (mViewMediatorCallback != null) {
-//			mViewMediatorCallback.keyguardDone(true);
-//		}
-		/*if(mOnDisMissAction != null){
-			mOnDisMissAction.onDismiss();
-		}*/
-		// Keyguard
-//		reverseToTimeWidget();
-		// Launcher
-//		reverseToWeatherWidget(mifLauncherInfozoneReverse);
-		
-//		if(AmigoWallpaperUtils.getInstance(mContext).isNaviLauncherAtTop()){
-//			reverseToWeatherWidget(mifLauncherInfozoneReverse);
-//		}else{
-//			reverseToWeatherWidget(false);
-//		}
 		mifLauncherInfozoneReverse = false;
-//		KeyguardViewManager.getInstance().setExtTurnOn(false);
 	}
 	
 	 public boolean isSecure() {
@@ -1332,12 +1304,7 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
     private OnViewTouchListener mOnViewTouchListener;
 	public void dismissWithAction(OnDismissAction r){
 		mOnDisMissAction = r;
-		scrollToUnlockByOther();
-		 if(isSecure()){
-			 resetDisMissAction();
-			 mKeyguardBouncer.showWithDismissAction(r);
-		 }
-		
+		scrollToUnlockByOther();	
 	}
 	
 	
@@ -1364,6 +1331,9 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
     public boolean isHostYAtHomePostion(){
         return getScrollY() == 0;
     }
+    public boolean isHostYAtTopPostion(){
+        return getScrollY() >= mMaxBoundY;
+    }
     
     public void  resetHostYToHomePosition(){
         setScrollY(0);
@@ -1385,6 +1355,7 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
     
     public boolean onBackPress(){
         UIController.getInstance().onBackPress();
+        DebugLog.d(TAG, "onBackPress...mBouncerIsShowing="+mBouncerIsShowing);
     	if(mBouncerIsShowing){
     		scrollToKeyguardPage(300);
     		return true;
@@ -1404,6 +1375,7 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
                 new GestureDetector.SimpleOnGestureListener() {
                     @Override
                     public void onLongPress(MotionEvent event) {
+                    	DebugLog.d(TAG,"initLongPressListener onLongPress");
                         UIController.getInstance().onLongPress(event.getX(), event.getY());
                     }
                     
@@ -1413,7 +1385,16 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
                         UIController.getInstance().onDown(e);
                         return super.onDown(e);
                     }
-                });
+                }){
+            
+            @Override
+            public boolean onTouchEvent(MotionEvent ev) {
+                if (Common.isPowerSaverMode()) {
+                    return false;
+                }
+                return super.onTouchEvent(ev);
+            }
+        };
         
         setLongClickable(true);
  

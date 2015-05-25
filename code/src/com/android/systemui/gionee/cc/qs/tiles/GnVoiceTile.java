@@ -20,8 +20,8 @@ public class GnVoiceTile extends GnQSTile<GnQSTile.BooleanState> {
     
     private static final String AMIGO_SETTING_VOICE = "amigo_silent_switch";
 
-    public GnVoiceTile(Host host) {
-        super(host);
+    public GnVoiceTile(Host host, String spec) {
+        super(host, spec);
     }
 
     @Override

@@ -2,11 +2,12 @@
 <resources>
     
     <!-- The number of columns in the QuickSettings -->
-    <integer name="gn_quick_settings_num_columns">5</integer>
+    <integer name="gn_quick_settings_num_columns">4</integer>
     
     <!-- The default tiles to display in QuickSettings for gionee -->
     <string name="gn_quick_settings_tiles_default" translatable="false">
-        airplane,wifi,dataconnect,bt,location,rotation,vibrate,voice,power,screenshot,launcher,alarm
+        dataconnect,wifi,voice,bt,screenshot,vibrate,power,more,
+        torch,setting,fakecall,airplane,calculate,rotation,location,camera,alarm
     </string>
     <!-- <string name="gn_quick_settings_tiles_default" translatable="false">
         airplane,wifi,dataconnect,bt,location,rotation,vibrate,voice,screenshot,launcher,alarm

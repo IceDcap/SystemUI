@@ -144,4 +144,11 @@
     </style>  
     
     <!-- NaviKeyguard end -->
+    
+    
+    
+    <!-- haokan content  -->
+    <style name="LinkTextAppearance" parent="@android:style/TextAppearance">
+		<item name="android:textSize">@dimen/haokan_content_link_textsize</item>
+	</style>
 </resources>

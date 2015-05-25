@@ -13,11 +13,16 @@ import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 import com.amigo.navi.keyguard.DebugLog;
-import com.amigo.navi.keyguard.network.local.ReadFileFromSD;
+import com.amigo.navi.keyguard.haokan.db.WallpaperDB;
+import com.amigo.navi.keyguard.haokan.entity.WallpaperList;
+import com.amigo.navi.keyguard.network.local.ReadAndWriteFileFromSD;
 import com.amigo.navi.keyguard.network.local.LocalFileOperation;
 import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -31,8 +36,8 @@ public class KeyguardDataModelInit {
     
     private static final String TAG = "KeyguardDataModelInit";
     private Context mContext = null;
-    private ReadFileFromSD mDealWithWallpaperFile = null;
-    private ReadFileFromSD mDealWithCategoryFile = null;
+    private ReadAndWriteFileFromSD mDealWithWallpaperFile = null;
+    private ReadAndWriteFileFromSD mDealWithCategoryFile = null;
 
     private static KeyguardDataModelInit sInstance = null;
     
@@ -50,21 +55,71 @@ public class KeyguardDataModelInit {
     private KeyguardDataModelInit(Context context){
         mContext = context.getApplicationContext();
         LocalFileOperation localFileOperation = new LocalFileOperation(context);
-        mDealWithWallpaperFile = new ReadFileFromSD(context, DiskUtils.WALLPAPER_BITMAP_FOLDER, 
+        mDealWithWallpaperFile = new ReadAndWriteFileFromSD(context, DiskUtils.WALLPAPER_BITMAP_FOLDER, 
                 DiskUtils.getCachePath(context.getApplicationContext())
                 , localFileOperation);
-        mDealWithCategoryFile = new ReadFileFromSD(context, DiskUtils.CATEGORY_BITMAP_FOLDER, 
+        mDealWithCategoryFile = new ReadAndWriteFileFromSD(context, DiskUtils.CATEGORY_BITMAP_FOLDER, 
                 DiskUtils.getCachePath(context.getApplicationContext())
                 , localFileOperation);
     }
     
     public void initData(){
         saveInitDataToClientDB(mContext);
+        initAlarm();
+        insertLocalDataToDBIfDBNull();
     }  
+    
+    private void insertLocalDataToDBIfDBNull(){
+        boolean flag = WallpaperDB.getInstance(mContext.getApplicationContext())
+                .queryHasDownLoadImage();   
+        if(!flag){
+            WallpaperList WallpaperList = JsonUtil.getDefaultWallpaperList();
+            WallpaperDB.getInstance(mContext).replaceWallpapers(WallpaperList);
+        }
+    }
+    
+    public void initAlarm(){
+        initBroadcastReceiver();
+        TimeControlManager.getInstance().init(mContext);
+        TimeControlManager.getInstance().startUpdateAlarm();
+    }
+    
+    private BroadcastReceiver mReveicer;
+    private void initBroadcastReceiver() {
+        if (null != mReveicer) {
+            mContext.getApplicationContext().unregisterReceiver(mReveicer);
+        }
+        mReveicer = new NicePictureReveicer();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Constant.WALLPAPER_TIMING_UPDATE);
+//        filter.addAction(Constant.DATA_CHANGE);
+        mContext.getApplicationContext().registerReceiver(mReveicer, filter);
+    }
+    
+    private class NicePictureReveicer extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            DebugLog.d(TAG,"onReceive wallpaper alarm");
+            String action = intent.getAction();
+            if (Constant.WALLPAPER_TIMING_UPDATE.equals(action)) {
+                TimeControlManager.getInstance().cancelUpdateAlarm();
+                TimeControlManager.getInstance().startUpdateAlarm();
+                RequestNicePicturesFromInternet.getInstance(mContext.getApplicationContext()).shutDownWorkPool();
+                RequestNicePicturesFromInternet.getInstance(mContext.getApplicationContext()).registerData();
+            } 
+        }
+    }
+    
+    public void realse(){
+        if(mReveicer != null){
+            mContext.unregisterReceiver(mReveicer);
+        }
+        TimeControlManager.getInstance().release();
+    }
     
     private final static String DBNAME = "haokan.db";
     private final static String ADDSTR = "/data/data/com.android.systemui/databases/";
-    private final static String DB_VERSION = "20150516";
+    private final static String DB_VERSION = "20150519";
     public boolean saveInitDataToClientDB(Context context) {
         File dbFile = new File(ADDSTR + DBNAME);
         if(dbFile.exists()){

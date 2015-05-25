@@ -12,12 +12,24 @@
     <string name="gn_qs_screen_shot">区域截屏</string>
     <string name="gn_qs_navi_launcher">Amigo经典桌面</string>
     <string name="gn_qs_power">极致省电</string>
-    
+    <string name="gn_qs_setting">设置</string>
+    <string name="gn_qs_more">更多</string>
+    <string name="gn_qs_calculator">计算器</string>
+    <string name="gn_qs_torch">手电筒</string>
+    <string name="gn_qs_camera">相机</string>
+    <string name="gn_qs_fake_call">虚拟来电</string>
+        
     <!-- Control center shotcut -->
     <string name="gn_sc_calculator">计算器</string>
     <string name="gn_sc_torch">手电筒</string>
     <string name="gn_sc_camera">相机</string>
     <string name="gn_sc_fake_call">虚拟来电</string>
+    
+    <!-- QS more -->
+    <string name="gn_qs_more_save">保存</string>
+    <string name="gn_qs_more_cancel">舍弃</string>
+    <string name="gn_qs_more_show_title">显示的快捷按钮</string>
+    <string name="gn_qs_more_hide_title">不显示的快捷按钮</string>
 
     <!-- Control center shotcut camera -->
     <string name="gn_camera_blind_shoot_success">拍照成功</string>

@@ -91,7 +91,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
     private final WifiManager mWifiManager;
     private final ConnectivityManager mConnectivityManager;
     private final SubscriptionManager mSubscriptionManager;
-    private final boolean mHasMobileDataFeature;
+    private boolean mHasMobileDataFeature;
     private Config mConfig;
 
     // Subcontrollers.
@@ -479,6 +479,8 @@ public class NetworkControllerImpl extends BroadcastReceiver
             mSignalClusters.get(i).setSubs(subscriptions);
         }
         mCurrentSubscriptions = subscriptions;
+        mHasMobileDataFeature =
+                mConnectivityManager.isNetworkSupported(ConnectivityManager.TYPE_MOBILE);
 
         HashMap<Integer, MobileSignalController> cachedControllers =
                 new HashMap<Integer, MobileSignalController>(mMobileSignalControllers);
@@ -1282,7 +1284,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
                     
                 }
                 for(int i = 0; i< signalClustersLength; i++) {
-                	mSignalClusters.get(i).setNetworkType(networkTypeIcon, mSubscriptionInfo.getSubscriptionId());
+                	mSignalClusters.get(i).setNetworkType(networkTypeIcon, mSubscriptionInfo.getSimSlotIndex());
                 	if(mCurrentState.dataConnected) {
                 		if(mCurrentState.activityIn) {
                 			mobileInOutIcon = R.drawable.gn_stat_sys_signal_in;
@@ -1294,7 +1296,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
                 	} else {
 						mobileInOutIcon = 0;
 					}
-                	mSignalClusters.get(i).setMobileInout(mCurrentState.dataConnected, mobileInOutIcon, mSubscriptionInfo.getSubscriptionId());
+                	mSignalClusters.get(i).setMobileInout(mCurrentState.dataConnected, mobileInOutIcon, mSubscriptionInfo.getSimSlotIndex());
                 }
             } else {
                 int networkTypeIcon = 0;
@@ -1302,7 +1304,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
                 int length = mSignalsChangedCallbacks.size();
 
                 for(int i = 0; i< signalClustersLength; i++) {
-                	mSignalClusters.get(i).setNetworkType(networkTypeIcon, mSubscriptionInfo.getSubscriptionId());
+                	mSignalClusters.get(i).setNetworkType(networkTypeIcon, mSubscriptionInfo.getSimSlotIndex());
                 	if(mCurrentState.dataConnected) {
                 		if(mCurrentState.activityIn) {
                 			mobileInOutIcon = R.drawable.gn_stat_sys_signal_in;
@@ -1314,7 +1316,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
                 	} else {
 						mobileInOutIcon = 0;
 					}
-                	mSignalClusters.get(i).setMobileInout(mCurrentState.dataConnected, mobileInOutIcon, mSubscriptionInfo.getSubscriptionId());
+                	mSignalClusters.get(i).setMobileInout(mCurrentState.dataConnected, mobileInOutIcon, mSubscriptionInfo.getSimSlotIndex());
                 }
             
 			}

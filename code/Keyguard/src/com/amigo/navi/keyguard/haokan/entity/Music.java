@@ -5,6 +5,7 @@ import java.io.Serializable;
 
 import android.util.Log;
 
+import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.haokan.PlayerManager.State;
 
 public class Music implements Serializable{
@@ -151,7 +152,7 @@ public class Music implements Serializable{
 
     @Override
     public String toString() {
-        Log.v("MUSIC", "ID=" + mId + ", Name" + mMusicName );
+        DebugLog.d("MUSIC", "ID=" + mId + ", Name" + mMusicName );
         return super.toString();
     }
 

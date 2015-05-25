@@ -74,8 +74,8 @@ public class DataConstant {
             WallpaperColumns.TODAY_IMAGE + " integer default 1," + 
             WallpaperColumns.REAL_ORDER + " real," + 
             WallpaperColumns.SHOW_ORDER + " real," +
-            WallpaperColumns.SHOW_TIME_BEGIN + " time," +
-            WallpaperColumns.SHOW_TIME_END + " time," +
+            WallpaperColumns.SHOW_TIME_BEGIN + " text," +
+            WallpaperColumns.SHOW_TIME_END + " text," +
             WallpaperColumns.SAVE_TYPE + " integer default 0," + 
             "primary key (img_id, type_id)" +
             ")";

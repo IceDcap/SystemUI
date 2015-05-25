@@ -12,6 +12,18 @@
     <string name="gn_qs_screen_shot">Regional screenshots</string>
     <string name="gn_qs_navi_launcher">Amigo classic launcher</string>
     <string name="gn_qs_power">Extreme mode</string>
+    <string name="gn_qs_setting">Setting</string>
+    <string name="gn_qs_more">More</string>
+    <string name="gn_qs_calculator">Calculator</string>
+    <string name="gn_qs_torch">Torch</string>
+    <string name="gn_qs_camera">Camera</string>
+    <string name="gn_qs_fake_call">FakeCall</string>
+    
+    <!-- QS more -->
+    <string name="gn_qs_more_save">Save</string>
+    <string name="gn_qs_more_cancel">Abandon</string>
+    <string name="gn_qs_more_show_title">Show shortcut buttons</string>
+    <string name="gn_qs_more_hide_title">Hide shortcut buttons</string>
     
     <!-- Control center shotcut -->
     <string name="gn_sc_calculator">Calculator</string>

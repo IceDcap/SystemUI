@@ -75,7 +75,8 @@ public class GnControlCenterImmerseView extends GnControlCenter {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (getState() != GnControlCenter.STATE_IMMERSE_CLOSING) {
+        if (getState() != GnControlCenter.STATE_IMMERSE_CLOSING
+                && event.getAction() == MotionEvent.ACTION_OUTSIDE) {
             pushDownOut();
         }
         return super.onTouchEvent(event);

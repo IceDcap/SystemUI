@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.WeakHashMap;
 
 import com.amigo.navi.keyguard.DebugLog;
+import com.amigo.navi.keyguard.haokan.db.WallpaperDB;
 import com.amigo.navi.keyguard.network.FailReason.FailType;
 import com.amigo.navi.keyguard.network.local.DealWithFromLocalInterface;
 import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
@@ -168,7 +169,7 @@ public class ImageLoader implements ImageLoaderInterface{
             ,String url){
         Bitmap bitmap = null;
         String key = DiskUtils.constructFileNameByUrl(url);
-        bitmap = (Bitmap) dealWithFromLocalInterface.readFromLocal(key);
+        bitmap = dealWithFromLocalInterface.readFromLocal(key);
         return bitmap;
     }
     

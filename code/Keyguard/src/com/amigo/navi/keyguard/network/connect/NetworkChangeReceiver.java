@@ -2,8 +2,9 @@ package com.amigo.navi.keyguard.network.connect;
 
 
 import com.amigo.navi.keyguard.DebugLog;
-import com.amigo.navi.keyguard.haokan.NicePicturesInit;
+import com.amigo.navi.keyguard.haokan.RequestNicePicturesFromInternet;
 import com.amigo.navi.keyguard.haokan.PlayerManager;
+import com.amigo.navi.keyguard.haokan.TimeControlManager;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -20,12 +21,15 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
 		boolean networkState = NetWorkUtils.isNetworkAvailable(mContext);
 		PlayerManager.getInstance().netStateChange(networkState);
         DebugLog.d(TAG,"test onReceive networkState:" + networkState);
-        NicePicturesInit nicePicturesInit = NicePicturesInit.getInstance(context);
+        RequestNicePicturesFromInternet nicePicturesInit = RequestNicePicturesFromInternet.getInstance(context);
 		if(networkState){
+			if(!TimeControlManager.getInstance().isFinishUpdateTime()){
+		        TimeControlManager.getInstance().init(mContext);
+		        TimeControlManager.getInstance().startUpdateAlarm();
+			}
 		    nicePicturesInit.registerData();
 		}else{
 	        nicePicturesInit.shutDownWorkPool();
-	        
 		}
 	}
 }

@@ -131,6 +131,7 @@ import com.android.systemui.gionee.GnUtil;
 import com.android.systemui.gionee.cc.GnControlCenter;
 import com.android.systemui.gionee.cc.GnControlCenterView;
 import com.android.systemui.gionee.cc.GnControlCenterImmerseView;
+import com.android.systemui.gionee.cc.qs.more.GnControlCenterMoreView;
 import com.android.systemui.gionee.nc.GnNotificationService;
 import com.android.systemui.gionee.nc.GnNotificationService.NotificationType;
 import com.android.systemui.gionee.nc.ui.GnNotificationLevelHeader;
@@ -736,12 +737,16 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         
         // Gionee <huangwt> <2014-12-13> add for CR01425226 begin
         // inflate contorl center
-        mGnImmerseView = (GnControlCenterImmerseView) View.inflate(mContext, R.layout.gn_control_center_immerse, null);
-        mGnImmerseView.setVisibility(View.GONE);
+        mGnMoreView = (GnControlCenterMoreView) View.inflate(mContext, R.layout.gn_control_center_more, null);
+        mGnMoreView.setVisibility(View.GONE);
 
         mGnControlCenterView = (GnControlCenterView) View.inflate(mContext, R.layout.gn_control_center, null);
+        mGnControlCenterView.addGnMoreView(mGnMoreView);
         mGnControlCenterView.setBar(this);
         mGnControlCenterView.setVisibility(View.GONE);
+        
+        mGnImmerseView = (GnControlCenterImmerseView) View.inflate(mContext, R.layout.gn_control_center_immerse, null);
+        mGnImmerseView.setVisibility(View.GONE);
         
         mGnControlCenter = new GnControlCenter(mContext);
         mGnControlCenter.addControlCenter(mGnControlCenterView);
@@ -1331,11 +1336,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     // Gionee <huangwt> <2014-12-13> add for CR01425226 begin
     // add contorl center
     public void addGnContorlCenter() {
-        mWindowManager.addView(mGnControlCenterView, getGnControlCenterLayoutParams(mGnControlCenterView.getLayoutParams()));
+        mWindowManager.addView(mGnControlCenterView, getGnControlCenterLayoutParams());
         mWindowManager.addView(mGnImmerseView, getGnImmerseLayoutParams());
+        mWindowManager.addView(mGnMoreView, getGnMoreLayoutParams());
     }
 
-    private WindowManager.LayoutParams getGnControlCenterLayoutParams(LayoutParams layoutParams) {
+    private WindowManager.LayoutParams getGnControlCenterLayoutParams() {
         boolean opaque = false;
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
                 LayoutParams.MATCH_PARENT,
@@ -1373,6 +1379,27 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
         lp.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
         lp.setTitle("gnimmerse");
+        lp.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_UNCHANGED
+        | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING;
+        return lp;
+    }
+    
+    private WindowManager.LayoutParams getGnMoreLayoutParams() {
+        boolean opaque = false;
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
+                LayoutParams.MATCH_PARENT,
+                LayoutParams.MATCH_PARENT,
+                // WindowManager.LayoutParams.TYPE_NAVIGATION_BAR_PANEL,
+                WindowManager.LayoutParams.TYPE_PHONE,
+                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
+                | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM
+                | WindowManager.LayoutParams.FLAG_SPLIT_TOUCH,
+                (opaque ? PixelFormat.OPAQUE : PixelFormat.TRANSLUCENT));
+        if (ActivityManager.isHighEndGfx()) {
+            lp.flags |= WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED;
+        }
+        lp.gravity = Gravity.BOTTOM | Gravity.START;
+        lp.setTitle("gnMore");
         lp.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_UNCHANGED
         | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING;
         return lp;

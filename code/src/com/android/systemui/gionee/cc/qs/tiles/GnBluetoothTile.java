@@ -27,8 +27,8 @@ public class GnBluetoothTile extends GnQSTile<GnQSTile.BooleanState>  {
 
     private final GnBluetoothController mController;
 
-    public GnBluetoothTile(Host host) {
-        super(host);
+    public GnBluetoothTile(Host host, String spec) {
+        super(host, spec);
         mController = host.getBluetoothController();
     }
 

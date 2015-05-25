@@ -30,8 +30,8 @@ public class GnMobileDataTile extends GnQSTile<GnQSTile.BooleanState> {
     private final GnMobileDataController mController;
     private final SubscriptionManager mSubscriptionManager;
 
-    public GnMobileDataTile(Host host) {
-        super(host);
+    public GnMobileDataTile(Host host, String spec) {
+        super(host, spec);
         mController = host.getGnMobileDataController();
         mSubscriptionManager = SubscriptionManager.from(mContext);
     }

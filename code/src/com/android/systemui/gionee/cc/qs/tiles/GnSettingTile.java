@@ -16,8 +16,8 @@ import com.android.systemui.gionee.GnYouJu;
 public class GnSettingTile extends GnQSTile<GnQSTile.BooleanState> {
     private static final Intent SETTINGS = new Intent(Settings.ACTION_SETTINGS);
     
-    public GnSettingTile(Host host) {
-        super(host);
+    public GnSettingTile(Host host, String spec) {
+        super(host, spec);
     }
 
     @Override
@@ -43,9 +43,9 @@ public class GnSettingTile extends GnQSTile<GnQSTile.BooleanState> {
 
     @Override
     protected void handleUpdateState(BooleanState state, Object arg) {
-        state.value = true;
+        state.value = false;
         state.visible = true;
-        state.label = "setting";
+        state.label = mContext.getString(R.string.gn_qs_setting);
         state.iconId = R.drawable.gn_ic_qs_setting;
         state.contentDescription = "setting";
     }

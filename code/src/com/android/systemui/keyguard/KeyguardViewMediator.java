@@ -398,7 +398,6 @@ public class KeyguardViewMediator extends SystemUI {
 
             switch (simState) {
                 case NOT_READY:
-                case ABSENT:
                     // only force lock screen in case of missing sim if user hasn't
                     // gone through setup wizard
                     synchronized (this) {
@@ -413,6 +412,10 @@ public class KeyguardViewMediator extends SystemUI {
                             }
                         }
                     }
+                    break;
+                case ABSENT:
+                    resetStateLocked();
+                    mStatusBarKeyguardViewManager.finishIfNoSecure();
                     break;
                 case PIN_REQUIRED:
                 case PUK_REQUIRED:
@@ -539,6 +542,15 @@ public class KeyguardViewMediator extends SystemUI {
             KeyguardViewMediator.this.adjustStatusBarLocked() ;
         }
         //jingyn add end
+        @Override
+        public void setKeyguardWallpaperShow(boolean isShow) {
+            KeyguardViewMediator.this.setKeyguardShowWallpaer(isShow) ;
+        }
+        
+        @Override
+        public boolean isScreenOn() {
+            return KeyguardViewMediator.this.isScreenOn() ;
+        }
     };
 
     public void userActivity() {
@@ -735,9 +747,9 @@ public class KeyguardViewMediator extends SystemUI {
             intent.putExtra("seq", mDelayedShowingSequence);
             PendingIntent sender = PendingIntent.getBroadcast(mContext,
                     0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-            mAlarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, when, sender);
+            mAlarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, when, sender);
             if (DEBUG) Log.d(TAG, "setting alarm to turn off keyguard, seq = "
-                             + mDelayedShowingSequence);
+                             + mDelayedShowingSequence+"  timeout: "+timeout);
         }
     }
 
@@ -867,7 +879,7 @@ public class KeyguardViewMediator extends SystemUI {
      */
     public void verifyUnlock(IKeyguardExitCallback callback) {
         if (DEBUG) Log.d(TAG, "verifyUnlock  getIsSkylightShown: "+getIsSkylightShown());
-        if (getIsSkylightShown()) {return;}
+//        if (getIsSkylightShown()) {return;}
         synchronized (this) {
             if (shouldWaitForProvisioning()) {
                 // don't allow this api when the device isn't provisioned
@@ -1070,7 +1082,7 @@ public class KeyguardViewMediator extends SystemUI {
 
     public void dismiss() {
         if(DEBUG){Log.d(TAG, "dismiss isSkylightShown: "+getIsSkylightShown());}
-        if (getIsSkylightShown()) {return;}
+//        if (getIsSkylightShown()) {return;}
         mHandler.sendEmptyMessage(DISMISS);
     }
 
@@ -1141,6 +1153,10 @@ public class KeyguardViewMediator extends SystemUI {
         return mLockPatternUtils.isSecure()
             || KeyguardUpdateMonitor.getInstance(mContext).isSimPinSecure();
     }
+    
+    private boolean isScreenOn(){
+        return mScreenOn;
+    }
 
     /**
      * Update the newUserId. Call while holding WindowManagerService lock.
@@ -1184,7 +1200,7 @@ public class KeyguardViewMediator extends SystemUI {
 
     public void keyguardDone(boolean authenticated, boolean wakeup) {
         if (DEBUG) Log.d(TAG, "keyguardDone(" + authenticated + ")"+"  isSkylightShown: "+getIsSkylightShown());
-        if (getIsSkylightShown()) {return;}
+//        if (getIsSkylightShown()) {return;}
         EventLog.writeEvent(70000, 2);
         Message msg = mHandler.obtainMessage(KEYGUARD_DONE, authenticated ? 1 : 0, wakeup ? 1 : 0);
         mHandler.sendMessage(msg);
@@ -1292,19 +1308,19 @@ public class KeyguardViewMediator extends SystemUI {
     }
 
     private void sendUserPresentBroadcast() {
-        synchronized (this) {
-            if (mBootCompleted) {
-                final UserHandle currentUser = new UserHandle(mLockPatternUtils.getCurrentUser());
-                final UserManager um = (UserManager) mContext.getSystemService(
-                        Context.USER_SERVICE);
-                List <UserInfo> userHandles = um.getProfiles(currentUser.getIdentifier());
-                for (UserInfo ui : userHandles) {
-                    mContext.sendBroadcastAsUser(USER_PRESENT_INTENT, ui.getUserHandle());
-                }
-            } else {
-                mBootSendUserPresent = true;
-            }
-        }
+//        synchronized (this) {
+//            if (mBootCompleted) {
+//                final UserHandle currentUser = new UserHandle(mLockPatternUtils.getCurrentUser());
+//                final UserManager um = (UserManager) mContext.getSystemService(
+//                        Context.USER_SERVICE);
+//                List <UserInfo> userHandles = um.getProfiles(currentUser.getIdentifier());
+//                for (UserInfo ui : userHandles) {
+//                    mContext.sendBroadcastAsUser(USER_PRESENT_INTENT, ui.getUserHandle());
+//                }
+//            } else {
+//                mBootSendUserPresent = true;
+//            }
+//        }
     }
 
     /**
@@ -1412,6 +1428,7 @@ public class KeyguardViewMediator extends SystemUI {
 //                mWM.keyguardGoingAway(
 //                        mStatusBarKeyguardViewManager.shouldDisableWindowAnimationsForUnlock(),
 //                        mStatusBarKeyguardViewManager.isGoingToNotificationShade());
+            	Log.d(TAG, "mKeyguardGoingAwayRunnable....run");
                 mWM.keyguardGoingAway(
                         true,
                         mStatusBarKeyguardViewManager.isGoingToNotificationShade());
@@ -1427,7 +1444,7 @@ public class KeyguardViewMediator extends SystemUI {
      */
     private void handleHide() {
         synchronized (KeyguardViewMediator.this) {
-            if (DEBUG) Log.d(TAG, "handleHide");
+            if (DEBUG) Log.d(TAG, "handleHide  mShowing: "+mShowing+"  mOccluded: "+mOccluded+" mHideAnimationRun: "+mHideAnimationRun);
 
             mHiding = true;
             if (mShowing && !mOccluded) {
@@ -1456,7 +1473,7 @@ public class KeyguardViewMediator extends SystemUI {
 
     private void handleStartKeyguardExitAnimation(long startTime, long fadeoutDuration) {
         synchronized (KeyguardViewMediator.this) {
-
+			if (DEBUG) Log.d(TAG, "handleStartKeyguardExitAnimation...mHiding="+mHiding );
             if (!mHiding) {
                 return;
             }
@@ -1708,5 +1725,12 @@ public class KeyguardViewMediator extends SystemUI {
             return mStatusBarKeyguardViewManager.getIsSkylightShown();
         }
         return false;
+    }
+    
+    private void setKeyguardShowWallpaer(boolean isShow){
+        if(mStatusBarKeyguardViewManager!=null){
+            mStatusBarKeyguardViewManager.setKeyguardShowWallpaer(isShow);
+        }
+        
     }
 }

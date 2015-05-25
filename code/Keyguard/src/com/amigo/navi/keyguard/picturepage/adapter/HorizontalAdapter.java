@@ -8,7 +8,7 @@ import com.amigo.navi.keyguard.haokan.entity.WallpaperList;
 import com.amigo.navi.keyguard.network.ImageLoader;
 import com.amigo.navi.keyguard.network.local.LocalBitmapOperation;
 import com.amigo.navi.keyguard.network.local.LocalFileOperationInterface;
-import com.amigo.navi.keyguard.network.local.ReadFileFromSD;
+import com.amigo.navi.keyguard.network.local.ReadAndWriteFileFromSD;
 import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
 import com.amigo.navi.keyguard.picturepage.interfacers.OnReloadListener;
 import com.amigo.navi.keyguard.picturepage.widget.ImageViewForHeadCompound;
@@ -33,14 +33,14 @@ public class HorizontalAdapter extends BaseAdapter {
    private ArrayList<OnReloadListener> mReloadListeners = new ArrayList<OnReloadListener>();
 //   private int[] mIDList = new int[]{R.drawable.a,R.drawable.b,R.drawable.c,R.drawable.d};
 //   ArrayList<Bitmap> bitmapList = new ArrayList<Bitmap>();
-   private ReadFileFromSD mDealWithFromLocalInterface = null;
+   private ReadAndWriteFileFromSD mDealWithFromLocalInterface = null;
    ImageViewForHeadCompound.Config mConfig = null;
    public HorizontalAdapter(Context context,WallpaperList wallpaperList,ImageLoader imageLoader){
        this.mInflater = LayoutInflater.from(context);
        updateDataList(wallpaperList);
        this.mImageLoader = imageLoader;
        LocalFileOperationInterface localFileOperationInterface = new LocalBitmapOperation(context);
-       mDealWithFromLocalInterface = new ReadFileFromSD(context.getApplicationContext(), 
+       mDealWithFromLocalInterface = new ReadAndWriteFileFromSD(context.getApplicationContext(), 
                  DiskUtils.WALLPAPER_BITMAP_FOLDER, DiskUtils.getCachePath(context.getApplicationContext()),
                  localFileOperationInterface);
        mConfig = new ImageViewForHeadCompound.Config();

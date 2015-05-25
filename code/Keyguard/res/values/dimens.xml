@@ -359,6 +359,8 @@
 	<dimen name="haokan_circle_imageview_radius">49dp</dimen>
 	<dimen name="haokan_wallpaper_alpha_offset">50dp</dimen>
 	<dimen name="haokan_webview_close_height">48dp</dimen>
+	
+	<dimen name="haokan_content_link_textsize">10dp</dimen>
 	<!-- haokan dimens end-->
 	
 	
@@ -378,16 +380,22 @@
 	<dimen name="settings_titlebar_textsize">18dp</dimen>
 	<dimen name="settings_title_height">40dp</dimen>
 	<dimen name="settings_title_padding_bottom">7dp</dimen>
-	<dimen name="settings_title_textsize">14sp</dimen>
+	<dimen name="settings_title_textsize">14dp</dimen>
 	<dimen name="settings_body_height">56dp</dimen>
 	<dimen name="settings_body_firstline_height">34dp</dimen>
 	<dimen name="settings_body_firstline_paddingtop">11dp</dimen>
 	<dimen name="settings_body_firstline_paddingbottom">5dp</dimen>
-	<dimen name="settings_body_firstline_textsize">18sp</dimen>
+	<dimen name="settings_body_firstline_textsize">18dp</dimen>
 	<dimen name="settings_body_secondline_height">22dp</dimen>
 	<dimen name="settings_body_secondline_paddingbottom">10dp</dimen>
 	<dimen name="settings_body_secondline_textsize">12dp</dimen>
 	<dimen name="settings_switch_marginright">13dp</dimen>	
+	<dimen name="settings_guide_marginright">16dp</dimen>	
+	<dimen name="settings_guide_textsize">14dp</dimen>
+	<dimen name="settings_guide_marginleft">169dp</dimen>
+	<dimen name="settings_guide_text_padding_h">14dp</dimen>
+	<dimen name="settings_guide_text_padding_top">6dp</dimen>
+	<dimen name="settings_guide_margintop">63dp</dimen>			
 	<integer name="settings_animation_distance">260</integer>
 	<integer name="settings_animation_time">330</integer>
 	<!-- settings dimens end -->

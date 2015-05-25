@@ -86,6 +86,7 @@
     <string name="dialog_information_point">欢迎使用锁屏壁纸。</string>
     <string name="dialog_Allinformation">在使用过程中可能产生数据流量，具体资费请咨询运营商。是否继续建立数据连接？</string>
     <string name="haokan_notification_settings_content">打开壁纸更新开关可获取最新壁纸</string>
+    <string name="haokan_wallpaper_update_guide_text">打开可获取最新壁纸哦</string>
     
     
     
@@ -109,6 +110,7 @@
     <string name="haokan_wallpaper_subscription">壁纸订阅</string>
     <string name="haokan_tip_check_net">请检查网络设置</string>
     <string name="haokan_tip_favorite_error">收藏失败</string>
+   	<string name="haokan_detail">详情</string>
     <string name="kg_wrong_password_time">"密码错误，还可以再输入<xliff:g id="NUMBER">%d</xliff:g>次"</string>
     <string name="kg_wrong_pattern_time">"密码错误，还可以再输入<xliff:g id="NUMBER">%d</xliff:g>次"</string>
     <string name="kg_wrong_pattern_onetime">"密码错误，还可以再输入<xliff:g id="NUMBER">%d</xliff:g>次"</string>

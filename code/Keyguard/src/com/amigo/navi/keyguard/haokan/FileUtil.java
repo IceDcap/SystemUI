@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Environment;
 import android.util.Log;
 
-import com.amigo.navi.keyguard.haokan.entity.Wallpaper;
+import com.amigo.navi.keyguard.DebugLog;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -24,6 +24,7 @@ public class FileUtil {
      * 
      */
     public static void deleteMusic() {
+        DebugLog.d(TAG, "delete all local music");
         String musicPath = Common.getSdCardPath() + DIRECTORY_MUSIC;
         boolean flag = deleteDirectory(musicPath);
         Log.v(TAG, "deleteMusic  flag = " + flag);

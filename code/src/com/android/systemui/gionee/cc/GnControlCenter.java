@@ -13,6 +13,7 @@ import java.util.List;
 import com.android.systemui.R;
 import com.android.systemui.gionee.GnBlurHelper;
 import com.android.systemui.gionee.GnUtil;
+import com.android.systemui.gionee.cc.qs.more.GnControlCenterMoreView;
 import com.android.systemui.statusbar.phone.NavigationBarView;
 import com.android.systemui.statusbar.phone.PhoneStatusBar;
 
@@ -207,6 +208,11 @@ public class GnControlCenter extends FrameLayout{
             Log.d(TAG, "return lock by notification");
             return;
         }
+        
+        if (GnUtil.getLockState() == GnUtil.STATE_LOCK_BY_CONTROLCENTER) {
+            Log.d(TAG, "return lock by cc");
+            return;
+        }
 
         if (GnUtil.getLockState() == GnUtil.STATE_LOCK_UNLOCK) {
             Log.d(TAG, "Lock by cc");
@@ -350,6 +356,9 @@ public class GnControlCenter extends FrameLayout{
     }
     
     public void createBlurBg(Context context) {
+        if (GnControlCenterMoreView.isOpen()) {
+            return;
+        }
         GnBlurHelper.getBlurHelper().createBlurBg(context);
     }
 }

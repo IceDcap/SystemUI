@@ -730,7 +730,10 @@ public class VolumePanel extends Handler implements DemoMode {
             sc.suppressorView =
                     (TextView) sc.group.findViewById(com.android.systemui.R.id.suppressor);
             sc.suppressorView.setVisibility(View.GONE);
-            final boolean showSecondary = !isNotification && notificationStream.show;
+            boolean showSecondary = !isNotification && notificationStream.show;
+            if (!ISCTSTEST) {
+            	showSecondary = false;
+            }
             sc.divider = sc.group.findViewById(com.android.systemui.R.id.divider);
             sc.secondaryIcon = (ImageView) sc.group
                     .findViewById(com.android.systemui.R.id.secondary_icon);

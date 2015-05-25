@@ -20,7 +20,7 @@
         xmlns:androidprv="http://schemas.android.com/apk/prv/res/android"
         package="com.android.systemui"
         android:sharedUserId="android.uid.systemui"
-		android:versionName="6.1.0.j"
+		android:versionName="6.1.0.m"
         coreApp="true">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -104,7 +104,10 @@
     <uses-permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
     <uses-permission android:name="android.permission.ACCESS_KEYGUARD_SECURE_STORAGE" />
     <uses-permission android:name="android.permission.TRUST_LISTENER" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
     <uses-permission android:name="com.gionee.setupwizard.permission.SECURE_SERVICE"/>
+    
     
     
 
@@ -447,7 +450,7 @@
         </activity>
                 
         <activity
-            android:name="com.android.systemui.gionee.cc.fakecall.GnCallingActivity"
+            android:name="com.android.systemui.gionee.cc.fakecall.GnFakeCallActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"
@@ -469,12 +472,14 @@
         
         <activity
             android:name="com.amigo.navi.keyguard.settings.KeyguardSettingsActivity"
+            android:launchMode="singleInstance"
             android:excludeFromRecents="true"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Material.Wallpaper.NoTitleBar">
         </activity>
         <activity
             android:name="com.amigo.navi.keyguard.haokan.CategoryActivity"
+            android:launchMode="singleInstance"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Wallpaper.NoTitleBar"
             android:excludeFromRecents="true" >
@@ -484,13 +489,6 @@
                 <action android:name="com.gionee.setupwizard.SECURE_SERVICE"/>
             </intent-filter>
         </receiver>
-        <receiver android:name="com.amigo.navi.keyguard.haokan.ShutdownBroadcastReceiver" > 
-         <intent-filter > 
-             <action android:name="android.intent.action.ACTION_SHUTDOWN" /> 
- 
-             <category android:name="android.intent.category.HOME" /> 
-         </intent-filter> 
-     </receiver> 
         <service
             android:name="com.android.systemui.gionee.cc.service.GnShortCutServices"
             android:exported="true" >

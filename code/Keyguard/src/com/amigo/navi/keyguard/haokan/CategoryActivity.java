@@ -36,7 +36,7 @@ import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.everydayphoto.NavilSettings;
 import com.amigo.navi.keyguard.haokan.db.CategoryDB;
 import com.amigo.navi.keyguard.haokan.entity.Category;
-import com.amigo.navi.keyguard.network.local.ReadFileFromSD;
+import com.amigo.navi.keyguard.network.local.ReadAndWriteFileFromSD;
 import com.amigo.navi.keyguard.network.local.LocalBitmapOperation;
 import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
 import com.amigo.navi.keyguard.settings.KeyguardWallpaper;
@@ -76,6 +76,7 @@ public class CategoryActivity extends Activity{
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
+	    getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
         setContentView(R.layout.haokan_category_layout);
  
         UIController.getInstance().setCategoryActivity(this);
@@ -93,7 +94,7 @@ public class CategoryActivity extends Activity{
         onInitUI();
         setBlurBackground();
        LocalBitmapOperation localFileOperation = new LocalBitmapOperation(this);
-       final ReadFileFromSD dealWithFileFromLocal = new ReadFileFromSD(this, DiskUtils.CATEGORY_BITMAP_FOLDER,
+       final ReadAndWriteFileFromSD dealWithFileFromLocal = new ReadAndWriteFileFromSD(this, DiskUtils.CATEGORY_BITMAP_FOLDER,
                 DiskUtils.getCachePath(this), localFileOperation);
         new Thread(new Runnable(){
 
@@ -112,7 +113,7 @@ public class CategoryActivity extends Activity{
                     	}else{
                             String key = DiskUtils.constructFileNameByUrl(url);
                             DebugLog.d(TAG,"category onCreate key:" + key);
-                            Bitmap bmp = (Bitmap) dealWithFileFromLocal.readFromLocal(key);
+                            Bitmap bmp = dealWithFileFromLocal.readFromLocal(key);
                             category.setIcon(bmp);
                     	}
                     }
@@ -158,7 +159,7 @@ public class CategoryActivity extends Activity{
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        NicePicturesInit.getInstance(this.getApplicationContext()).registerData();
+        RequestNicePicturesFromInternet.getInstance(this.getApplicationContext()).registerData();
         if (mWindowBackgroud != null && !mWindowBackgroud.isRecycled()) {
             mWindowBackgroud.recycle();
         }
@@ -183,10 +184,16 @@ public class CategoryActivity extends Activity{
 
     public void onFillUI() {
 
-        mGridView.setLayoutAnimation(getAnimationController());
-        mGridView.setAdapter(mCategoryAdapter);
-        mCategoryAdapter.notifyDataSetChanged();
-        startTextViewAnimation();
+        mHandler.postDelayed(new Runnable() {
+            
+            @Override
+            public void run() {
+                mGridView.setLayoutAnimation(getAnimationController());
+                mGridView.setAdapter(mCategoryAdapter);
+                mCategoryAdapter.notifyDataSetChanged();
+                startTextViewAnimation();
+            }
+        }, 100);
     }
     
     protected LayoutAnimationController getAnimationController() {  
@@ -261,7 +268,12 @@ public class CategoryActivity extends Activity{
                 holder = (ViewHolder) convertView.getTag(); 
             }
             final Category category = list.get(position);
-            holder.favorite.setVisibility(category.isFavorite() ? View.VISIBLE : View.GONE);
+//            holder.favorite.setVisibility(category.isFavorite() ? View.VISIBLE : View.GONE);
+            
+            holder.favorite
+                    .setBackgroundResource(category.isFavorite() ? R.drawable.haokan_category_favorite
+                            : R.drawable.haokan_category_favorite_cancel);
+
             DebugLog.d(TAG,"getView category.getIcon():" + category.getIcon());
             if (category.getIcon() != null) {
                 holder.image.setImageBitmap(category.getIcon());
@@ -290,7 +302,7 @@ public class CategoryActivity extends Activity{
                 @Override
                 public void onClick(View arg0) {
 //                    holder.image.bindClickAnimator();
-                    startAlphaAnim(holder.favorite, !category.isFavorite());
+//                    startAlphaAnim(holder.favorite, !category.isFavorite());
                     onItemClick(position);
                 }
             });
@@ -344,7 +356,7 @@ public class CategoryActivity extends Activity{
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Log.v(TAG, "onBackPressed");
+        DebugLog.d(TAG, "onBackPressed");
         finish();
     }
     

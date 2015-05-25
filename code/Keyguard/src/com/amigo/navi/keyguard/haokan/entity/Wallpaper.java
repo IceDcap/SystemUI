@@ -61,6 +61,10 @@ public class Wallpaper implements Serializable{
     
     private String showTimeEnd;
     
+    private int todayImage;
+    
+    private int downloadFinish;
+    
     
     public boolean isLocked() {
         return locked;
@@ -312,6 +316,22 @@ public class Wallpaper implements Serializable{
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
+
+	public int getTodayImage() {
+		return todayImage;
+	}
+
+	public void setTodayImage(int todayImage) {
+		this.todayImage = todayImage;
+	}
+
+	public int getDownloadFinish() {
+		return downloadFinish;
+	}
+
+	public void setDownloadFinish(int downloadFinish) {
+		this.downloadFinish = downloadFinish;
+	}
     
     
 

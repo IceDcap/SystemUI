@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
+import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.everydayphoto.NavilSettings;
 import com.amigo.navi.keyguard.haokan.entity.Client;
 import com.amigo.navi.keyguard.haokan.entity.Wallpaper;
@@ -45,6 +46,8 @@ public class Common {
     private static Client client = null;
     
     private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH");
+    
+    private static boolean isPowerSaverMode = false;
     
     public static String getUserId(Context context) {
         if (USER_ID == null) {
@@ -89,12 +92,12 @@ public class Common {
         NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
         boolean isAvailable = false;
         if (networkInfo == null) {
-            Log.v(TAG, "isAvailable  = " + false);
+            DebugLog.d(TAG, "isAvailable  = " + false);
             return false;
         }
         isAvailable = networkInfo.isAvailable();
 
-        Log.v(TAG, "isAvailable  = " + isAvailable);
+        DebugLog.d(TAG, "isAvailable  = " + isAvailable);
         return isAvailable;
     }
  
@@ -182,7 +185,7 @@ public class Common {
             }
         }
         
-        Log.v(TAG, "SCREEN_SIZE = " + SCREEN_SIZE);
+        DebugLog.d(TAG, "SCREEN_SIZE = " + SCREEN_SIZE);
         return SCREEN_SIZE;
     }
     
@@ -212,7 +215,6 @@ public class Common {
             }
         }
         
-        Log.v(TAG, "SCREEN_SIZE = " + SCREEN_SIZE);
         return SCREEN_SIZE;
     }
     
@@ -412,5 +414,26 @@ public class Common {
         pos = NavilSettings.getIntSharedConfig(context, NavilSettings.LOCK_ID, -1);
         return pos;
     }
+    
+    public static void setUpdateTime(Context context, String time) {
+        NavilSettings
+                .setStringSharedConfig(context, NavilSettings.ALARM_TIME, time);
+    }
+    
+    public static String getUpdateTime(Context context) {
+        String time = "";
+        time = NavilSettings.getStringSharedConfig(context, NavilSettings.ALARM_TIME, "");
+        return time;
+    }
+
+    public static boolean isPowerSaverMode() {
+        return isPowerSaverMode;
+    }
+
+    public static void setPowerSaverMode(boolean isPowerSaverMode) {
+        Common.isPowerSaverMode = isPowerSaverMode;
+    }
+    
+    
     
 }

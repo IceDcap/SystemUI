@@ -120,6 +120,7 @@ public class StatusBarKeyguardViewManager implements KeyguardBouncerCallback ,Ke
      * lazily.
      */
     public void show(Bundle options) {
+    	Log.i("TAG","show....options="+(options==null ? null : options));
         mShowing = true;
         mStatusBarWindowManager.setKeyguardShowing(true);
         mKeyguardViewHostManager.show(options);
@@ -141,6 +142,7 @@ public class StatusBarKeyguardViewManager implements KeyguardBouncerCallback ,Ke
 //            mBouncer.hide(false  destroyView );
 //            mBouncer.prepare();
 //        }
+    	Log.i("TAG","showBouncerOrKeyguard");
     	mPhoneStatusBar.showKeyguard();
         mKeyguardViewHostManager.showBouncerOrKeyguard();
         
@@ -172,6 +174,7 @@ public class StatusBarKeyguardViewManager implements KeyguardBouncerCallback ,Ke
      * Reset the state of the view.
      */
     public void reset() {
+    	Log.i("TAG","reset");
         if (mShowing) {
             if (mOccluded) {
 //     	        mKeyguardViewHost.setVisibility(View.GONE);
@@ -206,6 +209,7 @@ public class StatusBarKeyguardViewManager implements KeyguardBouncerCallback ,Ke
     }
 
     public void onScreenTurnedOff() {
+       	Log.i("TAG","onScreenTurnedOff");
         mScreenOn = false;
         mPhoneStatusBar.onScreenTurnedOff();
         mKeyguardViewHostManager.onScreenTurnedOff();
@@ -213,6 +217,7 @@ public class StatusBarKeyguardViewManager implements KeyguardBouncerCallback ,Ke
     }
 
     public void onScreenTurnedOn(final IKeyguardShowCallback callback) {
+      	Log.i("TAG","onScreenTurnedOn");
         mScreenOn = true;
         mPhoneStatusBar.onScreenTurnedOn();
         mKeyguardViewHostManager.onScreenTurnedOn();
@@ -235,8 +240,9 @@ public class StatusBarKeyguardViewManager implements KeyguardBouncerCallback ,Ke
     }
 
     public void verifyUnlock() {
-//        dismiss();
-    	mKeyguardViewHostManager.verifyUnlock();
+        // dismiss();
+		Log.i("TAG","verifyUnlock");
+        show(null);
     }
     
     
@@ -270,11 +276,18 @@ public class StatusBarKeyguardViewManager implements KeyguardBouncerCallback ,Ke
                 return;
             }
         }*/
-        
-        
     	//jiating modify for keyguard end
+     	Log.i("TAG","setOccluded...occluded="+occluded);
         mOccluded = occluded;
-        reset();
+        if (mShowing) {
+            if (mOccluded) {
+                mPhoneStatusBar.hideKeyguard();
+            } else {
+              	mPhoneStatusBar.showKeyguard();
+            }
+            mKeyguardViewHostManager.setOccluded(mOccluded);
+            updateStates();
+        }
         mStatusBarWindowManager.setKeyguardOccluded(occluded);
         //<Amigo_Keyguard>  jingyn <2015-05-12> modify for fingerIdentify begin
         if(occluded){
@@ -312,6 +325,7 @@ public class StatusBarKeyguardViewManager implements KeyguardBouncerCallback ,Ke
      * Hides the keyguard view
      */
     public void hide(long startTime, final long fadeoutDuration) {
+    	Log.i("TAG","hide");
         mShowing = false;
         
         // jingyn modify  for  keyguard begin 
@@ -343,7 +357,8 @@ public class StatusBarKeyguardViewManager implements KeyguardBouncerCallback ,Ke
             });
         } else {*/
             mPhoneStatusBar.setKeyguardFadingAway(delay, fadeoutDuration);
-            boolean staying = mPhoneStatusBar.hideKeyguard();
+            mPhoneStatusBar.hideKeyguard();
+//            boolean staying = mPhoneStatusBar.hideKeyguard();
            /*  if (!staying) {
                 mStatusBarWindowManager.setKeyguardFadingAway(true);
                 mScrimController.animateKeyguardFadingOut(delay, fadeoutDuration, new Runnable() {
@@ -379,6 +394,7 @@ public class StatusBarKeyguardViewManager implements KeyguardBouncerCallback ,Ke
      * Dismisses the keyguard by going to the next screen or making it gone.
      */
     public void dismiss() {
+    	Log.i("TAG","dismiss....mScreenOn="+mScreenOn);
         if (mScreenOn) {
 //            showBouncer();
         	mKeyguardViewHostManager.dismiss();
@@ -442,7 +458,7 @@ public class StatusBarKeyguardViewManager implements KeyguardBouncerCallback ,Ke
     };
 
     private void updateStates() {
-    	  int vis = mContainer.getSystemUiVisibility();
+//    	  int vis = mContainer.getSystemUiVisibility();
           boolean showing = mShowing;
           boolean occluded = mOccluded;
           boolean bouncerShowing = mKeyguardViewHostManager.keyguardBouncerIsShowing();
@@ -555,6 +571,12 @@ public class StatusBarKeyguardViewManager implements KeyguardBouncerCallback ,Ke
 	   dismissWithAction(r, afterKeyguardGone);
    }
    
+    public void setKeyguardShowWallpaer(boolean isShow) {
+        mStatusBarWindowManager.setKeyguardShowWallpaper(isShow);
+    }
    
+    public void finishIfNoSecure(){
+        mKeyguardViewHostManager.finishIfNoSecure();
+    }
     
 }

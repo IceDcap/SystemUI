@@ -28,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
+import android.widget.ImageView;
 
 import com.android.systemui.R;
 import com.android.systemui.gionee.GnBlurHelper;
@@ -58,13 +59,14 @@ public class GnControlCenterPanel extends ViewGroup implements GestureDetector.O
     private Context mContext;
     private GnControlCenterView mGnControlCenterView;
     
-    private View mHandle;
+    private ImageView mHandle;
     private View mContent;
 
     private final Rect mFrame = new Rect();
     private final Rect mInvalidate = new Rect();
-    private boolean mTracking;
     private boolean mLocked;
+    private static boolean mTracking;
+    private static boolean mAnimating;
 
     private VelocityTracker mVelocityTracker;
     
@@ -77,6 +79,7 @@ public class GnControlCenterPanel extends ViewGroup implements GestureDetector.O
     private int mHandleHeight;
     private int mCCHeight;
     private int mHeight;
+    private int mWidth;
 
     private OnDrawerOpenListener mOnDrawerOpenListener;
     private OnDrawerCloseListener mOnDrawerCloseListener;
@@ -90,7 +93,6 @@ public class GnControlCenterPanel extends ViewGroup implements GestureDetector.O
     private long mAnimationLastTime;
     private long mCurrentAnimationTime;
     private int mTouchDelta;
-    private boolean mAnimating;
     private boolean mAllowSingleTap;
     private boolean mAnimateOnClick;
 
@@ -166,6 +168,7 @@ public class GnControlCenterPanel extends ViewGroup implements GestureDetector.O
         } else {
             mHeight = heightPixels;
         }
+        mWidth = getResources().getDisplayMetrics().widthPixels;
         mCCHeight = mContext.getResources().getDimensionPixelSize(R.dimen.gn_cc_height);
         mTopOffset = mHeight - mCCHeight;
         mBottomOffset = 0;
@@ -190,15 +193,17 @@ public class GnControlCenterPanel extends ViewGroup implements GestureDetector.O
     protected void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            mTopOffset = 0;
+            mCCHeight = mContext.getResources().getDimensionPixelSize(R.dimen.gn_cc_height_land);
+            mTopOffset = mWidth - mCCHeight;
         } else {
+            mCCHeight = mContext.getResources().getDimensionPixelSize(R.dimen.gn_cc_height);
             mTopOffset = mHeight - mCCHeight;
         }
     }
 
     @Override
     protected void onFinishInflate() {
-        mHandle = findViewById(R.id.handle);
+        mHandle = (ImageView) findViewById(R.id.handle);
         if (mHandle == null) {
             throw new IllegalArgumentException("The handle attribute is must refer to an"
                     + " existing child.");
@@ -660,6 +665,8 @@ public class GnControlCenterPanel extends ViewGroup implements GestureDetector.O
         if (mAnimating) {
             return;
         }
+        
+        mHandle.setImageResource(R.drawable.gn_ic_qs_handle);
 
         // Something changed in the content, we need to honor the layout request
         // before creating the cached bitmap
@@ -844,6 +851,7 @@ public class GnControlCenterPanel extends ViewGroup implements GestureDetector.O
     private void openDrawer() {
         Log.d(TAG, "openDrawer");
         moveHandle(EXPANDED_FULL_OPEN);
+        mHandle.setImageResource(R.drawable.gn_ic_qs_handle_expend);
         mContent.setVisibility(View.VISIBLE);
 
         if (mExpanded) {
@@ -907,7 +915,7 @@ public class GnControlCenterPanel extends ViewGroup implements GestureDetector.O
         return mExpanded;
     }
 
-    public boolean isMoving() {
+    public static boolean isMoving() {
         return mTracking || mAnimating;
     }
     

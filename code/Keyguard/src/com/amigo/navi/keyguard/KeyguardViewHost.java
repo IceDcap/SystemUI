@@ -18,7 +18,7 @@ import android.widget.Toast;
 import android.widget.LinearLayout;
 import com.amigo.navi.keyguard.AmigoKeyguardBouncer.KeyguardBouncerCallback;
 import com.amigo.navi.keyguard.haokan.Common;
-import com.amigo.navi.keyguard.haokan.NicePicturesInit;
+import com.amigo.navi.keyguard.haokan.RequestNicePicturesFromInternet;
 import com.amigo.navi.keyguard.haokan.UIController;
 import com.amigo.navi.keyguard.haokan.db.WallpaperDB;
 import com.amigo.navi.keyguard.haokan.entity.Wallpaper;
@@ -152,7 +152,7 @@ public class KeyguardViewHost extends FrameLayout {
     }
     
     public void showBouncerOrKeyguard(){
-    	show(null);
+        show(null);
     	mAmigoKeyguardView.showBouncerOrKeyguard();
     }
     	
@@ -165,7 +165,10 @@ public class KeyguardViewHost extends FrameLayout {
     
     
     public void onScreenTurnedOff(){
+        DebugLog.d(LOG_TAG, "onScreenTurnedOff()");
         mAmigoKeyguardView.onScreenTurnedOff();
+        cancelFingerUnlock();
+        
     }
     
     public void onScreenTurnedOn(){
@@ -186,6 +189,10 @@ public class KeyguardViewHost extends FrameLayout {
     
     public void dismiss(){
         mAmigoKeyguardView.dismiss();
+    }
+    
+    public void finishIfNoSecure(){
+        mAmigoKeyguardView.finishIfNoSecure();
     }
     
     public boolean needsFullscreenBouncer(){
@@ -271,7 +278,7 @@ public class KeyguardViewHost extends FrameLayout {
     
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-    	Log.i("jiating", "hostView...dispatchKeyEvent...event.getKeyCode()="+event.getKeyCode());
+    	Log.i(LOG_TAG, "hostView...dispatchKeyEvent...event.getKeyCode()="+event.getKeyCode());
     	 boolean down = event.getAction() == KeyEvent.ACTION_DOWN;
          switch (event.getKeyCode()) {
              case KeyEvent.KEYCODE_BACK:
@@ -286,7 +293,7 @@ public class KeyguardViewHost extends FrameLayout {
     }
     
     public boolean  onBackPress(){
-    	Log.i("jiating", "hostView...onBackPress");
+    	Log.i(LOG_TAG, "hostView...onBackPress");
     	if ( mAmigoKeyguardView!=null) {
        	 return mAmigoKeyguardView.onBackPress(); 
         }
@@ -367,9 +374,10 @@ public class KeyguardViewHost extends FrameLayout {
 
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    mViewMediatorCallback.keyguardDone(true);
+                	mAmigoKeyguardView.finish();
                     setVisibility(View.GONE);
                     resetHostView();
+                    mViewMediatorCallback.userActivity();
                 }
 
                 @Override
@@ -380,6 +388,12 @@ public class KeyguardViewHost extends FrameLayout {
         }
         mScaleHostAnimator.start();
 
+    }
+    
+    private void cancelFingerUnlock() {
+        if (mScaleHostAnimator != null) {
+            mScaleHostAnimator.cancel();
+        }
     }
 
     private void resetHostView() {

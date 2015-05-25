@@ -92,10 +92,14 @@ public class StatusBarWindowManager {
 
     private void applyKeyguardFlags(State state) {
         if (state.keyguardShowing) {
-//            mLpChanged.flags |= WindowManager.LayoutParams.FLAG_SHOW_WALLPAPER;
+            if (state.isShowWallpaper) {
+                mLpChanged.flags |= WindowManager.LayoutParams.FLAG_SHOW_WALLPAPER;
+            } else {
+                mLpChanged.flags &= ~WindowManager.LayoutParams.FLAG_SHOW_WALLPAPER;
+            }
             mLpChanged.privateFlags |= WindowManager.LayoutParams.PRIVATE_FLAG_KEYGUARD;
         } else {
-//            mLpChanged.flags &= ~WindowManager.LayoutParams.FLAG_SHOW_WALLPAPER;
+            mLpChanged.flags &= ~WindowManager.LayoutParams.FLAG_SHOW_WALLPAPER;
             mLpChanged.privateFlags &= ~WindowManager.LayoutParams.PRIVATE_FLAG_KEYGUARD;
         }
     }
@@ -180,6 +184,11 @@ public class StatusBarWindowManager {
         apply(mCurrentState);
     }
 
+    public void setKeyguardShowWallpaper(boolean isShow){
+        mCurrentState.isShowWallpaper=isShow;
+        apply(mCurrentState);
+    }
+    
     public void setKeyguardOccluded(boolean occluded) {
         mCurrentState.keyguardOccluded = occluded;
         apply(mCurrentState);
@@ -239,6 +248,9 @@ public class StatusBarWindowManager {
         boolean bouncerShowing;
         boolean keyguardFadingAway;
         boolean qsExpanded;
+		//<Amigo_Keyguard> jingyn <2015-05-21> add for show wallpaper begin
+        boolean isShowWallpaper;
+		//<Amigo_Keyguard> jingyn <2015-05-21> add for show wallpaper begin
         /**
          * The {@link BaseStatusBar} state from the status bar.
          */

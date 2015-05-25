@@ -29,8 +29,8 @@ public class GnWifiTile extends GnQSTile<GnQSTile.BooleanState> {
 
     private final GnWifiController mController;
 
-    public GnWifiTile(Host host) {
-        super(host);
+    public GnWifiTile(Host host, String spec) {
+        super(host, spec);
         mController = host.getGnWifiController();
     }
 

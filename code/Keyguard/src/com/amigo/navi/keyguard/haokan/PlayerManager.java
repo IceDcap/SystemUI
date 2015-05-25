@@ -28,6 +28,7 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.RemoteViews;
 
+import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.haokan.analysis.Event;
 import com.amigo.navi.keyguard.haokan.analysis.HKAgent;
 import com.amigo.navi.keyguard.haokan.entity.Music;
@@ -168,11 +169,11 @@ public class PlayerManager {
             String dataSource = mCurrentMusic.getLocalPath();
  
             if (!isLocal && IsAvailable) {
-                Log.v(TAG, "is not Local music & download music");
+                DebugLog.d(TAG, "is not Local music & download music");
                 dataSource = mCurrentMusic.getPlayerUrl();
                 new DownLoadJob(mApplicationContext, mCurrentMusic).start();
             } 
-            Log.v(TAG, "dataSource = " + dataSource);
+            DebugLog.d(TAG, "dataSource = " + dataSource);
             
             try {
                 mMediaPlayer.setDataSource(dataSource);
@@ -231,7 +232,7 @@ public class PlayerManager {
     }
     
     private void cancelNotification() {
-        Log.v(TAG, "cancelNotification");
+        DebugLog.d(TAG, "cancelNotification");
 
         mNotificationManager.cancel(NOTIFICATION_ID);
 
@@ -267,17 +268,17 @@ public class PlayerManager {
     public void pauseOrPlayer() {
         
         if (mCurrentMusic == null) {
-            Log.v(TAG, "pauseOrPlayer  mCurrentMusic == null");
+            DebugLog.d(TAG, "pauseOrPlayer  mCurrentMusic == null");
             return;
         }
-        Log.v(TAG, mCurrentMusic.getmMusicName());
+        DebugLog.d(TAG, mCurrentMusic.getmMusicName());
         
         if (mState == State.PAUSE) {
-            Log.v(TAG, "pauseOrPlayer  start");
+            DebugLog.d(TAG, "pauseOrPlayer  start");
             start();
             
         }else if (mState == State.PLAYER) {
-            Log.v(TAG, "pauseOrPlayer  pause");
+            DebugLog.d(TAG, "pauseOrPlayer  pause");
             pause();
         }else if (mState == State.NULL){
         
@@ -392,7 +393,7 @@ public class PlayerManager {
     
     public void onScreenTurnedOff() {
         if (mMediaPlayer != null && mState == State.NULL) {
-            Log.v(TAG, "screen turned off & release mediaPlayer");
+            DebugLog.d(TAG, "screen turned off & release mediaPlayer");
             stopAndRelease();
         }
     }
@@ -401,7 +402,7 @@ public class PlayerManager {
     private OnCompletionListener mCompletionListener = new OnCompletionListener() {
         @Override
         public void onCompletion(MediaPlayer mp) {
-            Log.v("haokan", "onCompletion ");
+            DebugLog.d(TAG, "onCompletion ");
             stopAndRelease();
             UIController.getInstance().hideMusicPlayer(true);
         }
@@ -412,7 +413,6 @@ public class PlayerManager {
     private OnBufferingUpdateListener mBufferingUpdateListener = new OnBufferingUpdateListener() {
         @Override
         public void onBufferingUpdate(MediaPlayer mp, int percent) {
-            //Log.v("haokan", "onBufferingUpdate  percent = " + percent);
             mBufferingPercent = percent;
         }
     };
@@ -452,7 +452,7 @@ public class PlayerManager {
 //                    if (mMediaPlayer.isPlaying()) {
                         if (getState() == State.PLAYER) {
                         mCurrentDuration = mMediaPlayer.getCurrentPosition();
-                        Log.v("haokan", "mCurrentDuration  = " + mCurrentDuration);
+                        DebugLog.d(TAG, "mCurrentDuration  = " + mCurrentDuration);
                         mHandler.sendEmptyMessage(0);
                     }
                 }
@@ -603,7 +603,7 @@ public class PlayerManager {
    
     public void netStateChange(boolean connect) {
 
-        Log.v("haokan", "netStateChange " + connect);
+        DebugLog.d(TAG, "netStateChange " + connect);
         if (!connect) {
             if (mState == State.PLAYER && !isLocalMusic() && mBufferingPercent != 100) {
                 stopAndRelease();

@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 import android.util.Log;
+
+import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.haokan.Common;
 import com.amigo.navi.keyguard.haokan.JsonUtil;
 import com.amigo.navi.keyguard.haokan.analysis.Event;
@@ -81,7 +83,6 @@ public class StatisticsDB extends BaseDB{
             cursor.close();
         }
  
-//        Log.v(TAG, "Statistics  >  insertId = " + insertId + " " + event.toString());
         return insertId;
     }
     
@@ -97,7 +98,7 @@ public class StatisticsDB extends BaseDB{
             buider.append("'");
             buider.append(",");
         }       
-        Log.v(TAG, "buider.toString() = " + buider.toString());
+        DebugLog.d(TAG, "buider.toString() = " + buider.toString());
         String list = buider.toString().substring(0, buider.length()-1);
         int deleteCount = db.delete(DataConstant.TABLE_STATISTICS, "_id in ( "+list+" )", null);  
         return deleteCount;
@@ -115,7 +116,7 @@ public class StatisticsDB extends BaseDB{
          
         int cursorCount = cursor.getCount();
         
-        Log.v(TAG, "cursor.Count = " + cursorCount);
+        DebugLog.d(TAG, "cursor.Count = " + cursorCount);
         int num = 0;
         
         HashMap<String, List<EventLogger>> map = new HashMap<String, List<EventLogger>>();
@@ -187,18 +188,18 @@ public class StatisticsDB extends BaseDB{
             cursor.close();
         }
         
-        Log.v(TAG, "===============================log==============================================");
+        DebugLog.d(TAG, "===============================log==============================================");
         for (int i = 0; i < group.size(); i++) {
             MessageModel messageModel = group.get(i);
-            Log.v(TAG, "messageModel.jsonData = " + messageModel.jsonData);
+            DebugLog.d(TAG, "messageModel.jsonData = " + messageModel.jsonData);
             StringBuffer sb = new StringBuffer();
             
-            Log.v(TAG, "messageModel.idList.size() = " + messageModel.ids.size());
+            DebugLog.d(TAG, "messageModel.idList.size() = " + messageModel.ids.size());
             for (int j = 0; j < messageModel.ids.size(); j++) {
                 sb.append(messageModel.ids.get(j));
                 sb.append(",");
             }
-            Log.v(TAG, "messageModel.idList = " + sb.toString());
+            DebugLog.d(TAG, "messageModel.idList = " + sb.toString());
         }
         
         return group;

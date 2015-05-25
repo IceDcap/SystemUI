@@ -17,6 +17,7 @@ public class KeyguardSettingsSetupwizardReceiver extends BroadcastReceiver{
 		DebugLog.d(TAG, "receive:" + intent.getAction());
 		if (SETUPWIZARD_ACTION.equals(intent.getAction())){
 			KeyguardSettings.setWallpaperUpadteState(context,true);
+			KeyguardSettings.setEverOpened(context,true);
 			KeyguardSettings.cancelNotification(context);
 		}		
 	}

@@ -38,6 +38,7 @@ public class NavilSettings {
 	public static final String DATABASE_VERSION = "database_ver";
 	public static final String LOCK_POSITION = "lock_pos";
 	public static final String LOCK_ID = "lock_id";
+	public static final String ALARM_TIME = "ALARM_TIME";
 
 	public static void setVersionName(String versionName ){
 		sVersionName = versionName;

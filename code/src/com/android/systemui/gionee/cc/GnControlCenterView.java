@@ -7,6 +7,8 @@ package com.android.systemui.gionee.cc;
 * 
 */
 
+import java.util.Collection;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -24,8 +26,11 @@ import android.widget.ImageView;
 import com.android.systemui.R;
 import com.android.systemui.gionee.GnBlurHelper;
 import com.android.systemui.gionee.GnUtil;
+import com.android.systemui.gionee.cc.GnControlCenterPanel.OnDrawerOpenListener;
 import com.android.systemui.gionee.cc.qs.GnQSPanel;
+import com.android.systemui.gionee.cc.qs.GnQSTile;
 import com.android.systemui.gionee.cc.qs.GnQSTileHost;
+import com.android.systemui.gionee.cc.qs.more.GnControlCenterMoreView;
 import com.android.systemui.gionee.cc.qs.policy.GnBluetoothControllerImpl;
 import com.android.systemui.gionee.cc.qs.policy.GnLocationControllerImpl;
 import com.android.systemui.gionee.cc.qs.policy.GnMobileDataControllerImpl;
@@ -46,6 +51,8 @@ public class GnControlCenterView extends GnControlCenter {
     // Handler
     private static final int ACTION_DISMISS_CONTROL_CENTER = 1000;
     private static final int ACTION_START_ACTIVITY = 1001;
+    private static final int ACTION_SHOW_MORE = 1002;
+    private static final int ACTION_HIDE_MORE = 1003;
     private Handler mHandler = new Handler() {
 
         @Override
@@ -55,8 +62,16 @@ public class GnControlCenterView extends GnControlCenter {
                     mGnControlCenterPanel.animateClose();
                     break;
                 case ACTION_START_ACTIVITY:
-                    mStatusBar.startActivityDismissingKeyguard((Intent)msg.obj, true, true);
+                    mStatusBar.startActivityDismissingKeyguard((Intent)msg.obj, false, true);
                     break;
+                case ACTION_SHOW_MORE:
+                    Log.d(TAG, "Lock by cc more");
+                    GnUtil.setLockState(GnUtil.STATE_LOCK_BY_CONTROLCENTER);
+                    mGnMoreView.setVisibility(View.VISIBLE);
+                    mGnMoreView.pushUpIn();
+                    break;
+                case ACTION_HIDE_MORE:
+                    mGnMoreView.pushDownOut();                    
                 default:
                     break;
             }
@@ -66,13 +81,18 @@ public class GnControlCenterView extends GnControlCenter {
     // view
     private ImageView mHandle = null;
     private GnControlCenterPanel mGnControlCenterPanel;
-    private GnControlCenterShortcut mShortcut;
     
     // status bar
     private PhoneStatusBar mStatusBar;
     
+    // More
+    private GnControlCenterMoreView mGnMoreView;
+    
     // QS
     private GnQSPanel mGnQSPanel;
+    
+    // QSH
+    private GnQSTileHost mGnQSH;
     
     // Controller
     GnBluetoothControllerImpl mBluetoothController;
@@ -89,6 +109,11 @@ public class GnControlCenterView extends GnControlCenter {
             if (mGnControlCenterPanel.isOpened()) {
                 mHandler.sendEmptyMessage(ACTION_DISMISS_CONTROL_CENTER);
             }
+            
+            Log.d(TAG, "mGnMoreView.getVisibility() " + mGnMoreView.getVisibility());
+            if (mGnMoreView.getVisibility() == VISIBLE) {
+                mHandler.sendEmptyMessage(ACTION_HIDE_MORE);
+            }
         }
     };
 
@@ -104,6 +129,13 @@ public class GnControlCenterView extends GnControlCenter {
         mHandle = (ImageView) findViewById(R.id.handle);
         mGnControlCenterPanel = (GnControlCenterPanel) findViewById(R.id.slidingDrawer);
         mGnControlCenterPanel.setControlCenterView(this);
+        mGnControlCenterPanel.setOnDrawerOpenListener(new OnDrawerOpenListener() {
+            
+            @Override
+            public void onDrawerOpened() {
+                updateResources();
+            }
+        });
         
         mBluetoothController = new GnBluetoothControllerImpl(mContext);
         mLocationController = new GnLocationControllerImpl(mContext);
@@ -114,34 +146,20 @@ public class GnControlCenterView extends GnControlCenter {
         
         mGnQSPanel = (GnQSPanel) findViewById(R.id.gn_quick_settings_panel);
         if (mGnQSPanel != null) {
-            final GnQSTileHost qsh = new GnQSTileHost(mContext, this,
+            mGnQSH = new GnQSTileHost(mContext, this,
                     mBluetoothController, mLocationController, mRotationLockController,
                     mGnWifiController, mGnMobileDataController, mGnNextAlarmController);
-            mGnQSPanel.setControlCenterPanel(mGnControlCenterPanel);
-            mGnQSPanel.setHost(qsh);
-            mGnQSPanel.setTiles(qsh.getTiles());
+            mGnQSPanel.setHost(mGnQSH);
+            mGnQSPanel.setTiles(mGnQSH.getTiles());
             mGnQSPanel.setListening(true);
-            mGnQSPanel.addSettingTile();
-            qsh.setCallback(new GnQSTileHost.Callback() {
+            mGnQSH.setCallback(new GnQSTileHost.Callback() {
                 @Override
                 public void onTilesChanged() {
-                    mGnQSPanel.setTiles(qsh.getTiles());
+                    mGnQSPanel.setTiles(mGnQSH.getTiles());
+                    mGnMoreView.initMoreView(mGnQSH.getTiles());
                 }
-            });            
+            });
         }
-        
-        mShortcut = (GnControlCenterShortcut) findViewById(R.id.gn_shortcut_panel);
-        mShortcut.setControlCenter(this);
-        
-        setOnClickListener(new OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                if (mGnControlCenterPanel.isOpened() && !mGnControlCenterPanel.isMoving()) {
-                    mGnControlCenterPanel.animateClose();
-                }
-            }
-        });
     }
 
     @Override
@@ -150,13 +168,14 @@ public class GnControlCenterView extends GnControlCenter {
         Log.d(TAG, "visibility = " + visibility);
         if (visibility != View.VISIBLE) {
             Log.d(TAG, "releaseBitmap mBlur");
-            GnBlurHelper.releaseBitmap(GnBlurHelper.mBlur);
-            go(STATE_CLOSED);
+            if (!GnControlCenterMoreView.isOpen()) {
+                GnBlurHelper.releaseBitmap(GnBlurHelper.mBlur);
+                
+                Log.d(TAG, "cc unlock");
+                GnUtil.setLockState(GnUtil.STATE_LOCK_UNLOCK);
+            }
             
-            Log.d(TAG, "cc unlock");
-            GnUtil.setLockState(GnUtil.STATE_LOCK_UNLOCK);
-        } else {
-            mShortcut.updateResources();
+            go(STATE_CLOSED);
         }
     }
 
@@ -207,13 +226,17 @@ public class GnControlCenterView extends GnControlCenter {
             mHandler.sendEmptyMessage(ACTION_DISMISS_CONTROL_CENTER);
         }
         
+        if (mGnMoreView.getVisibility() == VISIBLE) {
+            mHandler.sendEmptyMessage(ACTION_HIDE_MORE);
+        }
+        
         Message msg = mHandler.obtainMessage(ACTION_START_ACTIVITY, intent);
         mHandler.sendMessageDelayed(msg, delay);
     }
 
     public void updateResources() {
         mGnQSPanel.updateResources();
-        mShortcut.updateResources();
+//        mShortcut.updateResources();
     }
 
     public void setBar(PhoneStatusBar statusBar) {
@@ -234,5 +257,21 @@ public class GnControlCenterView extends GnControlCenter {
     
     public void swiping(MotionEvent event) {
         mGnControlCenterPanel.swiping(event);
+    }
+    
+    public Collection<GnQSTile<?>> getTiles() {
+        return mGnQSH.getTiles();
+    }
+
+    public void addGnMoreView(GnControlCenterMoreView moreView) {
+        mGnMoreView = moreView;
+        mGnMoreView.initMoreView(mGnQSH.getTiles());
+//        mGnMoreView.setChanageListener(mGnQSPanel.getChangeListener());
+    }
+
+    public void openMoreView() {
+        GnControlCenterMoreView.setOpen(true);
+        dismiss();
+        mHandler.sendEmptyMessageDelayed(ACTION_SHOW_MORE, 300);
     }
 }

@@ -9,19 +9,13 @@ package com.android.systemui.gionee.cc.qs;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.RippleDrawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
-import android.util.MathUtils;
 import android.util.TypedValue;
-import android.view.GestureDetector;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -31,35 +25,26 @@ import android.widget.TextView;
 import com.android.systemui.FontSizeUtils;
 import com.android.systemui.R;
 import com.android.systemui.gionee.GnFontHelper;
-import com.android.systemui.gionee.cc.GnControlCenterPanel;
 
 /** View that represents a standard quick settings tile. **/
 public class GnQSTileView extends ViewGroup {
-    private static final Typeface CONDENSED = Typeface.create("sans-serif-condensed",
-            Typeface.NORMAL);
 
     protected final Context mContext;
-    private final View mIcon;
+    protected final View mIcon;
+    protected final int mIconSizePx;
     private final H mHandler = new H();
-    private final int mIconSizePx;
-    private final int mTilePaddingBelowIconPx;
 
-    private TextView mLabel;
+    protected TextView mLabel;
     private OnClickListener mClickPrimary;
     private OnLongClickListener mLongClick;
     
-    private GnControlCenterPanel mGnControlCenterPanel;
-
-    public GnQSTileView(Context context, GnControlCenterPanel panel) {
+    public GnQSTileView(Context context) {
         
         super(context);
-
-        mGnControlCenterPanel = panel;
 
         mContext = context;
         final Resources res = context.getResources();
         mIconSizePx = res.getDimensionPixelSize(R.dimen.gn_qs_tile_icon_size);
-        mTilePaddingBelowIconPx =  res.getDimensionPixelSize(R.dimen.gn_qs_tile_padding_below_icon);
         recreateLabel();
         setClipChildren(false);
 
@@ -81,7 +66,9 @@ public class GnQSTileView extends ViewGroup {
     }
     
     private void updateFontTypeFace(Configuration newConfig) {
-        GnFontHelper.resetAmigoFont(newConfig, mLabel);
+        Typeface typeface = GnFontHelper.getCurrentFontType(newConfig);
+        
+        mLabel.setTypeface(typeface);
     }
 
     private void recreateLabel() {
@@ -117,6 +104,10 @@ public class GnQSTileView extends ViewGroup {
         setFocusable(!dual);
         postInvalidate();
     }
+    
+    public void init(OnClickListener clickPrimary) {
+        mClickPrimary = clickPrimary;
+    }
 
     public void init(OnClickListener clickPrimary, OnClickListener clickSecondary, OnLongClickListener longClick) {
         mClickPrimary = clickPrimary;
@@ -127,14 +118,8 @@ public class GnQSTileView extends ViewGroup {
         final ImageView icon = new ImageView(mContext);
         icon.setId(android.R.id.icon);
         icon.setScaleType(ScaleType.CENTER_INSIDE);
-        icon.setBackgroundResource(R.drawable.gn_qs_tile_background);
+        icon.setBackgroundResource(R.drawable.gn_ic_qs_tile_bg_disable);
         return icon;
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        mGnControlCenterPanel.onTouchEvent(event);
-        return super.onTouchEvent(event);
     }
 
     @Override
@@ -147,26 +132,25 @@ public class GnQSTileView extends ViewGroup {
         setMeasuredDimension(w, h);
     }
 
-    private static int exactly(int size) {
+    protected static int exactly(int size) {
         return MeasureSpec.makeMeasureSpec(size, MeasureSpec.EXACTLY);
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         final int w = getMeasuredWidth();
+        final int h = getMeasuredHeight();
 
-        int top = 0;
         final int iconLeft = (w - mIcon.getMeasuredWidth()) / 2;
-        layout(mIcon, iconLeft, top);
-        top = mIcon.getBottom();
-        layout(mLabel, 0, top);
+        layout(mIcon, iconLeft, 0);
+        layout(mLabel, 0, h - mLabel.getMeasuredHeight());
     }
 
-    private static void layout(View child, int left, int top) {
+    protected static void layout(View child, int left, int top) {
         child.layout(left, top, left + child.getMeasuredWidth(), top + child.getMeasuredHeight());
     }
 
-    protected void handleStateChanged(GnQSTile.BooleanState state) {
+    protected void handleStateChanged(GnQSTile.State state) {
         if (mIcon instanceof ImageView) {
             ImageView iv = (ImageView) mIcon;
             if (state.icon != null) {
@@ -174,24 +158,13 @@ public class GnQSTileView extends ViewGroup {
             } else if (state.iconId > 0) {
                 iv.setImageResource(state.iconId);
             }
-            Drawable drawable = iv.getDrawable();
-            if (state.autoMirrorDrawable && drawable != null) {
-                drawable.setAutoMirrored(true);
-            }
         }
 
         mLabel.setText(state.label);
-        if (state.value) {
-            mLabel.setTextColor(mContext.getResources().getColor(R.color.gn_qs_tile_on));
-        } else {
-            mLabel.setTextColor(mContext.getResources().getColor(R.color.gn_qs_tile_off));
-        }
-        setContentDescription(state.contentDescription);
-        
         setEnabled(state.clickable);
     }
 
-    public void onStateChanged(GnQSTile.BooleanState state) {
+    public void onStateChanged(GnQSTile.State state) {
         mHandler.obtainMessage(H.STATE_CHANGED, state).sendToTarget();
     }
 
@@ -203,7 +176,7 @@ public class GnQSTileView extends ViewGroup {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == STATE_CHANGED) {
-                handleStateChanged((GnQSTile.BooleanState) msg.obj);
+                handleStateChanged((GnQSTile.State) msg.obj);
             }
         }
     }

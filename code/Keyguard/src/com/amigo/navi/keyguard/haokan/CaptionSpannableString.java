@@ -3,20 +3,20 @@ package com.amigo.navi.keyguard.haokan;
 import android.content.Context;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.os.Parcel;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.style.BackgroundColorSpan;
-import android.text.style.CharacterStyle;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.ImageSpan;
+import android.text.style.TextAppearanceSpan;
 import android.text.style.URLSpan;
 import android.util.Log;
 import android.view.View;
 
+import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.haokan.analysis.HKAgent;
 import com.amigo.navi.keyguard.haokan.entity.Caption;
 import com.android.keyguard.R;
@@ -24,10 +24,15 @@ import com.android.keyguard.R;
 
 public class CaptionSpannableString extends SpannableStringBuilder{
 
-    private static final String SPACE_LINK = "     ";
-    private static final String SPACE_SOURCE = " ";
+//    private static final String SPACE_LINK = "     ";
+//    private static final String SPACE_SOURCE = " ";
     
-    private static final int IMG_SOURCE_TEXT_COLOR = 0xffff9000;
+    private static final String SPACE_LINK = "  ";
+//    private static final String SPACE_SOURCE = "   ";
+    
+    
+//    private static final int IMG_SOURCE_TEXT_COLOR = 0xffff9000;
+    private static final int IMG_SOURCE_TEXT_COLOR = 0xccffffff;
     
     private static long mLastClickTime = 0;
     
@@ -38,13 +43,13 @@ public class CaptionSpannableString extends SpannableStringBuilder{
     private Context mContext;
     private CaptionsView mCaptionsView;
    
+    private static String  COMPANY = " ©";
     
     public CaptionSpannableString(CharSequence arg0) {
         super(arg0);
     }
-
-
-    public CaptionSpannableString(Context context, Caption caption,Drawable mContentLinkDrawable,Rect linkRect) {
+    
+    public CaptionSpannableString(Context context, Caption caption, Drawable mContentLinkDrawable, Rect linkRect,String link) {
         
         super(caption.getContent());
         mCaption = caption;
@@ -56,57 +61,50 @@ public class CaptionSpannableString extends SpannableStringBuilder{
         
         int start = 0;
         int end = 0;
-        if (!isEmptyLink) {
         
-            if (!isEmptyImgSource) {
-                append(SPACE_SOURCE);
-                append(caption.getImgSource());
-            }
-
+        end = length();
+        setSpan(new BackgroundColorSpan(caption.getContentBackgroundColor()), start, end,Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+        if (!isEmptyImgSource) {
+            append(COMPANY);
+            append(caption.getImgSource());
+            
+            start = caption.getContent().length();
+            end = length();
+            setSpan(new ForegroundColorSpan(IMG_SOURCE_TEXT_COLOR), start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+ 
+        }
+        
+        if (!isEmptyLink) {
             append(SPACE_LINK);
-            end = length() - SPACE_LINK.length() - caption.getImgSource().length() - SPACE_SOURCE.length();
-            setSpan(new BackgroundColorSpan(caption.getContentBackgroundColor()), start, end,Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
-           
-            if (!isEmptyImgSource) {
             
-                start = caption.getContent().length() + SPACE_SOURCE.length();
-                end = start + caption.getImgSource().length();
-                setSpan(new ForegroundColorSpan(IMG_SOURCE_TEXT_COLOR), start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
-            
-            }
-            
+            end = length();
+            start = end -1;
             mContentLinkDrawable.setBounds(linkRect);
-            
             ImageSpan imageSpan = new ImageSpan(mContentLinkDrawable, ImageSpan.ALIGN_BASELINE);
-
-            setSpan(imageSpan, length() - 3, length()-2, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
-            
-            setSpan(new WebURLSpan(caption.getLink()), length() - 4, length()-1,
-                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        }else {
-            
-            if (!isEmptyImgSource) {
-                append(SPACE_SOURCE);
-                append(caption.getImgSource());
-            }
-            
-            end = caption.getContent().length();
-            
-            setSpan(new BackgroundColorSpan(caption.getContentBackgroundColor()), start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
-            
-            if (!isEmptyImgSource) {
-                
-                start = caption.getContent().length() + SPACE_SOURCE.length();
-                end = start + caption.getImgSource().length();
-                setSpan(new ForegroundColorSpan(IMG_SOURCE_TEXT_COLOR), start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
-                
-            }
-            
+            setSpan(imageSpan, start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+            append(link);
+            append(" ");
+            end = length() - 1;
+            start = end - link.length() - 1;
+            setSpan(new WebURLSpan(caption.getLink()), start, end,
+                  Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+ 
             
         }
         
+        if (!isEmptyImgSource || !isEmptyLink) {
+            end = length();
+            start = caption.getContent().length();
+            TextAppearanceSpan textAppearanceSpan = new TextAppearanceSpan(mContext, R.style.LinkTextAppearance);
+            setSpan(textAppearanceSpan, start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+        }
         
     }
+    
+    
+    
+    
+    
     
     private class WebURLSpan extends URLSpan{
 
@@ -121,7 +119,7 @@ public class CaptionSpannableString extends SpannableStringBuilder{
                 return;
             }
             
-            Log.v("haokan", "Link onClick " + widget.getId());
+            DebugLog.d("haokan", "Link onClick " + widget.getId());
             mCaptionsView.setClickLink(true);
             if (isEmptyLink) {
                 return;
@@ -141,7 +139,9 @@ public class CaptionSpannableString extends SpannableStringBuilder{
         @Override
         public void updateDrawState(TextPaint ds) {
       
-            super.updateDrawState(ds);
+//            super.updateDrawState(ds);
+            ds.setColor(0xccffffff);  
+            ds.setUnderlineText(false); 
         }
         
     }

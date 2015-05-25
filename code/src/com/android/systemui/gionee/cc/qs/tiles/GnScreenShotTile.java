@@ -7,6 +7,7 @@
 package com.android.systemui.gionee.cc.qs.tiles;
 
 import android.content.Intent;
+import android.util.Log;
 
 import com.android.systemui.gionee.cc.qs.GnQSTile;
 import com.android.systemui.screenshot.GnSnapshotService;
@@ -17,8 +18,8 @@ public class GnScreenShotTile extends GnQSTile<GnQSTile.BooleanState> {
 
     private static final Intent GNSCREEN_SHOT = new Intent("gn.intent.action.SELECT_SHOT");
     
-    public GnScreenShotTile(Host host) {
-        super(host);
+    public GnScreenShotTile(Host host, String spec) {
+        super(host, spec);
     }
 
     @Override
@@ -33,6 +34,7 @@ public class GnScreenShotTile extends GnQSTile<GnQSTile.BooleanState> {
 
     @Override
     protected void handleClick() {
+        Log.d(TAG, "handleClick");
     	GnYouJu.onEvent(mContext, "Amigo_SystemUI_CC", "GnScreenShotTile");
         mHost.collapsePanels();
         

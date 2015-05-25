@@ -21,6 +21,7 @@ import android.text.TextUtils;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.util.CursorUtils;
+import com.amigo.navi.keyguard.util.ReflectionUtils;
 import com.google.android.collect.Lists;
 
 
@@ -39,7 +40,6 @@ public class KeyguardMissedInfoModule extends KeyguardModuleBase {
 	private static KeyguardMissedInfoModule sInstance = null;
 	
 	private MissMmsObserver mMissMmsObserver;
-//	private static final Uri MMS_SMS_CONTENT_URI = MmsSms.CONTENT_URI; // content://mms-sms/
 	
 	private MissCallObserver mMissCallObserver;
 	private static final Uri CALL_LOGS_CONTENT_URI = CallLog.Calls.CONTENT_URI;
@@ -152,9 +152,8 @@ public class KeyguardMissedInfoModule extends KeyguardModuleBase {
 	}
 	
 	private class MissedCallQueryThread extends Thread {
-		private static final String CONDITION_TYPE_AND_NEW = 
-				CallLog.Calls.TYPE + "=" + CallLog.Calls.MISSED_TYPE
-				+ " and " + CallLog.Calls.NEW + "=1";
+        private static final String CONDITION_TYPE_AND_NEW = Calls.TYPE + "=" + Calls.MISSED_TYPE + " and "
+                + Calls.IS_READ + "=0";
 		
 		public void run() {
 			if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "start to query missed call count");
@@ -178,6 +177,7 @@ public class KeyguardMissedInfoModule extends KeyguardModuleBase {
 			try {
 				cursor = mContext.getContentResolver().query(
 						uri, null, condition, null, CallLog.Calls.DEFAULT_SORT_ORDER);
+				if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "missed call cursor is null???? " + (cursor==null));
 				if(cursor != null) {
 					count = cursor.getCount();
 					if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "missed call count is " + count);
@@ -233,6 +233,7 @@ public class KeyguardMissedInfoModule extends KeyguardModuleBase {
 			Cursor cursor = null;
 			try {
 				cursor = mContext.getContentResolver().query(uri, null, condition, null, null);
+				if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "mms cursor is null? " +(cursor==null));
 				if(cursor != null) {
 					count = cursor.getCount();
 					if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "missed " + uri.toString() + " count is " + count);
@@ -318,9 +319,9 @@ public class KeyguardMissedInfoModule extends KeyguardModuleBase {
 		
 		// Gionee <jiangxiao> <2014-04-16> modify for CR01188955 begin
 		ContentResolver cr = context.getContentResolver();
-		
 		mMissMmsObserver = new MissMmsObserver();
-//		cr.registerContentObserver(MMS_SMS_CONTENT_URI, true, mMissMmsObserver);
+		Uri MMS_SMS_CONTENT_URI = ReflectionUtils.getMissMmsUri(); 
+		cr.registerContentObserver(MMS_SMS_CONTENT_URI, true, mMissMmsObserver);
         
         mMissCallObserver = new MissCallObserver();
 		cr.registerContentObserver(CALL_LOGS_CONTENT_URI, true, mMissCallObserver);
@@ -489,59 +490,6 @@ public class KeyguardMissedInfoModule extends KeyguardModuleBase {
     	return missedCall;
     }
     
-    // Gionee <jingyn> <2014-07-08> modify for CR01315875 begin
-//    static class MissedSmsInfo{
-//        private String personId;
-//        private String phoneNumber;
-//        private String smsContent;
-//    } 
-    // Gionee <jingyn> <2014-07-08> modify for CR01315875 end
-
- // Gionee <jingyn> <2014-07-08> add for CR01317558 begin
-//    private MissedSmsInfo findMissedSmsInfo() {
-//        Log.d(LOG_TAG, "findMissedSmsInfo");
-//        MissedSmsInfo smsInfo = null;
-//        Cursor cursor = null;
-//        try {
-//            Uri uri = Telephony.Sms.CONTENT_URI;
-//            String selection = "read != 1";
-//            String srotOrder = Conversations.DEFAULT_SORT_ORDER + " LIMIT 1";
-//            cursor = mContext.getContentResolver().query(uri, null, selection, null, srotOrder);
-//            if (cursor != null) {
-//                while (cursor.moveToNext()) {
-//                    int threadId = CursorUtils.getIntegerByColumnIndex(cursor, Telephony.Sms.THREAD_ID);
-//                    String address = CursorUtils.getStringByColumnIndex(cursor, Telephony.Sms.ADDRESS);
-//                    String smsContent = CursorUtils.getStringByColumnIndex(cursor, Telephony.Sms.BODY);
-//                    DebugLog.d(LOG_TAG, "sms queried111  " + "  smsContent: " + smsContent + " address:"
-//                            + address + " thread_Id:" + threadId);
-//                    if (address != null) {
-//                        smsInfo = new MissedSmsInfo();
-//                        String contact = findContactByNumber(address);
-//                        if (!TextUtils.isEmpty(contact)) {
-//                            address = contact;
-//                        }
-//                        if (checkSmsIsEncrypt(threadId, true)) {
-//                            smsContent = "";
-//                        }
-//                        if (smsContent == null) {
-//                            smsContent = "";
-//                        }
-//                        DebugLog.d(LOG_TAG, "sms queried222  " + "  smsContent: " + smsContent + " address:"
-//                                + address + " thread_Id:" + threadId);
-//                        smsInfo.phoneNumber = address;
-//                        smsInfo.smsContent = smsContent;
-//                    }
-//                }
-//            }
-//        } catch (SQLException e) {
-//            DebugLog.d(LOG_TAG, "fail to query missed call info");
-//            e.printStackTrace();
-//        } finally {
-//            CursorUtils.closeCursor(cursor);
-//        }
-//        return smsInfo;
-//    }
-    // Gionee <jingyn> <2014-07-08> add for CR01317558 end
     
     // Gionee <jingyn> <2014-07-08> add for CR01317558 begin
     /**
@@ -655,35 +603,6 @@ public class KeyguardMissedInfoModule extends KeyguardModuleBase {
 		return result;
 	}
 	
-//	private void postCallMessage(String detailInfo) {
-//		DebugLog.d(LOG_TAG, "postCallMessage()");
-//		Intent intent = new Intent(
-//				KeyguardInfoZone.ACTION_NEW_MISSED_INFO);
-//		intent.putExtra(KeyguardInfoZone.EXTRA_PKG, 
-//				KeyguardInfoZone.MISSED_INFO_CALL);
-//		intent.putExtra(KeyguardInfoZone.EXTRA_CLS, 
-//				"com.gionee.navi.keyguard.widget.KeyguardMissedCallWidget");
-//		intent.putExtra(KeyguardInfoZone.EXTRA_DETAIL, detailInfo);
-//		
-//		mContext.sendBroadcast(intent);
-//	}
-	// Gionee <jiangxiao> <2014-05-14> add for CR01237419 end
-	
-	// Gionee <jingyn> <2014-07-08> add for CR01317558 begin
-//    private void postSmsMessage(MissedSmsInfo info){
-//        DebugLog.d(LOG_TAG, "postSmsMessage()");
-//        Intent intent = new Intent(
-//                KeyguardInfoZone.ACTION_NEW_MISSED_INFO);
-//        intent.putExtra(KeyguardInfoZone.EXTRA_PKG, 
-//                KeyguardInfoZone.MISSED_INFO_SMS);
-//        intent.putExtra(KeyguardInfoZone.EXTRA_CLS, 
-//                "");
-//        intent.putExtra(KeyguardInfoZone.EXTRA_DETAIL, info.phoneNumber);
-//        intent.putExtra(KeyguardInfoZone.EXTRA_CONTENT, info.smsContent);
-//        
-//        mContext.sendBroadcast(intent);
-//    }
-    // Gionee <jingyn> <2014-07-08> add for CR01317558 end
     
 	
 	// Gionee <jiangxiao> <2014-04-16> modify for CR01188955 begin
@@ -706,7 +625,7 @@ public class KeyguardMissedInfoModule extends KeyguardModuleBase {
         @Override
         public void onChange(boolean selfChange, Uri uri) {
         	postQueryDelayed(mDoQuery, QUERY_TOKEN_CALL, DEFAULT_QUERY_DELAY);
-        	postMissedCallDetailsIfNeed();
+//        	postMissedCallDetailsIfNeed();
         }
     }
 	// Gionee <jiangxiao> <2014-04-16> modify for CR01188955 end

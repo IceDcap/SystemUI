@@ -22,7 +22,7 @@ public class ArcItemButton extends RelativeLayout{
     
     private boolean needFeekBack;
      
-    private boolean itemSelected = false;//已收藏
+    private boolean itemSelected = false;
     
     
     public void setItemSelected(boolean itemSelected) {

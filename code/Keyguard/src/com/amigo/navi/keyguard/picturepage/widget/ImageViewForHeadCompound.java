@@ -3,13 +3,14 @@ import java.util.Vector;
 
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.KWDataCache;
+import com.amigo.navi.keyguard.haokan.db.WallpaperDB;
 import com.amigo.navi.keyguard.haokan.entity.Wallpaper;
 import com.amigo.navi.keyguard.network.FailReason;
 import com.amigo.navi.keyguard.network.ImageLoaderInterface;
 import com.amigo.navi.keyguard.network.ImageLoadingListener;
 import com.amigo.navi.keyguard.network.local.DealWithFromLocalInterface;
 import com.amigo.navi.keyguard.network.local.ReadFileFromAssets;
-import com.amigo.navi.keyguard.network.local.ReadFileFromSD;
+import com.amigo.navi.keyguard.network.local.ReadAndWriteFileFromSD;
 import com.amigo.navi.keyguard.network.local.LocalBitmapOperation;
 import com.amigo.navi.keyguard.network.local.LocalFileOperationInterface;
 import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
@@ -144,12 +145,12 @@ public class ImageViewForHeadCompound extends ImageView implements OnReloadListe
     public void loadImageBitmap(Wallpaper wallpaper, boolean isNeedCache, boolean immediatelyLoad) {
         mWallPaper = wallpaper;
         mNeedCache = isNeedCache;
-        DebugLog.d("HorizontalListView","makeAndAddView loadImageBitmap mUrl:" + mUrl);
-        DebugLog.d("HorizontalListView","makeAndAddView loadImageBitmap wallpaper.getImgUrl():" + wallpaper.getImgUrl());
+        DebugLog.d(LOG_TAG,"makeAndAddView loadImageBitmap mUrl:" + mUrl);
+        DebugLog.d(LOG_TAG,"makeAndAddView loadImageBitmap wallpaper.getImgUrl():" + wallpaper.getImgUrl());
         boolean isCurUrl = mUrl.equals(wallpaper.getImgUrl());
-        DebugLog.d("HorizontalListView","makeAndAddView loadImageBitmap wallpaper.isCurUrl:" + isCurUrl);
+        DebugLog.d(LOG_TAG,"makeAndAddView loadImageBitmap wallpaper.isCurUrl:" + isCurUrl);
         if (!isCurUrl) {
-            this.setBitmap(null);
+            this.setImageResource(mConfig.startBitmapID);
         }
         DebugLog.d(LOG_TAG,"loadImageBitmap mConfig:" + mConfig);
         if (mConfig == null) {
@@ -159,7 +160,7 @@ public class ImageViewForHeadCompound extends ImageView implements OnReloadListe
         DebugLog.d(LOG_TAG,"loadImageBitmap mUrl:" + mUrl);
         this.setTag(mUrl);
         DebugLog.d(LOG_TAG,"loadImageBitmap immediatelyLoad:" + immediatelyLoad);
-        DebugLog.d("HorizontalListView","makeAndAddView loadImageBitmap immediatelyLoad:" + immediatelyLoad);
+        DebugLog.d(LOG_TAG,"makeAndAddView mUrl:" + mUrl + "loadImageBitmap immediatelyLoad:" + immediatelyLoad);
         if(immediatelyLoad){
             immediateLoadImageBitmap(wallpaper, isNeedCache);
         } else {
@@ -168,7 +169,7 @@ public class ImageViewForHeadCompound extends ImageView implements OnReloadListe
     }
 
     private void immediateLoadImageBitmap(final Wallpaper wallpaper, final boolean isNeedCache) {
-        DebugLog.d("HorizontalListView","makeAndAddView immediateLoadImageBitmap");
+        DebugLog.d(LOG_TAG,"makeAndAddView immediateLoadImageBitmap");
         mLoadState = State.LOADING;
         final ImageLoadingListener loadingListener = new ImageLoadingListener() {
             @Override
@@ -186,6 +187,7 @@ public class ImageViewForHeadCompound extends ImageView implements OnReloadListe
             @Override
             public void onLoadingFailed(String imageUri, FailReason failReason) {
                 DebugLog.d("HorizontalListView","makeAndAddView onLoadingFailed");
+                WallpaperDB.getInstance(getContext().getApplicationContext()).updateDownLoadNotFinish(wallpaper);
                 mLoadState = State.FAILED;
                 Log.v(LOG_TAG, "loadImageBitmap onLoadingFailed imageUri:" + imageUri);
                 HandlerObj handlerObj = new HandlerObj();
@@ -283,6 +285,7 @@ public class ImageViewForHeadCompound extends ImageView implements OnReloadListe
 ////            setImageResource(R.drawable.emotion_loading);
 //        }
     	
+    DebugLog.d(LOG_TAG,"loadFromCache mUrl:" + mUrl + "loadImageBitmap mConfig.startBitmapID:" + mConfig.startBitmapID);
   	if(mConfig.startBitmapID != 0){
           recyleImageBitmap();
   		  setImageResource(mConfig.startBitmapID);
@@ -490,12 +493,13 @@ public class ImageViewForHeadCompound extends ImageView implements OnReloadListe
     }
 
     private void loadFromCache(){
+        DebugLog.d(LOG_TAG,"loadFromCache mUrl:" + mUrl + " mConfig:" + mConfig);
+        DebugLog.d(LOG_TAG,"loadFromCache mUrl:" + mUrl + " mConfig.mImageLoader:" + mConfig.mImageLoader);
         if(mConfig == null || mConfig.mImageLoader == null){
             return;
         }
-        DebugLog.d("HorizontalListView","makeAndAddView loadFromCache");
         Bitmap bitmap = mConfig.mImageLoader.getBitmapFromCache(mWallPaper.getImgUrl());
-        DebugLog.d("HorizontalListView","makeAndAddView bitmap bitmap:" + bitmap);
+        DebugLog.d(LOG_TAG,"loadFromCache mUrl:" + mUrl + "loadImageBitmap bitmap:" + bitmap);
         if (bitmap != null) {
             this.setUrl(mWallPaper.getImgUrl());
             this.setImageBitmap(bitmap);

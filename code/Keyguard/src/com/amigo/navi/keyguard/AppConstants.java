@@ -16,5 +16,10 @@ public class AppConstants {
     public final static String HALL_STATUS_KEY = "hall_status";
     
     /****************skylight hall status change action*****************/
-
+    
+    /****************unlock sim action  send by Setting And Phone Module   don't change*****************/
+    public static final String ACTION_UNLOCK_SIM_LOCK = "mediatek.intent.action.ACTION_UNLOCK_SIM_LOCK";
+    /****************unlock sim action  send by Setting And Phone Module   don't change*****************/
+    
+    
 }

@@ -1,6 +1,9 @@
 package com.amigo.navi.keyguard.util;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+
+import android.net.Uri;
 
 import com.amigo.navi.keyguard.DebugLog;
 
@@ -63,4 +66,21 @@ public class ReflectionUtils {
     }
     
     // methods for fanfan end
+    
+    public static Uri getMissMmsUri() {
+        Uri missMmsUri = Uri.parse("content://mms-sms/");
+        try {
+            Class<?> clazz = Class.forName("android.provider.Telephony$MmsSms");
+            Field field = clazz.getField("CONTENT_URI");
+            field.setAccessible(true);
+            missMmsUri = (Uri) field.get(clazz);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        DebugLog.d(LOG_TAG, "getMissMmsUri:  "+missMmsUri.toString());
+        return missMmsUri;
+    }
+    
+    
+    
 }

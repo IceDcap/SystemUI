@@ -31,8 +31,8 @@ public class GnLauncherTile extends GnQSTile<GnQSTile.BooleanState> {
     
     //private boolean mListening;
     
-    public GnLauncherTile(Host host) {
-        super(host);
+    public GnLauncherTile(Host host, String spec) {
+        super(host, spec);
     }
 
     @Override

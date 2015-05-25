@@ -3,6 +3,7 @@ package com.amigo.navi.keyguard.haokan;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.haokan.entity.Music;
 
 
@@ -82,22 +83,21 @@ public class DownLoadTask extends AsyncTask<Void, Void, Boolean>{
             int length = -1;
             int totalSize = connection.getContentLength();
             int completeSize = 0;
-            Log.v(TAG, "Music Size : " + Common.formatByteToMB(totalSize) + "MB");
+            DebugLog.d(TAG, "Music Size : " + Common.formatByteToMB(totalSize) + "MB");
             
             while ((length = in.read(buffer)) != -1) {
                 randomAccessFile.write(buffer, 0, length);
                 completeSize += length;
-//                Log.v(TAG, "download progress " + completeSize * 100 / totalSize);
             }
             if (completeSize == totalSize) {
-                Log.v(TAG, music.getmMusicName() + " download over!");
+                DebugLog.d(TAG, music.getmMusicName() + " download over!");
                 success = true;
             }
             
         } catch (Exception e) { 
             success = false;
             FileUtil.deleteFile(localPath);
-            Log.v(TAG, "Exception deleteFile " + localPath);
+            DebugLog.e(TAG, "Exception deleteFile " + localPath);
         }  finally {
             try {
                 if (in != null){
@@ -110,7 +110,7 @@ public class DownLoadTask extends AsyncTask<Void, Void, Boolean>{
                     connection.disconnect();
                 }
             } catch (IOException e) { 
-                Log.v(TAG, "finally  IOException");
+                DebugLog.d(TAG, "finally  IOException");
             }
         }
         return success;

@@ -2,31 +2,26 @@
 Build Notes
 ==================
 1.版本目的:
-全功能版本
+控制中心新改版
 2.功能变更:
-全功能版本
+No
 3.重点测试的问题:
-全功能版本
+控制中心新改版
 4.应用数据库是否改变:
 No
 
 ==================
 Release Location
 ==================
-/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.j.zip
+/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.m.zip
 
 ==================
 CR List
 ==================
 [Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
-svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.cc' non-existent in revision 5214
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.x' non-existent in revision 5388
 
 svn: E200009: Could not display info for all targets because some targets don't exist
-svn: E205000: Syntax error in revision argument '5214:'
+svn: E205000: Syntax error in revision argument '5388:'
 File does not exist:  at getAppChangeSet.pl line 48
 
-==================
-Make sonar target URL:
-http://ss.alm.gionee.com/sonar
-http://ss.alm.gionee.com/sonar/dashboard/index/gionee.app:Amigo_SystemUI
-==================

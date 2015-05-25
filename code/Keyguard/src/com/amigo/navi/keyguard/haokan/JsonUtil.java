@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.amigo.navi.keyguard.DebugLog;
+import com.amigo.navi.keyguard.haokan.db.DataConstant;
 import com.amigo.navi.keyguard.haokan.entity.Client;
 import com.amigo.navi.keyguard.haokan.entity.EventLogger;
 import com.amigo.navi.keyguard.haokan.entity.WallpaperList;
@@ -301,10 +302,9 @@ public class JsonUtil {
 //            is = context.getAssets().open("wallpaper.xml");
             int size = is.available();
             byte[] buffer = new byte[size];
-            Log.v("zhaowei", "size = " + size);
             is.read(buffer);
             jsonString = new String(buffer, "utf-8");
-            Log.v("zhaowei", "jsonString = " + jsonString);
+            DebugLog.d("haokan", "jsonString = " + jsonString);
             if (jsonString != null) {
                 
                 list = new WallpaperList();
@@ -322,8 +322,8 @@ public class JsonUtil {
                     String background = jsonObjectImg.optString("Background");
                     String showTimeBegin = jsonObjectImg.optString("ShowTimeBegin");
                     String showTimeEnd = jsonObjectImg.optString("ShowTimeEnd");
-                    
-                    Log.v("zhaowei", "imageName = " + imageName + " imageTitle="+imageTitle + " imageContent="+imageContent + " imageSource = " + imageSource + " background="+background);
+                    String lock = jsonObjectImg.optString("Lock");
+ 
                     Category category = new Category();
                     category.setTypeId(1);
                     category.setTypeName("inlay");
@@ -340,7 +340,14 @@ public class JsonUtil {
                     wallpaper.setType(Wallpaper.WALLPAPER_FROM_FIXED_FOLDER);
                     wallpaper.setRealOrder(i);
                     wallpaper.setShowOrder(i); 
-                    wallpaper.setLocked(false);
+                    wallpaper.setTodayImage(1);
+                    wallpaper.setType(Wallpaper.WALLPAPER_FROM_FIXED_FOLDER);
+                    if("1".equals(lock)){
+                        wallpaper.setLocked(true);
+                    }else{
+                        wallpaper.setLocked(false);
+                    }
+                    wallpaper.setDownloadFinish(DataConstant.DOWNLOAD_FINISH);
                     list.add(wallpaper);
                 }
             }

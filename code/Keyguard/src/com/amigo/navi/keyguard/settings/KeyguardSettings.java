@@ -22,13 +22,16 @@ public class KeyguardSettings {
 	public static final boolean SWITCH_WALLPAPER_WIFI = true;
 	public static final boolean SWITCH_DOUBLE_SCREEN = true;
 	public static final boolean DIALOG_KEYGUARD_ALERT = true;
+	
+    public static final String SWITCH_WALLPAPER_UPDATE_OPENED_ONCE = "keyguard_wallpaper_update_opened_once";
 	// for statistics
 	public static final int SWITCH_WALLPAPER_UPDATE_ON = 2;
 	public static final int SWITCH_WALLPAPER_UPDATE_OFF = 1;
 	public static final int SWITCH_ONLY_WLAN_ON = 1;
 	public static final int SWITCH_ONLY_WLAN_OFF = 2;
 	
-	public static final long ANIMATION_DELAY = 33;
+	public static final long ANIMATION_DELAY = 33; //弹出动画的延时
+	public static final long WALLPAPER_UPDATE_ANIMATION_DELAY = 700;//壁纸更新引导动画延时
 
 	public static final String CLEARNOTIFICATION = "clearNotification_KeyguardSettingsActivity";
 	public static final int NOTIFICATION_ID_SETTING = 1007;
@@ -108,6 +111,21 @@ public class KeyguardSettings {
         SharedPreferences sp = context.getSharedPreferences(PREFERENCE_NAME,
                 Context.MODE_PRIVATE);
         return sp.getBoolean(PF_KEYGUARD_CONNECT,
+        		SWITCH_WALLPAPER_UPDATE);
+    }
+    
+    public static void setEverOpened(Context context,boolean value){
+        SharedPreferences sp = context.getSharedPreferences(PREFERENCE_NAME,
+                Context.MODE_PRIVATE);
+        Editor editor = sp.edit();
+        editor.putBoolean(SWITCH_WALLPAPER_UPDATE_OPENED_ONCE, value);
+		editor.commit();
+    }
+    
+    public static boolean getEverOpened(Context context){
+        SharedPreferences sp = context.getSharedPreferences(PREFERENCE_NAME,
+                Context.MODE_PRIVATE);
+        return sp.getBoolean(SWITCH_WALLPAPER_UPDATE_OPENED_ONCE,
         		SWITCH_WALLPAPER_UPDATE);
     }
     

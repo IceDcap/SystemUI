@@ -111,6 +111,7 @@
     <string name="dialog_information_point">Welcome to use Amigo screen lock.</string>
     <string name="dialog_Allinformation">This operation may use data traffic during running. Please consult local carriers for data charges. Continue?</string>
     <string name="haokan_notification_settings_content">Switch on to download latest wallpaper</string>    
+    <string name="haokan_wallpaper_update_guide_text">Switch on for updates</string>
     
     <string name="haokan_arc_menu_favorite">Save</string>
     <string name="haokan_arc_menu_favorite_ok">Saved</string>
@@ -137,6 +138,7 @@
    	<string name="haokan_wallpaper_subscription">Subscribe</string>
    	<string name="haokan_tip_check_net">Check your network settings</string>
    	<string name="haokan_tip_favorite_error">Save failed</string>
+    <string name="haokan_detail">Detail</string>
 
       
     <string name="keyguard_sim_name">"SIM Card"</string>

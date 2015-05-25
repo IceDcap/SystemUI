@@ -115,7 +115,6 @@ public abstract class KeyguardAbsKeyInputView extends LinearLayout
 
     protected void verifyPasswordAndUnlock() {
         String entry = getPasswordText();
-        Log.d("jing_test", "verifyPasswordAndUnlock entry: "+entry);
         if (mLockPatternUtils.checkPassword(entry)) {
             mCallback.reportUnlockAttempt(true);
             mCallback.dismiss(true);

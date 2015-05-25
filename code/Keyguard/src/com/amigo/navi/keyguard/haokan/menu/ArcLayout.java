@@ -38,10 +38,10 @@ import java.util.List;
 public class ArcLayout extends ViewGroup implements View.OnClickListener{
     private static final String TAG = "ArcLayout";
     
-    boolean mExpandAnimatorRunning = false;
-    boolean mShrinkAnimatorRunning = false;
-    boolean mClicKItemAnimatorRunning = false;
-    boolean mItemFeekbackAnimatorRunning = false;
+    private boolean mExpandAnimatorRunning = false;
+    private boolean mShrinkAnimatorRunning = false;
+    private boolean mClicKItemAnimatorRunning = false;
+    private boolean mItemFeekbackAnimatorRunning = false;
     
  
     private int[][] mMenuItemNameIds = {
@@ -115,7 +115,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
         
         mEdgeDistance = (int) (mRadiusNormal * Math.cos(Math.toRadians(DEFAULT_FROM_DEGREES)));
         
-        mTopDistance = (int) (mRadiusMax * Math.sin(Math.toRadians(25)));
+        mTopDistance = (int) (mRadiusMax * Math.sin(Math.toRadians(25))) + mChildSize / 2;
         
         
         MainRect.set(mEdgeDistance, 0, WIDTH_PIXELS - mEdgeDistance, HEIGHT_PIXELS);
@@ -148,7 +148,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
             return;
         }
         
-        Log.v(TAG, "refreshItemState() " + mWallpaper.toString());
+        DebugLog.d(TAG, "refreshItemState() " + mWallpaper.toString());
         ArcItemButton itemFavorite = mArcItems.get(0);
         itemFavorite.setItemSelected(mWallpaper.isFavorite());
          
@@ -221,7 +221,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
             public void onClick(View arg0) {
 
                 if (isExpanded() && !animatorRunning()) {
-                    Log.v(TAG, "ArcHomeButton ImageView OnClick ");
+                    DebugLog.d(TAG, "ArcHomeButton ImageView OnClick ");
                     startHide();
                 }
             }
@@ -306,7 +306,6 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
         set.setStartDelay(startOffset);
         set.setInterpolator(interpolator);
         set.play(translation).with(rotation).with(Alpha);
- 
         return set;
     }
     
@@ -443,8 +442,10 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                 fromDegrees = -62;
                 toDegrees = 62;
             }else {
-                fromDegrees = -25;
-                toDegrees = 87;
+//                fromDegrees = -25;
+//                toDegrees = 87;
+                fromDegrees = -32;
+                toDegrees = 80;
             }
             radius = mRadiusMax;
         }else {
@@ -457,8 +458,11 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                 fromDegrees = 118;
                 toDegrees = 242;
             }else {
-                fromDegrees = 93;
-                toDegrees = 205;
+//                fromDegrees = 93;
+//                toDegrees = 205;
+                
+                fromDegrees = 100;
+                toDegrees = 212;
             }
             radius = mRadiusMax;
         }
@@ -486,7 +490,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
      * @param showAnimation
      */
     public void switchState() {
-        Log.v(TAG, "switchState  mExpanded = " + mExpanded);
+        DebugLog.d(TAG, "switchState  mExpanded = " + mExpanded);
         final int childCount = mArcItems.size();
         for (int i = 0; i < childCount; i++) {
             ArcItemButton arcItemButton = mArcItems.get(i);
@@ -502,9 +506,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
             return;
         }
 
-        if (getVisibility() != VISIBLE) {
-            setVisibility(VISIBLE);
-        }
+        controller.showArcMenu();
 
         if (mArcHomeButton.getVisibility() != VISIBLE) {
             mArcHomeButton.setVisibility(VISIBLE);
@@ -514,12 +516,12 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
             @Override
             public void run() {
                 switchState();
+                mArcHomeButton.rippleAnimRun();
             }
-        }, 80);
+        }, 50);
 
         postDelayed(mCloseMenuRunnable, 3000);
         
-        mArcHomeButton.rippleAnimRun();
     }
     
     
@@ -670,14 +672,13 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
             }
         });
         controller.addAnimator(set);
-        
         set.start();
     }
     
     
     public void reset() {
         
-        setVisibility(GONE);
+        UIController.getInstance().hideArcMenu();
         mArcHomeButton.getmImageView().setScaleX(0.4f);
         mArcHomeButton.getmImageView().setScaleY(0.4f);
         mArcHomeButton.getmImageView().setVisibility(GONE);
@@ -757,7 +758,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                     values.put(MediaStore.Images.ImageColumns.WIDTH, width);
                     values.put(MediaStore.Images.ImageColumns.HEIGHT, height);
                     
-                    Log.v(TAG,
+                    DebugLog.d(TAG,
                             "favoriteLocalPath = " + favoriteLocalPath + " imageFileName = "
                                     + imageFileName + " dateSeconds = " + dateSeconds
                                     + " width=" + width
@@ -821,7 +822,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
             return;
         }
 
-        Log.v(TAG, "onClick  view = " + view.getId());
+        DebugLog.d(TAG, "onClick  view = " + view.getId());
         removeCallbacks(mCloseMenuRunnable);
         final int viewId = view.getId();
         
@@ -830,7 +831,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
         switch (viewId) {
             case 0: 
                 if (mWallpaper.isFavorite()) {
-                    Log.v(TAG, "onClick  isFavorite  return");
+                    DebugLog.d(TAG, "onClick  isFavorite  return");
                     if (isExpanded() && !animatorRunning()) {
                         startHide();
                     }
@@ -945,6 +946,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
             }
         });
         mItemFeekbackAnimatorRunning = true;
+        controller.addAnimator(set);
         set.start();
     }
     
@@ -955,20 +957,20 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                 || mClicKItemAnimatorRunning;
         
         if (mItemFeekbackAnimatorRunning) {
-            Log.v(TAG, "animatorRunning  mItemFeekbackAnimatorRunning  " + mItemFeekbackAnimatorRunning);
+            DebugLog.d(TAG, "animatorRunning  mItemFeekbackAnimatorRunning  " + mItemFeekbackAnimatorRunning);
         }
         if (mExpandAnimatorRunning) {
-            Log.v(TAG, "animatorRunning  mExpandAnimatorRunning   " + mExpandAnimatorRunning);
+            DebugLog.d(TAG, "animatorRunning  mExpandAnimatorRunning   " + mExpandAnimatorRunning);
         }
         if (mShrinkAnimatorRunning) {
-            Log.v(TAG, "animatorRunning  mShrinkAnimatorRunning " + mShrinkAnimatorRunning);
+            DebugLog.d(TAG, "animatorRunning  mShrinkAnimatorRunning " + mShrinkAnimatorRunning);
         }
         if (mClicKItemAnimatorRunning) {
-            Log.v(TAG, "animatorRunning  mClicKItemAnimatorRunning " + mClicKItemAnimatorRunning);
+            DebugLog.d(TAG, "animatorRunning  mClicKItemAnimatorRunning " + mClicKItemAnimatorRunning);
         }
         return running;
     }
 
-
+    
     
 }

@@ -71,6 +71,7 @@ import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.widget.RemoteViews;
 
+import com.amigo.navi.keyguard.AppConstants;
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.modules.AmigoBatteryStatus;
 import com.amigo.navi.keyguard.modules.KeyguardModuleBase;
@@ -144,6 +145,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
     private static final int MSG_MISSED_MMS_COUNT_CHANGED = 328;
     private static final int MSG_MISSED_CALL_COUNT_CHANGED = 329;
     private static final int MSG_MISSED_SMS_INFO_GONE= 330;
+    private static final int MSG_UNLOCK_SIM_LOCK= 331;
     
 
     private static KeyguardUpdateMonitor sInstance;
@@ -210,6 +212,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
                     handleBatteryUpdate((AmigoBatteryStatus) msg.obj);
                     break;
                 case MSG_SIM_STATE_CHANGE:
+                case MSG_UNLOCK_SIM_LOCK:
                     handleSimStateChange(msg.arg1, msg.arg2, (State) msg.obj);
                     break;
                 case MSG_RINGER_MODE_CHANGED:
@@ -340,6 +343,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
             for (int j = 0; j < mCallbacks.size(); j++) {
                 KeyguardUpdateMonitorCallback cb = mCallbacks.get(j).get();
                 if (cb != null) {
+                    Log.v(TAG, "onSubscriptionInfoChanged()  simState: "+data.simState);
                     cb.onSimStateChanged(data.subId, data.slotId, data.simState);
                 }
             }
@@ -531,6 +535,10 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
                        intent.getIntExtra(Intent.EXTRA_USER_HANDLE, 0), 0));
             } else if (Intent.ACTION_BOOT_COMPLETED.equals(action)) {
                 dispatchBootCompleted();
+            } else if (AppConstants.ACTION_UNLOCK_SIM_LOCK.equals(action)) {
+                SimData args = SimData.fromIntent(intent);
+                DebugLog.d(TAG, "ACTION_UNLOCK_SIM_LOCK  state:" + args);
+                mHandler.sendMessage(mHandler.obtainMessage(MSG_UNLOCK_SIM_LOCK, args.subId, args.slotId, args.simState));
             }
         }
     };
@@ -594,13 +602,20 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
 
         static SimData fromIntent(Intent intent) {
             State state;
-            if (!TelephonyIntents.ACTION_SIM_STATE_CHANGED.equals(intent.getAction())) {
+            String action=intent.getAction();
+            boolean isStateChange=TelephonyIntents.ACTION_SIM_STATE_CHANGED.equals(action);
+            boolean isUnlockSim=AppConstants.ACTION_UNLOCK_SIM_LOCK.equals(action);
+            if (!(isStateChange||isUnlockSim)) {
                 throw new IllegalArgumentException("only handles intent ACTION_SIM_STATE_CHANGED");
             }
             String stateExtra = intent.getStringExtra(IccCardConstants.INTENT_KEY_ICC_STATE);
             int slotId = intent.getIntExtra(PhoneConstants.SLOT_KEY, 0);
             int subId = intent.getIntExtra(PhoneConstants.SUBSCRIPTION_KEY,
                     SubscriptionManager.INVALID_SUBSCRIPTION_ID);
+            if(subId==SubscriptionManager.INVALID_SUBSCRIPTION_ID){
+                subId = (int)intent.getLongExtra(PhoneConstants.SUBSCRIPTION_KEY,
+                        SubscriptionManager.INVALID_SUBSCRIPTION_ID);
+            }
             if (IccCardConstants.INTENT_VALUE_ICC_ABSENT.equals(stateExtra)) {
                 final String absentReason = intent
                     .getStringExtra(IccCardConstants.INTENT_KEY_LOCKED_REASON);
@@ -754,6 +769,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         filter.addAction(Intent.ACTION_BATTERY_CHANGED);
         filter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
         filter.addAction(TelephonyIntents.ACTION_SIM_STATE_CHANGED);
+        filter.addAction(AppConstants.ACTION_UNLOCK_SIM_LOCK);
         filter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
         filter.addAction(AudioManager.RINGER_MODE_CHANGED_ACTION);
         filter.addAction(Intent.ACTION_USER_REMOVED);
@@ -1571,7 +1587,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         if(!notNeedNotification){
 			if (mNotification == null) {
 				mNotification = new Notification();
-				mNotification.icon = R.drawable.haokan_notification_settings;
+				mNotification.icon = R.drawable.amigologo;
 				mNotification.when = System.currentTimeMillis();
 				mNotification.flags = Notification.FLAG_AUTO_CANCEL;
 			}
@@ -1586,8 +1602,8 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
 				RemoteViews mRemoteViews = new RemoteViews(
 						mContext.getPackageName(),
 						R.layout.haokan_notification_settings_layout);
-	            mRemoteViews.setOnClickPendingIntent(R.id.haokan_notification_settings, pendingIntent);
 				mNotification.contentView = mRemoteViews;
+				mNotification.contentIntent=pendingIntent;
 			}
 			String title = mContext.getResources().getString(R.string.settings);
 			String content = mContext.getResources().getString(

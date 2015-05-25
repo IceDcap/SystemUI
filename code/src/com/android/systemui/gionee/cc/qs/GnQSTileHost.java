@@ -30,12 +30,18 @@ import com.android.systemui.gionee.cc.qs.policy.GnWifiControllerImpl;
 import com.android.systemui.gionee.cc.qs.tiles.GnAirplaneModeTile;
 import com.android.systemui.gionee.cc.qs.tiles.GnAlarmTile;
 import com.android.systemui.gionee.cc.qs.tiles.GnBluetoothTile;
+import com.android.systemui.gionee.cc.qs.tiles.GnCalculateTile;
+import com.android.systemui.gionee.cc.qs.tiles.GnCameraTile;
+import com.android.systemui.gionee.cc.qs.tiles.GnFakeCallTile;
 import com.android.systemui.gionee.cc.qs.tiles.GnLauncherTile;
 import com.android.systemui.gionee.cc.qs.tiles.GnLocationTile;
 import com.android.systemui.gionee.cc.qs.tiles.GnMobileDataTile;
+import com.android.systemui.gionee.cc.qs.tiles.GnMoreTile;
 import com.android.systemui.gionee.cc.qs.tiles.GnPowerTile;
 import com.android.systemui.gionee.cc.qs.tiles.GnRotationLockTile;
 import com.android.systemui.gionee.cc.qs.tiles.GnScreenShotTile;
+import com.android.systemui.gionee.cc.qs.tiles.GnSettingTile;
+import com.android.systemui.gionee.cc.qs.tiles.GnTorchTile;
 import com.android.systemui.gionee.cc.qs.tiles.GnVibrateTile;
 import com.android.systemui.gionee.cc.qs.tiles.GnVoiceTile;
 import com.android.systemui.gionee.cc.qs.tiles.GnWifiTile;
@@ -102,7 +108,7 @@ public class GnQSTileHost implements GnQSTile.Host {
     
     @Override
     public void startSettingsActivity(final Intent intent) {
-        mGnControlCenterView.postStartSettingsActivity(intent, 250); // 250: time for collapse controlcenter 
+        mGnControlCenterView.postStartSettingsActivity(intent, 300); // 400: time for collapse controlcenter 
     }
 
     @Override
@@ -118,6 +124,11 @@ public class GnQSTileHost implements GnQSTile.Host {
     @Override
     public void collapsePanels() {
         mGnControlCenterView.dismiss();
+    }
+    
+    @Override
+    public void openMoreView() {
+        mGnControlCenterView.openMoreView();
     }
 
     @Override
@@ -164,7 +175,7 @@ public class GnQSTileHost implements GnQSTile.Host {
         if (DEBUG) Log.d(TAG, "Recreating tiles");
         final List<String> tileSpecs = loadTileSpecs();
         for (Map.Entry<String, GnQSTile<?>> tile : mTiles.entrySet()) {
-            if (!tileSpecs.contains(tile.getKey())) {
+            if (tileSpecs.contains(tile.getKey())) {
                 if (DEBUG) Log.d(TAG, "Destroying tile: " + tile.getKey());
                 tile.getValue().destroy();
             }
@@ -172,6 +183,7 @@ public class GnQSTileHost implements GnQSTile.Host {
         final LinkedHashMap<String, GnQSTile<?>> newTiles = new LinkedHashMap<>();
         for (String tileSpec : tileSpecs) {
             if (mTiles.containsKey(tileSpec)) {
+                if (DEBUG) Log.d(TAG, "add tile: " + tileSpec);
                 newTiles.put(tileSpec, mTiles.get(tileSpec));
             } else {
                 if (DEBUG) Log.d(TAG, "Creating tile: " + tileSpec);
@@ -182,7 +194,7 @@ public class GnQSTileHost implements GnQSTile.Host {
                 }
             }
         }
-        if (mTiles.equals(newTiles)) return;
+        // if (mTiles.equals(newTiles)) return;
         mTiles.clear();
         mTiles.putAll(newTiles);
         if (mCallback != null) {
@@ -191,18 +203,24 @@ public class GnQSTileHost implements GnQSTile.Host {
     }
 
     private GnQSTile<?> createTile(String tileSpec) {
-        if (tileSpec.equals("bt")) return new GnBluetoothTile(this);
-        else if (tileSpec.equals("airplane")) return new GnAirplaneModeTile(this);
-        else if (tileSpec.equals("location")) return new GnLocationTile(this);
-        else if (tileSpec.equals("rotation")) return new GnRotationLockTile(this);
-        else if (tileSpec.equals("wifi")) return new GnWifiTile(this);
-        else if (tileSpec.equals("dataconnect")) return new GnMobileDataTile(this);
-        else if (tileSpec.equals("vibrate")) return new GnVibrateTile(this);
-        else if (tileSpec.equals("voice")) return new GnVoiceTile(this);
-        else if (tileSpec.equals("screenshot")) return new GnScreenShotTile(this);
-        else if (tileSpec.equals("alarm")) return new GnAlarmTile(this);
-        else if (tileSpec.equals("launcher")) return new GnLauncherTile(this);
-        else if (tileSpec.equals("power")) return new GnPowerTile(this);
+        if (tileSpec.equals("bt")) return new GnBluetoothTile(this, tileSpec);
+        else if (tileSpec.equals("airplane")) return new GnAirplaneModeTile(this, tileSpec);
+        else if (tileSpec.equals("location")) return new GnLocationTile(this, tileSpec);
+        else if (tileSpec.equals("rotation")) return new GnRotationLockTile(this, tileSpec);
+        else if (tileSpec.equals("wifi")) return new GnWifiTile(this, tileSpec);
+        else if (tileSpec.equals("dataconnect")) return new GnMobileDataTile(this, tileSpec);
+        else if (tileSpec.equals("vibrate")) return new GnVibrateTile(this, tileSpec);
+        else if (tileSpec.equals("voice")) return new GnVoiceTile(this, tileSpec);
+        else if (tileSpec.equals("screenshot")) return new GnScreenShotTile(this, tileSpec);
+        else if (tileSpec.equals("alarm")) return new GnAlarmTile(this, tileSpec);
+//        else if (tileSpec.equals("launcher")) return new GnLauncherTile(this, tileSpec);
+        else if (tileSpec.equals("power")) return new GnPowerTile(this, tileSpec);
+        else if (tileSpec.equals("setting")) return new GnSettingTile(this, tileSpec);
+        else if (tileSpec.equals("more")) return new GnMoreTile(this, tileSpec);
+        else if (tileSpec.endsWith("calculate")) return new GnCalculateTile(this, tileSpec);
+        else if (tileSpec.endsWith("camera")) return new GnCameraTile(this, tileSpec);
+        else if (tileSpec.endsWith("torch")) return new GnTorchTile(this, tileSpec);
+        else if (tileSpec.endsWith("fakecall")) return new GnFakeCallTile(this, tileSpec);
         else throw new IllegalArgumentException("Bad tile spec: " + tileSpec);
     }
 

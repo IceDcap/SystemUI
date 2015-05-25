@@ -20,15 +20,12 @@ public class GnStartTaskReciver extends BroadcastReceiver {
         boolean ringFakeCall = intent.getBooleanExtra(GnConstants.START_TASK_OPTR, false);
         
         Log.d(LOG_TAG, "ring the phone: " + ringFakeCall);
-        
-        GnFakeCall virtualPhone = new GnFakeCall(context);
-        GnFakeCallHelper gnFakeCallHelper = GnFakeCallHelper.getInstance();
+
+        GnFakeCallControllerImpl gnFakeCallHelper = GnFakeCallControllerImpl.getInstance();
         if (ringFakeCall) {
-            gnFakeCallHelper.setIsTimerRunning(true);
-            virtualPhone.ringPhone();
+            gnFakeCallHelper.ring();
         } else {
-            gnFakeCallHelper.setIsTimerRunning(false);
-            virtualPhone.canclePhone();
+            gnFakeCallHelper.cancel();
         }
     }
 

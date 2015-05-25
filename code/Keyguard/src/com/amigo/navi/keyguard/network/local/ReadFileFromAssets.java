@@ -1,11 +1,6 @@
 package com.amigo.navi.keyguard.network.local;
 
-import java.io.File;
 
-import com.amigo.navi.keyguard.DebugLog;
-import com.amigo.navi.keyguard.KWDataCache;
-import com.amigo.navi.keyguard.network.local.manager.DiskLruCache;
-import com.amigo.navi.keyguard.network.local.manager.DiskManager;
 import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
 
 import android.content.Context;
@@ -22,16 +17,14 @@ public class ReadFileFromAssets implements DealWithFromLocalInterface{
     
     private static final String SYSTEM_FILE_PATH = "/system/etc/ScreenLock/";
     @Override
-    public Object readFromLocal(String key) {
-//    	String path = mPath + File.separator + key + ".jpg";
-//    	Bitmap bitmap = DiskUtils.getImageFromAssetsFile(mContext.getApplicationContext(),path);
+    public Bitmap readFromLocal(String key) {
      	String path = SYSTEM_FILE_PATH + key;
     	Bitmap bitmap = DiskUtils.getImageFromSystem(mContext.getApplicationContext(),path);
     	return bitmap;
     }
 
     @Override
-    public boolean writeToLocal(String key, Object obj) {
+    public boolean writeToLocal(String key, Bitmap bitmap) {
         return false;
     }
 

@@ -99,4 +99,18 @@ public interface ViewMediatorCallback {
      */
     void adjustStatusBarLocked() ;
     //jingyn add end
+    
+    //<Amigo_Keyguard> jingyn <2015-05-18> add for hao kan begin 
+    /**
+     * 
+     */
+    void setKeyguardWallpaperShow(boolean isShow) ;
+    //<Amigo_Keyguard> jingyn <2015-05-18> add for hao kan end 
+    
+    //<Amigo_Keyguard> jingyn <2015-05-23> add for hao kan begin 
+    /**
+     * 
+     */
+    boolean isScreenOn() ;
+    //<Amigo_Keyguard> jingyn <2015-05-23> add for hao kan end 
 }

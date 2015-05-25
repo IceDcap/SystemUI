@@ -127,6 +127,8 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
     @Override
     public void onResume(final int reason) {
         super.onResume(reason);
+        // 解决bug： 使用混合密码，应用有输入法弹出时，灭屏再亮屏输入法未收起问题
+        hiddenInput();
         // Wait a bit to focus the field so the focusable flag on the window is already set then.
         if(reason == KeyguardSecurityView.KEYGUARD_HOSTVIEW_SCROLL_AT_UNLOCKH_EIGHT){
         post(new Runnable() {
@@ -158,15 +160,14 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
     @Override
     public void onPause(int reason) {
         super.onPause(reason);
-        if(reason == KeyguardSecurityView.KEYGUARD_HOSTVIEW_SCROLL_AT_HOMEPAGE){
-        	hiddenInput();
-        }
+        hiddenInput();
 //        setVisibility(INVISIBLE);
     }
 
 	private void hiddenInput() {
 		mPasswordEntry.clearFocus();
-		mImm.hideSoftInputFromWindow(getWindowToken(), 0);
+		boolean hide = mImm.hideSoftInputFromWindow(getWindowToken(), 0);
+	    if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "hideSoftInputFromWindow return"+hide);
 	}
 
     @Override

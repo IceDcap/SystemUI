@@ -95,6 +95,7 @@ import com.android.systemui.SystemUI;
 import com.android.systemui.gionee.cc.GnControlCenter;
 import com.android.systemui.gionee.cc.GnControlCenterView;
 import com.android.systemui.gionee.cc.GnControlCenterImmerseView;
+import com.android.systemui.gionee.cc.qs.more.GnControlCenterMoreView;
 import com.android.systemui.gionee.nc.GnNotificationService;
 import com.android.systemui.gionee.nc.ui.GnNotificationLevelHeader;
 import com.android.systemui.statusbar.NotificationData.Entry;
@@ -210,6 +211,7 @@ public abstract class BaseStatusBar extends SystemUI implements
     protected GnControlCenter mGnControlCenter = null;
     protected GnControlCenterView mGnControlCenterView = null;
     protected GnControlCenterImmerseView mGnImmerseView = null;
+    protected GnControlCenterMoreView mGnMoreView = null;
     // Gionee <huangwt> <2014-12-13> add for CR01425226 end
 
     protected boolean mUseHeadsUp = false;

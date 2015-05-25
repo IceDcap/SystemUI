@@ -19,8 +19,8 @@ public class GnVibrateTile extends GnQSTile<GnQSTile.BooleanState> {
     
     private static final String AMIGO_SETTING_VIBRATE = "amigo_vibration_switch";
 
-    public GnVibrateTile(Host host) {
-        super(host);
+    public GnVibrateTile(Host host, String spec) {
+        super(host, spec);
     }
 
     @Override

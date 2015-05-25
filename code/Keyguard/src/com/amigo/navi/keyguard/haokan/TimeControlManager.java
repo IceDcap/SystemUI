@@ -63,7 +63,21 @@ public class TimeControlManager {
        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
        String time = sdf.format(d);  
        DebugLog.d(TAG,"getTime time:" + time);
+       SimpleDateFormat sdfFormat = new SimpleDateFormat("yyyyMMdd");
+       String updateTime = sdfFormat.format(d);  
        alarmManager.set(AlarmManager.RTC_WAKEUP, amendTime,pendingActivityIntent);
+       Common.setUpdateTime(mContext, updateTime);
+	}
+	
+	public boolean isFinishUpdateTime(){
+	       Date d = new Date(System.currentTimeMillis());
+	       SimpleDateFormat sdfFormat = new SimpleDateFormat("yyyyMMdd");
+	       String updateTime = sdfFormat.format(d);  
+	       String oldTime = Common.getUpdateTime(mContext);
+	       if(updateTime.equals(oldTime)){
+	    	   return true;
+	       }
+	       return false;
 	}
 	
 	public void cancelUpdateAlarm(){

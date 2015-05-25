@@ -32,7 +32,7 @@ public class LoggerThread extends HandlerThread implements Callback{
     public static final int SAVE_LOG = 1;
     public static final int SEND_LOG = 2;
 
-	private static final String TAG = "LoggerThread";
+	private static final String TAG = "haokan";
     
     private LoggerThread() {
         super("STATISTICS Thread");
@@ -93,7 +93,7 @@ public class LoggerThread extends HandlerThread implements Callback{
         try {
             List<EventLogger> listPv = messageModel.getListPv();
             int len = listPv.size();
-            Log.v(TAG, "listPv size = " + len);
+            DebugLog.d(TAG, "listPv size = " + len);
             for (EventLogger eventLogger : listPv) {
                 int count = eventLogger.getCount();
                 URL url = new URL(eventLogger.getUrlPv());

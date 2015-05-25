@@ -20,8 +20,8 @@ public class GnRotationLockTile extends GnQSTile<GnQSTile.BooleanState> {
 
     private final GnRotationLockController mController;
 
-    public GnRotationLockTile(Host host) {
-        super(host);
+    public GnRotationLockTile(Host host, String spec) {
+        super(host, spec);
         mController = host.getRotationLockController();
     }
 

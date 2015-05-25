@@ -23,6 +23,8 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.haokan.analysis.HKAgent;
 import com.amigo.navi.keyguard.haokan.entity.Caption;
 import com.amigo.navi.keyguard.haokan.entity.Wallpaper;
@@ -120,17 +122,20 @@ public class CaptionsView extends LinearLayout {
     }
     
 
+    String mlinkString = null;
     
     private void initUI() {
         mContentLinkDrawable = getResources().getDrawable(R.drawable.haokan_caption_content_link);
         mGap = getResources().getDimensionPixelSize(R.dimen.haokan_caption_layout_content_margintop);
         mTitleHeight = getResources().getDimensionPixelSize(R.dimen.haokan_caption_layout_title_height);
+        mlinkString = getResources().getString(R.string.haokan_detail);
     }
     
     public void setContentText(Caption caption) {
-
+ 
         CaptionSpannableString string = new CaptionSpannableString(getContext()
-                .getApplicationContext(), caption, mContentLinkDrawable,mLinkDrawablebounds);
+                .getApplicationContext(), caption, mContentLinkDrawable,mLinkDrawablebounds,mlinkString);
+        
         mTextViewContent.setText(string);
         mTextViewContent.setMovementMethod(LinkMovementMethod.getInstance());
         mTextViewTitle.setText(caption.getTitle());
@@ -187,7 +192,7 @@ public class CaptionsView extends LinearLayout {
 
             @Override
             public void onClick(View arg0) {
-                Log.v("haokan", "mTextViewContent onClick " + arg0.getId());
+                DebugLog.d("haokan", "mTextViewContent onClick " + arg0.getId());
                 if (mClickLink) {
                     mClickLink = false;
                     return;
@@ -313,8 +318,8 @@ public class CaptionsView extends LinearLayout {
                 Keyframe.ofFloat(.399828f, 6f), 
                 Keyframe.ofFloat(.571061f, -3f), 
                 Keyframe.ofFloat(.714041f, 0.5f), 
-                Keyframe.ofFloat(.857020f, -1f),
-                Keyframe.ofFloat(.927020f, 0.2f),
+//                Keyframe.ofFloat(.857020f, -1f),
+//                Keyframe.ofFloat(.927020f, 0.2f),
                 Keyframe.ofFloat(1f, 0f) 
                 
         );  
@@ -348,7 +353,7 @@ public class CaptionsView extends LinearLayout {
         ObjectAnimator animatorTitle = ObjectAnimator.ofFloat(mTextViewTitle, "translationX", 2 * translationX , 0).setDuration(500);
         
         ObjectAnimator animationDate = ObjectAnimator.ofPropertyValuesHolder(date, pvhdate).setDuration(1168);
-        ObjectAnimator animationTime = ObjectAnimator.ofPropertyValuesHolder(time, pvhtime).setDuration(1168);
+        ObjectAnimator animationTime = ObjectAnimator.ofPropertyValuesHolder(time, pvhtime).setDuration(968);
         
         final View playerLayout = UIController.getInstance().getmLayoutPlayer();        
         animationTime.addUpdateListener(new AnimatorUpdateListener() {

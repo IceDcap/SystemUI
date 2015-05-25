@@ -92,6 +92,7 @@ public class HKAgent {
     
     public static void onEventIMGShow(final Context context, final Wallpaper wallpaper) {
 //        onEvent(context, wallpaper.getImgId(), wallpaper.getCategory().getTypeId(), Event.IMG_SHOW);
+    	
         onEvent(context, new EventLogger(Common.currentTimeTime(), wallpaper.getImgId(), wallpaper
                 .getCategory().getTypeId(), Event.IMG_SHOW, 1, wallpaper.getUrlPv()));
  }

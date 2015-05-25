@@ -134,13 +134,12 @@ public class GnBrightnessController implements GnToggleSlider.Listener {
         mContext = context;
         mControl = control;
         mIcon = icon;
+        mIcon.setImageResource(R.drawable.gn_ic_qs_brightness_auto);
         mIcon.setOnClickListener(new OnClickListener() {
             
             @Override
             public void onClick(View v) {
             	GnYouJu.onEvent(mContext, "Amigo_SystemUI_CC", "mBrightnessIcon_Clicked");
-                int brightness = getBrightnessValue();
-                int brightnessLevel = getBrightnessLevel();
                 int brightnessMode = Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL;
                 
                 int oldBrightnessMode;
@@ -152,35 +151,14 @@ public class GnBrightnessController implements GnToggleSlider.Listener {
                 
                 if (mAutomatic) {
                     brightnessMode = Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL;
-                    brightness = mMinimumBacklight;
                 } else {
-                    if (brightnessLevel == mMinimumBacklight) {
-                        brightness = mDefaultBackLight;
-                    } else if (brightnessLevel == mDefaultBackLight) {
-                        brightness = mMaximumBacklight;
-                    } else {
-                        brightness = mMaximumBacklight;
-                        brightnessMode = Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC;
-                    }
+                    brightnessMode = Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC;
                 }
 
                 if (oldBrightnessMode != brightnessMode) {
                     Settings.System.putIntForUser(mContext.getContentResolver(),
                             Settings.System.SCREEN_BRIGHTNESS_MODE, brightnessMode,
                             UserHandle.USER_CURRENT);
-                }
-                    
-                final int newBrightness = brightness;
-                if (brightnessMode == Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL) {
-                    setBrightness(newBrightness);
-                    
-//                    AsyncTask.execute(new Runnable() {
-//                        public void run() {
-                            Settings.System.putIntForUser(mContext.getContentResolver(),
-                                    Settings.System.SCREEN_BRIGHTNESS, newBrightness,
-                                    UserHandle.USER_CURRENT);
-//                        }
-//                    });
                 }
             }
         });
@@ -309,31 +287,10 @@ public class GnBrightnessController implements GnToggleSlider.Listener {
     private void updateIcon() {
 
         if (mAutomatic) {
-            mIcon.setImageResource(R.drawable.gn_ic_qs_brightness_auto);
+            mIcon.setBackgroundResource(R.drawable.gn_ic_qs_tile_bg_enable);
         } else {
-            int brightness = getBrightnessLevel();
-            
-            if (brightness == mMinimumBacklight) {                
-                mIcon.setImageResource(R.drawable.gn_ic_qs_brightness_low);
-            } else if (brightness == mMaximumBacklight) {
-                mIcon.setImageResource(R.drawable.gn_ic_qs_brightness_full);
-            } else {
-                mIcon.setImageResource(R.drawable.gn_ic_qs_brightness_middle);
-            }
+            mIcon.setBackgroundResource(R.drawable.gn_ic_qs_tile_bg_disable);
         }
-    }
-
-    private int getBrightnessLevel() {
-        int brightness = getBrightnessValue();
-        
-        if (brightness <= mMinimumBacklight) {
-            brightness = mMinimumBacklight;
-        } else if (brightness < mMaximumBacklight) {
-            brightness = mDefaultBackLight;
-        } else {
-            brightness = mMaximumBacklight;
-        }
-        return brightness;
     }
 
     private int getBrightnessValue() {

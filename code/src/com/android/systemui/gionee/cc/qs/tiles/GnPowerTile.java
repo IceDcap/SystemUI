@@ -22,8 +22,8 @@ public class GnPowerTile extends GnQSTile<GnQSTile.BooleanState> {
     
     private boolean mListening;
     
-    public GnPowerTile(Host host) {
-        super(host);
+    public GnPowerTile(Host host, String spec) {
+        super(host, spec);
     }
 
     @Override

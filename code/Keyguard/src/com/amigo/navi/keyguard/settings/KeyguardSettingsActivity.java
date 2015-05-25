@@ -34,16 +34,20 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
+
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amigo.navi.keyguard.DebugLog;
-import com.amigo.navi.keyguard.haokan.NicePicturesInit;
+import com.amigo.navi.keyguard.haokan.RequestNicePicturesFromInternet;
 import com.amigo.navi.keyguard.haokan.UIController;
 import com.amigo.navi.keyguard.haokan.analysis.Event;
 import com.amigo.navi.keyguard.haokan.analysis.HKAgent;
@@ -70,12 +74,14 @@ public class KeyguardSettingsActivity extends Activity {
     private TextView mDoubleDesktopLockFirstline;
     private TextView mDoubleDesktopLockSecondline;
     private Bitmap mWindowBackgroud;
+    
+    private TextView mGuideView; 
 
 	@Override
 	protected void onCreate(Bundle arg0) {
  
 		super.onCreate(arg0); 
-		
+	    getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
 		initView();
 		
 		UIController.getInstance().setKeyguardSettingsActivity(this);
@@ -96,13 +102,13 @@ public class KeyguardSettingsActivity extends Activity {
         }
 		
 		
-		setBlurBackground();
+		setBlurBackground();		
 		
-		
-		
+		guideEnterAnimation();
 
 	}
 	
+
 	@Override
     protected void onDestroy() {
         super.onDestroy();
@@ -125,7 +131,8 @@ public class KeyguardSettingsActivity extends Activity {
 	    mDoubleDesktopLockFirstline = (TextView)findViewById(R.id.double_desktop_lock_firstline);
 	    mDoubleDesktopLockSecondline = (TextView)findViewById(R.id.double_desktop_lock_secondline);
 	    mDoubleDesktopLock = (AmigoSwitch) findViewById(R.id.settings_switch_double_desktop_lock);
- 
+	    mGuideView = (TextView)findViewById(R.id.wallpaper_update_guide);
+
 	}
 	
 	private ArrayList<View> getViewGroup(){
@@ -187,7 +194,7 @@ public class KeyguardSettingsActivity extends Activity {
 	
 	
     private void initView() {
-    	LinearLayout view = (LinearLayout)LayoutInflater.from(this).inflate(
+    	RelativeLayout view = (RelativeLayout)LayoutInflater.from(this).inflate(
     			R.layout.keyguard_settings_view, null); 
 		setContentView(view);
 		findView();
@@ -270,7 +277,7 @@ public class KeyguardSettingsActivity extends Activity {
 	        		}
 	        		
 	        		HKAgent.onEventWallpaperUpdate(getApplicationContext(),Event.SETTING_UPDATE, KeyguardSettings.SWITCH_WALLPAPER_UPDATE_ON);
-					
+					RequestNicePicturesFromInternet.getInstance(getApplicationContext()).registerData();
 				}else{
 	        		saveConnectState(false);
 	        		HKAgent.onEventWallpaperUpdate(getApplicationContext(),Event.SETTING_UPDATE, KeyguardSettings.SWITCH_WALLPAPER_UPDATE_OFF);
@@ -300,7 +307,7 @@ public class KeyguardSettingsActivity extends Activity {
 				}else{
 	        		HKAgent.onEventOnlyWlan(getApplicationContext(),Event.SETTING_DOWNLOAD, KeyguardSettings.SWITCH_ONLY_WLAN_OFF);
 				}
-				NicePicturesInit.getInstance(getApplicationContext()).registerData();
+				RequestNicePicturesFromInternet.getInstance(getApplicationContext()).registerData();
 			}});
 
     }
@@ -357,9 +364,9 @@ public class KeyguardSettingsActivity extends Activity {
 					KeyguardSettings.setDialogAlertState(getApplicationContext(), isAlert);
 				}
 //				KeyguardSettings.setDialogAlertState(getApplicationContext(), !cbDontShowAgain.isChecked());
-				
+				KeyguardSettings.setEverOpened(getApplicationContext(), true);
+				guideExitAnimation();
 				saveConnectState(true);
-				NicePicturesInit.getInstance(getApplicationContext()).registerData();
 				dialog.dismiss();
 			}
 		}).setNegativeButton(R.string.dialog_cancle, new DialogInterface.OnClickListener() {
@@ -381,5 +388,79 @@ public class KeyguardSettingsActivity extends Activity {
 		networkDialog.setCanceledOnTouchOutside(false);
 	}   
     
+	// 壁纸更新引导动画
+	private void guideEnterAnimation() {
+		if (KeyguardSettings.getEverOpened(getApplicationContext())) {
+			return;
+		}
+		
+		mGuideView.setVisibility(View.VISIBLE);
+		
+	    AnimationSet set = new AnimationSet(true);  
+	    
+        Animation animation = new AlphaAnimation(0.0f, 1.0f);  
+        animation.setDuration(500);  
+        set.addAnimation(animation);  
+        animation = new ScaleAnimation(0, 1.0f, 0,
+				1.0f, Animation.RELATIVE_TO_SELF, 0.9f,
+				Animation.RELATIVE_TO_SELF, 1.0f); 
+        animation.setDuration(500);  
+        set.addAnimation(animation);  
+        set.setInterpolator(new OvershootInterpolator());
+        set.setStartOffset(KeyguardSettings.WALLPAPER_UPDATE_ANIMATION_DELAY);
+        set.setAnimationListener(new AnimationListener() {
+            
+            @Override
+            public void onAnimationStart(Animation arg0) {
+            	mGuideView.setVisibility(View.VISIBLE);
+            }
+            
+            @Override
+            public void onAnimationRepeat(Animation arg0) {
+                
+            }
+            
+            @Override
+            public void onAnimationEnd(Animation arg0) {
+                
+            }
+        });
+        mGuideView.startAnimation(set);
 
+	}
+
+	private void guideExitAnimation() {
+		if (View.VISIBLE == mGuideView.getVisibility()) {
+			
+		    AnimationSet set = new AnimationSet(true);  
+		    
+	        Animation animation = new AlphaAnimation(1.0f, 0.0f);  
+	        animation.setDuration(500);  
+	        set.addAnimation(animation);  
+	        animation = new ScaleAnimation(1.0f, 0, 1.0f,
+					0f, Animation.RELATIVE_TO_SELF, 0.9f,
+					Animation.RELATIVE_TO_SELF, 1.0f); 
+	        animation.setDuration(500);  
+	        set.addAnimation(animation);  
+	        set.setInterpolator(new OvershootInterpolator());
+	        set.setAnimationListener(new AnimationListener() {
+	            
+	            @Override
+	            public void onAnimationStart(Animation arg0) {
+	            }
+	            
+	            @Override
+	            public void onAnimationRepeat(Animation arg0) {
+	                
+	            }
+	            
+	            @Override
+	            public void onAnimationEnd(Animation arg0) {	    			
+	    			mGuideView.setVisibility(View.INVISIBLE);
+	            }
+	        });
+	        mGuideView.startAnimation(set);
+
+		}
+	}
 }

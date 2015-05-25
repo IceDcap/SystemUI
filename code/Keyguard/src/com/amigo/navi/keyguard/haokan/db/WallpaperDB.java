@@ -14,6 +14,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.wifi.WpsInfo;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -59,40 +60,74 @@ public class WallpaperDB extends BaseDB{
      * @param list
      * @param db
      */
-    private synchronized void insertWallpapersNoTransaction(WallpaperList list) {
+    private  synchronized  void insertWallpapersNoTransaction(WallpaperList list) {
         final SQLiteDatabase db = mWritableDatabase;
         int index = 1;
         for (Wallpaper wallpaper : list) {
-            ContentValues values = new ContentValues();
-            
-            values.put(DataConstant.WallpaperColumns.TYPE_ID, wallpaper.getCategory().getTypeId());
-            values.put(DataConstant.WallpaperColumns.TYPE_NAME, wallpaper.getCategory().getTypeName());
-            values.put(DataConstant.WallpaperColumns.IMG_ID, wallpaper.getImgId());
-            values.put(DataConstant.WallpaperColumns.IMG_NAME, wallpaper.getImgName());
-            values.put(DataConstant.WallpaperColumns.IMG_CONTENT, wallpaper.getImgContent());
-            values.put(DataConstant.WallpaperColumns.IMG_SOURCE, wallpaper.getImgSource());
-            values.put(DataConstant.WallpaperColumns.IMG_URL, wallpaper.getImgUrl());
-            values.put(DataConstant.WallpaperColumns.URL_CLICK, wallpaper.getUrlClick());
-            values.put(DataConstant.WallpaperColumns.START_TIME, wallpaper.getStartTime());
-            values.put(DataConstant.WallpaperColumns.END_TIME, wallpaper.getEndTime());
-            values.put(DataConstant.WallpaperColumns.URL_PV, wallpaper.getUrlPv());
-            values.put(DataConstant.WallpaperColumns.ISADVERT, wallpaper.getIsAdvert());
-            values.put(DataConstant.WallpaperColumns.BACKGROUND_COLOR, wallpaper.getBackgroundColor());
-            values.put(DataConstant.WallpaperColumns.MUSIC_ID, wallpaper.getMusic().getMusicId());
-            values.put(DataConstant.WallpaperColumns.MUSIC_NAME, wallpaper.getMusic().getmMusicName());
-            values.put(DataConstant.WallpaperColumns.MUSIC_SINGER, wallpaper.getMusic().getmArtist());
-            values.put(DataConstant.WallpaperColumns.MUSIC_URL, wallpaper.getMusic().getPlayerUrl());
-            values.put(DataConstant.WallpaperColumns.DATE, wallpaper.getDate());
-            values.put(DataConstant.WallpaperColumns.FESTIVAL, wallpaper.getFestival());
-            values.put(DataConstant.WallpaperColumns.TODAY_IMAGE,DataConstant.TODAY_IMAGE);
-            values.put(DataConstant.WallpaperColumns.REAL_ORDER, index);
-            values.put(DataConstant.WallpaperColumns.SHOW_ORDER, index);
-            values.put(DataConstant.WallpaperColumns.SHOW_TIME_BEGIN, wallpaper.getShowTimeBegin());
-            values.put(DataConstant.WallpaperColumns.SHOW_TIME_END, wallpaper.getShowTimeEnd());
+            ContentValues values = getContentValue(index, wallpaper);
             long id = db.insert(DataConstant.TABLE_WALLPAPER, null, values);
             index++;
         }
     }
+
+    public void replaceWallpapers(WallpaperList list) {
+        final SQLiteDatabase db = mWritableDatabase;
+        db.beginTransaction();
+        replaceWallpapersNoTransaction(list);
+        db.setTransactionSuccessful();  
+        db.endTransaction();  
+        
+    }
+
+    
+    private void replaceWallpapersNoTransaction(WallpaperList list) {
+        final SQLiteDatabase db = mWritableDatabase;
+        int index = 1;
+        for (Wallpaper wallpaper : list) {
+            ContentValues values = getContentValue(index, wallpaper);
+            long id = db.replace(DataConstant.TABLE_WALLPAPER, null, values);
+            index++;
+        }
+    }
+
+	private ContentValues getContentValue(int index, Wallpaper wallpaper) {
+		ContentValues values = new ContentValues();
+		
+		values.put(DataConstant.WallpaperColumns.TYPE_ID, wallpaper.getCategory().getTypeId());
+		values.put(DataConstant.WallpaperColumns.TYPE_NAME, wallpaper.getCategory().getTypeName());
+		values.put(DataConstant.WallpaperColumns.IMG_ID, wallpaper.getImgId());
+		values.put(DataConstant.WallpaperColumns.IMG_NAME, wallpaper.getImgName());
+		values.put(DataConstant.WallpaperColumns.IMG_CONTENT, wallpaper.getImgContent());
+		values.put(DataConstant.WallpaperColumns.IMG_SOURCE, wallpaper.getImgSource());
+		values.put(DataConstant.WallpaperColumns.IMG_URL, wallpaper.getImgUrl());
+		values.put(DataConstant.WallpaperColumns.URL_CLICK, wallpaper.getUrlClick());
+		values.put(DataConstant.WallpaperColumns.START_TIME, wallpaper.getStartTime());
+		values.put(DataConstant.WallpaperColumns.END_TIME, wallpaper.getEndTime());
+		values.put(DataConstant.WallpaperColumns.URL_PV, wallpaper.getUrlPv());
+		values.put(DataConstant.WallpaperColumns.ISADVERT, wallpaper.getIsAdvert());
+		values.put(DataConstant.WallpaperColumns.BACKGROUND_COLOR, wallpaper.getBackgroundColor());
+		if(wallpaper.getMusic() != null){
+			values.put(DataConstant.WallpaperColumns.MUSIC_ID, wallpaper.getMusic().getMusicId());
+			values.put(DataConstant.WallpaperColumns.MUSIC_NAME, wallpaper.getMusic().getmMusicName());
+			values.put(DataConstant.WallpaperColumns.MUSIC_SINGER, wallpaper.getMusic().getmArtist());
+			values.put(DataConstant.WallpaperColumns.MUSIC_URL, wallpaper.getMusic().getPlayerUrl());
+		}
+		values.put(DataConstant.WallpaperColumns.DATE, wallpaper.getDate());
+		values.put(DataConstant.WallpaperColumns.FESTIVAL, wallpaper.getFestival());
+		values.put(DataConstant.WallpaperColumns.TODAY_IMAGE,DataConstant.TODAY_IMAGE);
+		values.put(DataConstant.WallpaperColumns.REAL_ORDER, index);
+		values.put(DataConstant.WallpaperColumns.SHOW_ORDER, index);
+		values.put(DataConstant.WallpaperColumns.SHOW_TIME_BEGIN, wallpaper.getShowTimeBegin());
+		values.put(DataConstant.WallpaperColumns.SHOW_TIME_END, wallpaper.getShowTimeEnd());
+		if(wallpaper.isLocked()){
+			values.put(DataConstant.WallpaperColumns.LOCK,1);
+		}else{
+			values.put(DataConstant.WallpaperColumns.LOCK,0);
+		}
+		values.put(DataConstant.WallpaperColumns.SAVE_TYPE, wallpaper.getType());
+		values.put(DataConstant.WallpaperColumns.DOWNLOAD_PICTURE, wallpaper.getDownloadFinish());
+		return values;
+	}
     
     public void addMusicLocalPath(Music music) {
 
@@ -334,14 +369,14 @@ public class WallpaperDB extends BaseDB{
         return wallpaper;
     }
     
-    public synchronized void deleteAllExcludeLock() {
+    public synchronized  void deleteAllExcludeLock() {
         final SQLiteDatabase db = mWritableDatabase;
         String sql = "delete from wallpaper where " + DataConstant.WallpaperColumns.LOCK +
                 " = " + DataConstant.WALLPAPER_NOT_LOCK;
         db.execSQL(sql);
     }
     
-    public synchronized void insertAfterDeleteAll(WallpaperList list){
+    public synchronized  void insertAfterDeleteAll(WallpaperList list){
         DebugLog.d(TAG,"insertAfterDeleteAll 1");         
         final SQLiteDatabase db = mWritableDatabase;
         db.beginTransaction();
@@ -365,13 +400,21 @@ public class WallpaperDB extends BaseDB{
     }
     
     public void updateDownLoadFinish(Wallpaper wallpaper){
-        final SQLiteDatabase db = mWritableDatabase;
+        updateDownLoadState(wallpaper,DataConstant.DOWN_FINISH);
+    }
+
+    public void updateDownLoadNotFinish(Wallpaper wallpaper){
+        updateDownLoadState(wallpaper,DataConstant.DOWN_NOT_FINISH);
+    }
+
+	private void updateDownLoadState(Wallpaper wallpaper,int state) {
+		final SQLiteDatabase db = mWritableDatabase;
         ContentValues values = new ContentValues();
-        values.put(IS_FINISH, DataConstant.DOWN_FINISH);
+        values.put(IS_FINISH, state);
         db.update(TABLE_NAME, values, "img_id = ?", new String[] {
                 String.valueOf(wallpaper.getImgId())
         });
-    }
+	}
     
  
     public void updateNotTodayImg(){
@@ -444,7 +487,7 @@ public class WallpaperDB extends BaseDB{
         }
     }
     
-    public synchronized void deleteWallpaperNotTodayAndNotLock(){
+    public  synchronized   void deleteWallpaperNotTodayAndNotLock(){
         final SQLiteDatabase db = mWritableDatabase;
         String sql = "delete from wallpaper where " + DataConstant.WallpaperColumns.LOCK +
                 " = " + DataConstant.WALLPAPER_NOT_LOCK + " and " + DataConstant.WallpaperColumns.TODAY_IMAGE
@@ -462,7 +505,7 @@ public class WallpaperDB extends BaseDB{
         });
     }
     
-    public synchronized void clearLock(){
+    public  synchronized   void clearLock(){
         final SQLiteDatabase db = mWritableDatabase;
         ContentValues values = new ContentValues();
         values.put(DataConstant.WallpaperColumns.LOCK, DataConstant.WALLPAPER_NOT_LOCK);
@@ -481,16 +524,16 @@ public class WallpaperDB extends BaseDB{
     
     public   Wallpaper queryDynamicShowWallpaper(String timeNow){
         final SQLiteDatabase db = mReadableDatabase;
-        String sqlCurrentTime = "select * from " + TABLE_NAME + " where strftime('%H%M'," + 
-                DataConstant.WallpaperColumns.SHOW_TIME_BEGIN + ")<=strftime('%H%M','" + timeNow + 
-                "') and strftime('%H%M'," + DataConstant.WallpaperColumns.SHOW_TIME_END + ")>strftime('%H%M','" + timeNow + 
-                "') order by strftime('%H%M'," + DataConstant.WallpaperColumns.SHOW_TIME_BEGIN + ") asc Limit 1 Offset 0";
-        String sqlPreTime = "select * from " + TABLE_NAME + " where strftime('%H%M'," + 
-                DataConstant.WallpaperColumns.SHOW_TIME_END + ")<=strftime('%H%M','" + timeNow +     
-                "') order by strftime('%H%M'," + DataConstant.WallpaperColumns.SHOW_TIME_END + ") desc Limit 1 Offset 0";
-        String sqlNextTime = "select * from " + TABLE_NAME + " where strftime('%H%M'," + 
-                DataConstant.WallpaperColumns.SHOW_TIME_BEGIN + ")>=strftime('%H%M','" + timeNow +     
-                "') order by strftime('%H%M'," + DataConstant.WallpaperColumns.SHOW_TIME_BEGIN + ") asc Limit 1 Offset 0";
+        String sqlCurrentTime = "select * from " + TABLE_NAME + " where " + 
+                DataConstant.WallpaperColumns.SHOW_TIME_BEGIN + "<='" + timeNow + 
+                "' and " + DataConstant.WallpaperColumns.SHOW_TIME_END + ">'" + timeNow + 
+                "' order by " + DataConstant.WallpaperColumns.SHOW_TIME_BEGIN + " asc Limit 1 Offset 0";
+        String sqlPreTime = "select * from " + TABLE_NAME + " where " + 
+                DataConstant.WallpaperColumns.SHOW_TIME_END + "<='" + timeNow +     
+                "' order by " + DataConstant.WallpaperColumns.SHOW_TIME_END + " desc Limit 1 Offset 0";
+        String sqlNextTime = "select * from " + TABLE_NAME + " where " + 
+                DataConstant.WallpaperColumns.SHOW_TIME_BEGIN + ">='" + timeNow +     
+                "' order by " + DataConstant.WallpaperColumns.SHOW_TIME_BEGIN + " asc Limit 1 Offset 0";
         DebugLog.d(TAG,"queryDynamicShowWallpaper sqlCurrentTime:" + sqlCurrentTime);
         DebugLog.d(TAG,"queryDynamicShowWallpaper sqlPreTime:" + sqlPreTime);
         DebugLog.d(TAG,"queryDynamicShowWallpaper sqlNextTime:" + sqlNextTime);
@@ -532,10 +575,27 @@ public class WallpaperDB extends BaseDB{
         return null;
     }
     
+    public boolean queryHasDownLoadImage(){
+        final SQLiteDatabase db = mReadableDatabase;
+        Cursor cursor = db.rawQuery("select * from wallpaper where " +
+        DataConstant.WallpaperColumns.DOWNLOAD_PICTURE + " = ?",new String[] {
+                String.valueOf(DataConstant.DOWN_FINISH)
+            });
+        if(cursor != null){
+        	if(cursor.getCount() > 0){
+                closeCursor(cursor);
+        		return true;
+        	}
+        }
+        closeCursor(cursor);
+        return false;
+    }
+    
     private void closeCursor(Cursor cursor){
         if(cursor != null){
             cursor.close();
         }
     }
+    
     
 }

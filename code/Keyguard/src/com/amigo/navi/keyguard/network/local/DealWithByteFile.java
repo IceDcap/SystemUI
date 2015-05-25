@@ -1,15 +1,13 @@
 package com.amigo.navi.keyguard.network.local;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.KWDataCache;
 import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 
 public class DealWithByteFile{
     private static final String TAG = "DealWithBitmapFromLocal";
@@ -25,10 +23,10 @@ public class DealWithByteFile{
         mScreenWid = KWDataCache.getScreenWidth(context.getResources());
     }
     
-    public Object readFromLocal(String key) {
+    public Bitmap readFromLocal(String key) {
         DebugLog.d(TAG,"readFromLocal url:" + key);
         String file = mPath + File.separator + mFolderName + File.separator + key;
-        Object bitmap = DiskUtils.readFile(file,mScreenWid);
+        Bitmap bitmap = DiskUtils.readFile(file,mScreenWid);
         return bitmap;
     }
 

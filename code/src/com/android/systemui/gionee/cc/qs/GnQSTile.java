@@ -27,6 +27,7 @@ import com.android.systemui.gionee.cc.qs.policy.GnRotationLockController;
 import com.android.systemui.gionee.cc.qs.policy.GnWifiController;
 import com.android.systemui.statusbar.policy.Listenable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -45,9 +46,10 @@ public abstract class GnQSTile<TState extends State> implements Listenable {
     protected final Context mContext;
     protected final H mHandler;
     protected final Handler mUiHandler = new Handler(Looper.getMainLooper());
+    protected final String mSpec;
 
-    private Callback mCallback;
-    protected final TState mState = newTileState();
+    private ArrayList<Callback> mCallback = new ArrayList<Callback>();
+    public final TState mState = newTileState();
     private final TState mTmpState = newTileState();
     private boolean mAnnounceNextStateChange;
 
@@ -58,8 +60,9 @@ public abstract class GnQSTile<TState extends State> implements Listenable {
     
     public StatusBarManager mService;
 
-    protected GnQSTile(Host host) {
+    protected GnQSTile(Host host, String spec) {
         mHost = host;
+        mSpec = spec;
         mContext = host.getContext();
         mHandler = new H(host.getLooper());
         mService = (StatusBarManager)mContext.getSystemService(Context.STATUS_BAR_SERVICE);
@@ -72,9 +75,17 @@ public abstract class GnQSTile<TState extends State> implements Listenable {
     public Host getHost() {
         return mHost;
     }
-
-    public GnQSTileView createTileView(Context context, GnControlCenterPanel panel) {
-        return new GnQSTileView(context, panel);
+    
+    public String getSpec() {
+        return mSpec;
+    }
+    
+    public GnQSBoolTileView createTileView(Context context) {
+        return new GnQSBoolTileView(context);
+    }
+    
+    public GnQSAnimTileView createAnimTileView(Context context) {
+        return new GnQSAnimTileView(context);
     }
 
     public void setCallback(Callback callback) {
@@ -93,7 +104,7 @@ public abstract class GnQSTile<TState extends State> implements Listenable {
         mHandler.obtainMessage(H.SHOW_DETAIL, show ? 1 : 0, 0).sendToTarget();
     }
 
-    protected final void refreshState() {
+    public final void refreshState() {
         refreshState(null);
     }
 
@@ -117,13 +128,13 @@ public abstract class GnQSTile<TState extends State> implements Listenable {
         mHandler.sendEmptyMessage(H.DESTROY);
     }
 
-    public BooleanState getState() {
-        return (BooleanState) mState;
+    public TState getState() {
+        return mState;
     }
 
     // call only on tile worker looper
     private void handleSetCallback(Callback callback) {
-        mCallback = callback;
+        mCallback.add(callback);
         handleRefreshState(null);
     }
 
@@ -141,15 +152,10 @@ public abstract class GnQSTile<TState extends State> implements Listenable {
 
     private void handleStateChanged() {
         boolean delayAnnouncement = shouldAnnouncementBeDelayed();
-        if (mCallback != null) {
-            mCallback.onStateChanged((BooleanState)mState);
-            if (mAnnounceNextStateChange && !delayAnnouncement) {
-                String announcement = composeChangeAnnouncement();
-                if (announcement != null) {
-                    mCallback.onAnnouncementRequested(announcement);
-                }
-            }
+        for (Callback callback : mCallback) {
+            callback.onStateChanged(mState);
         }
+        
         mAnnounceNextStateChange = mAnnounceNextStateChange && delayAnnouncement;
     }
 
@@ -167,7 +173,7 @@ public abstract class GnQSTile<TState extends State> implements Listenable {
 
     protected void handleDestroy() {
         setListening(false);
-        mCallback = null;
+        mCallback.clear();
     }
 
     protected final class H extends Handler {
@@ -224,8 +230,7 @@ public abstract class GnQSTile<TState extends State> implements Listenable {
     }
 
     public interface Callback {
-        void onStateChanged(BooleanState state);
-        void onAnnouncementRequested(CharSequence announcement);
+        void onStateChanged(State state);
     }
 
     public interface Host {
@@ -233,6 +238,7 @@ public abstract class GnQSTile<TState extends State> implements Listenable {
         void startSettingsActivity(Intent intent, int delay);
         void warn(String message, Throwable t);
         void collapsePanels();
+        void openMoreView();
         Looper getLooper();
         Context getContext();
         Collection<GnQSTile<?>> getTiles();
@@ -316,6 +322,29 @@ public abstract class GnQSTile<TState extends State> implements Listenable {
         protected StringBuilder toStringBuilder() {
             final StringBuilder rt = super.toStringBuilder();
             rt.insert(rt.length() - 1, ",value=" + value);
+            return rt;
+        }
+    }
+    
+    public static class AnimBooleanState extends State {
+        public boolean value;
+        public boolean animating;
+
+        @Override
+        public boolean copyTo(State other) {
+            final AnimBooleanState o = (AnimBooleanState) other;
+            final boolean changed = super.copyTo(other) || o.value != value
+                    || o.animating != animating;
+            o.value = value;
+            o.animating = animating;
+            return changed;
+        }
+
+        @Override
+        protected StringBuilder toStringBuilder() {
+            final StringBuilder rt = super.toStringBuilder();
+            rt.insert(rt.length() - 1, ",value=" + value);
+            rt.insert(rt.length() - 1, ",animating=" + animating);
             return rt;
         }
     }

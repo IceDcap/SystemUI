@@ -25,6 +25,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amigo.navi.keyguard.haokan.CaptionsView;
+import com.amigo.navi.keyguard.haokan.Common;
 import com.amigo.navi.keyguard.haokan.PlayerButton;
 import com.amigo.navi.keyguard.haokan.UIController;
 import com.amigo.navi.keyguard.modules.AmigoBatteryStatus;
@@ -169,6 +170,7 @@ public class AmigoKeyguardPage extends RelativeLayout {
         controller.setmTextViewTip(textViewTip);
         controller.setmTextViewMusicName(musicName);
         controller.setmTextViewArtist(musicArtist);
+        controller.setHaoKanLayout(mHaoKanLayout);
         playerButton.setOnClickListener(new OnClickListener() {
             
             @Override
@@ -179,6 +181,10 @@ public class AmigoKeyguardPage extends RelativeLayout {
         PlayerManager.getInstance().setPlayerButton(playerButton);
         PlayerManager.getInstance().init(getContext().getApplicationContext());
         addView(mHaoKanLayout, params);
+        
+        if (Common.isPowerSaverMode()) {
+            mHaoKanLayout.setVisibility(GONE);
+        }
         
     }
 	

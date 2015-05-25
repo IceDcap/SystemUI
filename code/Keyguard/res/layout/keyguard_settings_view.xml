@@ -1,43 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:clipChildren="false"
+    android:orientation="vertical"
     android:paddingLeft="@dimen/settings_paddingleft"
     android:paddingRight="@dimen/settings_paddingright" >
- 
 
- 
+    <TextView
+        android:id="@+id/wallpaper_update_guide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/settings_guide_marginright"
+        android:layout_marginTop="@dimen/settings_guide_margintop"
+        android:background="@drawable/haokan_wallpaper_update_guide_bg"
+        android:paddingLeft="@dimen/settings_guide_text_padding_h"
+        android:paddingRight="@dimen/settings_guide_text_padding_h"
+        android:paddingTop="@dimen/settings_guide_text_padding_top"
+        android:shadowColor="#000000"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="2"
+        android:text="@string/haokan_wallpaper_update_guide_text"
+        android:textColor="@color/keyguard_setting_guide_textcolor"
+        android:textSize="@dimen/settings_guide_textsize"
+        android:visibility="invisible" />
 
-        <TextView
-            android:visibility="invisible"
-            android:id="@+id/setting_title"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/settings_titlebar_height"
-            android:gravity="center_vertical"
-            android:text="@string/settings"
-            android:textColor="@color/keyguard_setting_titlebar_color"
-            android:textSize="@dimen/settings_titlebar_textsize" />
-    
+    <TextView
+        android:id="@+id/setting_title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/settings_titlebar_height"
+        android:gravity="center_vertical"
+        android:text="@string/settings"
+        android:textColor="@color/keyguard_setting_titlebar_color"
+        android:textSize="@dimen/settings_titlebar_textsize"
+        android:visibility="invisible" />
 
- 
-
-        <amigo.widget.AmigoTextView
-            android:visibility="invisible"
-            android:id="@+id/wallpaper_update_title"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/settings_title_height"
-            android:gravity="bottom"
-            android:text="@string/preference_wallpaper_update"
-            android:textColor="@color/keyguard_setting_title_color"
-            android:textSize="@dimen/settings_title_textsize" />
-        
-   
+    <amigo.widget.AmigoTextView
+        android:id="@+id/wallpaper_update_title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/settings_title_height"
+        android:layout_below="@id/setting_title"
+        android:gravity="bottom"
+        android:text="@string/preference_wallpaper_update"
+        android:textColor="@color/keyguard_setting_title_color"
+        android:textSize="@dimen/settings_title_textsize"
+        android:visibility="invisible" />
 
     <LinearLayout
+        android:id="@+id/wallpaper_update_layout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/settings_body_height"
+        android:layout_below="@id/wallpaper_update_title"
         android:clipChildren="false"
         android:orientation="horizontal" >
 
@@ -49,47 +64,46 @@
             android:orientation="vertical" >
 
             <TextView
-                android:visibility="invisible"
                 android:id="@+id/wallpaper_update_firstline"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/settings_body_firstline_height"
                 android:gravity="bottom"
                 android:text="@string/preference_wallpaper_update"
                 android:textColor="@color/keyguard_setting_firstline_color"
-                android:textSize="@dimen/settings_body_firstline_textsize" />
-           
+                android:textSize="@dimen/settings_body_firstline_textsize"
+                android:visibility="invisible" />
 
             <TextView
-                android:visibility="invisible"
                 android:id="@+id/wallpaper_update_secondline"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/settings_body_secondline_height"
                 android:gravity="center_vertical"
                 android:text="@string/preference_wallpaper_update_summary"
                 android:textColor="@color/keyguard_setting_secondline_color"
-                android:textSize="@dimen/settings_body_secondline_textsize"/>
-            
+                android:textSize="@dimen/settings_body_secondline_textsize"
+                android:visibility="invisible" />
         </LinearLayout>
 
         <amigo.widget.AmigoSwitch
-            android:visibility="invisible"
             android:id="@+id/settings_switch_wallpaper_update"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical|right"
             android:layout_marginRight="@dimen/settings_switch_marginright"
-            android:layout_weight="4" />
+            android:layout_weight="4"
+            android:visibility="invisible" />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/only_wlan_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/wallpaper_update_layout"
         android:clipChildren="false"
         android:gravity="center_vertical"
         android:orientation="horizontal" >
 
         <TextView
-            android:visibility="invisible"
             android:id="@+id/only_wlan_firstline"
             android:layout_width="match_parent"
             android:layout_height="@dimen/settings_body_height"
@@ -97,46 +111,44 @@
             android:gravity="center_vertical"
             android:text="@string/preference_only_wlan"
             android:textColor="@color/keyguard_setting_firstline_color"
-            android:textSize="@dimen/settings_body_firstline_textsize" />
+            android:textSize="@dimen/settings_body_firstline_textsize"
+            android:visibility="invisible" />
 
         <amigo.widget.AmigoSwitch
-            android:visibility="invisible"
             android:id="@+id/settings_switch_only_wlan"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical|right"
             android:layout_marginRight="@dimen/settings_switch_marginright"
-            android:layout_weight="4" />
+            android:layout_weight="4"
+            android:visibility="invisible" />
     </LinearLayout>
 
-   
+    <View
+        android:id="@+id/settings_divider"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/settings_line_height"
+        android:layout_below="@id/only_wlan_layout"
+        android:layout_gravity="right"
+        android:background="@color/keyguard_setting_line_color"
+        android:visibility="invisible" />
 
-        <View
-            android:visibility="invisible"
-            android:id="@+id/settings_divider"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/settings_line_height"
-            android:layout_gravity="right"
-            android:background="@color/keyguard_setting_line_color" />
-  
-
-   
-
-        <amigo.widget.AmigoTextView
-            android:visibility="invisible"
-            android:id="@+id/double_desktop_lock_title"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/settings_title_height"
-            android:gravity="bottom"
-            android:text="@string/preference_double_desktop_lock_title"
-            android:textColor="@color/keyguard_setting_title_color"
-            android:textSize="@dimen/settings_title_textsize" />
-         
+    <amigo.widget.AmigoTextView
+        android:id="@+id/double_desktop_lock_title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/settings_title_height"
+        android:layout_below="@id/settings_divider"
+        android:gravity="bottom"
+        android:text="@string/preference_double_desktop_lock_title"
+        android:textColor="@color/keyguard_setting_title_color"
+        android:textSize="@dimen/settings_title_textsize"
+        android:visibility="invisible" />
 
     <LinearLayout
-        android:clipChildren="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/double_desktop_lock_title"
+        android:clipChildren="false"
         android:orientation="horizontal" >
 
         <LinearLayout
@@ -147,36 +159,33 @@
             android:orientation="vertical" >
 
             <TextView
-                android:visibility="invisible"
                 android:id="@+id/double_desktop_lock_firstline"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/settings_body_firstline_height"
-                android:text="@string/preference_double_desktop_lock"
                 android:gravity="bottom"
+                android:text="@string/preference_double_desktop_lock"
                 android:textColor="@color/keyguard_setting_firstline_color"
-                android:textSize="@dimen/settings_body_firstline_textsize" />
-            <!--                 android:paddingBottom="@dimen/settings_body_firstline_paddingbottom"
-                android:paddingTop="@dimen/settings_body_firstline_paddingtop" -->
+                android:textSize="@dimen/settings_body_firstline_textsize"
+                android:visibility="invisible" />
 
             <TextView
-                android:visibility="invisible"
                 android:id="@+id/double_desktop_lock_secondline"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/settings_body_secondline_height"
                 android:gravity="center_vertical"
                 android:textColor="@color/keyguard_setting_secondline_color"
-                android:textSize="@dimen/settings_body_secondline_textsize"/>
-            <!--                 android:paddingBottom="@dimen/settings_body_secondline_paddingbottom" -->
+                android:textSize="@dimen/settings_body_secondline_textsize"
+                android:visibility="invisible" />
         </LinearLayout>
 
         <amigo.widget.AmigoSwitch
-            android:visibility="invisible"
             android:id="@+id/settings_switch_double_desktop_lock"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical|right"
             android:layout_marginRight="@dimen/settings_switch_marginright"
-            android:layout_weight="4" />
+            android:layout_weight="4"
+            android:visibility="invisible" />
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>

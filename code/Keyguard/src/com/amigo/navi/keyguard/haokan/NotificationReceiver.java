@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.amigo.navi.keyguard.DebugLog;
+
 
 public class NotificationReceiver extends BroadcastReceiver {
 
@@ -22,7 +24,7 @@ public class NotificationReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         
         String action = intent.getAction();
-        Log.v(TAG, "intent.getAction() = " + action);
+        DebugLog.d(TAG, "intent.getAction() = " + action);
         if (ACTION_MUSIC_CLOSE.equals(action)) {
             PlayerManager.getInstance().closeNotificationAndMusic();
         }else if (ACTION_PLAYER_OR_PAUSE.equals(action)) {

@@ -766,7 +766,6 @@ public class AmigoMSimCarrierLayout extends LinearLayout {
         boolean isCmccRom = "cmcc".equals(customMadeRom); 
         boolean isCuccRom = "cucc".equals(customMadeRom); 
         boolean isCtccRom = "ctcc".equals(customMadeRom);
-        mIsCustomMade=true;
         if (isCmccRom||isCuccRom||isCtccRom) {
             mIsCustomMade=true;
         } 

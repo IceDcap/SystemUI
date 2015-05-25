@@ -25,8 +25,8 @@ public class GnAlarmTile extends GnQSTile<GnQSTile.BooleanState> {
     private GnNextAlarmController mControler;
     // private AlarmManager.AlarmClockInfo mNextAlarm;
     
-    public GnAlarmTile(Host host) {
-        super(host);
+    public GnAlarmTile(Host host, String spec) {
+        super(host, spec);
         
         mControler = host.getGnNextAlarmController();
     }

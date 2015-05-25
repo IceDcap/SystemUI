@@ -54,13 +54,6 @@
     <dimen name="gn_fc_sms_reject_size">15sp</dimen>
     <dimen name="gn_fc_calling_text_margin_top">40dp</dimen>
     
-    <!-- Control center -->
-    <dimen name="gn_cc_height">364dp</dimen>
-    
-    <!-- Control center immerse mode -->
-    <dimen name="gn_cc_immerse_width">72dp</dimen>
-    <dimen name="gn_cc_immerse_height">30dp</dimen>
-    
     <!-- The font size for the clock -->
     <dimen name="gn_status_bar_clock_size">13sp</dimen>
     

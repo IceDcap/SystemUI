@@ -44,4 +44,18 @@ public class KeyguardListView extends HorizontalListView {
       return null;
     }
     
+    public Object getCurrentItemWhenMove(){
+    	int page = 0;
+    	DebugLog.d(TAG,"getPageWhenMoving isBeginScroll:" + isBeginScroll);
+    	if(isBeginScroll){
+    		page = getPageWhenMoving();
+    	}else{
+    		page = getPage();
+    	}
+    	DebugLog.d(TAG,"getPageWhenMoving page:" + page);
+        if(page >= 0 && mAdapter.getCount() > 0){
+            return mAdapter.getItem(page);
+        }
+      return null;
+    }
 }

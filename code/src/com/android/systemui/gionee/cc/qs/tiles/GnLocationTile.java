@@ -20,8 +20,8 @@ public class GnLocationTile extends GnQSTile<GnQSTile.BooleanState> {
     private final GnLocationController mController;
     private final Callback mCallback = new Callback();
 
-    public GnLocationTile(Host host) {
-        super(host);
+    public GnLocationTile(Host host, String spec) {
+        super(host, spec);
         mController = host.getLocationController();
     }
 

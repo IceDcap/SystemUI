@@ -136,11 +136,13 @@ public class DiskUtils {
     }
 
     public static byte[] convertBitmap(Bitmap bmp){
+		 DebugLog.d(TAG,"convertBitmap 1");
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         bmp.compress(CompressFormat.JPEG, 100, output);
 //            bmp.recycle();//自由选择是否进行回收
         byte[] result = output.toByteArray();//转换成功了
         try {
+			DebugLog.d(TAG,"convertBitmap 2");
             output.close();
             return result;
         } catch (Exception e) {
@@ -256,7 +258,7 @@ public class DiskUtils {
     
     }  
  
-    public static Object readFile(String path,int screenWid){
+    public static Bitmap readFile(String path,int screenWid){
 		FileInputStream fis;
 		Bitmap bitmap = null;
 		try {
@@ -380,4 +382,21 @@ public class DiskUtils {
 	    
 	    }  
 		
+		public static boolean saveBitmap(Bitmap bt, String key,String path){
+			if(bt == null){
+				return false;
+			}
+			 // 保存文件   
+			try {
+				 DebugLog.d(TAG,"saveBitmap path:" + path);
+				 DebugLog.d(TAG,"saveBitmap key:" + key);
+				 byte[] bts = convertBitmap(bt);
+				 return saveBitmap(bts, key, path);
+			} catch (Exception e) {
+				DebugLog.d(TAG,"saveBitmap error");
+				e.printStackTrace();
+			}
+			return false;
+		}
+	    
 }
