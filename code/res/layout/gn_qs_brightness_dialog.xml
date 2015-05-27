@@ -16,14 +16,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:systemui="http://schemas.android.com/apk/res-auto"
     style="@style/BrightnessDialogContainer">
-
-    <com.android.systemui.gionee.cc.qs.brightness.GnToggleSlider
-        android:id="@+id/brightness_slider"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_weight="1"
-        systemui:text="@string/status_bar_settings_auto_brightness_label" />
     
     <ImageView
         android:id="@+id/brightness_icon"
@@ -34,7 +26,15 @@
         android:background="@drawable/gn_ic_qs_tile_bg_disable"
         android:clickable="true"
         android:contentDescription="@null"
-        android:src="@drawable/gn_ic_qs_brightness_low"
+        android:src="@drawable/gn_ic_qs_brightness_auto_off"
         android:visibility="visible" />
+
+    <com.android.systemui.gionee.cc.qs.brightness.GnToggleSlider
+        android:id="@+id/brightness_slider"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        systemui:text="@string/status_bar_settings_auto_brightness_label" />
 
 </LinearLayout>

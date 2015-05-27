@@ -1445,8 +1445,9 @@ public class KeyguardViewMediator extends SystemUI {
     private void handleHide() {
         synchronized (KeyguardViewMediator.this) {
             if (DEBUG) Log.d(TAG, "handleHide  mShowing: "+mShowing+"  mOccluded: "+mOccluded+" mHideAnimationRun: "+mHideAnimationRun);
-
+            
             mHiding = true;
+            mStatusBarKeyguardViewManager.cancelFingerIdentify();
             if (mShowing && !mOccluded) {
                 if (!mHideAnimationRun) {
                     mStatusBarKeyguardViewManager.startPreHideAnimation(mKeyguardGoingAwayRunnable);

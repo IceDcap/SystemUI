@@ -271,10 +271,14 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
         if (deadline != 0) {
             handleAttemptLockout(deadline);
         } else {
+            resetFrozen();
         	resetMessage();
         }
     }
 
+    private void resetFrozen(){
+        isFrozen=false;
+    }
     
     private void resetMessage() {
     	int retryCount = getUnlokcRetryCount();
@@ -633,7 +637,6 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
 	}
 	@Override
 	public boolean isFrozen() {
-		// TODO Auto-generated method stub
 		return isFrozen;
 	}
     

@@ -9,6 +9,7 @@ import com.android.systemui.gionee.cc.qs.GnQSTileView;
 import com.android.systemui.gionee.cc.qs.tiles.GnMoreTile;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Rect;
 import android.os.Handler;
@@ -56,7 +57,7 @@ public class GnDragGridView extends ViewGroup {
     private int mDragPosition;
     private int mCurPosition;
     
-    private final int mColumns;
+    private int mColumns;
     private int mCellWidth;
     private int mCellHeight;
     private int mCellPaddingTop;
@@ -73,7 +74,9 @@ public class GnDragGridView extends ViewGroup {
             Log.d(TAG, "isDraging = true;");
             isDraging = true;
             mVibrator.vibrate(100);
-            mMoreTile.setVisibleState(true, false);
+            if (isPortrait()) {
+                mMoreTile.setVisibleState(true, false);
+            }
             requestLayout();
         }
     };
@@ -102,7 +105,7 @@ public class GnDragGridView extends ViewGroup {
         mVibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         
         final Resources res = mContext.getResources();
-        mColumns = Math.max(1, res.getInteger(R.integer.gn_quick_settings_num_columns));
+        mColumns = res.getInteger(R.integer.gn_quick_settings_num_columns);
         mCellWidth = res.getDimensionPixelSize(R.dimen.gn_qs_tile_width);
         mCellHeight = res.getDimensionPixelSize(R.dimen.gn_qs_tile_height);
         mCellPaddingTop = res.getDimensionPixelSize(R.dimen.gn_qs_more_tile_padding_top);
@@ -129,12 +132,30 @@ public class GnDragGridView extends ViewGroup {
     }
 
     @Override
+    protected void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Resources res = mContext.getResources();
+        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            mColumns = res.getInteger(R.integer.gn_quick_settings_num_columns);
+            mCellPaddingTitle = res.getDimensionPixelSize(R.dimen.gn_qs_more_tile_padding_title);
+            mCellPaddingTop = res.getDimensionPixelSize(R.dimen.gn_qs_more_tile_padding_top);
+        } else {
+            mColumns = res.getInteger(R.integer.gn_quick_settings_num_columns_land);
+            mCellPaddingTitle = res.getDimensionPixelSize(R.dimen.gn_qs_more_tile_padding_title_land);
+            mCellPaddingTop = res.getDimensionPixelSize(R.dimen.gn_qs_more_tile_padding_top_land);
+        }
+        
+        hideMoreView();
+    }
+
+    @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int witch = MeasureSpec.getSize(widthMeasureSpec);
         int height = MeasureSpec.getSize(heightMeasureSpec);
         
-        mShowLabel.measure(widthMeasureSpec, exactly(120));
-        mHideLabel.measure(widthMeasureSpec, exactly(120));
+        int labelHeight = getLableHeight(); 
+        mShowLabel.measure(widthMeasureSpec, exactly(labelHeight));
+        mHideLabel.measure(widthMeasureSpec, exactly(labelHeight));
         
         for (TileRecord record : mRecords) {
             if (record.tileView.getVisibility() == GONE) continue;
@@ -146,9 +167,17 @@ public class GnDragGridView extends ViewGroup {
         setMeasuredDimension(witch, height);
     }
 
+    private int getLableHeight() {
+        int labelHeight = mContext.getResources().getDimensionPixelSize(R.dimen.gn_qs_more_title_height);
+        if (isLandscape()) {
+            labelHeight = mContext.getResources().getDimensionPixelSize(R.dimen.gn_qs_more_title_height_land);
+        }
+        return labelHeight;
+    }
+
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        int hideTitleTop = mShowLabel.getMeasuredHeight() + 2 * (mCellHeight + mCellPaddingTop) + mCellPaddingTitle;
+        int hideTitleTop = getHideTitleTop();
         mShowLabel.layout(0, 0, mShowLabel.getMeasuredWidth(), mShowLabel.getMeasuredHeight());
         mHideLabel.layout(0, hideTitleTop, mHideLabel.getMeasuredWidth(), 
                 hideTitleTop + mHideLabel.getMeasuredHeight());
@@ -169,6 +198,22 @@ public class GnDragGridView extends ViewGroup {
                 row ++;
             }
         }
+    }
+
+    private int getHideTitleTop() {
+        if (isLandscape()) {
+            return mShowLabel.getMeasuredHeight() + mCellHeight + mCellPaddingTop + mCellPaddingTitle;
+        } else {
+            return mShowLabel.getMeasuredHeight() + 2 * (mCellHeight + mCellPaddingTop) + mCellPaddingTitle;
+        }
+    }
+
+    private boolean isLandscape() {
+        return mContext.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+    }
+    
+    private boolean isPortrait() {
+        return !isLandscape();
     }
     
     private void layoutTile(View view, int col, int row) {
@@ -221,11 +266,7 @@ public class GnDragGridView extends ViewGroup {
         int width = getWidth() - 2 * mPanelPaddingLeft;
         int extra = (width - view.getMeasuredWidth() * mColumns) / (mColumns - 1);
         rect.left = col * view.getMeasuredWidth() + extra * col + mPanelPaddingLeft;
-        rect.top = row * (view.getMeasuredHeight() + mCellPaddingTop)
-                + mShowLabel.getMeasuredHeight() + mCellPaddingTitle;
-        if (row >= 2) {
-            rect.top = rect.top + mHideLabel.getMeasuredHeight() + mCellPaddingTitle;
-        }
+        rect.top = getTileTop(view, row);
         rect.right = rect.left + view.getMeasuredWidth();
         rect.bottom = rect.top + view.getMeasuredHeight();
         
@@ -234,6 +275,21 @@ public class GnDragGridView extends ViewGroup {
         return rect;
     }
 
+    private int getTileTop(View view, final int row) {
+        int top = row * (view.getMeasuredHeight() + mCellPaddingTop) 
+                + mShowLabel.getMeasuredHeight() + mCellPaddingTitle;
+        
+        if (isLandscape()) {
+            if (row >= 1) {
+                top = top + mHideLabel.getMeasuredHeight() + mCellPaddingTitle;
+            }
+        } else {
+            if (row >= 2) {
+                top = top + mHideLabel.getMeasuredHeight() + mCellPaddingTitle;
+            }
+        }
+        return top;
+    }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
@@ -297,6 +353,7 @@ public class GnDragGridView extends ViewGroup {
         int position = -1;
         
         for (int i=0; i<mRecords.size(); i++) {
+            
             if (i == mDragPosition) {
                 continue;
             }
@@ -407,10 +464,17 @@ public class GnDragGridView extends ViewGroup {
                                 }
                                 
                                 index = i - invisibleCount;
-                                if (index == 6 && newPosition < 7) {
-                                    updateTilePosition(mRecords.get(i).tileView, index + 2);
-                                } else {
+                                if (isLandscape()) {
+                                    if (index > 7 && newPosition > 7) {
+                                        index --;
+                                    }
                                     updateTilePosition(mRecords.get(i).tileView, index + 1);
+                                } else {
+                                    if (index == 6 && newPosition < 7) {
+                                        updateTilePosition(mRecords.get(i).tileView, index + 2);
+                                    } else {
+                                        updateTilePosition(mRecords.get(i).tileView, index + 1);
+                                    }
                                 }
                             }
                         } else {
@@ -429,10 +493,17 @@ public class GnDragGridView extends ViewGroup {
                                 }
                                 
                                 index = i - invisibleCount;
-                                if (index == 8 && newPosition > 7) {
-                                    updateTilePosition(mRecords.get(i).tileView, index - 2);
-                                } else {
+                                if (isLandscape()) {
+                                    if ((index > 7 && newPosition < 7) || (mCurPosition > 7 )) {
+                                        index --;
+                                    }
                                     updateTilePosition(mRecords.get(i).tileView, index - 1);
+                                } else {
+                                    if (index == 8 && newPosition > 7) {
+                                        updateTilePosition(mRecords.get(i).tileView, index - 2);
+                                    } else {
+                                        updateTilePosition(mRecords.get(i).tileView, index - 1);
+                                    }
                                 }
                             }
                         }
@@ -527,7 +598,7 @@ public class GnDragGridView extends ViewGroup {
             @Override
             public void onStateChanged(GnQSTile.State state) {
                 int visibility = state.visible ? VISIBLE : GONE;
-                if (r.tile.getSpec().equals("more")) {
+                if (isPortrait() && r.tile.getSpec().equals("more")) {
                     visibility = state.visible ? VISIBLE : INVISIBLE;
                 }
                 setTileVisibility(r.tileView, visibility);

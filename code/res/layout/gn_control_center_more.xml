@@ -17,9 +17,9 @@
             android:orientation="vertical" >
 
             <RelativeLayout
+                android:id="@+id/header"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="@dimen/status_bar_height" >
+                android:layout_height="@dimen/gn_qs_more_header_height" >
 
                 <TextView
                     android:id="@+id/cancel"

@@ -76,8 +76,8 @@ public class FingerIdentifyManager {
         if (manager == null) {
             return false;
         }
-        boolean isSurpportFinger=KeyguardViewHostManager.isSuppotFinger();
-        if(!isSurpportFinger){
+        boolean isSupportFinger=KeyguardViewHostManager.isSuppotFinger();
+        if(!isSupportFinger){
             return false;
         }
         if (!mFingerprintSwitchOpen) {
@@ -104,6 +104,8 @@ public class FingerIdentifyManager {
         if (isSimRequired) {
             return false;
         }
+        
+        
         return true;
     }
     
@@ -234,7 +236,6 @@ public class FingerIdentifyManager {
             return;
         } else if (reason == 1) {// timeout
             startIdentifyIfNeed();
-            
         } else if (reason == 0) {
             DebugLog.d(LOG_TAG, "onFingerNoMatch mIdentifyFailedTimes: " + mIdentifyFailedTimes);
             fingerMatchFail();
@@ -244,9 +245,9 @@ public class FingerIdentifyManager {
     private void fingerMatchFail() {
         boolean isSecureFrozen = KeyguardViewHostManager.getInstance().passwordViewIsForzen();
         if (mIdentifyFailedTimes < 2 && !isSecureFrozen) {
-            mIdentifyFailedTimes++;
             boolean isAtHomePosition = KeyguardViewHostManager.getInstance().isAmigoHostYAtHomePostion();
             if (isAtHomePosition) {
+                mIdentifyFailedTimes++;
                 KeyguardViewHostManager.getInstance().shakeFingerIdentifyTip();
             } else {
                 KeyguardViewHostManager.getInstance().fingerPrintFailed();
@@ -262,11 +263,13 @@ public class FingerIdentifyManager {
     
     private void onFingerIdentify() {
         if (!isActiveFingerPrint()) {
+            DebugLog.d(LOG_TAG, "onFingerIdentify  isActiveFingerPrint flase");
             return;
         }
         KeyguardViewHostManager hostManager = KeyguardViewHostManager.getInstance();
         boolean isSecureFrozen = hostManager.passwordViewIsForzen();
         boolean isAtHomePosition = hostManager.isAmigoHostYAtHomePostion();
+        DebugLog.d(LOG_TAG, "onFingerIdentify  isSecureFrozen: "+isSecureFrozen);
         if (isSecureFrozen) {
             if (isAtHomePosition) {
                 hostManager.scrollToUnlockHeightByOther(true);

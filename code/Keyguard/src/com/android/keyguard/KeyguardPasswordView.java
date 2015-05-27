@@ -97,11 +97,15 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
         if (deadline!=0) {
             handleAttemptLockout(deadline);
         }else{
+            resetFrozen();
         	resetMessage();
         }
 
     }
     
+    private void resetFrozen(){
+        isFrozen=false;
+    }
     
     private void resetMessage() {
         mPasswordEntry.setEnabled(true);

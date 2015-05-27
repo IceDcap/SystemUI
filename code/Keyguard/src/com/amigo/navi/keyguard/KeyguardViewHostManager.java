@@ -217,7 +217,6 @@ public class KeyguardViewHostManager {
         setSkylightHidden();
     	
         finishStatistics();
-        cancelFingerIdentify();
         updateNotifiOnkeyguard(false);
         releaseCache();
         mContainer.reset();

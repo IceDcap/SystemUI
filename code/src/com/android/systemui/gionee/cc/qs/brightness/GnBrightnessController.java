@@ -134,7 +134,7 @@ public class GnBrightnessController implements GnToggleSlider.Listener {
         mContext = context;
         mControl = control;
         mIcon = icon;
-        mIcon.setImageResource(R.drawable.gn_ic_qs_brightness_auto);
+        mIcon.setImageResource(R.drawable.gn_ic_qs_brightness_auto_on);
         mIcon.setOnClickListener(new OnClickListener() {
             
             @Override
@@ -287,8 +287,10 @@ public class GnBrightnessController implements GnToggleSlider.Listener {
     private void updateIcon() {
 
         if (mAutomatic) {
+            mIcon.setImageResource(R.drawable.gn_ic_qs_brightness_auto_on);
             mIcon.setBackgroundResource(R.drawable.gn_ic_qs_tile_bg_enable);
         } else {
+            mIcon.setImageResource(R.drawable.gn_ic_qs_brightness_auto_off);
             mIcon.setBackgroundResource(R.drawable.gn_ic_qs_tile_bg_disable);
         }
     }

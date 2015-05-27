@@ -129,8 +129,13 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
             setKeyButtonClickEnable(true);
             handleAttemptLockout(deadline);
         }else{
+            resetFrozen();
         	resetMessage();
         }
+    }
+    
+    private void resetFrozen(){
+        isFrozen=false;
     }
     
     private void resetMessage() {
@@ -630,5 +635,8 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
     	return super.onInterceptTouchEvent(ev);
     }
     
-    
+    @Override
+    public boolean isFrozen() {
+        return isFrozen;
+    }
 }

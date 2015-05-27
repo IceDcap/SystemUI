@@ -231,10 +231,12 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         @Override
         public void onChanged() {
             DebugLog.d(TAG,"AdapterDataSetObserver mFirstPosition:" + mFirstPosition);
-            if(mFirstPosition < 0){
-                mFirstPosition = 0;
-            }
-            setSelection(mFirstPosition);
+//            if(mFirstPosition < 0){
+//                mFirstPosition = 0;
+//            }
+//            mFirstPosition = 0;
+//            setSelection(mFirstPosition);
+            setSelection(0);
         }
 
         @Override
