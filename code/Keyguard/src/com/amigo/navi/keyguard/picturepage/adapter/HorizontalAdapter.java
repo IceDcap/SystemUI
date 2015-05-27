@@ -11,7 +11,7 @@ import com.amigo.navi.keyguard.network.local.LocalFileOperationInterface;
 import com.amigo.navi.keyguard.network.local.ReadAndWriteFileFromSD;
 import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
 import com.amigo.navi.keyguard.picturepage.interfacers.OnReloadListener;
-import com.amigo.navi.keyguard.picturepage.widget.ImageViewForHeadCompound;
+import com.amigo.navi.keyguard.picturepage.widget.ImageViewWithLoadBitmap;
 
 
 import android.content.Context;
@@ -30,11 +30,12 @@ public class HorizontalAdapter extends BaseAdapter {
    private LayoutInflater mInflater;
    private ImageLoader mImageLoader = null;
    private boolean isAllowLoad = true;
+   private static final boolean PRINT_LOG = false;
    private ArrayList<OnReloadListener> mReloadListeners = new ArrayList<OnReloadListener>();
 //   private int[] mIDList = new int[]{R.drawable.a,R.drawable.b,R.drawable.c,R.drawable.d};
 //   ArrayList<Bitmap> bitmapList = new ArrayList<Bitmap>();
    private ReadAndWriteFileFromSD mDealWithFromLocalInterface = null;
-   ImageViewForHeadCompound.Config mConfig = null;
+   ImageViewWithLoadBitmap.Config mConfig = null;
    public HorizontalAdapter(Context context,WallpaperList wallpaperList,ImageLoader imageLoader){
        this.mInflater = LayoutInflater.from(context);
        updateDataList(wallpaperList);
@@ -43,7 +44,7 @@ public class HorizontalAdapter extends BaseAdapter {
        mDealWithFromLocalInterface = new ReadAndWriteFileFromSD(context.getApplicationContext(), 
                  DiskUtils.WALLPAPER_BITMAP_FOLDER, DiskUtils.getCachePath(context.getApplicationContext()),
                  localFileOperationInterface);
-       mConfig = new ImageViewForHeadCompound.Config();
+       mConfig = new ImageViewWithLoadBitmap.Config();
        mConfig.startBitmapID = R.drawable.loading;
        mConfig.failBitmapID = R.drawable.loading;
        mConfig.setImageLoader(mImageLoader);
@@ -99,7 +100,7 @@ public class HorizontalAdapter extends BaseAdapter {
             holder=new ViewHolder();  
              
             convertView = mInflater.inflate(R.layout.image_view_show, null);
-            holder.img = (ImageViewForHeadCompound)convertView.findViewById(R.id.image);
+            holder.img = (ImageViewWithLoadBitmap)convertView.findViewById(R.id.image);
             holder.img.setConfig(mConfig);
             convertView.setTag(holder);             
         }else {
@@ -120,7 +121,7 @@ public class HorizontalAdapter extends BaseAdapter {
     }
 
     public final class ViewHolder{
-        public ImageViewForHeadCompound img;
+        public ImageViewWithLoadBitmap img;
 //        public ImageView img;
     }
  
@@ -129,12 +130,16 @@ public class HorizontalAdapter extends BaseAdapter {
     }
 
     public void lock() {
-    	DebugLog.d(TAG,"lock img");
+        if(PRINT_LOG){
+        	DebugLog.d(TAG,"lock img");
+        }
         this.isAllowLoad = false;
     }
 
     public void unlock() {
-    	DebugLog.d(TAG,"lock img no");
+        if(PRINT_LOG){
+        	DebugLog.d(TAG,"lock img no");
+        }
         this.isAllowLoad = true;
 
         for(OnReloadListener listerner : mReloadListeners){

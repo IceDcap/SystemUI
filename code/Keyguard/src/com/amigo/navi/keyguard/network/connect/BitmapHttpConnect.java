@@ -43,9 +43,12 @@ public class BitmapHttpConnect {
             DebugLog.d(TAG,"loadImageFromInternet conUrl:" + conUrl.toString());
             DebugLog.d(TAG,"loadImageFromInternet reqCode:" + reqCode);
             if (reqCode == HttpStatus.SC_OK) {
+                int contentLength = urlConn.getContentLength();
                 inputStream = urlConn.getInputStream();
                 result = readInputStream(inputStream);
-                bitmap = createBitmap(bitmap, result);
+                if(result != null && result.length == contentLength){
+                	bitmap = createBitmap(bitmap, result);
+                }
             }
         } catch (Exception e) {
             DebugLog.d(TAG,"loadImageFromInternet e:" + e);

@@ -1021,6 +1021,9 @@ public class VolumePanel extends Handler implements DemoMode {
         final StreamControl active = mStreamControls.get(mActiveStreamType);
         if (active != null) {
             updateSlider(active, false /*forceReloadIcon*/);
+            //Gionee <hanbj> <20150526> add for CR01488389 begin
+            updateAmigoAudioState(active);
+            //Gionee <hanbj> <20150526> add for CR01488389 end
         }
     }
 

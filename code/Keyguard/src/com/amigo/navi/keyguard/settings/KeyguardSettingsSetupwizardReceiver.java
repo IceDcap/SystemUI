@@ -8,7 +8,7 @@ import android.content.Intent;
 
 public class KeyguardSettingsSetupwizardReceiver extends BroadcastReceiver{
 
-	private static final String TAG = "SetupwizardReceiver";
+	private static final String TAG = "KeyguardSettingsSetupwizardReceiver";
 	private static final String SETUPWIZARD_ACTION = "com.gionee.setupwizard.SECURE_SERVICE";
 
 	@Override
@@ -16,6 +16,7 @@ public class KeyguardSettingsSetupwizardReceiver extends BroadcastReceiver{
 		// TODO Auto-generated method stub
 		DebugLog.d(TAG, "receive:" + intent.getAction());
 		if (SETUPWIZARD_ACTION.equals(intent.getAction())){
+			KeyguardSettings.setConnectState(context, true);
 			KeyguardSettings.setWallpaperUpadteState(context,true);
 			KeyguardSettings.setEverOpened(context,true);
 			KeyguardSettings.cancelNotification(context);

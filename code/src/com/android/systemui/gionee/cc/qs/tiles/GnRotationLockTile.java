@@ -8,6 +8,7 @@ package com.android.systemui.gionee.cc.qs.tiles;
 
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.util.Log;
 
 import com.android.systemui.R;
 import com.android.systemui.gionee.cc.qs.GnQSTile;
@@ -42,6 +43,7 @@ public class GnRotationLockTile extends GnQSTile<GnQSTile.BooleanState> {
     @Override
     protected void handleClick() {
     	GnYouJu.onEvent(mContext, "Amigo_SystemUI_CC", "GnRotationLockTile");
+    	Log.d(TAG, "handleClick   mController=" + mController + "  mState.value " + mState.value);
         if (mController == null) return;
         mController.setRotationLocked(mState.value);
     }

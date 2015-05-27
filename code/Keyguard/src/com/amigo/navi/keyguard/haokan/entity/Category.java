@@ -39,6 +39,7 @@ public class Category implements Serializable{
     public static final int PIC_DOWNLOAD_FINISH = DataConstant.DOWNLOAD_FINISH;
     public static final int PIC_DOWNLOAD_NOT_FINISH = DataConstant.NOT_DOWNLOAD;
     private int isPicDownLod;
+    private int sort;
     
     public boolean isFavorite() {
         return favorite;
@@ -119,6 +120,14 @@ public class Category implements Serializable{
 
 	public void setIsPicDownLod(int isPicDownLod) {
 		this.isPicDownLod = isPicDownLod;
+	}
+
+	public int getSort() {
+		return sort;
+	}
+
+	public void setSort(int sort) {
+		this.sort = sort;
 	}
 
      

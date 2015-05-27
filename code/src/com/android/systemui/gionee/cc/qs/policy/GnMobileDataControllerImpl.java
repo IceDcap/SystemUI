@@ -46,6 +46,8 @@ public class GnMobileDataControllerImpl extends BroadcastReceiver implements GnM
 
     private boolean mHasMobileDataFeature;
     
+    private int mSubId = 0;
+    
     ArrayList<MobileDataChangedCallback> mCallbacks = new ArrayList<MobileDataChangedCallback>();
     
     public GnMobileDataControllerImpl(Context context) {
@@ -88,8 +90,14 @@ public class GnMobileDataControllerImpl extends BroadcastReceiver implements GnM
     @Override
     public void addMobileDataChangedCallback(MobileDataChangedCallback cb) {
         mCallbacks.add(cb);
-        mContext.getContentResolver().registerContentObserver(Settings.Secure.getUriFor(Settings.Global.MOBILE_DATA), 
-                true, mMobileDataChangeObserver);
+        int subId = mSubscriptionManager.getDefaultDataSubId();
+        if (mSubscriptionManager.isValidSubscriptionId(subId)) {
+            mSubId = subId;
+            mContext.getContentResolver().registerContentObserver(
+                    Settings.Global.getUriFor(Settings.Global.MOBILE_DATA + mSubId), true,
+                    mMobileDataChangeObserver);
+            Log.d(TAG, "add callback  name = " + (Settings.Global.MOBILE_DATA + mSubId));
+        }
     }
 
     @Override
@@ -156,7 +164,17 @@ public class GnMobileDataControllerImpl extends BroadcastReceiver implements GnM
         @Override
         public void onSubscriptionsChanged() {
             Log.d(TAG, "onSubscriptionsChanged");
-            notifyMobileDataChange();
+            int subId = mSubscriptionManager.getDefaultDataSubId();
+            Log.d(TAG, "mSubscriptionListener  subId = " + subId);
+            if (mSubscriptionManager.isValidSubscriptionId(subId) && mSubId != subId) {
+                mSubId = subId;
+                mContext.getContentResolver().unregisterContentObserver(mMobileDataChangeObserver);
+                mContext.getContentResolver().registerContentObserver(
+                        Settings.Global.getUriFor(Settings.Global.MOBILE_DATA + mSubId), true,
+                        mMobileDataChangeObserver);
+                Log.d(TAG, "name = " + (Settings.Global.MOBILE_DATA + mSubId));
+                notifyMobileDataChange();
+            }
         };
     };
 }

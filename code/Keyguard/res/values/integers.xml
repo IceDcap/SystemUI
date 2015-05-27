@@ -22,5 +22,7 @@
     
     <!-- NaviKeyguard begin -->
     <integer name="weathertime_hour_marginleft">5</integer>
+    <integer name="haokan_guide_slip_per_frame_duration">150</integer>
+    
     <!-- NaviKeyguard end -->
 </resources>

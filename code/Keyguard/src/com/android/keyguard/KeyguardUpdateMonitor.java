@@ -330,6 +330,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         // Hack level over 9000: Because the subscription id is not yet valid when we see the
         // first update in handleSimStateChange, we need to force refresh all all SIM states
         // so the subscription id for them is consistent.
+        
         ArrayList<SubscriptionInfo> changedSubscriptions = new ArrayList<>();
         for (int i = 0; i < subscriptionInfos.size(); i++) {
             SubscriptionInfo info = subscriptionInfos.get(i);
@@ -338,16 +339,18 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
                 changedSubscriptions.add(info);
             }
         }
-        for (int i = 0; i < changedSubscriptions.size(); i++) {
+        //<Amigo_Keyguard> jingyn <2015-05-25> remove for simcard ignore function begin
+       /* for (int i = 0; i < changedSubscriptions.size(); i++) {
             SimData data = mSimDatas.get(changedSubscriptions.get(i).getSubscriptionId());
             for (int j = 0; j < mCallbacks.size(); j++) {
                 KeyguardUpdateMonitorCallback cb = mCallbacks.get(j).get();
                 if (cb != null) {
-                    Log.v(TAG, "onSubscriptionInfoChanged()  simState: "+data.simState);
+                    Log.v(TAG, "onSubscriptionInfoChanged()  simState: "+data.toString());
                     cb.onSimStateChanged(data.subId, data.slotId, data.simState);
                 }
             }
-        }
+        }*/
+        //<Amigo_Keyguard> jingyn <2015-05-25> remove for simcard ignore function end
         for (int j = 0; j < mCallbacks.size(); j++) {
             KeyguardUpdateMonitorCallback cb = mCallbacks.get(j).get();
             if (cb != null) {
@@ -1111,7 +1114,8 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
             data.slotId = slotId;
             DebugLog.d(TAG, "handleSimStateChange  data is not null");
         }
-        if (changed && state != State.UNKNOWN) {
+        //remove by jingyn for subscription change sim state earlier than receiver
+        if (/*changed &&*/ state != State.UNKNOWN) {
             for (int i = 0; i < mCallbacks.size(); i++) {
                 KeyguardUpdateMonitorCallback cb = mCallbacks.get(i).get();
                 if (cb != null) {

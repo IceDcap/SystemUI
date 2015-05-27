@@ -12,6 +12,7 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Handler;
 import android.os.Message;
 import android.os.UserHandle;
@@ -20,6 +21,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -88,6 +90,7 @@ public class AmigoKeyguardPage extends RelativeLayout {
 		// TODO Auto-generated method stub
 		super.onAttachedToWindow();
 		
+		addGuideScrollUpView();
 		addCarrierView();
 		addBatteryView();
 		addHKMainLayout();
@@ -122,6 +125,7 @@ public class AmigoKeyguardPage extends RelativeLayout {
 	private TextView mNotificationClickTipView;
 	private NotificationStackScrollLayout mNotificationContent;
 	private RelativeLayout mFingerIdentifyTip;
+	private RelativeLayout mGuideScrollUpLayout;
 	
 	private AmigoBatteryStatus mBatteryStatus = null;
 	private static final float BATTERY_HIDE_ALPHA = 0.001f;
@@ -187,6 +191,34 @@ public class AmigoKeyguardPage extends RelativeLayout {
         }
         
     }
+	
+	private void addGuideScrollUpView(){
+		if (!Guide.needGuideScrollUp()){
+			return;
+		}		
+		
+	    LayoutInflater inflater=LayoutInflater.from(mContext);
+	    mGuideScrollUpLayout = (RelativeLayout)inflater.inflate(R.layout.keyguard_guide_scroll_up, null);
+	    ImageView scroll_up = (ImageView)mGuideScrollUpLayout.findViewById(R.id.keyguard_guide_scroll_up);
+		AmigoKeyguardPage.LayoutParams lp = new AmigoKeyguardPage.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT);
+		AnimationDrawable animationDrawable;
+		animationDrawable = (AnimationDrawable) scroll_up.getDrawable();
+		animationDrawable.start();
+		addView(mGuideScrollUpLayout, lp);
+        UIController controller = UIController.getInstance();
+        controller.setGuideScrollUpView(mGuideScrollUpLayout);
+	}
+	
+	public void removeGuideScrollUpView() {
+
+		if (!Guide.needGuideScrollUp() || mGuideScrollUpLayout == null) {
+			return;
+		}
+		Guide.setNeedGuideScrollUp(false);
+		Guide.setBooleanSharedConfig(mContext, Guide.GUIDE_SCROLL_UP, false);
+		removeView(mGuideScrollUpLayout);
+	}
+	
 	
 	private void addCarrierView(){
 	    LayoutInflater inflater=LayoutInflater.from(mContext);

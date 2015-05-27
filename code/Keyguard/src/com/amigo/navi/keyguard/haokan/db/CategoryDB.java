@@ -23,6 +23,7 @@ public class CategoryDB extends BaseDB{
     public static final String FAVORITE = CategoryColumns.FAVORITE;
     public static final String IS_FINISH = CategoryColumns.DOWNLOAD_PICTURE;
     public static final String TODAY_IMG = CategoryColumns.TODAY_IMAGE;
+    public static final String SORT = CategoryColumns.SORT;
 
     
     public CategoryDB(Context context) {
@@ -92,6 +93,7 @@ public class CategoryDB extends BaseDB{
             	values.put(IS_FINISH, categoryInDB.getIsPicDownLod());
             }
             values.put(TODAY_IMG, DataConstant.TODAY_IMAGE);
+            values.put(SORT, category.getSort());
             db.replace(TABLE_NAME, null, values);
         }
     }
@@ -118,7 +120,7 @@ public class CategoryDB extends BaseDB{
         final SQLiteDatabase db = mWritableDatabase;
         String sql = "select * from " + TABLE_NAME
                 + " where download_picture = 1 and " + DataConstant.CategoryColumns.TODAY_IMAGE + "=" + 
-                DataConstant.TODAY_IMAGE;
+                DataConstant.TODAY_IMAGE + " order by " + DataConstant.CategoryColumns.SORT + " asc";
         
         
         Cursor cursor = db.rawQuery(sql, null);
@@ -274,6 +276,30 @@ public class CategoryDB extends BaseDB{
         	cursor.close();
         }
         return list;
+    }
+    
+    public boolean queryHasDownLoadImageNotLocalData(){
+        final SQLiteDatabase db = mReadableDatabase;
+        Cursor cursor = db.rawQuery("select * from category where " +
+        DataConstant.CategoryColumns.DOWNLOAD_PICTURE + " = ? and " + 
+        DataConstant.CategoryColumns.SAVE_TYPE + " = ?",new String[] {
+                String.valueOf(DataConstant.DOWN_FINISH),
+                String.valueOf(DataConstant.INTERNET)
+            });
+        if(cursor != null){
+        	if(cursor.getCount() > 0){
+                closeCursor(cursor);
+        		return true;
+        	}
+        }
+        closeCursor(cursor);
+        return false;
+    }
+    
+    private void closeCursor(Cursor cursor){
+        if(cursor != null){
+            cursor.close();
+        }
     }
     
 }

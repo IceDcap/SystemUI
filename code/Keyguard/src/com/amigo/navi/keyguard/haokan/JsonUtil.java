@@ -79,6 +79,9 @@ public class JsonUtil {
             JSONObject jsonObject = new JSONObject(jsonString);
             
             JSONArray jsonArray = jsonObject.optJSONArray("data");
+            if(jsonArray == null){
+            	return list;
+            }
             int len = jsonArray.length();
             for (int i = 0; i < len; i++) {
                 JSONObject jsonObject2 = jsonArray.optJSONObject(i);
@@ -86,6 +89,7 @@ public class JsonUtil {
                 wallpaperType.setTypeId(jsonObject2.optInt("i"));
                 wallpaperType.setTypeName(jsonObject2.optString("n"));
                 wallpaperType.setTypeIconUrl(jsonObject2.optString("u"));
+                wallpaperType.setSort(i);
                 list.add(wallpaperType);
             }
         } catch (JSONException e) {
@@ -325,10 +329,11 @@ public class JsonUtil {
                     String lock = jsonObjectImg.optString("Lock");
  
                     Category category = new Category();
-                    category.setTypeId(1);
+                    category.setTypeId(0);
                     category.setTypeName("inlay");
                     wallpaper.setCategory(category);
-                    wallpaper.setImgId(i);
+                    int id = i + 1;
+                    wallpaper.setImgId(id);
                     wallpaper.setDisplayName(imageName);
                     wallpaper.setImgName(imageTitle);
                     wallpaper.setImgContent(imageContent);

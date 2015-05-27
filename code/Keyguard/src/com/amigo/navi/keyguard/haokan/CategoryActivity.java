@@ -159,7 +159,7 @@ public class CategoryActivity extends Activity{
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        RequestNicePicturesFromInternet.getInstance(this.getApplicationContext()).registerData();
+        RequestNicePicturesFromInternet.getInstance(this.getApplicationContext()).registerData(false);
         if (mWindowBackgroud != null && !mWindowBackgroud.isRecycled()) {
             mWindowBackgroud.recycle();
         }
@@ -277,6 +277,8 @@ public class CategoryActivity extends Activity{
             DebugLog.d(TAG,"getView category.getIcon():" + category.getIcon());
             if (category.getIcon() != null) {
                 holder.image.setImageBitmap(category.getIcon());
+            }else{
+            	holder.image.setImageResource(R.drawable.category_loading);
             }
 //            holder.image.setImageDrawable(getDrawable(R.drawable.haokan_life));
             

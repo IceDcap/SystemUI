@@ -460,8 +460,10 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         boolean flag = false;
         final int action = event.getAction();
         int motionX = (int) event.getX();
-        Log.d(TAG, "onInterceptTouchEvent -> action = " + action);
-        Log.d(TAG, "onInterceptTouchEvent -> motionX = " + motionX);
+        if(PRINT_LOG){
+        	Log.d(TAG, "onInterceptTouchEvent -> action = " + action);
+        	Log.d(TAG, "onInterceptTouchEvent -> motionX = " + motionX);
+        }
         switch (action & MotionEvent.ACTION_MASK) {
         case MotionEvent.ACTION_DOWN:
             initOrResetVelocityTracker();
@@ -497,13 +499,18 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         return dealwithTouchEvent(event);
     }
 
+    
     public boolean dealwithTouchEvent(MotionEvent event) {
         final int action = event.getAction();
-    	DebugLog.d(TAG, "motionUp -> action1 = " + action);
+        if(PRINT_LOG){
+        	DebugLog.d(TAG, "motionUp -> action1 = " + action);
+        }
         if (controller.isArcExpanded()) {
             return false;
         }
-    	DebugLog.d(TAG, "motionUp -> action2 = " + action);
+        if(PRINT_LOG){
+        	DebugLog.d(TAG, "motionUp -> action2 = " + action);
+        }
         acquireVelocityTrackerAndAddMovement(event);
         int motionX = (int) event.getX();
         switch (action & MotionEvent.ACTION_MASK) {
@@ -580,7 +587,9 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
             if(!isCanLoop && mCurrentPage < 0){
             	finalPage = mCurrentPage;
             }
-            DebugLog.d(TAG,"testscroll motionUp1:" + finalPage);
+            if(PRINT_LOG){
+            	DebugLog.d(TAG,"testscroll motionUp1:" + finalPage);
+            }
             snapToPage(finalPage,motionX);
             mIsFling = true;
         }else if (deltaX < -mMinDistance || velocityX < -3000) {
@@ -588,7 +597,9 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
             if(!isCanLoop && mCurrentPage > childCount - 1){
             	finalPage = mCurrentPage;
             }
-            DebugLog.d(TAG,"testscroll motionUp2:" + finalPage);
+            if(PRINT_LOG){
+            	DebugLog.d(TAG,"testscroll motionUp2:" + finalPage);
+            }
             snapToPage(finalPage,motionX);
             mIsFling = true;
         }else{
@@ -600,7 +611,9 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     protected void snapToPage(int page,int motionX){
         mNextPage = page;
         mNextPage = reviseFinalPage(mNextPage);
-        DebugLog.d(TAG,"testscroll snapToPage mNextPage:" + mNextPage);
+        if(PRINT_LOG){
+        	DebugLog.d(TAG,"testscroll snapToPage mNextPage:" + mNextPage);
+        }
         int scrollToX = page * mChildWidth; 
         if (mTouchlListener != null && getScrollX() != scrollToX) {
 //            if (Math.abs(motionX - mDownMotionX) > 2 * mTouchSlop) {
@@ -686,8 +699,10 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         }
         x = getFinalScrollX(x);
         int scrollX = getScrollX();
-        DebugLog.d(TAG,"testscroll smoothScrollTo x:" + x);
-        DebugLog.d(TAG,"testscroll smoothScrollTo scrollX:" + scrollX);
+        if(PRINT_LOG){
+        	DebugLog.d(TAG,"testscroll smoothScrollTo x:" + x);
+        	DebugLog.d(TAG,"testscroll smoothScrollTo scrollX:" + scrollX);
+        }
         mScroller.startScroll(scrollX, 0, x - scrollX, 0, MIN_SCROLL_TIME);
         postInvalidate();
     }

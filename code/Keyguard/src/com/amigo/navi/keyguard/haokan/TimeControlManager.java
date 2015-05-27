@@ -16,8 +16,8 @@ import com.amigo.navi.keyguard.DebugLog;
 public class TimeControlManager {
     private static final String TAG = "TimeControlManager";
 	private static final long DAY = 86400000;//24hour
-	private Context mContext;
-	private AlarmManager alarmManager;
+	private static Context mContext;
+	private static AlarmManager alarmManager;
 	private PendingIntent pendingActivityIntent;
 	private static TimeControlManager instance = null;
 	
@@ -25,26 +25,27 @@ public class TimeControlManager {
 		
 	}
 	
-	public static TimeControlManager getInstance(){
-		if(instance == null){
-			construct();
+	public static TimeControlManager getInstance(Context context){
+		if(instance == null){ 
+			construct(context);
 		}
 		return instance;
 	}
 	
-	private static void construct(){
+	private static void construct(Context context){
 		synchronized (TimeControlManager.class){
 			if(instance == null){
+				mContext = context.getApplicationContext();
+				alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
 				instance = new TimeControlManager();
 			}
 		}
 	}
 	
-	public void init(Context context){
-        DebugLog.d(TAG,"init");
-		mContext = context;
-		alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
-	}
+//	public void init(Context context){
+//        DebugLog.d(TAG,"init");
+//		mContext = context;
+//	}
 	
 	public void startUpdateAlarm(){
         DebugLog.d(TAG,"startAlarm");

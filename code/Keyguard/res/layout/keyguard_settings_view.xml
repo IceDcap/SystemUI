@@ -37,7 +37,7 @@
         android:textSize="@dimen/settings_titlebar_textsize"
         android:visibility="invisible" />
 
-    <amigo.widget.AmigoTextView
+    <TextView
         android:id="@+id/wallpaper_update_title"
         android:layout_width="match_parent"
         android:layout_height="@dimen/settings_title_height"
@@ -84,7 +84,7 @@
                 android:visibility="invisible" />
         </LinearLayout>
 
-        <amigo.widget.AmigoSwitch
+        <Switch
             android:id="@+id/settings_switch_wallpaper_update"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -114,7 +114,7 @@
             android:textSize="@dimen/settings_body_firstline_textsize"
             android:visibility="invisible" />
 
-        <amigo.widget.AmigoSwitch
+        <Switch
             android:id="@+id/settings_switch_only_wlan"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -133,7 +133,7 @@
         android:background="@color/keyguard_setting_line_color"
         android:visibility="invisible" />
 
-    <amigo.widget.AmigoTextView
+    <TextView
         android:id="@+id/double_desktop_lock_title"
         android:layout_width="match_parent"
         android:layout_height="@dimen/settings_title_height"
@@ -178,7 +178,7 @@
                 android:visibility="invisible" />
         </LinearLayout>
 
-        <amigo.widget.AmigoSwitch
+        <Switch
             android:id="@+id/settings_switch_double_desktop_lock"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

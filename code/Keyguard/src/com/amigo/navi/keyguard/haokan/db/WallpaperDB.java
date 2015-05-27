@@ -372,7 +372,8 @@ public class WallpaperDB extends BaseDB{
     public synchronized  void deleteAllExcludeLock() {
         final SQLiteDatabase db = mWritableDatabase;
         String sql = "delete from wallpaper where " + DataConstant.WallpaperColumns.LOCK +
-                " = " + DataConstant.WALLPAPER_NOT_LOCK;
+                " = " + DataConstant.WALLPAPER_NOT_LOCK + " or " + DataConstant.WallpaperColumns.SAVE_TYPE + 
+                "=" + Wallpaper.WALLPAPER_FROM_FIXED_FOLDER;
         db.execSQL(sql);
     }
     
@@ -597,5 +598,28 @@ public class WallpaperDB extends BaseDB{
         }
     }
     
+    public synchronized  void deleteAll() {
+        final SQLiteDatabase db = mWritableDatabase;
+        String sql = "delete from wallpaper";
+        db.execSQL(sql);
+    }
+    
+    public boolean queryHasDownLoadImageNotLocalData(){
+        final SQLiteDatabase db = mReadableDatabase;
+        Cursor cursor = db.rawQuery("select * from wallpaper where " +
+        DataConstant.WallpaperColumns.DOWNLOAD_PICTURE + " = ? and " + 
+        DataConstant.WallpaperColumns.SAVE_TYPE + " = ?",new String[] {
+                String.valueOf(DataConstant.DOWN_FINISH),
+                String.valueOf(DataConstant.INTERNET)
+            });
+        if(cursor != null){
+        	if(cursor.getCount() > 0){
+                closeCursor(cursor);
+        		return true;
+        	}
+        }
+        closeCursor(cursor);
+        return false;
+    }
     
 }

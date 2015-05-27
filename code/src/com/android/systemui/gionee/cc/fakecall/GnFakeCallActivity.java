@@ -393,7 +393,7 @@ public class GnFakeCallActivity extends Activity {
 
             switch (state) {
                 case TelephonyManager.CALL_STATE_IDLE:
-                    restoreRingtoneMode();
+//                    restoreRingtoneMode();
                     break;
 
                 case TelephonyManager.CALL_STATE_RINGING:
@@ -407,7 +407,7 @@ public class GnFakeCallActivity extends Activity {
 
                 case TelephonyManager.CALL_STATE_OFFHOOK:
                     onCallStateBusy();
-                    restoreRingtoneMode();
+//                    restoreRingtoneMode();
                     endCall();
                     break;
 
@@ -415,22 +415,22 @@ public class GnFakeCallActivity extends Activity {
                     break;
             }
         }
-
-        private void restoreRingtoneMode() {
-            int currentRingtoneMode = mAudioManager.getRingerMode();
-            if (currentRingtoneMode != mRingtoneModeWhenFakeCallStart) {
-                Log.d(LOG_TAG, "restore ringtone mode to " + mRingtoneModeWhenFakeCallStart);
-                mAudioManager.setRingerMode(mRingtoneModeWhenFakeCallStart);
-            }
-        }
-
-        private void onCallStateBusy() {
-            Log.d(LOG_TAG, "onCallStateBusy() change mode to vibrate");
-            stopFakeCallVoice();
-            mAudioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
-            // mHandler.sendDelayedDefault(CALL_END_EVENT);
-        }
     };
+    
+    private void restoreRingtoneMode() {
+        int currentRingtoneMode = mAudioManager.getRingerMode();
+        if (currentRingtoneMode != mRingtoneModeWhenFakeCallStart) {
+            Log.d(LOG_TAG, "restore ringtone mode to " + mRingtoneModeWhenFakeCallStart);
+            mAudioManager.setRingerMode(mRingtoneModeWhenFakeCallStart);
+        }
+    }
+    
+    private void onCallStateBusy() {
+        Log.d(LOG_TAG, "onCallStateBusy() change mode to vibrate");
+        stopFakeCallVoice();
+//        mAudioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+        // mHandler.sendDelayedDefault(CALL_END_EVENT);
+    }
 
     private void initBroadcastReceiver() {
         mReceiver = new BroadcastReceiver() {
@@ -1062,6 +1062,8 @@ public class GnFakeCallActivity extends Activity {
         }
         GnRingerModeRecoveryUtils.sendRingerModeRecoveryRequest(this.getBaseContext());
         
+        restoreRingtoneMode();
+        
         release();
     }
     // Gionee <jiangxiao> <2014-01-08> modify for CR00989271 end
@@ -1154,7 +1156,9 @@ public class GnFakeCallActivity extends Activity {
         
         @Override
         public void onAnswer(int videoState, Context context) {
+            Log.d(LOG_TAG, "onAnwserButtonClicked()");
             stopRingtone();
+            mAudioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
             onAnwserButtonClicked();
         }
     };

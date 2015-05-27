@@ -65,7 +65,7 @@ public class FingerIdentifyManager {
         DebugLog.d(LOG_TAG, "startIdentifyIfNeed  isStartFingerPrint:"+isStartFingerPrint);
         if(isStartFingerPrint){
             int[] ids=getIds();
-            if(ids!=null){
+            if(ids!=null&&ids.length>0){
                 startIdentifyTimeout(ids, 25*1000);
             }
         }

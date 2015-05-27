@@ -1308,20 +1308,20 @@ public class KeyguardViewMediator extends SystemUI {
     }
 
     private void sendUserPresentBroadcast() {
-//        synchronized (this) {
-//            if (mBootCompleted) {
-//                final UserHandle currentUser = new UserHandle(mLockPatternUtils.getCurrentUser());
-//                final UserManager um = (UserManager) mContext.getSystemService(
-//                        Context.USER_SERVICE);
-//                List <UserInfo> userHandles = um.getProfiles(currentUser.getIdentifier());
-//                for (UserInfo ui : userHandles) {
-//                    mContext.sendBroadcastAsUser(USER_PRESENT_INTENT, ui.getUserHandle());
-//                }
-//            } else {
-//                mBootSendUserPresent = true;
-//            }
-//        }
-    }
+        synchronized (this) {
+            if (mBootCompleted) {
+                final UserHandle currentUser = new UserHandle(mLockPatternUtils.getCurrentUser());
+                final UserManager um = (UserManager) mContext.getSystemService(
+                        Context.USER_SERVICE);
+                List <UserInfo> userHandles = um.getProfiles(currentUser.getIdentifier());
+                for (UserInfo ui : userHandles) {
+                    mContext.sendBroadcastAsUser(USER_PRESENT_INTENT, ui.getUserHandle());
+                }
+            } else {
+                mBootSendUserPresent = true;
+            }
+        }
+   }
 
     /**
      * @see #keyguardDone

@@ -110,9 +110,7 @@ public class KeyguardViewHostManager {
         sInstance=this;
         setViewMediatorCallback(callback);
         initKeyguard(callback);
-        mKeyguardViewHost.setOnViewTouchListener(mViewTouchListener);
-        initThreadUtil();
-		Common.setPowerSaverMode(getPowerSaverMode() == 2);
+        Common.setPowerSaverMode(getPowerSaverMode() == 2);
         initHorizontalListView();
         addKeyguardArcMenu();
         mFingerIdentifyManager=new FingerIdentifyManager(context);
@@ -122,6 +120,8 @@ public class KeyguardViewHostManager {
         isSuppotFinger=SystemProperties.get("ro.gn.fingerprint.support").equals("FPC");
 		initPowerSaverObserver();
         Log.i(TAG,"isSuppotFinger....isSuppotFinger="+isSuppotFinger);
+        
+        Guide.init(context);
     }
     
     KeyguardViewHost.ConfigChangeCallback mConfigChangeCallback = new KeyguardViewHost.ConfigChangeCallback() {
@@ -484,9 +484,16 @@ public class KeyguardViewHostManager {
                 break;
             case MSG_UPDATE_HAOKAN_LIST_SCREEN_OFF:
                 WallpaperList wallpapers = (WallpaperList) msg.obj;
-                refreshHorizontalListView(wallpapers); 
-                mKeyguardListView.setPosition(mShowPage);
-                UIController.getInstance().refreshWallpaperInfo();
+                if(wallpapers.size() == 0){
+                    mKeyguardListView.setVisibility(View.GONE);
+                    mContainer.setVisibility(View.GONE);
+                    UIController.getInstance().getHaoKanLayout().setVisibility(View.GONE);
+                    mViewMediatorCallback.setKeyguardWallpaperShow(true);
+                }else{
+                    refreshHorizontalListView(wallpapers); 
+                    mKeyguardListView.setPosition(mShowPage);
+                    UIController.getInstance().refreshWallpaperInfo();
+                }
                 break;
             default:
                 break;
@@ -769,35 +776,43 @@ public class KeyguardViewHostManager {
         }
     };
     
+    private static final boolean PRINT_LOG = false;
     private ThreadUtil mThreadUtil = null;
     OnScrollListener mKeyguardListViewScrollListener = new OnScrollListener() {
         @Override
         public void onScrollMoving(int motionX) {
-            DebugLog.d(TAG,"onScrollMoving");
+            if(PRINT_LOG){
+            	DebugLog.d(TAG,"onScrollMoving");
+            }
             QuickSleepUtil.updateWallPaperScrollingState(false);
-            Object obj = mKeyguardListView.getCurrentItem();
+/*            Object obj = mKeyguardListView.getCurrentItem();
             Wallpaper wallpaper = null;
             if(obj != null){
                 wallpaper = (Wallpaper) obj;
             	HKAgent.onEventIMGShow(mContext.getApplicationContext(), wallpaper);
-            }
+            }*/
         }
         
         @Override
         public void onScrollEnd() {
-            DebugLog.d(TAG,"onScrollEnd");
+            if(PRINT_LOG){
+            	DebugLog.d(TAG,"onScrollEnd");
+            }
             mWallpaperAdapter.unlock();
             Wallpaper wallpaper = null;
             Object obj = mKeyguardListView.getCurrentItem();
             if(obj != null){
                 wallpaper = (Wallpaper) obj;
         		HKAgent.onEventIMGSwitch(mContext.getApplicationContext(), wallpaper);
+            	HKAgent.onEventIMGShow(mContext.getApplicationContext(), wallpaper);
             }
         }
         
         @Override
         public void onScrollBegin() {
-            DebugLog.d(TAG,"onScrollBegin");
+            if(PRINT_LOG){
+            	DebugLog.d(TAG,"onScrollBegin");
+            }
             mWallpaperAdapter.lock();
             QuickSleepUtil.updateWallPaperScrollingState(true);
         }

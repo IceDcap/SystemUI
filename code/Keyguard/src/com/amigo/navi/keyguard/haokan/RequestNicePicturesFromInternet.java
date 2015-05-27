@@ -74,10 +74,13 @@ public class RequestNicePicturesFromInternet {
 //        registerData();
     }
     
-    public void registerData(){
+    public void registerData(boolean isCheckFromOnToOff){
     		boolean isUpdate = KeyguardSettings.getWallpaperUpadteState(mContext);
             DebugLog.d(TAG,"registerUserID isUpdate:" + isUpdate);
     		if(!isUpdate){
+    			if(isCheckFromOnToOff){
+    				HKAgent.uploadAllLog();
+    			}
     			return;
     		}
     		boolean isUpdateOnWifi = KeyguardSettings.getOnlyWlanState(mContext);
@@ -181,13 +184,13 @@ public class RequestNicePicturesFromInternet {
         DebugLog.d(TAG,"downloadCategoryPicturesFromNet categoryList:" + categoryList.size());
         boolean isFirstBitmapOfCurrentDay = true;
         downloadCategoryImage(date, dealWithBitmap, isStop, categoryList,
-				isFirstBitmapOfCurrentDay,mFirstSaveImageForCategory);
+				isFirstBitmapOfCurrentDay,mFirstSaveImageForCategory,result);
     }
 
 	private void downloadCategoryImage(int date,
 			DealWithByteFile dealWithBitmap, boolean isStop,
 			List<Category> categoryList, boolean isFirstBitmapOfCurrentDay
-			,FirstSaveCategoryImage firstSaveCategoryImage) {
+			,FirstSaveCategoryImage firstSaveCategoryImage,String result) {
 		ArrayList<Category> delList = new ArrayList<Category>();
 		for(int index = 0;index < categoryList.size();index++){
             DebugLog.d(TAG,"downloadCategoryPicturesFromNet isStop:" + isStop);
@@ -204,7 +207,8 @@ public class RequestNicePicturesFromInternet {
                     boolean savedSuccess = dealWithBitmap.writeToLocal(key,bitmapByte);                  
                     if(savedSuccess){
                        if(firstSaveCategoryImage != null){
-                    	   isFirstBitmapOfCurrentDay = firstSaveCategoryImage.operationAfterSaveImage(categoryList, isFirstBitmapOfCurrentDay, date, delList);
+                    	   isFirstBitmapOfCurrentDay = firstSaveCategoryImage.operationAfterSaveImage(categoryList, isFirstBitmapOfCurrentDay, date, delList,
+                    			   result);
                        }
                 	   CategoryDB.getInstance(mContext).updateDownLoadFinish(category);
                     }
@@ -231,7 +235,7 @@ public class RequestNicePicturesFromInternet {
         DebugLog.d(TAG,"downloadCategoryPictures");
         CategoryDB categoryDB = CategoryDB.getInstance(mContext);
         List<Category> categoryList = categoryDB.queryPicturesNoDownLoad();
-        downloadCategoryImage(date, dealWithBitmap, isStop, categoryList, false, mFirstSaveImageForCategory);
+        downloadCategoryImage(date, dealWithBitmap, isStop, categoryList, false, mFirstSaveImageForCategory,null);
     }
 
     /**
@@ -287,6 +291,7 @@ public class RequestNicePicturesFromInternet {
 //        }
         DebugLog.d(TAG,"downloadWallpaperPicturesFromNet 1");
         WallpaperList wallpaperList = JsonUtil.parseJsonToWallpaperList(result);
+        wallpaperList.quickSort();
         DebugLog.d(TAG,"downloadWallpaperPicturesFromNet 2");
         boolean isFirstBitmapOfCurrentDay = true;
         String currentDate = Common.formatCurrentDate();
@@ -294,7 +299,7 @@ public class RequestNicePicturesFromInternet {
         downloadWallpaperImage(date,dealWithBitmap, isStop, wallpaperList,
 				isFirstBitmapOfCurrentDay,mFirstSaveImageForWallpaper);
     }
-
+    
 	private void downloadWallpaperImage(int date,
 			ReadAndWriteFileFromSD dealWithBitmap, boolean isStop,
 			WallpaperList wallpaperList, boolean isFirstBitmapOfCurrentDay,
@@ -387,7 +392,7 @@ public class RequestNicePicturesFromInternet {
     }
 
     private interface FirstSaveCategoryImage{
-    	public boolean operationAfterSaveImage(List<Category> list,boolean isFirst,int date,List<Category> delList);
+    	public boolean operationAfterSaveImage(List<Category> list,boolean isFirst,int date,List<Category> delList,String result);
     	public void delOldImage(DealWithByteFile dealWithBitmap,boolean savedSuccess, List<Category> delList);
     }
     
@@ -418,12 +423,13 @@ public class RequestNicePicturesFromInternet {
 		
 		@Override
 		public boolean operationAfterSaveImage(List<Category> categoryList,boolean isFirst,
-				int date,List<Category> delCategoryList) {
+				int date,List<Category> delCategoryList,String result) {
             if(isFirst){
             	CategoryDB categoryDB = CategoryDB.getInstance(mContext);
                 categoryDB.insertAfterDeleteAll(categoryList);
                 delCategoryList = categoryDB.queryHasCategoryNotToday();
                 Common.setUpdateCategoryDate(mContext,date);
+                JsonUtil.setCategoryDataVersion(mContext, result);
                 isFirst = false;
             }
 			return isFirst;

@@ -16,7 +16,7 @@ public class Event {
     
     
     /**
-     * 图片展示(自动轮播/亮屏/手动轮播等图片出现过一次+1)
+     * 图片展示(亮屏/手动轮播等图片出现过一次+1)
      */
     public static final int IMG_SHOW = 10;
     

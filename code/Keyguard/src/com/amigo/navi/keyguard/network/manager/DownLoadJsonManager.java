@@ -114,6 +114,7 @@ public class DownLoadJsonManager {
         params.add(new BasicNameValuePair(TIMESTAMP,String.valueOf(currentTimeMillis)));
         params.add(new BasicNameValuePair(USERID, userID));
         String dataVersion = String.valueOf(Common.getDataVersion(context));
+    	DebugLog.d(TAG,"requestPictureCategory dataVersion :" + dataVersion);
         params.add(new BasicNameValuePair(DATA_VERSION,dataVersion));
         params.add(new BasicNameValuePair(REQUEST_FROM,String.valueOf(ConnectionParameters.REQUEST_SOURCE)));
         String md5Secret = Common.getMD5String(versionName + SIGN_DIVIDE

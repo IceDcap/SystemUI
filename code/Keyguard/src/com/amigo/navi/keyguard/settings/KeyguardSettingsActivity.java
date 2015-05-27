@@ -3,8 +3,6 @@ package com.amigo.navi.keyguard.settings;
 import java.util.ArrayList;
 
 import amigo.app.AmigoAlertDialog;
-import amigo.widget.AmigoSwitch;
-import amigo.widget.AmigoTextView;
 
 import android.app.Activity;
 import android.app.Notification;
@@ -44,6 +42,7 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.amigo.navi.keyguard.DebugLog;
@@ -61,16 +60,16 @@ public class KeyguardSettingsActivity extends Activity {
 	
 	private Bitmap wallpaper;
 
-    private AmigoSwitch mDoubleDesktopLock;
-    private AmigoSwitch mKeyguardWallpaperUpdate;
-    private AmigoSwitch mOnlyWlanSwitch;
+    private Switch mDoubleDesktopLock;
+    private Switch mKeyguardWallpaperUpdate;
+    private Switch mOnlyWlanSwitch;
     private TextView mSettingTitle;
-    private AmigoTextView mWallpaperUpdateTitle;
+    private TextView mWallpaperUpdateTitle;
     private TextView mWallpaperUpdateFirstline;
     private TextView mWallpaperUpdateSecondline;
     private TextView mOnlyWlanSwitchFirstLine;
     private View mDivider;
-    private AmigoTextView mDoubleDesktopLockTitle;
+    private TextView mDoubleDesktopLockTitle;
     private TextView mDoubleDesktopLockFirstline;
     private TextView mDoubleDesktopLockSecondline;
     private Bitmap mWindowBackgroud;
@@ -120,17 +119,17 @@ public class KeyguardSettingsActivity extends Activity {
 	
 	private void findView(){
 		mSettingTitle = (TextView)findViewById(R.id.setting_title);
-	    mWallpaperUpdateTitle = (AmigoTextView)findViewById(R.id.wallpaper_update_title);
+	    mWallpaperUpdateTitle = (TextView)findViewById(R.id.wallpaper_update_title);
 	    mWallpaperUpdateFirstline = (TextView)findViewById(R.id.wallpaper_update_firstline);
 	    mWallpaperUpdateSecondline = (TextView)findViewById(R.id.wallpaper_update_secondline);
-	    mKeyguardWallpaperUpdate = (AmigoSwitch) findViewById(R.id.settings_switch_wallpaper_update);
+	    mKeyguardWallpaperUpdate = (Switch) findViewById(R.id.settings_switch_wallpaper_update);
 	    mOnlyWlanSwitchFirstLine = (TextView)findViewById(R.id.only_wlan_firstline);
-	    mOnlyWlanSwitch = (AmigoSwitch) findViewById(R.id.settings_switch_only_wlan);
+	    mOnlyWlanSwitch = (Switch) findViewById(R.id.settings_switch_only_wlan);
 	    mDivider = (View)findViewById(R.id.settings_divider);
-	    mDoubleDesktopLockTitle = (AmigoTextView)findViewById(R.id.double_desktop_lock_title);
+	    mDoubleDesktopLockTitle = (TextView)findViewById(R.id.double_desktop_lock_title);
 	    mDoubleDesktopLockFirstline = (TextView)findViewById(R.id.double_desktop_lock_firstline);
 	    mDoubleDesktopLockSecondline = (TextView)findViewById(R.id.double_desktop_lock_secondline);
-	    mDoubleDesktopLock = (AmigoSwitch) findViewById(R.id.settings_switch_double_desktop_lock);
+	    mDoubleDesktopLock = (Switch) findViewById(R.id.settings_switch_double_desktop_lock);
 	    mGuideView = (TextView)findViewById(R.id.wallpaper_update_guide);
 
 	}
@@ -277,10 +276,11 @@ public class KeyguardSettingsActivity extends Activity {
 	        		}
 	        		
 	        		HKAgent.onEventWallpaperUpdate(getApplicationContext(),Event.SETTING_UPDATE, KeyguardSettings.SWITCH_WALLPAPER_UPDATE_ON);
-					RequestNicePicturesFromInternet.getInstance(getApplicationContext()).registerData();
+					RequestNicePicturesFromInternet.getInstance(getApplicationContext()).registerData(false);
 				}else{
 	        		saveConnectState(false);
 	        		HKAgent.onEventWallpaperUpdate(getApplicationContext(),Event.SETTING_UPDATE, KeyguardSettings.SWITCH_WALLPAPER_UPDATE_OFF);
+					RequestNicePicturesFromInternet.getInstance(getApplicationContext()).registerData(true);
 				}
 				
 			}});
@@ -307,7 +307,7 @@ public class KeyguardSettingsActivity extends Activity {
 				}else{
 	        		HKAgent.onEventOnlyWlan(getApplicationContext(),Event.SETTING_DOWNLOAD, KeyguardSettings.SWITCH_ONLY_WLAN_OFF);
 				}
-				RequestNicePicturesFromInternet.getInstance(getApplicationContext()).registerData();
+				RequestNicePicturesFromInternet.getInstance(getApplicationContext()).registerData(false);
 			}});
 
     }

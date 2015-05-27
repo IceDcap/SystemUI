@@ -23,11 +23,16 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
         DebugLog.d(TAG,"test onReceive networkState:" + networkState);
         RequestNicePicturesFromInternet nicePicturesInit = RequestNicePicturesFromInternet.getInstance(context);
 		if(networkState){
-			if(!TimeControlManager.getInstance().isFinishUpdateTime()){
-		        TimeControlManager.getInstance().init(mContext);
-		        TimeControlManager.getInstance().startUpdateAlarm();
+			try {
+				if(!TimeControlManager.getInstance(context).isFinishUpdateTime()){
+//		        TimeControlManager.getInstance().init(mContext);
+					TimeControlManager.getInstance(context).cancelUpdateAlarm();
+		        	TimeControlManager.getInstance(context).startUpdateAlarm();
+				}
+			} catch (Exception e) {
+				DebugLog.d(TAG,"onReceive error:" + e);
 			}
-		    nicePicturesInit.registerData();
+		    nicePicturesInit.registerData(false);
 		}else{
 	        nicePicturesInit.shutDownWorkPool();
 		}

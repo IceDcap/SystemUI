@@ -6,10 +6,16 @@ import java.util.LinkedHashMap;
 import java.util.WeakHashMap;
 
 import com.amigo.navi.keyguard.DebugLog;
+import com.amigo.navi.keyguard.KWDataCache;
+import com.amigo.navi.keyguard.haokan.BitmapUtil;
 import com.amigo.navi.keyguard.haokan.db.WallpaperDB;
 import com.amigo.navi.keyguard.network.FailReason.FailType;
 import com.amigo.navi.keyguard.network.local.DealWithFromLocalInterface;
+import com.amigo.navi.keyguard.network.local.LocalBitmapOperation;
+import com.amigo.navi.keyguard.network.local.LocalFileOperationInterface;
+import com.amigo.navi.keyguard.network.local.ReadAndWriteFileFromSD;
 import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
+import com.amigo.navi.keyguard.network.manager.DownLoadBitmapManager;
 
 import android.app.ActionBar.Tab;
 import android.content.Context;
@@ -21,10 +27,20 @@ public class ImageLoader implements ImageLoaderInterface{
     private static final String LOG_TAG = "ImageLoader";
     private int mSecondMaxCapacity = 4;
     private Context mContext;
-    int maxMemory = (int) Runtime.getRuntime().maxMemory();
-    int mCacheSize = maxMemory / 2;  
+    int maxMemory = (int) Runtime.getRuntime().maxMemory() / 1024;
+    int mCacheSize = maxMemory / 4;
+	private int mScreenWid;
+	private int mScreenHei;
+	private ReadAndWriteFileFromSD mDealWithWallpaper;  
+	private static final boolean isPrintLog = false;
     public ImageLoader(Context context) {
         mContext = context.getApplicationContext();
+    	mScreenWid = KWDataCache.getScreenWidth(mContext.getResources());
+    	mScreenHei = KWDataCache.getAllScreenHeigt(mContext);
+        LocalFileOperationInterface localFileOperationInterface = new LocalBitmapOperation(mContext);
+        String path = DiskUtils.getCachePath(mContext);
+        mDealWithWallpaper = new ReadAndWriteFileFromSD(mContext
+                ,DiskUtils.WALLPAPER_BITMAP_FOLDER,path,localFileOperationInterface);
     }
     
 
@@ -41,7 +57,9 @@ public class ImageLoader implements ImageLoaderInterface{
                         Bitmap oldValue, Bitmap newValue) {
                     // TODO Auto-generated method stub
             super.entryRemoved(evicted, key, oldValue, newValue);
-            DebugLog.d(LOG_TAG,"entryRemoved oldValue:" + oldValue);
+            if(isPrintLog){
+            	DebugLog.d(LOG_TAG,"entryRemoved oldValue:" + oldValue);
+            }
             if (oldValue != null) { 
                 mSecondLevelCache.put(key,new SoftReference<Bitmap>(oldValue));
               }
@@ -124,7 +142,9 @@ public class ImageLoader implements ImageLoaderInterface{
         }
         Bitmap bitmap = loadImageStepByStep(url, loadingListener,
                 dealWithFromLocalInterface); 
-        DebugLog.d(LOG_TAG,"makeAndAddView loadImage url:" + url + " bitmap:" + bitmap);
+        if(isPrintLog){
+            DebugLog.d(LOG_TAG,"makeAndAddView loadImage url:" + url + " bitmap:" + bitmap);
+        }
 //        if(bitmap != null){
 //            DebugLog.d(LOG_TAG,"loadImage bitmap width:" + bitmap.getWidth());
 //            DebugLog.d(LOG_TAG,"loadImage bitmap height:" + bitmap.getHeight());
@@ -135,8 +155,10 @@ public class ImageLoader implements ImageLoaderInterface{
     private void dealWithImage(String url,
             ImageLoadingListener loadingListener, boolean isNeedCache,
             Bitmap bitmap,DealWithFromLocalInterface dealWithFromLocalInterface) {
-        DebugLog.d(LOG_TAG,"dealWithImage loadImage url:" + url + " bitmap:" + bitmap);
-        DebugLog.d(LOG_TAG,"dealWithImage loadImage isNeedCache:" + isNeedCache);
+        if(isPrintLog){
+        	DebugLog.d(LOG_TAG,"dealWithImage loadImage url:" + url + " bitmap:" + bitmap);
+            DebugLog.d(LOG_TAG,"dealWithImage loadImage isNeedCache:" + isNeedCache);
+        }
         if(bitmap != null){
             if(isNeedCache){
                 addImage2Cache(url, bitmap);
@@ -155,12 +177,29 @@ public class ImageLoader implements ImageLoaderInterface{
     private Bitmap loadImageStepByStep(String url,
             ImageLoadingListener loadingListener,
             DealWithFromLocalInterface dealWithFromLocalInterface) {
-        DebugLog.d("HorizontalListView","makeAndAddView loadImageStepByStep url:" + url);
+        if(isPrintLog){
+            DebugLog.d("HorizontalListView","makeAndAddView loadImageStepByStep url:" + url);
+        }
         Bitmap bitmap = getBitmapFromCache(url);
-        DebugLog.d("HorizontalListView","makeAndAddView loadImageStepByStep1 bitmap:" + bitmap);
+        if(isPrintLog){
+            DebugLog.d("HorizontalListView","makeAndAddView loadImageStepByStep1 bitmap:" + bitmap);
+        }
         if (bitmap == null) {
             bitmap = loadImageFromLocal(dealWithFromLocalInterface, url);
-            DebugLog.d("HorizontalListView","makeAndAddView loadImageStepByStep bitmap:" + bitmap);
+            if(isPrintLog){
+                DebugLog.d("HorizontalListView","makeAndAddView loadImageStepByStep bitmap:" + bitmap);
+            }
+        }
+        if(bitmap == null){
+        	Bitmap bitmapTemp = DownLoadBitmapManager.getInstance().downLoadBitmap(mContext, url);
+            String key = DiskUtils.constructFileNameByUrl(url);
+            if(bitmapTemp != null){
+            	bitmap = BitmapUtil.getResizedBitmapForSingleScreen(bitmapTemp, mScreenHei, mScreenWid);
+            	mDealWithWallpaper.writeToLocal(key,bitmap);
+            	BitmapUtil.recycleBitmap(bitmapTemp);
+            	BitmapUtil.recycleBitmap(bitmap);
+            	return null;
+            }
         }
         return bitmap;
     }

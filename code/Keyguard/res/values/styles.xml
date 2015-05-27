@@ -151,4 +151,7 @@
     <style name="LinkTextAppearance" parent="@android:style/TextAppearance">
 		<item name="android:textSize">@dimen/haokan_content_link_textsize</item>
 	</style>
+    <style name="KeyguardSettingsStyle" parent="@android:style/Theme.Material.Wallpaper.NoTitleBar">
+	    <item name="android:colorAccent">@color/keyguard_setting_title_color</item>
+    </style>
 </resources>

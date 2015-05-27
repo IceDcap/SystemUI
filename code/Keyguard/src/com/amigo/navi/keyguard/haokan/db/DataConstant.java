@@ -24,6 +24,7 @@ public class DataConstant {
             CategoryColumns.DOWNLOAD_PICTURE + " integer default 0,"+
             CategoryColumns.SAVE_TYPE + " integer default 0," + 
             CategoryColumns.EN_NAME + " text," + 
+            CategoryColumns.SORT + " integer default 0," + 
             CategoryColumns.TODAY_IMAGE + " integer default 1" + 
             ")";
     
@@ -39,6 +40,7 @@ public class DataConstant {
         public static final String TODAY_IMAGE = "today_img";
         public static final String SAVE_TYPE = "save_type";
         public static final String EN_NAME = "en_name";
+        public static final String SORT = "sort";
     }
     
     

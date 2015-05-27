@@ -2,26 +2,38 @@
 Build Notes
 ==================
 1.版本目的:
-控制中心新改版
+CR01479178
+解决  合上皮套-天窗界面来电后接听-在天窗界面挂断后-天窗界面显示的是桌面 的bug
+CR01482835
+修改 天窗没显示“未接来电、未读短信”图标及数量  的问题
+CR01482835
+解决密码锁为无时，sim卡状态下 合盖开盖，天窗不消失的bug
+CR01486851
+【品质压力】控制中心，开关飞行模式后，点击转屏无作用，无法点关闭飞行模式，重启后恢复 2/50
 2.功能变更:
-No
+-
 3.重点测试的问题:
-控制中心新改版
+-
 4.应用数据库是否改变:
 No
 
 ==================
 Release Location
 ==================
-/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.m.zip
+/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.n.zip
 
 ==================
 CR List
 ==================
-[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
-svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.x' non-existent in revision 5388
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.y' non-existent[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+ in revision 5435
 
 svn: E200009: Could not display info for all targets because some targets don't exist
-svn: E205000: Syntax error in revision argument '5388:'
+svn: E205000: Syntax error in revision argument '5431:'
 File does not exist:  at getAppChangeSet.pl line 48
 
+==================
+Make sonar target URL:
+http://ss.alm.gionee.com/sonar
+http://ss.alm.gionee.com/sonar/dashboard/index/gionee.app:Amigo_SystemUI
+==================

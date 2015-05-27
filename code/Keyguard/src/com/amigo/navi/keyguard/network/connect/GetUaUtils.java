@@ -3,11 +3,16 @@ package com.amigo.navi.keyguard.network.connect;
 import java.lang.reflect.Method;
 import java.util.Locale;
 
+import com.amigo.navi.keyguard.DebugLog;
+
+import android.app.ActionBar.Tab;
 import android.content.Context;
 import android.os.Build;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 
 public class GetUaUtils {
+	private static final String TAG = "GetUaUtils";
     private static String sUa = null;
 
     public static String getUA(Context context) {
@@ -33,8 +38,15 @@ public class GetUaUtils {
         Locale local = Locale.getDefault();
         String slocaleInfo = local.getLanguage() + "-"
                 + local.getCountry().toLowerCase();
+        String release = Build.VERSION.RELEASE;
+        if(TextUtils.isEmpty(release)){
+        	release = "x.x";
+        }
+        if(TextUtils.isEmpty(slocaleInfo)){
+        	slocaleInfo = "zh-cn";
+        }
         uacontent = "Mozilla/5.0 (Linux; U; Android "
-                + Build.VERSION.RELEASE
+                + release
                 + "; "
                 + slocaleInfo
                 + ";"
@@ -51,13 +63,14 @@ public class GetUaUtils {
                 uacontent += " Id/" + decodeImei;
             }
         }
+        DebugLog.d(TAG,"getUaString uacontent:" + uacontent);
         return uacontent;
     }
     
     public static String systemPropertiesGet(String key, String def) {
         init();
     
-        String value = null;
+        String value = def;
     
         try {
             value = (String) mGetMethod.invoke(mClassType, key, def);

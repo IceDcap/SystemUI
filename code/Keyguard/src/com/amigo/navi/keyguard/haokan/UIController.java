@@ -27,6 +27,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.amigo.navi.keyguard.AmigoKeyguardHostView;
 import com.amigo.navi.keyguard.DebugLog;
+import com.amigo.navi.keyguard.Guide;
 import com.amigo.navi.keyguard.KeyguardViewHost;
 import com.amigo.navi.keyguard.KeyguardViewHostManager;
 import com.amigo.navi.keyguard.haokan.PlayerManager.State;
@@ -122,6 +123,15 @@ public class UIController implements OnTouchlListener{
     private TextView mTextViewMusicName, mTextViewArtist;
     
     private RelativeLayout mHaoKanLayout;
+    private RelativeLayout mGuideScrollUpView;
+    
+    
+    private RelativeLayout getGuideScrollUpView() {
+        return mGuideScrollUpView;
+    }
+    public void setGuideScrollUpView(RelativeLayout guideScrollUpView) {
+        this.mGuideScrollUpView = guideScrollUpView;
+    }
     
     public RelativeLayout getmArcMenu() {
         return mArcMenu;
@@ -569,7 +579,6 @@ public class UIController implements OnTouchlListener{
     
     public void refreshWallpaperInfo() {
         int pos = getmKeyguardListView().getNextPage();
-        DebugLog.d(TAG,"OnTouchUp pos:" + pos);
         DebugLog.d(TAG, "OnTouchUp getPage = " + pos);
         HorizontalAdapter mWallpaperAdapter = (HorizontalAdapter) getmKeyguardListView().getAdapter(); 
         WallpaperList list = mWallpaperAdapter.getWallpaperList();
@@ -705,6 +714,14 @@ public class UIController implements OnTouchlListener{
    
     public void onKeyguardScrollChanged(int top,int maxBoundY,int model) {
 
+    	
+		if (Guide.needGuideScrollUp()) {
+			if (top > 0) {
+				mGuideScrollUpView.setVisibility(View.GONE);
+			} else {
+				mGuideScrollUpView.setVisibility(View.VISIBLE);
+			}
+		}
         
         float captionsAlpha = 0f;
         float infozoneAlpha = 0f;

@@ -25,6 +25,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory.Options;
 import android.os.Environment;
+import android.text.TextUtils;
 
 public class DiskUtils {
     public static final int VERSION = 1;
@@ -153,11 +154,21 @@ public class DiskUtils {
 
     public static String getCachePath(Context context){
         String cachePath = "";
+        File file = null;
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
             || !Environment.isExternalStorageRemovable()) {
-          cachePath = context.getExternalCacheDir().getPath();
-        } else {
-          cachePath = context.getCacheDir().getPath();
+        	  file = context.getExternalCacheDir();
+        } 
+        if(file != null){
+        	cachePath = file.getPath();
+            if(!TextUtils.isEmpty(cachePath))
+            {
+            	return cachePath;
+            }
+        }
+        file = context.getCacheDir();
+        if(file != null){
+        	cachePath = file.getPath();
         }
         return cachePath;
     }

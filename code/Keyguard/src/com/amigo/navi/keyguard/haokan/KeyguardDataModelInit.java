@@ -13,6 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 import com.amigo.navi.keyguard.DebugLog;
+import com.amigo.navi.keyguard.haokan.db.CategoryDB;
 import com.amigo.navi.keyguard.haokan.db.WallpaperDB;
 import com.amigo.navi.keyguard.haokan.entity.WallpaperList;
 import com.amigo.navi.keyguard.network.local.ReadAndWriteFileFromSD;
@@ -36,8 +37,6 @@ public class KeyguardDataModelInit {
     
     private static final String TAG = "KeyguardDataModelInit";
     private Context mContext = null;
-    private ReadAndWriteFileFromSD mDealWithWallpaperFile = null;
-    private ReadAndWriteFileFromSD mDealWithCategoryFile = null;
 
     private static KeyguardDataModelInit sInstance = null;
     
@@ -54,13 +53,6 @@ public class KeyguardDataModelInit {
     
     private KeyguardDataModelInit(Context context){
         mContext = context.getApplicationContext();
-        LocalFileOperation localFileOperation = new LocalFileOperation(context);
-        mDealWithWallpaperFile = new ReadAndWriteFileFromSD(context, DiskUtils.WALLPAPER_BITMAP_FOLDER, 
-                DiskUtils.getCachePath(context.getApplicationContext())
-                , localFileOperation);
-        mDealWithCategoryFile = new ReadAndWriteFileFromSD(context, DiskUtils.CATEGORY_BITMAP_FOLDER, 
-                DiskUtils.getCachePath(context.getApplicationContext())
-                , localFileOperation);
     }
     
     public void initData(){
@@ -71,17 +63,23 @@ public class KeyguardDataModelInit {
     
     private void insertLocalDataToDBIfDBNull(){
         boolean flag = WallpaperDB.getInstance(mContext.getApplicationContext())
-                .queryHasDownLoadImage();   
+                .queryHasDownLoadImage(); 
         if(!flag){
-            WallpaperList WallpaperList = JsonUtil.getDefaultWallpaperList();
-            WallpaperDB.getInstance(mContext).replaceWallpapers(WallpaperList);
+            insertLocalDataToDB();
+            return;
         }
+
     }
+
+	private void insertLocalDataToDB() {
+		WallpaperList WallpaperList = JsonUtil.getDefaultWallpaperList();
+		WallpaperDB.getInstance(mContext).replaceWallpapers(WallpaperList);
+	}
     
     public void initAlarm(){
         initBroadcastReceiver();
-        TimeControlManager.getInstance().init(mContext);
-        TimeControlManager.getInstance().startUpdateAlarm();
+//        TimeControlManager.getInstance().init(mContext);
+        TimeControlManager.getInstance(mContext).startUpdateAlarm();
     }
     
     private BroadcastReceiver mReveicer;
@@ -102,10 +100,10 @@ public class KeyguardDataModelInit {
             DebugLog.d(TAG,"onReceive wallpaper alarm");
             String action = intent.getAction();
             if (Constant.WALLPAPER_TIMING_UPDATE.equals(action)) {
-                TimeControlManager.getInstance().cancelUpdateAlarm();
-                TimeControlManager.getInstance().startUpdateAlarm();
-                RequestNicePicturesFromInternet.getInstance(mContext.getApplicationContext()).shutDownWorkPool();
-                RequestNicePicturesFromInternet.getInstance(mContext.getApplicationContext()).registerData();
+                TimeControlManager.getInstance(context).cancelUpdateAlarm();
+                TimeControlManager.getInstance(context).startUpdateAlarm();
+//                RequestNicePicturesFromInternet.getInstance(mContext.getApplicationContext()).shutDownWorkPool();
+                RequestNicePicturesFromInternet.getInstance(mContext.getApplicationContext()).registerData(false);
             } 
         }
     }
@@ -114,18 +112,23 @@ public class KeyguardDataModelInit {
         if(mReveicer != null){
             mContext.unregisterReceiver(mReveicer);
         }
-        TimeControlManager.getInstance().release();
+        TimeControlManager.getInstance(mContext).release();
     }
     
     private final static String DBNAME = "haokan.db";
     private final static String ADDSTR = "/data/data/com.android.systemui/databases/";
-    private final static String DB_VERSION = "20150519";
+    private final static String DB_VERSION = "20150525";
     public boolean saveInitDataToClientDB(Context context) {
         File dbFile = new File(ADDSTR + DBNAME);
         if(dbFile.exists()){
         	if(!DB_VERSION.equals(Common.getDatabaseVersion(mContext))){
-        		dbFile.delete();
+        			dbFile.delete();
+                	Common.setUpdateWallpaperDate(mContext,0);
+                	Common.setUpdateCategoryDate(mContext,0);
         	}else{
+            	if(isNeedToDelDBWhenImageError(dbFile)){
+                    Common.setUpdateCategoryDate(mContext,0);
+            	}
                 return true;
         	}
         }
@@ -160,5 +163,28 @@ public class KeyguardDataModelInit {
         }
         return false;
     }
+
+	private boolean isNeedToDelDBWhenImageError(File dbFile) {
+		boolean isNeedToDel = false;
+		boolean hasNotLocalData = CategoryDB.getInstance(mContext.getApplicationContext())
+          .queryHasDownLoadImageNotLocalData(); 
+          String path = DiskUtils.getCachePath(mContext);
+          String folder = path + File.separator + DiskUtils.CATEGORY_BITMAP_FOLDER;
+          File file = new File(folder);
+          DebugLog.d(TAG,"isNeedToDelDBWhenImageError hasNotLocalData:" + hasNotLocalData);
+          DebugLog.d(TAG,"isNeedToDelDBWhenImageError file:" + file);
+          if(hasNotLocalData && file != null){
+              DebugLog.d(TAG,"isNeedToDelDBWhenImageError file.exists():" + file.exists());
+          		if(!file.exists()){
+          			return true;
+          		}
+                DebugLog.d(TAG,"isNeedToDelDBWhenImageError file.isDirectory():" + file.isDirectory());
+          		if(file.isDirectory() && file.list().length == 0) {
+                    DebugLog.d(TAG,"isNeedToDelDBWhenImageError file.list().length:" + file.list().length);
+          			return true;
+          		}
+            }
+          	return isNeedToDel;
+	}
     
 }

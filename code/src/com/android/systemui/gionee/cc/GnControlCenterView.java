@@ -47,6 +47,9 @@ public class GnControlCenterView extends GnControlCenter {
     
     // Context
     private Context mContext;
+    
+    // Orientation
+    private int mOldOrientation = Configuration.ORIENTATION_PORTRAIT;
 
     // Handler
     private static final int ACTION_DISMISS_CONTROL_CENTER = 1000;
@@ -194,8 +197,10 @@ public class GnControlCenterView extends GnControlCenter {
         }
         mHandle.setLayoutParams(lp);
         
-        if (mGnControlCenterPanel.isShown()) {
+        if (mGnControlCenterPanel.isShown() && newConfig.orientation != mOldOrientation) {
             Log.d(TAG, "onConfigurationChanged createBlurBg");
+            mOldOrientation = newConfig.orientation;
+            
             createBlurBg(mContext);
             // Gionee <huangwt> <2015-3-31> add for CR01458422 begin
             dismiss();

@@ -8,6 +8,7 @@ package com.android.systemui.gionee.cc.qs.policy;
 
 import android.content.Context;
 import android.os.UserHandle;
+import android.util.Log;
 
 import com.android.internal.view.RotationPolicy;
 
@@ -15,6 +16,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /** Platform implementation of the rotation lock controller. **/
 public final class GnRotationLockControllerImpl implements GnRotationLockController {
+    
+    private static final String TAG = "GnRotationLockControllerImpl";
     private final Context mContext;
     private final CopyOnWriteArrayList<RotationLockControllerCallback> mCallbacks =
             new CopyOnWriteArrayList<RotationLockControllerCallback>();
@@ -50,6 +53,7 @@ public final class GnRotationLockControllerImpl implements GnRotationLockControl
     }
 
     public void setRotationLocked(boolean locked) {
+        Log.d(TAG, "setRotationLocked  " + locked);
         RotationPolicy.setRotationLock(mContext, locked);
     }
 

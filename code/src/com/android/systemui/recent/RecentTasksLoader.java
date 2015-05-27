@@ -52,7 +52,7 @@ public class RecentTasksLoader implements View.OnTouchListener {
     static final String TAG = "RecentTasksLoader";
     static final boolean DEBUG = true;//PhoneStatusBar.DEBUG || false;
 
-    private static final int DISPLAY_TASKS = 16;
+    private static final int DISPLAY_TASKS = 20;
     private static final int MAX_TASKS = DISPLAY_TASKS + 1; // allow extra for non-apps
 
     private Context mContext;

@@ -978,6 +978,7 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 			if(DebugLog.DEBUG){
 				DebugLog.d(LOG_TAG, "onScrollChanged--top>=mMaxBoundY : "+mMaxBoundY+"  isSecure: "+isSecure());
 			}
+			mKeyguardPage.removeGuideScrollUpView();
 			mScroller.forceFinished(true);
 			if(!isSecure()){
 //			    mKeyguardViewManager.destroyAcivityIfNeed();

@@ -361,6 +361,11 @@
 	<dimen name="haokan_webview_close_height">48dp</dimen>
 	
 	<dimen name="haokan_content_link_textsize">10dp</dimen>
+	
+	<dimen name="haokan_guide_slip_left_right_margin">11dp</dimen>
+	<dimen name="haokan_guide_slip_top_margin">253dp</dimen>
+	
+	
 	<!-- haokan dimens end-->
 	
 	

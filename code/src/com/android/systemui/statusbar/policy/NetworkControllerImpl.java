@@ -382,6 +382,8 @@ public class NetworkControllerImpl extends BroadcastReceiver
             handleConfigurationChanged();
         } else if (action.equals(Intent.ACTION_AIRPLANE_MODE_CHANGED)) {
             refreshLocale();
+            //Get the airplane mode from intent to avoid DB delay.
+            mAirplaneMode = intent.getBooleanExtra("state", false);
             updateAirplaneMode(false);
             refreshCarrierLabel();
         } else if (action.equals(TelephonyIntents.ACTION_DEFAULT_VOICE_SUBSCRIPTION_CHANGED)) {
@@ -532,16 +534,18 @@ public class NetworkControllerImpl extends BroadcastReceiver
     }
 
     private void updateAirplaneMode(boolean force) {
-        boolean airplaneMode = (Settings.Global.getInt(mContext.getContentResolver(),
+        /*boolean airplaneMode = (Settings.Global.getInt(mContext.getContentResolver(),
                 Settings.Global.AIRPLANE_MODE_ON, 0) == 1);
         if (airplaneMode != mAirplaneMode || force) {
             mAirplaneMode = airplaneMode;
-            for (MobileSignalController mobileSignalController : mMobileSignalControllers.values()) {
-                mobileSignalController.setAirplaneMode(mAirplaneMode);
-            }
-            notifyListeners();
-            refreshCarrierLabel();
-        }
+        }*/
+    	if(mAirplaneMode || force) {
+    		for (MobileSignalController mobileSignalController : mMobileSignalControllers.values()) {
+    			mobileSignalController.setAirplaneMode(mAirplaneMode);
+    		}
+    		notifyListeners();
+    		refreshCarrierLabel();
+    	}
     }
 
     private void refreshLocale() {
@@ -1207,8 +1211,8 @@ public class NetworkControllerImpl extends BroadcastReceiver
             mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_UMTS, TelephonyIcons.THREE_G);
 
             if (!mConfig.showAtLeast3G) {
-                mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_UNKNOWN,TelephonyIcons.G
-                        /*TelephonyIcons.UNKNOWN*/);//while we cannot getDataNetworkType from ServiceState, take G as default
+                mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_UNKNOWN,
+                        TelephonyIcons.UNKNOWN);//while we cannot getDataNetworkType from ServiceState, take G as default
                 mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_EDGE, TelephonyIcons.E);
                 mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_CDMA, TelephonyIcons.ONE_X);
                 mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_1xRTT, TelephonyIcons.ONE_X);
