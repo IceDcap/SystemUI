@@ -117,7 +117,7 @@ public class StackStateAnimator {
                 continue;
             }
 
-            child.setClipBounds(null);
+            //child.setClipBounds(null);
             startAnimations(child, viewState, finalState, i);
         }
         if (!isRunning()) {
