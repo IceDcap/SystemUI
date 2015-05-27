@@ -688,7 +688,11 @@ public class StackScrollAlgorithm {
             StackScrollState.ViewState childViewState = resultState.getViewStateForView(child);
             if (i < algorithmState.itemsInTopStack) {
                 float stackIndex = algorithmState.itemsInTopStack - i;
-                stackIndex = Math.min(stackIndex, MAX_ITEMS_IN_TOP_STACK + 2);
+
+                // Ensure that the topmost item is a little bit higher than the rest when fully
+                // scrolled, to avoid drawing errors when swiping it out
+                float max = MAX_ITEMS_IN_TOP_STACK + (i == 0 ? 2.5f : 2);
+                stackIndex = Math.min(stackIndex, max);
                 if (i == 0 && algorithmState.itemsInTopStack < 2.0f) {
 
                     // We only have the top item and an additional item in the top stack,
