@@ -20,7 +20,7 @@
         xmlns:androidprv="http://schemas.android.com/apk/prv/res/android"
         package="com.android.systemui"
         android:sharedUserId="android.uid.systemui"
-		android:versionName="6.1.0.n"
+		android:versionName="6.1.0.o"
         coreApp="true">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -484,6 +484,19 @@
             android:theme="@android:style/Theme.Wallpaper.NoTitleBar"
             android:excludeFromRecents="true" >
         </activity>
+        <activity
+            android:name="com.amigo.navi.keyguard.haokan.DetailActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Wallpaper.NoTitleBar"
+            android:excludeFromRecents="true" >
+        </activity>
+         <activity
+            android:name="com.amigo.navi.keyguard.haokan.WallpaperCutActivity"
+            android:screenOrientation="portrait"
+            android:theme="@amigo:style/Theme.Amigo.Light"
+            android:excludeFromRecents="true" >
+        </activity>
+
         <receiver android:name="com.amigo.navi.keyguard.settings.KeyguardSettingsSetupwizardReceiver">
             <intent-filter>
                 <action android:name="com.gionee.setupwizard.SECURE_SERVICE"/>

@@ -162,7 +162,7 @@ public class AmigoKeyguardPage extends RelativeLayout {
         RelativeLayout playerRelativeLayout = (RelativeLayout) mHaoKanLayout.findViewById(R.id.haokan_page_layout_player);
         CaptionsView captionsView = (CaptionsView) mHaoKanLayout.findViewById(R.id.haokan_page_layout_captions);
         PlayerButton playerButton = (PlayerButton) playerRelativeLayout.findViewById(R.id.haokan_page_layout_imageButton);
-        TextView textViewTip = (TextView) mHaoKanLayout.findViewById(R.id.haokan_page_layout_tip);
+        
         
         TextView musicName = (TextView) playerRelativeLayout.findViewById(R.id.haokan_page_layout_music);
         TextView musicArtist = (TextView) playerRelativeLayout.findViewById(R.id.haokan_page_layout_Artist);
@@ -171,7 +171,6 @@ public class AmigoKeyguardPage extends RelativeLayout {
         controller.setmLayoutPlayer(playerRelativeLayout);
         controller.setmCaptionsView(captionsView);
         controller.setmPlayerButton(playerButton);
-        controller.setmTextViewTip(textViewTip);
         controller.setmTextViewMusicName(musicName);
         controller.setmTextViewArtist(musicArtist);
         controller.setHaoKanLayout(mHaoKanLayout);

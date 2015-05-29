@@ -180,6 +180,7 @@ public class PlayerManager {
                 mMediaPlayer.prepareAsync();
                 setState(State.PREPARE);
             } catch (Exception e) {
+                Log.e(TAG, "player  Exception");
                 e.printStackTrace();
             }
             
@@ -289,7 +290,7 @@ public class PlayerManager {
             if (isLocalMusic || IsAvailable) {
                 player(IsAvailable, isLocalMusic);
             } else {
-                UIController.getInstance().showTip(R.string.haokan_tip_check_net);
+                UIController.getInstance().showToast(R.string.haokan_tip_check_net);
             }
              
         }
@@ -422,6 +423,13 @@ public class PlayerManager {
         @Override
         public boolean onError(MediaPlayer mp, int what, int extra) {
  
+            Log.e(TAG, "MediaPlayer onError what = " + what + " extra = " + extra);
+            
+            if (what == MediaPlayer.MEDIA_ERROR_UNKNOWN /*&& extra == -2147483648*/) {//-2147483648
+                stopAndRelease();
+                UIController.getInstance().hideMusicPlayer(true);
+            }
+            
             return true;
         }
     };
@@ -479,7 +487,7 @@ public class PlayerManager {
         @Override
         public void onAnimationUpdate(ValueAnimator animation) {
             if (mMediaPlayer != null) {
-                float Volume = (float) animation.getAnimatedValue();
+                float Volume = (Float) animation.getAnimatedValue();
                 mMediaPlayer.setVolume(Volume, Volume);
             }
         }

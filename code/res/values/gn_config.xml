@@ -8,13 +8,8 @@
     <integer name="gn_quick_settings_num_columns_land">7</integer>
     
     <!-- The default tiles to display in QuickSettings for gionee -->
-    <string name="gn_quick_settings_tiles_default" translatable="false">
-        dataconnect,wifi,voice,bt,screenshot,vibrate,power,more,
-        torch,setting,fakecall,airplane,calculate,rotation,location,camera,alarm
-    </string>
-    <!-- <string name="gn_quick_settings_tiles_default" translatable="false">
-        airplane,wifi,dataconnect,bt,location,rotation,vibrate,voice,screenshot,launcher,alarm
-    </string> -->
+    <string name="gn_quick_settings_tiles_default" translatable="false">        
+        bt,wifi,dataconnect,screenshot,voice,vibrate,power,more,location,rotation,airplane,alarm,torch,fakecall,calculate,camera,setting</string>
     
     <!-- Critical battery warning level -->
     <integer name="gn_critical_battery_warning_level">4</integer>

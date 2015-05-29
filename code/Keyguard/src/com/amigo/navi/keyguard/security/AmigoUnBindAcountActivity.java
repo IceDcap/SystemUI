@@ -7,8 +7,11 @@ import com.amigo.navi.keyguard.haokan.UIController;
 import com.amigo.navi.keyguard.settings.KeyguardSettings;
 import com.amigo.navi.keyguard.settings.KeyguardSettingsActivity;
 import com.amigo.navi.keyguard.settings.KeyguardWallpaper;
+import com.android.keyguard.KeyguardUpdateMonitor;
+import com.android.keyguard.KeyguardUpdateMonitorCallback;
 import com.android.keyguard.R;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -19,6 +22,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -29,7 +33,7 @@ import android.view.View.OnClickListener;
 import amigo.app.AmigoActionBar;
 
 
-public class AmigoUnBindAcountActivity  extends AmigoActivity{
+public class AmigoUnBindAcountActivity  extends Activity {
 	
 	  private Bitmap mWindowBackgroud;
 	
@@ -38,17 +42,28 @@ public class AmigoUnBindAcountActivity  extends AmigoActivity{
 		super.onCreate(savedInstanceState);
 		getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);          
-        getWindow().setStatusBarColor(Color.TRANSPARENT);
+//        getWindow().setStatusBarColor(getResources().getColor(R.color.keyguard_unbind_account_color));
 //
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-        AmigoActionBar actionBar = getAmigoActionBar();
+        ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(false);
         actionBar.setTitle(R.string.forget_password);
+
+
 		setContentView(R.layout.amigo_unbind_account);
 	}
 	
-	private void setActionBar(){
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == android.R.id.home) {
+			finish();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+	
+/*	private void setActionBar(){
 		  AmigoActionBar actionBar = getAmigoActionBar();
 
 	      actionBar.setDisplayHomeAsUpEnabled(true);
@@ -60,13 +75,12 @@ public class AmigoUnBindAcountActivity  extends AmigoActivity{
 	        		finish();
 	          }
 	      });
-	}
+	}*/
 	
 	@Override
 	protected void onPause() {
         Log.i("jiating","AmigoUnBindAcountActivity...onPause");
 		super.onPause();
-		finish();
 	}
 	
 	private void setBlurBackground() {
@@ -97,5 +111,26 @@ public class AmigoUnBindAcountActivity  extends AmigoActivity{
             mWindowBackgroud.recycle();
         }
 	}
+	
+	
+	 private KeyguardUpdateMonitorCallback mInfoCallback = new KeyguardUpdateMonitorCallback() {
+		   public void onScreenTurnedOff(int why) {
+			   finish();
+		   };
+	 };
+	 
+	 public void onAttachedToWindow() {
+		  KeyguardUpdateMonitor.getInstance(AmigoUnBindAcountActivity.this).registerCallback(mInfoCallback);
+	 };
+	 
+	 @Override
+	public void onDetachedFromWindow() {
+		// TODO Auto-generated method stub
+		super.onDetachedFromWindow();
+		  KeyguardUpdateMonitor.getInstance(AmigoUnBindAcountActivity.this).registerCallback(mInfoCallback);
+	}
+	 
+	
+
 
 }

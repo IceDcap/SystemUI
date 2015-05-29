@@ -13,6 +13,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
@@ -20,9 +23,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.CycleInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.webkit.WebView;
+import android.widget.FrameLayout;
+import android.widget.FrameLayout.LayoutParams;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.amigo.navi.keyguard.AmigoKeyguardHostView;
@@ -41,8 +52,10 @@ import com.amigo.navi.keyguard.picturepage.adapter.HorizontalAdapter;
 import com.amigo.navi.keyguard.picturepage.widget.KeyguardListView;
 import com.amigo.navi.keyguard.picturepage.widget.HorizontalListView.OnTouchlListener;
 import com.amigo.navi.keyguard.settings.KeyguardSettingsActivity;
+import com.amigo.navi.keyguard.settings.KeyguardWallpaper;
 import com.amigo.navi.keyguard.util.VibatorUtil;
 import com.android.keyguard.KeyguardHostView.OnDismissAction;
+import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.keyguard.R;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +80,6 @@ public class UIController implements OnTouchlListener{
     
     private AmigoKeyguardInfoZone mInfozone;
     
-    private WebView mWebView;
     
     private View mWebViewContainer;
     
@@ -77,7 +89,7 @@ public class UIController implements OnTouchlListener{
     
     private RelativeLayout mPlayerLayout;
     
-    private boolean mWebViewShowing = false;
+//    private boolean mWebViewShowing = false;
     
     private static UIController instance = null;
     
@@ -88,7 +100,6 @@ public class UIController implements OnTouchlListener{
     private KeyguardListView mKeyguardListView;
     
     
-    private TextView mTextViewTip;
     
     private View mKeyguardNotificationView;
     
@@ -105,13 +116,12 @@ public class UIController implements OnTouchlListener{
     
     private KeyguardWallpaperContainer mKeyguardWallpaperContainer;
     
-    private WebLayout mWebLayout = null;
-    
-    
     private RelativeLayout mArcMenu;
     
     private CategoryActivity categoryActivity;
     private KeyguardSettingsActivity mKeyguardSettingsActivity;
+    
+    private DetailActivity mDetailActivity;
     
     private AmigoKeyguardHostView mAmigoKeyguardHostView;
     public static final int SCROLL_TO_UNLOCK=0;
@@ -125,6 +135,12 @@ public class UIController implements OnTouchlListener{
     private RelativeLayout mHaoKanLayout;
     private RelativeLayout mGuideScrollUpView;
     
+
+    private boolean mGuideLongPressShowing = false;
+    
+    private GuideLondPressLayout mGuideLongPressLayout;
+    
+    private RelativeLayout toastView;
     
     private RelativeLayout getGuideScrollUpView() {
         return mGuideScrollUpView;
@@ -133,6 +149,7 @@ public class UIController implements OnTouchlListener{
         this.mGuideScrollUpView = guideScrollUpView;
     }
     
+ 
     public RelativeLayout getmArcMenu() {
         return mArcMenu;
     }
@@ -146,51 +163,25 @@ public class UIController implements OnTouchlListener{
     public void setmKeyguardViewHost(KeyguardViewHost mKeyguardViewHost) {
         this.mKeyguardViewHost = mKeyguardViewHost;
     }
-    public void startCategoryActivity(final Context context){
- 
-/*        if (getAmigoKeyguardHostView().isSecure()) {
-            
-            KeyguardViewHostManager.getInstance().dismissWithDismissAction(new OnDismissAction() {
-                @Override
-                public boolean onDismiss() {*/
-                    Intent intent = new Intent(context, CategoryActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-                    context.startActivity(intent);
-/*                    return true;
-                }
-            },true);
-        }else {
-            
-            Intent intent = new Intent(context, CategoryActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            KeyguardViewHostManager.getInstance().showBouncerOrKeyguardDone();
-            context.startActivity(intent);
-        }*/
+
+    public boolean isSecure() {
+        return getAmigoKeyguardHostView().isSecure();
     }
     
-    public void startSettingsActivity(final Context context){
- 
-/*        if (getAmigoKeyguardHostView().isSecure()) {
-            
-            KeyguardViewHostManager.getInstance().dismissWithDismissAction(new OnDismissAction() {
-                
-                @Override
-                public boolean onDismiss() {*/
-                    Intent intent = new Intent(context, KeyguardSettingsActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-                    context.startActivity(intent);
-/*                    return true;
-                }
-            },true);
-            
-        }else {
-            
-            Intent intent = new Intent(context, KeyguardSettingsActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            KeyguardViewHostManager.getInstance().showBouncerOrKeyguardDone();
-            context.startActivity(intent);
-        }*/
-        
+    public void startCategoryActivity(final Context context) {
+
+        Intent intent = new Intent(context, CategoryActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+        context.startActivity(intent);
+
+    }
+
+    public void startSettingsActivity(final Context context) {
+
+        Intent intent = new Intent(context, KeyguardSettingsActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+        context.startActivity(intent);
+
     }
 
     public static UIController getInstance() {
@@ -203,105 +194,11 @@ public class UIController implements OnTouchlListener{
     public UIController() {
     
     }
-    
-   
-    
-    public void wakeLockRelease(){
-        if(mWakeLock != null && mWakeLock.isHeld()){
-            mWakeLock.release();
-        }
-    }
-    
-    public void wakeLockAcquire(){
-        if(mWakeLock != null){
-            mWakeLock.acquire(30000);
-        }
-    }
-    
-    
-    public void showWebView(Context context,String link) {
-        
-        mWebViewShowing = true;
-        
-        final KeyguardViewHost keyguardHostView = getmKeyguardViewHost();
 
-        if (mWebLayout == null) {
-            mWebLayout = (WebLayout) LayoutInflater.from(context).inflate(
-                    R.layout.haokan_web_layout, null, true);
-        }
-        mWebLayout.addWebView();
-        mWebLayout.loadurl(link);
-        final WebView webView = mWebLayout.getmWebView();
 
-        if (keyguardHostView.indexOfChild(mWebLayout) != -1) {
-            keyguardHostView.removeView(mWebLayout);
-        }
-        
-        if (mWakeLock == null) {
-            PowerManager powerManager = (PowerManager)context.getApplicationContext().getSystemService(Context.POWER_SERVICE);
-            mWakeLock = powerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "keyguard_webview"); 
-            mWakeLock.setReferenceCounted(false);
-        }
-        wakeLockAcquire();
-        
- 
-        keyguardHostView.addView(mWebLayout);
-        
-        final CaptionsView captionsView = getmCaptionsView();
-        final AmigoKeyguardInfoZone infoZone = getmInfozone();
-        
-        ObjectAnimator animatorCaptionsView = ObjectAnimator.ofFloat(captionsView, "alpha", 1f,0f).setDuration(400);
-        ObjectAnimator animatorInfoZone = ObjectAnimator.ofFloat(infoZone, "translationY", 0f,infoZone.getMeasuredHeight()).setDuration(400);
-        
-        ObjectAnimator animatorWebLayout = ObjectAnimator.ofFloat(mWebLayout, "alpha", 0f, 1f).setDuration(800);
-        animatorWebLayout.addListener(new AnimatorListener() {
-            
-            @Override
-            public void onAnimationStart(Animator arg0) {
-                mWebLayout.setVisibility(View.VISIBLE);
-            }
-            
-            @Override
-            public void onAnimationRepeat(Animator arg0) {
-                
-            }
-            
-            @Override
-            public void onAnimationEnd(Animator arg0) {
-                
-            }
-            
-            @Override
-            public void onAnimationCancel(Animator arg0) {
-                
-            }
-        });
-        
-        float translationY = ((View) webView.getParent()).getMeasuredHeight();
-        ObjectAnimator animatorWebView = ObjectAnimator.ofFloat(webView, "translationY",translationY, 0f).setDuration(300);
-        
-        
-//        PropertyValuesHolder pvhTranslationY = PropertyValuesHolder.ofFloat("translationY", 300.0f, 0f);  
-//        PropertyValuesHolder alpha = PropertyValuesHolder.ofFloat("alpha", 0.0f, 1.0f);
-//        ObjectAnimator animatorCloseLink = ObjectAnimator.ofPropertyValuesHolder(mWebLayout.getmButtonCloseLink(), pvhTranslationY,alpha).setDuration(300);
-//        mWebLayout.getmButtonCloseLink().setTranslationY(0f);
-        ObjectAnimator animatorCloseLink = ObjectAnimator.ofFloat(mWebLayout.getmButtonCloseLink(), "alpha", 0f, 1f).setDuration(300);
-        
-        AnimatorSet set = new AnimatorSet();
-//        set.play(animatorInfoZone).with(animatorCaptionsView); 
-//        set.play(animatorWebLayout).after(animatorInfoZone);
-//        set.play(animatorWebView).after(animatorWebLayout);
-//        set.play(animatorCloseLink).after(animatorWebLayout);
-//        set.start();
-        
-        animatorWebView.setStartDelay(400);
-        set.play(animatorInfoZone).with(animatorCaptionsView); 
-        set.play(animatorWebLayout).after(animatorInfoZone);
-        set.play(animatorWebView).after(animatorInfoZone);
-        set.play(animatorCloseLink).after(animatorInfoZone);
-        set.start();
-        
-    }
+    
+    
+     
     
     public boolean isArcExpanded() {
         if (mArcLayout != null) {
@@ -312,111 +209,65 @@ public class UIController implements OnTouchlListener{
     }
     
     public void onBackPress() {
-        
-        if (mWebViewShowing) {
- 
-            boolean canGoBack = mWebView.canGoBack();
-             
-            if (canGoBack) {
-                mWebView.goBack();
-            }else {
-                removeWebView();
-            }
-            
-        }
 
     }
     
-    public void removeWebView() {
-        wakeLockRelease();
-        mWebViewShowing = false;
-        
-        final CaptionsView captionsView = getmCaptionsView();
-        final AmigoKeyguardInfoZone infoZone = getmInfozone();
-        
-        AnimatorSet set = new AnimatorSet();
-        
-        ObjectAnimator animatorCaptionsView = ObjectAnimator.ofFloat(captionsView, "alpha", 0f,1f).setDuration(400);
-        ObjectAnimator animatorInfoZone = ObjectAnimator.ofFloat(infoZone, "translationY", infoZone.getTranslationY(),0f).setDuration(400);
-        
-        
-        ObjectAnimator animatorWebView = ObjectAnimator.ofFloat(mWebLayout.getmWebView(), "translationY",0f,mWebLayout.getmWebView().getMeasuredHeight()).setDuration(400);
-        ObjectAnimator animatorWebLayout = ObjectAnimator.ofFloat(mWebLayout, "alpha", 1.0f, 0f).setDuration(200);
-        animatorWebLayout.addListener(new AnimatorListener() {
-            
-            @Override
-            public void onAnimationStart(Animator arg0) {
-                
-            }
-            
-            @Override
-            public void onAnimationRepeat(Animator arg0) {
-                
-            }
-            
-            @Override
-            public void onAnimationEnd(Animator arg0) {
-                
-                final KeyguardViewHost keyguardHostView = getmKeyguardViewHost();
-
-                if (mWebLayout != null) {
-                    mWebLayout.setVisibility(View.GONE);
-                    mWebLayout.removeWebView();
-                    if (keyguardHostView.indexOfChild(mWebLayout) != -1) {
-                        keyguardHostView.removeView(mWebLayout);
-                    }
-                }
- 
-            }
-            
-            @Override
-            public void onAnimationCancel(Animator arg0) {
-                
-            }
-        });
-        
-        ObjectAnimator animatorCloseLink = ObjectAnimator.ofFloat(mWebLayout.getmButtonCloseLink(), "alpha",1,0f).setDuration(300);
-//        PropertyValuesHolder pvhTranslationY = PropertyValuesHolder.ofFloat("translationY", 300.0f);  
-//        PropertyValuesHolder alpha = PropertyValuesHolder.ofFloat("alpha", 0.0f);
-//        ObjectAnimator animatorCloseLink = ObjectAnimator.ofPropertyValuesHolder(mWebLayout.getmButtonCloseLink(), pvhTranslationY,alpha).setDuration(300);
-        
-        
-//        set.play(animatorWebView).with(animatorCloseLink);
-//        set.play(animatorWebLayout).after(animatorWebView);
-//        set.play(animatorInfoZone).after(animatorWebLayout);
-//        set.play(animatorCaptionsView).after(animatorWebLayout);
-        animatorWebView.setStartDelay(150);
-        set.play(animatorWebView).with(animatorCloseLink);
-        set.play(animatorWebLayout).after(animatorWebView);
-        set.play(animatorInfoZone).after(animatorWebLayout);
-        set.play(animatorCaptionsView).after(animatorWebLayout);
-        
-        set.start();
-
-    }
     
- 
-    public void showTip(int resId) {
-        if (mTextViewTip == null) {
-            return;
+     
+    public void showToast(int resId) {
+        Context context = getmKeyguardViewHost().getContext();
+        if (toastView == null) {
+            LayoutInflater inflate = (LayoutInflater)
+                    context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            toastView = (RelativeLayout) inflate.inflate(R.layout.keyguard_toast, null);
+        }
+        TextView toastText = (TextView) toastView.findViewById(R.id.toast_text);
+        toastText.setText(resId);
+        
+        if (getmKeyguardViewHost().indexOfChild(toastView) == -1) {
+            FrameLayout.LayoutParams params = new  FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+            params.topMargin = context.getResources().getDimensionPixelSize(R.dimen.haokan_tip_margin_top);
+            getmKeyguardViewHost().addView(toastView, params);
         }
         
-        final TextView tip = mTextViewTip;
-        
-        tip.setText(resId);
-        tip.setVisibility(View.VISIBLE);
-        
+        AlphaAnimation alphaAnimation = new AlphaAnimation(0f, 1.0f);
+        alphaAnimation.setDuration(300);
+        alphaAnimation.setFillAfter(true);
+        toastView.startAnimation(alphaAnimation);
+ 
         mHandle.postDelayed(new Runnable() {
-            
+
             @Override
             public void run() {
-                tip.setVisibility(View.GONE);
+                
+                AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0f);
+                alphaAnimation.setDuration(300);
+                alphaAnimation.setFillAfter(true);
+                toastView.startAnimation(alphaAnimation);
+                alphaAnimation.setAnimationListener(new AnimationListener() {
+                    
+                    @Override
+                    public void onAnimationStart(Animation arg0) {
+                        
+                    }
+                    
+                    @Override
+                    public void onAnimationRepeat(Animation arg0) {
+                        
+                    }
+                    
+                    @Override
+                    public void onAnimationEnd(Animation arg0) {
+                        getmKeyguardViewHost().removeView(toastView);
+                    }
+                });
             }
         }, 2000);
+        
+        
  
     }
-    
-    
+ 
     
     @Override
     public void OnTouchMove(int x, int dx) {
@@ -433,10 +284,9 @@ public class UIController implements OnTouchlListener{
         final View dateFestival = mInfozone.getDateFestivalView();
         
         if (mInfozoneTranslationX == 0f) {
-            
-            if (mCaptionsView.animatorSet != null) {
-                mCaptionsView.animatorSet.cancel();
-            }
+
+            getmCaptionsView().cancelAnimator();
+            getmCaptionsView().hideGuideIfNeed();
             int len = infoZoneAnimators.length - 1;
             for (int i = 0; i < len; i++) {
                 ObjectAnimator animator = infoZoneAnimators[i];
@@ -450,6 +300,7 @@ public class UIController implements OnTouchlListener{
             week.setTranslationX(0);
             dateFestival.setTranslationX(0);
             mPlayerLayout.setTranslationX(0);
+            KeyguardUpdateMonitor.getInstance(getmKeyguardNotification().getContext()).getNotificationModule().removeAllNotifications();
         }
         
         mInfozoneTranslationX +=  dx;
@@ -493,7 +344,29 @@ public class UIController implements OnTouchlListener{
         mInfozoneTranslationX = 0f;
         refreshWallpaperInfo();
         mCaptionsView.OnTouchUpAnimator();
+        
+        if (Guide.needGuideLongPress()) {
+            if (Guide.getBooleanSharedConfig(getmKeyguardViewHost().getContext(),
+                    Guide.GUIDE_LONG_PRESS, true)) {
+                getmKeyguardViewHost().postDelayed(mGuideLongPressRunnable, 500);
+            }else {
+                Guide.setNeedGuideLongPress(false); 
+            }
+        }
+
+        if (Guide.needGuideSlideAround()) {
+            Guide.setNeedGuideSlideAround(false);
+        }
+        
     }
+    
+    Runnable mGuideLongPressRunnable = new Runnable() {
+        
+        @Override
+        public void run() {
+            showGuideLongPress();
+        }
+    };
     
     
     
@@ -512,10 +385,14 @@ public class UIController implements OnTouchlListener{
     public void onScreenTurnedOn() {
         if (isScreenOff()) {
             setScreenOff(false);
-            if (mWebViewShowing) {
-                wakeLockAcquire();
-            }
+            
             onScreenTurnedOnAnimation();
+            
+            if (Guide.needGuideSlideAround() && !Guide.needGuideScrollUp()) {
+            
+                
+            }
+            
         }
     }
     
@@ -559,19 +436,14 @@ public class UIController implements OnTouchlListener{
             }
         }
         
-        if (mWebViewShowing) {
-            final KeyguardViewHost keyguardHostView = getmKeyguardViewHost();
 
-            if (mWebLayout != null) {
-                if (keyguardHostView.indexOfChild(mWebLayout) != -1) {
-                    keyguardHostView.removeView(mWebLayout);
-                }
+        
+        if (getDetailActivity() != null) {
+            if (!getDetailActivity().isDestroyed()) {
+                DebugLog.d(TAG, "getDetailActivity is not destroyed()");
+                getDetailActivity().finish();
+                setDetailActivity(null);
             }
-            
-            mWebViewShowing = false;
-            getmInfozone().setAlpha(1.0f);
-            getmInfozone().setTranslationY(0f);
-            getmCaptionsView().setAlpha(1.0f);
         }
 
     }
@@ -579,6 +451,7 @@ public class UIController implements OnTouchlListener{
     
     public void refreshWallpaperInfo() {
         int pos = getmKeyguardListView().getNextPage();
+        DebugLog.d(TAG,"OnTouchUp pos:" + pos);
         DebugLog.d(TAG, "OnTouchUp getPage = " + pos);
         HorizontalAdapter mWallpaperAdapter = (HorizontalAdapter) getmKeyguardListView().getAdapter(); 
         WallpaperList list = mWallpaperAdapter.getWallpaperList();
@@ -591,6 +464,15 @@ public class UIController implements OnTouchlListener{
             DebugLog.d(TAG, "refreshWallpaperInfo() : pos = " + pos + "  " + wallpaper.toString());
             refreshWallpaperInfo(wallpaper);
         }
+        
+        if (getDetailActivity() != null) {
+            if (!getDetailActivity().isDestroyed()) {
+                DebugLog.d(TAG, "getDetailActivity is not destroyed()");
+                getDetailActivity().finish();
+                setDetailActivity(null);
+            }
+        }
+        
 
     }
     
@@ -635,7 +517,6 @@ public class UIController implements OnTouchlListener{
         }
         
         mInfozone.setFestivalText(wallpaper.getFestival());
- 
         mCaptionsView.setContentText(wallpaper.getCaption());
     }
     
@@ -685,7 +566,8 @@ public class UIController implements OnTouchlListener{
                 VibatorUtil.LOCKSCREEN_STORYMODE_DISPLAY, 100);
         
         cancelRunningAnimators();
-        hideKeyguardNotification();
+        KeyguardUpdateMonitor.getInstance(getmKeyguardNotification().getContext())
+                .getNotificationModule().removeAllNotifications();
         mArcLayout.setmWallpaper(getmCurrentWallpaper());
         mArcLayout.refreshItemState();
         isArcExpanding = true;
@@ -709,7 +591,6 @@ public class UIController implements OnTouchlListener{
     	}
         return bitmap;
     }
-    
     
    
     public void onKeyguardScrollChanged(int top,int maxBoundY,int model) {
@@ -874,13 +755,6 @@ public class UIController implements OnTouchlListener{
         
         PropertyValuesHolder pvhTranslateY= PropertyValuesHolder.ofKeyframe(View.TRANSLATION_Y,  
  
-    
-//                Keyframe.ofFloat(0f, zoneFormTranslationY),  
-//                Keyframe.ofFloat(.35691f, -8.3f * 3f),  
-//                Keyframe.ofFloat(.53598f, 3f * 3f),  
-//                Keyframe.ofFloat(.71428f, -0.6f * 3f),  
-//                Keyframe.ofFloat(.89258f, 0.4f * 3f),  
-//                Keyframe.ofFloat(1f, 0f)  
                 Keyframe.ofFloat(0f, zoneFormTranslationY),  
                 Keyframe.ofFloat(.35691f, -25f),  
                 Keyframe.ofFloat(.53598f, 10f),  
@@ -973,7 +847,7 @@ public class UIController implements OnTouchlListener{
             PropertyValuesHolder pvhTranslationY = PropertyValuesHolder.ofFloat("translationY", titleFormTranslationY, hkCaptionsView.getInitialTranslationY()); 
             ObjectAnimator animationTitle = ObjectAnimator.ofPropertyValuesHolder(hkCaptionsView, pvhTranslationY).setDuration(333);  
          
-            final View view = hkCaptionsView.getTitleContainer();
+            final View view = hkCaptionsView.getTitleView();
             
             animationTitle.setStartDelay(733);
             
@@ -1004,7 +878,43 @@ public class UIController implements OnTouchlListener{
             listViewScaleAnimator.setInterpolator(new DecelerateInterpolator());
             animatorSet.play(listViewScaleAnimator);
         }
-        
+        animatorSet.addListener(new AnimatorListener() {
+            
+            private boolean isCancel  = false;
+            
+            @Override
+            public void onAnimationStart(Animator arg0) {
+                
+            }
+            
+            @Override
+            public void onAnimationRepeat(Animator arg0) {
+                
+            }
+            
+            @Override
+            public void onAnimationEnd(Animator arg0) {
+                if (!isCancel) {
+                    Log.v("zhaowei", "Guide.needGuideClickTitle() = " + Guide.needGuideClickTitle() + " Guide.needGuideSlideAround() = " + Guide.needGuideSlideAround());
+                    
+                    if (Guide.needGuideClickTitle() && !Guide.needGuideSlideAround() && !getmCaptionsView().isGuideClickViewShowing()) {
+                        Log.v("zhaowei", "showGuideClickTitle");
+//                        showGuideClickTitle();
+                        getmCaptionsView().startGuide();
+                    }
+                    if (getmCaptionsView().isGuideClickViewShowing()) {
+                        getmCaptionsView().showGuideIfNeed();
+                    }
+                    
+                }
+                isCancel = false;
+            }
+            
+            @Override
+            public void onAnimationCancel(Animator arg0) {
+                isCancel = true;
+            }
+        });
         
         animatorSet.setStartDelay(200);
         animatorSet.start();
@@ -1086,6 +996,47 @@ public class UIController implements OnTouchlListener{
         
     }
     
+    public void setSrceenLockWallpaper(Context context,Bitmap bitmap) {
+        
+    }
+    
+    private void hideGuideLongPress() {
+
+        if (mGuideLongPressLayout == null) {
+            return;
+        }
+        mGuideLongPressLayout.stopGuide();
+        setGuideLongPressShowing(false);
+    }
+    
+    
+    
+    public void showGuideLongPress() {
+        if (isGuideLongPressShowing()) {
+            return;
+        }
+        getmKeyguardNotification().setAlpha(0f);
+        final int width = getmKeyguardViewHost().getMeasuredWidth();
+        final int height = getmKeyguardViewHost().getMeasuredHeight();
+        Bitmap background = Bitmap.createBitmap(width, height,
+                Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(background);
+        canvas.drawColor(0, PorterDuff.Mode.CLEAR);
+        getmKeyguardViewHost().draw(canvas);
+        background = KeyguardWallpaper.getBlurBitmap(background, 3.0f);
+        LayoutInflater inflater = LayoutInflater.from(getmKeyguardViewHost().getContext());
+        mGuideLongPressLayout = (GuideLondPressLayout)inflater.inflate(R.layout.guide_long_press, null);
+        mGuideLongPressLayout.setBlurBackground(background);
+        getmKeyguardViewHost().addView(mGuideLongPressLayout);
+        mGuideLongPressLayout.startGuide(); 
+    }
+    
+//    public void showGuideClickTitle() {
+//        Log.v("zhaowei", "showGuideClickTitle");
+//        getmCaptionsView().startGuide();
+//    }
+    
+    
     public RelativeLayout getHaoKanLayout() {
         return mHaoKanLayout;
     }
@@ -1105,14 +1056,6 @@ public class UIController implements OnTouchlListener{
 
     public void setmInfozone(AmigoKeyguardInfoZone mInfozone) {
         this.mInfozone = mInfozone;
-    }
-
-    public WebView getmWebView() {
-        return mWebView;
-    }
-
-    public void setmWebView(WebView mWebView) {
-        this.mWebView = mWebView;
     }
 
 
@@ -1163,12 +1106,7 @@ public class UIController implements OnTouchlListener{
         this.mCurrentWallpaper = mCurrentWallpaper;
     }
     
-    public TextView getmTextViewTip() {
-        return mTextViewTip;
-    }
-    public void setmTextViewTip(TextView mTextViewTip) {
-        this.mTextViewTip = mTextViewTip;
-    }
+     
     public KeyguardListView getmKeyguardListView() {
         return mKeyguardListView;
     }
@@ -1192,6 +1130,12 @@ public class UIController implements OnTouchlListener{
     
     
     
+    public DetailActivity getDetailActivity() {
+        return mDetailActivity;
+    }
+    public void setDetailActivity(DetailActivity mDetailActivity) {
+        this.mDetailActivity = mDetailActivity;
+    }
     public KeyguardWallpaperContainer getmKeyguardWallpaperContainer() {
         return mKeyguardWallpaperContainer;
     }
@@ -1250,6 +1194,14 @@ public class UIController implements OnTouchlListener{
         this.mTextViewArtist = mTextViewArtist;
     }
     
+    
+    
+    public boolean isGuideLongPressShowing() {
+        return mGuideLongPressShowing;
+    }
+    public void setGuideLongPressShowing(boolean mGuideLongPressShowing) {
+        this.mGuideLongPressShowing = mGuideLongPressShowing;
+    }
     public boolean lockWallpaper(final Context context,final Wallpaper wallpaper) {
     	boolean success = false;
 //    	if(isLocalData){

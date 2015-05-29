@@ -221,7 +221,7 @@ public class GnQSTileHost implements GnQSTile.Host {
         else if (tileSpec.endsWith("camera")) return new GnCameraTile(this, tileSpec);
         else if (tileSpec.endsWith("torch")) return new GnTorchTile(this, tileSpec);
         else if (tileSpec.endsWith("fakecall")) return new GnFakeCallTile(this, tileSpec);
-        else throw new IllegalArgumentException("Bad tile spec: " + tileSpec);
+        else throw new IllegalArgumentException("Bad tile spec: !" + tileSpec + "!");
     }
 
     private List<String> loadTileSpecs() {

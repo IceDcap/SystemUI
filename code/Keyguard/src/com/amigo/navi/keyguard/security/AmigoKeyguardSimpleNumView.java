@@ -23,6 +23,7 @@ import java.util.List;
 
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.KeyguardViewHostManager;
+import com.amigo.navi.keyguard.fingerprint.FingerIdentifyManager;
 import com.amigo.navi.keyguard.util.TimeUtils;
 import com.amigo.navi.keyguard.util.VibatorUtil;
 import com.android.keyguard.AppearAnimationUtils;
@@ -123,10 +124,10 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
         super.resetState();
         resetPasswordText(true /* animate */);
         refreshImageStat(0);
+        setKeyButtonClickEnable(true);
         long deadline =  mKeyguardUpdateMonitor.getCurDeadLine();
         if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "resetState :deadline="+deadline);
         if (deadline!=0) {
-            setKeyButtonClickEnable(true);
             handleAttemptLockout(deadline);
         }else{
             resetFrozen();
@@ -437,15 +438,22 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
         return stringId;
     }
 	
-	  private void displayDefaultSecurityMessage() {
-		  if(KeyguardViewHostManager.isSuppotFinger()){
-	    		mSecurityMessageDisplay.setMessage(R.string.keyguard_password_enter_code_finger, true);
-	    	}else{ 		
-	    		mSecurityMessageDisplay.setMessage(R.string.keyguard_password_enter_code, true);
-	    	}
-	    }
+    private void displayDefaultSecurityMessage() {
+        if (KeyguardViewHostManager.isSuppotFinger() && getFingerSwitchState()) {
+            mSecurityMessageDisplay.setMessage(R.string.keyguard_password_enter_code_finger, true);
+        } else {
+            mSecurityMessageDisplay.setMessage(R.string.keyguard_password_enter_code, true);
+        }
+    }
 
-
+    private boolean getFingerSwitchState(){
+        FingerIdentifyManager fingerIdentifyManager=FingerIdentifyManager.getInstance();
+        boolean isFingerSwitchOpen=false;
+        if(fingerIdentifyManager!=null){
+            isFingerSwitchOpen = fingerIdentifyManager.readFingerprintSwitchValue();
+        }
+        return isFingerSwitchOpen;
+    }
     
     private int getTimeOutSize() {
   		return mKeyguardUpdateMonitor.getFailedUnlockAttempts();
@@ -623,6 +631,10 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
     @Override
     public void onPause(int reason) {
     	setVisibility(View.INVISIBLE);
+    	if (mSimpleNumViewCountdownTimer != null) {
+    		mSimpleNumViewCountdownTimer.cancel();
+    		mSimpleNumViewCountdownTimer = null;
+        }
     }
     
     

@@ -103,6 +103,9 @@
     <string name="preference_double_desktop_lock_title">QUICK OFF SCREEN</string>
     <string name="preference_desktop_lock_on">On</string>
     <string name="preference_desktop_lock_off">Off</string>
+    <string name="preference_screenlock_wallpaper">SCREENLOCK WALLPAPER</string>
+    <string name="preference_set_screenlock_wallpaper">Set screenlock wallpaper</string>
+    <string name="preference_set_screenlock_wallpaper_text">Select a picture to show when screen on</string>
     
     <string name="dialog_ok">Continue</string>
     <string name="dialog_cancle">Cancle</string>
@@ -138,7 +141,14 @@
    	<string name="haokan_wallpaper_subscription">Subscribe</string>
    	<string name="haokan_tip_check_net">Check your network settings</string>
    	<string name="haokan_tip_favorite_error">Save failed</string>
+   	<string name="haokan_tip_save_gallery">Saved to album</string>
+   	<string name="haokan_tip_screen_on_show">Display the picture always whenever screen on.</string>
+    <string name="haokan_tip_no_lock_show">No longer always display the picture.</string>
     <string name="haokan_detail">Detail</string>
+    
+    <string name="guide_long_press_tip">长按呼出更多功能菜单</string>
+    <string name="cancel">Cancel</string>
+    <string name="apply">Apply</string>
 
       
     <string name="keyguard_sim_name">"SIM Card"</string>
@@ -186,4 +196,8 @@
       <string name="hour">h</string>
       <string name="minute">m</string>
       <string name="second">s</string>
+      
+      
+      <string name="set_screenlock_wallpaper_fail">set screenlock wallpaper fail</string>
+      
 </resources>

@@ -10,9 +10,8 @@ import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.PorterDuff.Mode;
-import android.graphics.RadialGradient;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.FrameLayout;
 
 import com.android.keyguard.R;
@@ -34,6 +33,8 @@ public class KeyguardWallpaperContainer extends FrameLayout {
     Bitmap mBitmap = null;
     private float mBlind=0;
     private int mModel;
+    
+    Drawable bottomDrawable = null;
     
     public KeyguardWallpaperContainer(Context context) {
         this(context,null);
@@ -65,6 +66,10 @@ public class KeyguardWallpaperContainer extends FrameLayout {
         mPaint.setXfermode(new PorterDuffXfermode(Mode.DST_ATOP));
         
         mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.haokan_wallpaper_alpha).copy(Bitmap.Config.ARGB_8888, true);
+        
+        bottomDrawable = getResources().getDrawable(R.drawable.infozone_background);
+        bottomDrawable.setBounds(0, mScreenHeight - getResources().getDimensionPixelSize(R.dimen.ketguard_infozone_height), mScreenWidth, mScreenHeight);
+        
     }
     
     public void reset() {
@@ -82,6 +87,7 @@ public class KeyguardWallpaperContainer extends FrameLayout {
     @Override
     protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
+        bottomDrawable.draw(canvas);
         if (mModel!=UIController.SCROLL_TO_SECURTY && mTop != mScreenHeight) {
             canvas.drawBitmap(mBitmap, 0, mTop, mPaint);
         }

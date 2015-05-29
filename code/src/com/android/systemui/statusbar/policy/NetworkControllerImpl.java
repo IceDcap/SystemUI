@@ -382,8 +382,6 @@ public class NetworkControllerImpl extends BroadcastReceiver
             handleConfigurationChanged();
         } else if (action.equals(Intent.ACTION_AIRPLANE_MODE_CHANGED)) {
             refreshLocale();
-            //Get the airplane mode from intent to avoid DB delay.
-            mAirplaneMode = intent.getBooleanExtra("state", false);
             updateAirplaneMode(false);
             refreshCarrierLabel();
         } else if (action.equals(TelephonyIntents.ACTION_DEFAULT_VOICE_SUBSCRIPTION_CHANGED)) {
@@ -534,18 +532,16 @@ public class NetworkControllerImpl extends BroadcastReceiver
     }
 
     private void updateAirplaneMode(boolean force) {
-        /*boolean airplaneMode = (Settings.Global.getInt(mContext.getContentResolver(),
+        boolean airplaneMode = (Settings.Global.getInt(mContext.getContentResolver(),
                 Settings.Global.AIRPLANE_MODE_ON, 0) == 1);
         if (airplaneMode != mAirplaneMode || force) {
             mAirplaneMode = airplaneMode;
-        }*/
-    	if(mAirplaneMode || force) {
-    		for (MobileSignalController mobileSignalController : mMobileSignalControllers.values()) {
-    			mobileSignalController.setAirplaneMode(mAirplaneMode);
-    		}
-    		notifyListeners();
-    		refreshCarrierLabel();
-    	}
+            for (MobileSignalController mobileSignalController : mMobileSignalControllers.values()) {
+            	mobileSignalController.setAirplaneMode(mAirplaneMode);
+            }
+            notifyListeners();
+            refreshCarrierLabel();
+        }
     }
 
     private void refreshLocale() {

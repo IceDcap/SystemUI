@@ -17,6 +17,7 @@ import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -46,17 +47,23 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.amigo.navi.keyguard.DebugLog;
+import com.amigo.navi.keyguard.KeyguardViewHostManager;
 import com.amigo.navi.keyguard.haokan.RequestNicePicturesFromInternet;
 import com.amigo.navi.keyguard.haokan.UIController;
+import com.amigo.navi.keyguard.haokan.WallpaperCutActivity;
 import com.amigo.navi.keyguard.haokan.analysis.Event;
 import com.amigo.navi.keyguard.haokan.analysis.HKAgent;
+import com.android.keyguard.KeyguardHostView.OnDismissAction;
 import com.android.keyguard.R;
 import android.content.Intent;
 
 
 
 public class KeyguardSettingsActivity extends Activity {
-	private final String TAG = "KeyguardSettingsActivity";
+	private final String TAG = "haokan";
+	
+	
+	private static final int REQUEST_CODE = 1001;
 	
 	private Bitmap wallpaper;
 
@@ -145,6 +152,12 @@ public class KeyguardSettingsActivity extends Activity {
 		viewGroup.add(mOnlyWlanSwitchFirstLine);
 		viewGroup.add(mOnlyWlanSwitch);
 		viewGroup.add(mDivider);
+		
+		viewGroup.add(findViewById(R.id.settings_divider_second));
+		viewGroup.add(findViewById(R.id.set_keyguard_wallpaper_title));
+		viewGroup.add(findViewById(R.id.set_keyguard_wallpaper));
+		viewGroup.add(findViewById(R.id.set_keyguard_wallpaper_text));
+
 		viewGroup.add(mDoubleDesktopLockTitle);
 		viewGroup.add(mDoubleDesktopLockFirstline);
 		viewGroup.add(mDoubleDesktopLock);
@@ -207,8 +220,60 @@ public class KeyguardSettingsActivity extends Activity {
                 startAppearAnimation();
             }
         }, 50);
+		
+		LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.set_keyguard_wallpaper_layout);
+		linearLayout.setOnClickListener(new View.OnClickListener() {
+            
+            @Override
+            public void onClick(View arg0) {
+                pickScreenLockWallpaper();
+            }
+        });
     }
+    
+    
+    private void pickScreenLockWallpaper() {
 
+        if (UIController.getInstance().isSecure()) {
+
+            KeyguardViewHostManager.getInstance().dismissWithDismissAction(new OnDismissAction() {
+                @Override
+                public boolean onDismiss() {
+                    Intent intent=new Intent(Intent.ACTION_GET_CONTENT); 
+                    intent.setType("image/*");  
+                    startActivityForResult(intent, REQUEST_CODE);   
+                    return true;
+                }
+            }, true);
+        } else {
+
+            Intent intent=new Intent(Intent.ACTION_GET_CONTENT); 
+            intent.setType("image/*");  
+            KeyguardViewHostManager.getInstance().showBouncerOrKeyguardDone();
+            startActivityForResult(intent, REQUEST_CODE);   
+        }
+    }
+    
+   
+    
+    @Override  
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {  
+        super.onActivityResult(requestCode, resultCode, data);  
+ 
+
+        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK && null != data) {  
+            Uri selectedImage = data.getData(); 
+            Log.v("haokan", "selectedImage = " + selectedImage);
+            DebugLog.d(TAG, "selectedImage = " + selectedImage);
+            Intent intent = new Intent(this, WallpaperCutActivity.class);
+            intent.setAction(Intent.ACTION_ATTACH_DATA);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setData(selectedImage);
+            startActivity(intent);
+            finish();
+        }  
+   
+    }  
 	
 	
 	private void setBlurBackground() {
@@ -231,12 +296,12 @@ public class KeyguardSettingsActivity extends Activity {
         }
     }
 	
-    private void changeWallpaperUpdateData(boolean isopen){
-    	if(isopen){
-    		mOnlyWlanSwitch.setEnabled(true);
-    	}else{
-    		mOnlyWlanSwitch.setEnabled(false);
-    	}
+    private void changeWallpaperUpdateData(boolean isopen) {
+        mOnlyWlanSwitch.setEnabled(isopen);
+        mOnlyWlanSwitchFirstLine.setTextColor(getResources().getColor(
+                isopen ? R.color.keyguard_setting_firstline_color
+                        : R.color.keyguard_setting_secondline_color));
+
     }
 	
     private void changeDoubleDesktopLockData(boolean isopen){
@@ -297,6 +362,13 @@ public class KeyguardSettingsActivity extends Activity {
         	HKAgent.onEventOnlyWlan(getApplicationContext(),Event.SETTING_DOWNLOAD, KeyguardSettings.SWITCH_ONLY_WLAN_OFF);
         }
         mOnlyWlanSwitch.setEnabled(connectNet);
+        
+        if (connectNet) {
+            mOnlyWlanSwitchFirstLine.setTextColor(getResources().getColor(R.color.keyguard_setting_firstline_color));
+        }
+        
+        
+        
         mOnlyWlanSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override

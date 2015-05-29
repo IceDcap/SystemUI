@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.amigo.navi.keyguard.haokan.GuideLondPressLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="gone" >
+
+    <com.amigo.navi.keyguard.haokan.LongPressView
+        android:id="@+id/LongPressView"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="160dp" />
+
+    <ImageView
+        android:id="@+id/hand"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="180dp"
+        android:alpha="0"
+        android:src="@drawable/hand"
+          />
+
+    <TextView
+        android:id="@+id/guide_long_press_tip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="227dp"
+        android:alpha="0"
+        android:gravity="center"
+        android:text="@string/guide_long_press_tip" />
+
+    <ImageView
+        android:id="@+id/guide_long_press_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="68dp"
+        android:alpha="0"
+        android:background="@drawable/guide_long_press_close" />
+
+</com.amigo.navi.keyguard.haokan.GuideLondPressLayout>

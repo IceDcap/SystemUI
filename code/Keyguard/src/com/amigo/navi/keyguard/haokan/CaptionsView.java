@@ -10,31 +10,25 @@ import android.animation.ValueAnimator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.text.method.LinkMovementMethod;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.OvershootInterpolator;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amigo.navi.keyguard.DebugLog;
+import com.amigo.navi.keyguard.Guide;
 import com.amigo.navi.keyguard.haokan.analysis.HKAgent;
 import com.amigo.navi.keyguard.haokan.entity.Caption;
-import com.amigo.navi.keyguard.haokan.entity.Wallpaper;
-import com.amigo.navi.keyguard.haokan.entity.WallpaperList;
 import com.amigo.navi.keyguard.infozone.AmigoKeyguardInfoZone;
-import com.amigo.navi.keyguard.picturepage.adapter.HorizontalAdapter;
 import com.android.keyguard.R;
  
 
-public class CaptionsView extends LinearLayout {
+public class CaptionsView extends RelativeLayout {
 
     
     private ValueAnimator mValueAnimator = new ValueAnimator(); 
@@ -45,18 +39,12 @@ public class CaptionsView extends LinearLayout {
     
     private int mTitleHeight;
     
-    private RelativeLayout mTitleParentView;
-    
-    private RelativeLayout mTitleContainer;
-    
-    private RelativeLayout mTitleLeftView,mTitleRightView;
     
     private TextView mTextViewContent;
     private boolean mContentVisible = false;
-    private int mGap;
     private Drawable mContentLinkDrawable;
     
-    GradientDrawable GradientDrawable1,GradientDrawable2,GradientDrawable3;
+    private GradientDrawable GradientDrawable;
     
     public boolean animRuning = false;
     
@@ -66,7 +54,15 @@ public class CaptionsView extends LinearLayout {
     
     private Rect mLinkDrawablebounds = new Rect();
     
-    AnimatorSet animatorSet;
+    private AnimatorSet animatorSet;
+    
+    private String mlinkString = null;
+    
+    private float mAlpha;
+    
+    private GuideClickView mGuideClickView;
+    
+    private boolean mGuideClickViewShowing = false;
     
     public void setContentVisible(boolean visible) {
         if (mContentVisible != visible) {
@@ -88,30 +84,27 @@ public class CaptionsView extends LinearLayout {
     
     public CaptionsView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        
-         GradientDrawable1 = (GradientDrawable) getResources().getDrawable(R.drawable.haokan_title_left);
-         GradientDrawable2 = (GradientDrawable) getResources().getDrawable(R.drawable.haokan_title_left);
-         GradientDrawable3 = (GradientDrawable) getResources().getDrawable(R.drawable.haokan_title_left);
-        
-         
-         setPivotY(0f);
-         setPivotX(0f);
-         
-         mInitialTranslationY = getResources().getDimensionPixelSize(R.dimen.haokan_caption_layout_translationY);
-         
-         int left = getResources().getDimensionPixelSize(R.dimen.haokan_caption_link_left);
-         int top = getResources().getDimensionPixelSize(R.dimen.haokan_caption_link_top);
-         int right = getResources().getDimensionPixelSize(R.dimen.haokan_caption_link_right);
-         int bottom = getResources().getDimensionPixelSize(R.dimen.haokan_caption_link_bottom);
-         
-         mLinkDrawablebounds.set(left, top, right, bottom);
+
+        GradientDrawable = (GradientDrawable) getResources().getDrawable(
+                R.drawable.haokan_title_background);
+
+        mInitialTranslationY = getResources().getDimensionPixelSize(
+                R.dimen.haokan_caption_layout_translationY);
+
+        int left = getResources().getDimensionPixelSize(R.dimen.haokan_caption_link_left);
+        int top = getResources().getDimensionPixelSize(R.dimen.haokan_caption_link_top);
+        int right = getResources().getDimensionPixelSize(R.dimen.haokan_caption_link_right);
+        int bottom = getResources().getDimensionPixelSize(R.dimen.haokan_caption_link_bottom);
+
+        mLinkDrawablebounds.set(left, top, right, bottom);
         initUI();
     }
     
     public void onScreenTurnedOff() {
         setContentVisible(false);
         setTranslationY(mInitialTranslationY + mTitleHeight);
-        getTitleContainer().setAlpha(0);
+        getTitleView().setAlpha(0f);
+        hideGuideIfNeed();
     }
     
     public int getInitialTranslationY() {
@@ -122,17 +115,24 @@ public class CaptionsView extends LinearLayout {
     }
     
 
-    String mlinkString = null;
+    
     
     private void initUI() {
         mContentLinkDrawable = getResources().getDrawable(R.drawable.haokan_caption_content_link);
-        mGap = getResources().getDimensionPixelSize(R.dimen.haokan_caption_layout_content_margintop);
         mTitleHeight = getResources().getDimensionPixelSize(R.dimen.haokan_caption_layout_title_height);
         mlinkString = getResources().getString(R.string.haokan_detail);
     }
     
     public void setContentText(Caption caption) {
- 
+        if(caption == null){
+            setVisibility(GONE);
+        	return;
+        }
+        
+        if (getVisibility() != VISIBLE) {
+            setVisibility(VISIBLE);
+        }
+        
         CaptionSpannableString string = new CaptionSpannableString(getContext()
                 .getApplicationContext(), caption, mContentLinkDrawable,mLinkDrawablebounds,mlinkString);
         
@@ -145,14 +145,8 @@ public class CaptionsView extends LinearLayout {
      
     
     public void setTitleBackgroundColor(int color) {
-
-        GradientDrawable1.setColor(color);
-        GradientDrawable2.setColor(color);
-        GradientDrawable3.setColor(color);
-        mTitleParentView.setBackground(GradientDrawable1);
-        mTitleLeftView.setBackground(GradientDrawable2);
-        mTitleRightView.setBackground(GradientDrawable3);
-
+        GradientDrawable.setColor(color);
+        mTextViewTitle.setBackground(GradientDrawable);
     }
     
  
@@ -160,18 +154,10 @@ public class CaptionsView extends LinearLayout {
     protected void onFinishInflate() {
         super.onFinishInflate();
 
-        
-        mTitleParentView = (RelativeLayout) findViewById(R.id.haokan_captions_title_parent);
         mTextViewTitle = (TextView) findViewById(R.id.haokan_captions_title);
         mTextViewContent = (TextView) findViewById(R.id.haokan_captions_content);
         
-        mTitleContainer = (RelativeLayout) findViewById(R.id.haokan_captions_title_container);
-        
-        mTitleLeftView = (RelativeLayout) findViewById(R.id.haokan_captions_title_left);
-        mTitleRightView = (RelativeLayout) findViewById(R.id.haokan_captions_title_right);
-        
-//        mTextViewTitle.setOnClickListener(new OnClickListener() {
-        mTitleContainer.setOnClickListener(new OnClickListener() {
+        mTextViewTitle.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -180,6 +166,13 @@ public class CaptionsView extends LinearLayout {
 
                 if (mContentVisible) {
                     UIController.getInstance().hideKeyguardNotification();
+                    
+                    if (isGuideClickViewShowing() && Guide.needGuideClickTitle()) {
+                        stopGuide();
+                        Guide.setBooleanSharedConfig(getContext(), Guide.GUIDE_CLICK_TITLE, false);
+                        Guide.setNeedGuideClickTitle(false);
+                    }
+                    
                 }else {
                     UIController.getInstance().showKeyguardNotification();
                 }
@@ -188,6 +181,7 @@ public class CaptionsView extends LinearLayout {
             }
         });
 
+         
         mTextViewContent.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -204,6 +198,9 @@ public class CaptionsView extends LinearLayout {
                 
             }
         });
+        
+        
+        mGuideClickView = (GuideClickView) findViewById(R.id.guide_click_view);
     
     }
  
@@ -242,7 +239,7 @@ public class CaptionsView extends LinearLayout {
 
         @Override
         public void onAnimationUpdate(ValueAnimator animation) {
-            float translationY = (float) animation.getAnimatedValue();
+            float translationY = (Float) animation.getAnimatedValue();
             setTranslationY(translationY);
         }
     };
@@ -252,41 +249,29 @@ public class CaptionsView extends LinearLayout {
         return mTextViewTitle;
     }
     
-    float mScale;
-    float mAlpha;
+    
     /**
      * 
      * @param translationX
      */
     public void onHorizontalMove(float translationX) {
-        
-        
          
         float percent = translationX / (Common.getScreenWidth(getContext().getApplicationContext())/2);
-        float x = (float) (percent * 0.2);
-        float scale = 1 - x;
-        mScale = scale;
-        setScaleX(scale);
-        setScaleY(scale);
-        
-     
-        float t = -translationX / 10;
-        mTitleParentView.setTranslationX(t);
-        mTitleLeftView.setTranslationX(-t);
-        if (mContentVisible) {
-            mTextViewContent.setTranslationX(t);
-        }
-        
-        float alpha = 1 - percent;
+        float alpha = 1.0f - percent;
         if (alpha <= 1f && alpha >= 0f) {
             mAlpha = alpha;
         }
-         
         setAlpha(mAlpha);
-
     }
     
    
+    public void cancelAnimator() {
+
+        if (animatorSet != null) {
+            animatorSet.cancel();
+            animatorSet = null;
+        }
+    }
     
     public void OnTouchUpAnimator() {
         
@@ -300,138 +285,68 @@ public class CaptionsView extends LinearLayout {
         final View week = infoZone.getWeekView();
         
         float infoZoneTranslationX = time.getTranslationX();
-        
-        //1168
-        PropertyValuesHolder pvhtime= PropertyValuesHolder.ofKeyframe(View.TRANSLATION_X,  
-                
+//        
+//        PropertyValuesHolder pvhtime= PropertyValuesHolder.ofKeyframe(View.TRANSLATION_X,  
+//                
+//                Keyframe.ofFloat(0f, infoZoneTranslationX),  
+//                Keyframe.ofFloat(.22859f, -9f),  
+//                Keyframe.ofFloat(.399828f, 6f), 
+//                Keyframe.ofFloat(.571061f, -3f), 
+//                Keyframe.ofFloat(.714041f, 0.5f), 
+//                Keyframe.ofFloat(1f, 0f) 
+//                
+//        );  
+        PropertyValuesHolder pvhtime = PropertyValuesHolder.ofKeyframe(View.TRANSLATION_X,  
                 Keyframe.ofFloat(0f, infoZoneTranslationX),  
-                
-//                Keyframe.ofFloat(.22859f, -4f * 3f),  
-//                Keyframe.ofFloat(.399828f, 3f * 3f), 
-//                Keyframe.ofFloat(.571061f, -2f * 3f), 
-//                Keyframe.ofFloat(.714041f, 1f), 
-//                Keyframe.ofFloat(.857020f, -0.5f * 3f),
-//                Keyframe.ofFloat(.927020f, 0.2f * 3f),
-//                Keyframe.ofFloat(1f, 0f)   
-                
                 Keyframe.ofFloat(.22859f, -9f),  
                 Keyframe.ofFloat(.399828f, 6f), 
                 Keyframe.ofFloat(.571061f, -3f), 
                 Keyframe.ofFloat(.714041f, 0.5f), 
 //                Keyframe.ofFloat(.857020f, -1f),
-//                Keyframe.ofFloat(.927020f, 0.2f),
+                Keyframe.ofFloat(.927020f, -0.2f),
                 Keyframe.ofFloat(1f, 0f) 
                 
-        );  
-        PropertyValuesHolder pvhdate = PropertyValuesHolder.ofKeyframe(View.TRANSLATION_X,  
-                Keyframe.ofFloat(0f, infoZoneTranslationX),  
-                
-//                Keyframe.ofFloat(.22859f, -4f * 3f),  
-//                Keyframe.ofFloat(.399828f, 3f * 3f), 
-//                Keyframe.ofFloat(.571061f, -2f * 3f), 
-//                Keyframe.ofFloat(.714041f, 1f), 
-//                Keyframe.ofFloat(.857020f, -0.5f * 3f),
-//                Keyframe.ofFloat(.927020f, 0.2f * 3f),
-//                Keyframe.ofFloat(1f, 0f)  
-                
-                Keyframe.ofFloat(.22859f, -9f),  
-                Keyframe.ofFloat(.399828f, 6f), 
-                Keyframe.ofFloat(.571061f, -3f), 
-                Keyframe.ofFloat(.714041f, 0.5f), 
-                Keyframe.ofFloat(.857020f, -1f),
-                Keyframe.ofFloat(.927020f, 0.2f),
-                Keyframe.ofFloat(1f, 0f) 
+//                Keyframe.ofFloat(.22859f, -6f),  
+//                Keyframe.ofFloat(.399828f, 3f), 
+//                Keyframe.ofFloat(.571061f, -1f), 
+//                Keyframe.ofFloat(.714041f, 0.2f),
+//                
+//                Keyframe.ofFloat(.857020f, -0f),
+//                Keyframe.ofFloat(.927020f, 0f),
+//                Keyframe.ofFloat(1f, 0f) 
                 
         
         );  
  
-        float translationX = mTitleParentView.getTranslationX();
+        ObjectAnimator animatorText = ObjectAnimator.ofFloat(this, "alpha", 1.0f).setDuration(1000);
         
-        ObjectAnimator objectAnimator1 = ObjectAnimator.ofFloat(mTitleParentView, "translationX", translationX , 0f).setDuration(400);
-        
-     
-        ObjectAnimator animatorTitle = ObjectAnimator.ofFloat(mTextViewTitle, "translationX", 2 * translationX , 0).setDuration(500);
-        
-        ObjectAnimator animationDate = ObjectAnimator.ofPropertyValuesHolder(date, pvhdate).setDuration(1168);
-        ObjectAnimator animationTime = ObjectAnimator.ofPropertyValuesHolder(time, pvhtime).setDuration(968);
+//        ObjectAnimator animationDate = ObjectAnimator.ofPropertyValuesHolder(date, pvhdate).setDuration(1168);
+        ObjectAnimator animationTime = ObjectAnimator.ofPropertyValuesHolder(time, pvhtime).setDuration(1068);
         
         final View playerLayout = UIController.getInstance().getmLayoutPlayer();        
         animationTime.addUpdateListener(new AnimatorUpdateListener() {
             
             @Override
             public void onAnimationUpdate(ValueAnimator arg0) {
-                playerLayout.setTranslationX((float) arg0.getAnimatedValue());
+                playerLayout.setTranslationX((Float) arg0.getAnimatedValue());
                 if (playerLayout.getAlpha() <= arg0.getAnimatedFraction()) {
                     playerLayout.setAlpha(arg0.getAnimatedFraction());
                 }
             }
         });
         
-        ObjectAnimator animationWeek = ObjectAnimator.ofPropertyValuesHolder(week, pvhdate).setDuration(1168);
+//        ObjectAnimator animationWeek = ObjectAnimator.ofPropertyValuesHolder(week, pvhdate).setDuration(1168);
         
-        animationDate.setStartDelay(67);
-        animationWeek.setStartDelay(34);
+        ObjectAnimator animationWeek = ObjectAnimator.ofPropertyValuesHolder(week, pvhtime).setDuration(1068);
+        ObjectAnimator animationDate = ObjectAnimator.ofPropertyValuesHolder(date, pvhtime).setDuration(1068);
+//        animationDate.setStartDelay(67);
+//        animationWeek.setStartDelay(34);
         
-        
-        
-        
-        
-        animatorSet.play(objectAnimator1).with(animatorTitle)
-                .with(animationWeek).with(animationDate).with(animationTime);
-
-        objectAnimator1.addUpdateListener(new AnimatorUpdateListener() {
-            
-            @Override
-            public void onAnimationUpdate(ValueAnimator arg0) {
-        
-                float translationX = (float) arg0.getAnimatedValue();
-                mTitleLeftView.setTranslationX(-translationX);
-                mTextViewContent.setTranslationX(translationX);
-            }
-        });
-        
-        animatorTitle.addUpdateListener(new AnimatorUpdateListener() {
-            
-            @Override
-            public void onAnimationUpdate(ValueAnimator arg0) {
-
-                float fraction = arg0.getAnimatedFraction();
-                setAlpha(fraction);
-                float scale =  mScale + (1.0f - mScale)/mScale * fraction;
-                if (scale <= 1f) {
-                    setScaleX(scale);
-                    setScaleY(scale);
-                }
-                setAlpha(mAlpha + (1 - mAlpha)/mAlpha * fraction);
-                
-            }
-        });
-        
-        objectAnimator1.addListener(new AnimatorListener() {
-            
-            @Override
-            public void onAnimationStart(Animator arg0) {
-                
-            }
-            
-            @Override
-            public void onAnimationRepeat(Animator arg0) {
-                
-            }
-            
-            @Override
-            public void onAnimationEnd(Animator arg0) {
-                mTitleRightView.setTranslationX(0f);
-                mTitleLeftView.setTranslationX(0f);
-            }
-            
-            @Override
-            public void onAnimationCancel(Animator arg0) {
-               
-            }
-        });
+        animatorSet.play(animatorText).with(animationWeek).with(animationDate).with(animationTime);
+     
         animatorSet.addListener(new AnimatorListener() {
             
+            private boolean isCancel = false;
             @Override
             public void onAnimationStart(Animator arg0) {
                 
@@ -445,64 +360,21 @@ public class CaptionsView extends LinearLayout {
             @Override
             public void onAnimationEnd(Animator arg0) {
                 animRuning = false;
+                
+                if (!isCancel) {
+                    showGuideIfNeed();
+                }
+                isCancel = false;
             }
             
             @Override
             public void onAnimationCancel(Animator arg0) {
-                
+                isCancel = true;
             }
         });
         animatorSet.start();
     }
     
-    
-  
-    
-    
-    public void switchWallpaperAnimation(float translationX) {
-        if (translationX == 0) {
-            mTitleRightView.setVisibility(VISIBLE);
-            mTitleLeftView.setVisibility(VISIBLE);
-        }
-
-        getTitleView().setTranslationX(-translationX * 2);
-        mTitleRightView.setTranslationX(-translationX * 2);
-        
-        if (mContentVisible) {
-            mTextViewContent.setTranslationX(-translationX * 2);
-        }
-        
-        if (translationX > mTextViewTitle.getMeasuredWidth()/2) {
-            mTitleRightView.setVisibility(INVISIBLE);
-            mTitleLeftView.setVisibility(INVISIBLE);
-        }
-    }
-    
-    public int getRealHeight() {
-        return mTextViewTitle.getMeasuredHeight() + mGap + mTextViewContent.getMeasuredHeight();
-    }
-    
-    
-    public void startMusicPlayerAnim() {
-
-        AnimatorUpdateListener mAnimatorUpdateListener = new AnimatorUpdateListener() {
-
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                float translationX = (float) animation.getAnimatedValue();
-                mTextViewContent.setTranslationX(translationX);
-                mTextViewTitle.setTranslationX(translationX);
-            }
-        };
-        mValueAnimator.setFloatValues(200, 0);
-        mValueAnimator.setDuration(5000);
-        mValueAnimator.addUpdateListener(mAnimatorUpdateListener);
-        mValueAnimator.setInterpolator(new OvershootInterpolator());
-        
-        mValueAnimator.start();
-        
-    }
-
 
     public void setClickLink(boolean mClickLink) {
         this.mClickLink = mClickLink;
@@ -513,13 +385,53 @@ public class CaptionsView extends LinearLayout {
         }
     }
 
-    public RelativeLayout getTitleContainer() {
-        return mTitleContainer;
+    
+    
+    public void startGuide() {
+        setGuideClickViewShowing(true);
+        setGuideVisibility(VISIBLE);
+        changeGuideViewPostion();
+        mGuideClickView.startAnimator();
+        
+    }
+    
+    public void stopGuide() {
+        setGuideClickViewShowing(false);
+        mGuideClickView.stopAnimator();
+        setGuideVisibility(GONE);
+    }
+    
+    private void changeGuideViewPostion() {
+
+        RelativeLayout.LayoutParams params = (LayoutParams) mGuideClickView.getLayoutParams();
+        params.leftMargin = mTextViewTitle.getMeasuredWidth() - mGuideClickView.getMeasuredWidth() / 2;
+        mGuideClickView.setLayoutParams(params);
+    }
+    
+    public void setGuideVisibility(int visibility) {
+        mGuideClickView.setVisibility(visibility);
     }
 
-     
+    public boolean isGuideClickViewShowing() {
+        return mGuideClickViewShowing;
+    }
+
+    public void setGuideClickViewShowing(boolean mGuideClickViewShowing) {
+        this.mGuideClickViewShowing = mGuideClickViewShowing;
+    }
     
+    public void hideGuideIfNeed() {
+        if (isGuideClickViewShowing()) {
+            setGuideVisibility(GONE);
+        }
+    }
     
+    public void showGuideIfNeed() {
+        if (isGuideClickViewShowing()) {
+            changeGuideViewPostion();
+            setGuideVisibility(VISIBLE);
+        }
+    }
     
 
 }

@@ -113,4 +113,10 @@ public interface ViewMediatorCallback {
      */
     boolean isScreenOn() ;
     //<Amigo_Keyguard> jingyn <2015-05-23> add for hao kan end 
+    
+  //<Amigo_Keyguard> jiating <2015-05-27> add for other APP use begin
+    void unlockKeyguardByOtherApp();			
+	void lockKeyguardByOtherApp();
+	
+	  //<Amigo_Keyguard> jiating <2015-05-27> add for other APP use begin
 }

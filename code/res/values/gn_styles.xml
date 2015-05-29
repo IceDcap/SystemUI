@@ -57,6 +57,12 @@
     
     
       <style name="GnAmiogUnbindActivityLightTheme" parent="@amigo:style/Theme.Amigo.Light">
+          <item name="amigo:amigoactionBarStyle">@style/AmiogUnbindActionBarStyle</item>
+        <item name="android:actionBarStyle">@style/AmiogUnbindActionBarStyle</item>
+    </style>
+    
+       <style name="AmiogUnbindActionBarStyle" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+        <item name="amigo:amigobackground">@color/keyguard_unbind_account_color</item>
     </style>
     
     

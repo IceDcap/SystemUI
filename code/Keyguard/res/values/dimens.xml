@@ -368,6 +368,17 @@
 	
 	<!-- haokan dimens end-->
 	
+	<!-- guide -->
+	<dimen name="guide_long_press_hand_translationY">38dp</dimen>
+	<dimen name="guide_long_press_stroke">2dp</dimen>
+	<dimen name="guide_long_press_firstcircle_maxradius">9dp</dimen>
+	<dimen name="guide_long_press_secondcircle_maxradius">12dp</dimen>
+	<dimen name="guide_long_press_thirdcircle_maxradius">20dp</dimen>
+	
+	<dimen name="guide_click_title_circle_to_radius">15dp</dimen>
+	<dimen name="guide_click_title_circle_from_radius">0dp</dimen>
+	<dimen name="guide_click_title_view_size">40dp</dimen>
+	
 	
 	<!-- infozone -->
 	<dimen name="keyguard_infozone_time_textsize">55dp</dimen>

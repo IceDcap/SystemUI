@@ -42,4 +42,6 @@
 	<color name="gn_recent_app_label_text_color">#ffffff</color>
 	<color name="gn_recent_app_notice_text_color">#80ffffff</color>
 	
+	<color name="keyguard_unbind_account_color">#00000000</color>
+	
 </resources>

@@ -214,16 +214,17 @@ public class Wallpaper implements Serializable{
     }
 
     public Caption getCaption() {
-        if (caption == null) {
+        if (caption == null && getImgName() != null && getImgContent() != null) {
             String backgroundColor = getBackgroundColor();
             int color = 0xff4d4d4d;
             int contentColor = 0x404d4d4d;
             if (!TextUtils.isEmpty(backgroundColor)) {
-                 color = Color.parseColor(backgroundColor);
-                 int fortyPercent = ((((color & 0xff000000) >> 24) & 0x0000ff ) / 10 * 4) << 24;
-                 contentColor = (color & 0x00ffffff) | fortyPercent;
+                color = Color.parseColor(backgroundColor);
+                int fortyPercent = ((((color & 0xff000000) >> 24) & 0x0000ff) / 10 * 4) << 24;
+                contentColor = (color & 0x00ffffff) | fortyPercent;
             }
-            caption = new Caption(getImgName(), getImgContent(), getUrlClick(), color, contentColor, getImgSource());
+            caption = new Caption(getImgName(), getImgContent(), getUrlClick(), color,
+                    contentColor, getImgSource());
         }
         return caption;
     }

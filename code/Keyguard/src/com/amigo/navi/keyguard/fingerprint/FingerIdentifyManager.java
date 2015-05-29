@@ -109,7 +109,7 @@ public class FingerIdentifyManager {
         return true;
     }
     
-    public void readFingerprintSwitchValue(){
+    public boolean readFingerprintSwitchValue(){
         //0 is close;1 is open
         int unlockValue = Settings.Secure.getInt(mContext.getContentResolver(),
                 FINGERPRINT_FOR_UNLOCK_SWITCH_KEY, 0);
@@ -118,7 +118,7 @@ public class FingerIdentifyManager {
         }else{
             mFingerprintSwitchOpen=true;
         }
-        
+        return mFingerprintSwitchOpen;
     }
     
     

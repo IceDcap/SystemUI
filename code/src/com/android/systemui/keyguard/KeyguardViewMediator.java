@@ -83,6 +83,10 @@ import java.util.List;
 import static android.provider.Settings.System.SCREEN_OFF_TIMEOUT;
 
 
+
+import com.amigo.navi.keyguard.KeyguardViewHostManager;
+
+
 /**
  * Mediates requests related to the keyguard.  This includes queries about the
  * state of the keyguard, power management events that effect whether the keyguard
@@ -551,6 +555,23 @@ public class KeyguardViewMediator extends SystemUI {
         public boolean isScreenOn() {
             return KeyguardViewMediator.this.isScreenOn() ;
         }
+        
+        //<Amigo_Keyguard> jiating <2015-05-27> add for other APP use begin
+     	@Override
+        public void unlockKeyguardByOtherApp(){
+    		mStatusBarKeyguardViewManager.unlockKeyguardByOtherApp();
+        }
+		
+    	@Override
+		public void lockKeyguardByOtherApp(){
+    		synchronized (this) {
+    			Bundle options = new Bundle();
+    			options.putBoolean(KeyguardViewHostManager.KEYGUARD_LOCK_BY_OTHERAPP, true);
+    			KeyguardViewMediator.this.doKeyguardLocked(options);
+    		}
+    	}
+    	
+    	  //<Amigo_Keyguard> jiating <2015-05-27> add for other APP use end
     };
 
     public void userActivity() {
@@ -667,7 +688,6 @@ public class KeyguardViewMediator extends SystemUI {
     public void onScreenTurnedOff(int why) {
     	
     	KeyguardSensorModule.getInstance(mContext).unRegisterListener();
-    	
         synchronized (this) {
             mScreenOn = false;
             if (DEBUG) Log.d(TAG, "onScreenTurnedOff(" + why + ")");
@@ -680,7 +700,7 @@ public class KeyguardViewMediator extends SystemUI {
             // camera while preventing unwanted input.
             final boolean lockImmediately =
                 mLockPatternUtils.getPowerButtonInstantlyLocks() || !mLockPatternUtils.isSecure();
-
+            if (DEBUG) Log.d(TAG, "lockImmediately="+lockImmediately+"mLockPatternUtils.getPowerButtonInstantlyLocks() ="+mLockPatternUtils.getPowerButtonInstantlyLocks() +"mLockPatternUtils.isSecure()="+mLockPatternUtils.isSecure());
             notifyScreenOffLocked();
 
             if (mExitSecureCallback != null) {
@@ -735,7 +755,7 @@ public class KeyguardViewMediator extends SystemUI {
         } else {
             timeout = lockAfterTimeout;
         }
-
+        if (DEBUG) Log.d(TAG, "doKeyguardLaterLocked "+timeout+"lockAfterTimeout="+lockAfterTimeout+"policyTimeout="+policyTimeout);
         if (timeout <= 0) {
             // Lock now
             mSuppressNextLockSound = true;
@@ -761,11 +781,6 @@ public class KeyguardViewMediator extends SystemUI {
      * Let's us know the screen was turned on.
      */
     public void onScreenTurnedOn(IKeyguardShowCallback callback) {
-    	
-    	if(isShowing()){
-    		KeyguardSensorModule.getInstance(mContext).registerListener();
-    	}
-    	
         synchronized (this) {
             mScreenOn = true;
             cancelDoKeyguardLaterLocked();
@@ -777,6 +792,9 @@ public class KeyguardViewMediator extends SystemUI {
         KeyguardUpdateMonitor.getInstance(mContext).dispatchScreenTurnedOn();
         maybeSendUserPresentBroadcast();
         showSkylightIfNeed();
+        if(isShowing()){
+            KeyguardSensorModule.getInstance(mContext).registerListener();
+        }
     }
 
     private void maybeSendUserPresentBroadcast() {

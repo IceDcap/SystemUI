@@ -1,6 +1,7 @@
 package com.amigo.navi.keyguard.haokan;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.text.Spannable;
@@ -13,9 +14,7 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.ImageSpan;
 import android.text.style.TextAppearanceSpan;
 import android.text.style.URLSpan;
-import android.util.Log;
 import android.view.View;
-
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.haokan.analysis.HKAgent;
 import com.amigo.navi.keyguard.haokan.entity.Caption;
@@ -24,14 +23,8 @@ import com.android.keyguard.R;
 
 public class CaptionSpannableString extends SpannableStringBuilder{
 
-//    private static final String SPACE_LINK = "     ";
-//    private static final String SPACE_SOURCE = " ";
     
     private static final String SPACE_LINK = "  ";
-//    private static final String SPACE_SOURCE = "   ";
-    
-    
-//    private static final int IMG_SOURCE_TEXT_COLOR = 0xffff9000;
     private static final int IMG_SOURCE_TEXT_COLOR = 0xccffffff;
     
     private static long mLastClickTime = 0;
@@ -50,8 +43,9 @@ public class CaptionSpannableString extends SpannableStringBuilder{
     }
     
     public CaptionSpannableString(Context context, Caption caption, Drawable mContentLinkDrawable, Rect linkRect,String link) {
-        
+
         super(caption.getContent());
+
         mCaption = caption;
         
         boolean isEmptyImgSource = TextUtils.isEmpty(mCaption.getImgSource());
@@ -101,11 +95,6 @@ public class CaptionSpannableString extends SpannableStringBuilder{
         
     }
     
-    
-    
-    
-    
-    
     private class WebURLSpan extends URLSpan{
 
         public WebURLSpan(String url) {
@@ -126,10 +115,13 @@ public class CaptionSpannableString extends SpannableStringBuilder{
             }
 
             if (Common.getNetIsAvailable(mContext)) {
-                UIController.getInstance().showWebView(mContext, mCaption.getLink());
+                Intent intent = new Intent(mContext, DetailActivity.class);
+                intent.putExtra("link", mCaption.getLink());
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                mContext.startActivity(intent);
                 HKAgent.onEventIMGLink(mContext, UIController.getInstance().getmCurrentWallpaper());
             } else {
-                UIController.getInstance().showTip(R.string.haokan_tip_check_net);
+                UIController.getInstance().showToast(R.string.haokan_tip_check_net);
             }
             HKAgent.onEventIMGLink(mContext, UIController.getInstance().getmCurrentWallpaper());
             
@@ -139,7 +131,6 @@ public class CaptionSpannableString extends SpannableStringBuilder{
         @Override
         public void updateDrawState(TextPaint ds) {
       
-//            super.updateDrawState(ds);
             ds.setColor(0xccffffff);  
             ds.setUnderlineText(false); 
         }

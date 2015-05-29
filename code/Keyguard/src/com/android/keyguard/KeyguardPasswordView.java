@@ -45,6 +45,7 @@ import java.util.List;
 
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.KeyguardViewHostManager;
+import com.amigo.navi.keyguard.fingerprint.FingerIdentifyManager;
 import com.amigo.navi.keyguard.security.AmigoAccount;
 import com.amigo.navi.keyguard.security.AmigoUnBindAcountActivity;
 import com.amigo.navi.keyguard.skylight.SkylightActivity;
@@ -165,6 +166,10 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
     public void onPause(int reason) {
         super.onPause(reason);
         hiddenInput();
+        if (mPasswordViewCountdownTimer != null) {
+        	mPasswordViewCountdownTimer.cancel();
+        	mPasswordViewCountdownTimer = null;
+        }
 //        setVisibility(INVISIBLE);
     }
 
@@ -584,14 +589,22 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
 		}
 		
 		  private void displayDefaultSecurityMessage() {
-				if(KeyguardViewHostManager.isSuppotFinger()){
+		    
+		        if(KeyguardViewHostManager.isSuppotFinger()&&getFingerSwitchState()){
 		    		mSecurityMessageDisplay.setMessage(R.string.keyguard_password_enter_code_finger, true);
 		    	}else{ 		
 		    		mSecurityMessageDisplay.setMessage(R.string.keyguard_password_enter_code, true);
 		    	}
 		    }
-		
-		
+		  
+		private boolean getFingerSwitchState(){
+		    FingerIdentifyManager fingerIdentifyManager=FingerIdentifyManager.getInstance();
+            boolean isFingerSwitchOpen=false;
+            if(fingerIdentifyManager!=null){
+                isFingerSwitchOpen = fingerIdentifyManager.readFingerprintSwitchValue();
+            }
+            return isFingerSwitchOpen;
+		}
 		
 		private int getTimeOutSize() {
 				return mKeyguardUpdateMonitor.getFailedUnlockAttempts();

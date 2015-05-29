@@ -79,6 +79,10 @@
     <string name="preference_double_desktop_lock_title">快捷熄屏</string>
     <string name="preference_desktop_lock_on">已开启</string>
     <string name="preference_desktop_lock_off">已关闭</string>
+    <string name="preference_screenlock_wallpaper">亮屏显示</string>
+    <string name="preference_set_screenlock_wallpaper">设置亮屏壁纸</string>
+    <string name="preference_set_screenlock_wallpaper_text">从本地选择图片亮屏时固定显示</string>
+    
     <string name="dialog_ok">继续</string>
     <string name="dialog_cancle">取消</string>
     <string name="dialog_nopoint">下次不再提示</string>
@@ -90,15 +94,18 @@
     
     
     
-    <string name="haokan_arc_menu_favorite">收藏</string>
-    <string name="haokan_arc_menu_favorite_ok">已收藏</string>
-    <string name="haokan_arc_menu_lock">锁定</string>
-    <string name="haokan_arc_menu_lock_ok">已锁定</string>
-    <string name="haokan_arc_menu_share">分享</string>
-    <string name="haokan_arc_menu_subscribe">订阅</string>
-    <string name="haokan_arc_menu_setting">设置</string>
-   	<string name="haokan_arc_menu_tip_no_locked">取消锁定</string>
-   	<string name="haokan_arc_menu_tip_no_favorite">取消收藏</string>
+    <string name="haokan_arc_menu_favorite">保存图片</string>
+    <string name="haokan_arc_menu_favorite_ok">已保存</string>
+   	
+   	<string name="haokan_arc_menu_lock">亮屏显示</string>
+   	<string name="haokan_arc_menu_lock_ok">取消显示</string>
+   	
+   	<string name="haokan_arc_menu_share">分享</string>
+   	<string name="haokan_arc_menu_subscribe">壁纸订阅</string>
+   	<string name="haokan_arc_menu_setting">锁屏设置</string>
+   	
+   	<string name="haokan_arc_menu_tip_no_locked">取消显示</string>
+   	<string name="haokan_arc_menu_tip_no_favorite">取消保存</string>
     <string name="haokan_category_life">生活</string>
     <string name="haokan_category_traffic">交通</string>
     <string name="haokan_category_star">明星</string>
@@ -110,7 +117,13 @@
     <string name="haokan_wallpaper_subscription">壁纸订阅</string>
     <string name="haokan_tip_check_net">请检查网络设置</string>
     <string name="haokan_tip_favorite_error">收藏失败</string>
+   	<string name="haokan_tip_save_gallery">已保存到图库</string>
+   	<string name="haokan_tip_screen_on_show">每次亮屏时固定显示该壁纸</string>
+    <string name="haokan_tip_no_lock_show">该壁纸不再固定显示</string>
+   	
    	<string name="haokan_detail">详情</string>
+   	<string name="cancel">取消</string>
+    <string name="apply">应用</string>
     <string name="kg_wrong_password_time">"密码错误，还可以再输入<xliff:g id="NUMBER">%d</xliff:g>次"</string>
     <string name="kg_wrong_pattern_time">"密码错误，还可以再输入<xliff:g id="NUMBER">%d</xliff:g>次"</string>
     <string name="kg_wrong_pattern_onetime">"密码错误，还可以再输入<xliff:g id="NUMBER">%d</xliff:g>次"</string>
@@ -148,4 +161,5 @@
    	<string name="yule">娱乐</string>
    	<string name="jinxuan">amigo精选</string>
 
+   	<string name="set_screenlock_wallpaper_fail">设置锁屏壁纸失败</string>
 </resources>

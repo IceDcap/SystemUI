@@ -520,7 +520,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
             }
         }, 50);
 
-        postDelayed(mCloseMenuRunnable, 3000);
+        postDelayed(mCloseMenuRunnable, 5000);
         
     }
     
@@ -737,7 +737,8 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                         @Override
                         public void run() {
                            
-                            bindClickItemFeekBackAnimator(arcItemButton, true, R.string.haokan_arc_menu_favorite_ok);
+//                            bindClickItemFeekBackAnimator(arcItemButton, true, R.string.haokan_arc_menu_favorite_ok);
+                            controller.showToast(R.string.haokan_tip_save_gallery);
                         }
                     }, 300);
                     
@@ -772,7 +773,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                         
                         @Override
                         public void run() {
-                            controller.showTip(R.string.haokan_tip_favorite_error);
+                            controller.showToast(R.string.haokan_tip_favorite_error);
                         }
                     }, 300);
                 }
@@ -803,9 +804,10 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                         public void run() {
                             
                             boolean isLocked = mWallpaper.isLocked();
-                            int stringId = isLocked ? R.string.haokan_arc_menu_lock_ok : R.string.haokan_arc_menu_tip_no_locked;
+//                            int stringId = isLocked ? R.string.haokan_arc_menu_lock_ok : R.string.haokan_arc_menu_tip_no_locked;
+//                            bindClickItemFeekBackAnimator(arcItemButton, isLocked, stringId);
                             
-                            bindClickItemFeekBackAnimator(arcItemButton, isLocked, stringId);
+                            controller.showToast(isLocked ? R.string.haokan_tip_screen_on_show : R.string.haokan_tip_no_lock_show);
                         }
                     }, 500);
                 }  

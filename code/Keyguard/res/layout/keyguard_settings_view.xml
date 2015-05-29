@@ -123,16 +123,67 @@
             android:layout_weight="4"
             android:visibility="invisible" />
     </LinearLayout>
+    
+    <View
+        android:layout_below="@id/only_wlan_layout"
+        android:id="@+id/settings_divider_second"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/settings_line_height"
+        android:layout_gravity="right"
+        android:background="@color/keyguard_setting_line_color"
+        android:visibility="invisible" />
+
+    <TextView
+        android:layout_below="@id/settings_divider_second"
+        android:id="@+id/set_keyguard_wallpaper_title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/settings_title_height"
+        android:gravity="bottom"
+        android:text="@string/preference_screenlock_wallpaper"
+        android:textColor="@color/keyguard_setting_title_color"
+        android:textSize="@dimen/settings_title_textsize"
+        android:visibility="invisible" />
+
+    <LinearLayout
+        android:layout_below="@id/set_keyguard_wallpaper_title"
+        android:id="@+id/set_keyguard_wallpaper_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/set_keyguard_wallpaper"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/settings_body_firstline_height"
+            android:gravity="center_vertical"
+            android:text="@string/preference_set_screenlock_wallpaper"
+            android:textColor="@color/keyguard_setting_firstline_color"
+            android:textSize="@dimen/settings_body_firstline_textsize"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/set_keyguard_wallpaper_text"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/settings_body_secondline_height"
+            android:gravity="center_vertical"
+            android:text="@string/preference_set_screenlock_wallpaper_text"
+            android:textColor="@color/keyguard_setting_secondline_color"
+            android:textSize="@dimen/settings_body_secondline_textsize"
+            android:visibility="invisible" />
+    </LinearLayout>
 
     <View
         android:id="@+id/settings_divider"
         android:layout_width="match_parent"
         android:layout_height="@dimen/settings_line_height"
-        android:layout_below="@id/only_wlan_layout"
+        android:layout_below="@id/set_keyguard_wallpaper_layout"
         android:layout_gravity="right"
+        android:layout_marginTop="16dp"
         android:background="@color/keyguard_setting_line_color"
         android:visibility="invisible" />
-
+    
+    
     <TextView
         android:id="@+id/double_desktop_lock_title"
         android:layout_width="match_parent"

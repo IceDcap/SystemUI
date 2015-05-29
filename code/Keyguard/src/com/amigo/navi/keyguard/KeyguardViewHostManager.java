@@ -94,6 +94,7 @@ public class KeyguardViewHostManager {
 //  private boolean IsClearLock = false;
     private static boolean isSuppotFinger=false;
     private static final int MSG_UPDATE_HAOKAN_LIST_SCREEN_OFF = 4;
+    public static final String KEYGUARD_LOCK_BY_OTHERAPP="lockByOtherApp";
 
 	public KeyguardViewHostManager(Context context,KeyguardViewHost host,SkylightHost skylight,LockPatternUtils lockPatternUtils,ViewMediatorCallback callback){
         DebugLog.d(TAG,"KeyguardViewHostManager");
@@ -116,7 +117,6 @@ public class KeyguardViewHostManager {
         mFingerIdentifyManager=new FingerIdentifyManager(context);
         ShutdownBroadcastReceiver.setUpdatePage(mUpdatePage);
         mKeyguardViewHost.setConfigChangeCallback(mConfigChangeCallback);
-		Log.i(TAG,"isSuppotFinger....isSuppotFinger="+isSuppotFinger);
         isSuppotFinger=SystemProperties.get("ro.gn.fingerprint.support").equals("FPC");
 		initPowerSaverObserver();
         Log.i(TAG,"isSuppotFinger....isSuppotFinger="+isSuppotFinger);
@@ -163,6 +163,7 @@ public class KeyguardViewHostManager {
     }
     public void initKeyguard(ViewMediatorCallback callback){
         mKeyguardViewHost.initKeyguard(callback, mLockPatternUtils);
+        amigoInitUnlockReceiver(callback);
         
     }
     
@@ -394,6 +395,7 @@ public class KeyguardViewHostManager {
             mIsSkylightShown=false;
             mViewMediatorCallback.adjustStatusBarLocked();
         }
+       startFingerIdentify();
        beginStatics();
     }
     
@@ -952,5 +954,16 @@ public class KeyguardViewHostManager {
 	    private int getPowerSaverMode() {
 	    	return Settings.Global.getInt(mContext.getContentResolver(), POWERSAVERSETTING, 0);
 	    }
+	    
+	    
+	    public void unlockKeyguardByOtherApp(){
+	    	unLockByOther(true);
+	    }
 		
+	    
+	    private void amigoInitUnlockReceiver(ViewMediatorCallback callback) {
+	      	 Log.d(TAG, "amigoInitUnlockReceiver");
+	      	AmigoLockOrUnlockReceiver unlockExt = AmigoLockOrUnlockReceiver.getInstance(mContext);
+	      	unlockExt.setUnlockCallback(callback);
+	     }
 }

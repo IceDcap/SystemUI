@@ -6,62 +6,7 @@
     <dimen name="notification_seperate_width">30dp</dimen>
     <!-- Padding for notification sort list -->
     <dimen name="notification_item_padding">16dp</dimen>
-    
-    <!-- Control center -->
-    <dimen name="gn_cc_height">324dp</dimen>
-    <dimen name="gn_cc_height_land">294dp</dimen>
-    
-    <!-- Control center immerse mode -->
-    <dimen name="gn_cc_immerse_width">72dp</dimen>
-    <dimen name="gn_cc_immerse_height">20dp</dimen>
-    
-    <dimen name="gn_cc_handle_height">36dp</dimen>
-    <dimen name="gn_cc_handle_height_land">30dp</dimen>
-    
-    <dimen name="gn_qs_panel_padding_top">15dp</dimen>
-    <dimen name="gn_qs_panel_padding_top_land">20dp</dimen>
-    <dimen name="gn_qs_panel_padding_left">20dp</dimen>
-    <dimen name="gn_qs_panel_padding_left_land">56dp</dimen>
-    <dimen name="gn_qs_tile_height">74dp</dimen>
-    <dimen name="gn_qs_tile_width">54dp</dimen>
-    <dimen name="gn_qs_tile_icon_size">54dp</dimen>
-    <dimen name="gn_qs_tile_text_size">10sp</dimen>
-    <dimen name="gn_qs_tile_text_gap">8dp</dimen>
-    <dimen name="gn_qs_tile_padding_top">30dp</dimen>
-    <dimen name="gn_qs_tile_padding_top_land">12dp</dimen>
-    <dimen name="gn_qs_tile_padding_below_icon">12dp</dimen>
-    <dimen name="gn_qs_tile_padding_bottom">16dp</dimen>
-    <dimen name="gn_qs_tile_setting_padding_top">3dp</dimen>
-    <dimen name="gn_qs_brightness_tile_width">30dp</dimen>
-    <dimen name="gn_qs_brightness_tile_padding_left">32dp</dimen>
-    <dimen name="gn_qs_brightness_tile_padding_left_land">70dp</dimen>
-    <dimen name="gn_qs_brightness_tile_padding_right">14dp</dimen>
-    <dimen name="gn_qs_brightness_tile_padding_right_land">52dp</dimen>
-    <dimen name="gn_qs_brightness_padding_top">24dp</dimen>
-    <dimen name="gn_qs_brightness_padding_top_land">24dp</dimen>
-    <dimen name="gn_qs_brightness_padding_bottom">7dp</dimen>
-    <dimen name="gn_qs_brightness_padding_bottom_land">0dp</dimen>
-    <dimen name="gn_qs_brightness_padding_right">28dp</dimen>
-    <dimen name="gn_qs_brightness_padding_start">28dp</dimen>
-    
-    <dimen name="gn_sc_panel_padding_top">10dp</dimen>
-    <dimen name="gn_sc_panel_padding_left">8dp</dimen>
-    <dimen name="gn_sc_panel_padding_left_land">16dp</dimen>
-    <dimen name="gn_sc_tile_text_padding_top">12dp</dimen>
-    
-    <!-- QS More -->
-    <dimen name="gn_qs_more_title_text_size">12sp</dimen>
-    <dimen name="gn_qs_more_tile_padding_title">10dp</dimen>
-    <dimen name="gn_qs_more_tile_padding_title_land">0dp</dimen>
-    <dimen name="gn_qs_more_tile_padding_top">16dp</dimen>
-    <dimen name="gn_qs_more_tile_padding_top_land">10dp</dimen>
-    <dimen name="gn_qs_more_header_height">50dp</dimen>
-    <dimen name="gn_qs_more_header_height_land">40dp</dimen>
-    <dimen name="gn_qs_more_header_text_size">20sp</dimen>
-    <dimen name="gn_qs_more_header_text_size_land">16sp</dimen>
-    <dimen name="gn_qs_more_title_height">40dp</dimen>
-    <dimen name="gn_qs_more_title_height_land">30dp</dimen>
-    
+
     <!-- Snap shot button field -->
     <dimen name="gn_snapshot_button_width">124dp</dimen>
     <dimen name="gn_snapshot_button_height">64dp</dimen>

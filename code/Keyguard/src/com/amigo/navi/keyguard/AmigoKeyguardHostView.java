@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Rect;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
@@ -1022,10 +1023,11 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 		}
 //		Log.e("ddd", "========-top=========" + top);
 		//use owner wallpaper
-		if(isSecure()){
-			mUIController.onKeyguardScrollChanged(top, mMaxBoundY, UIController.SCROLL_TO_SECURTY);
-		}else{
+		if(!isSecure() ){
 			mUIController.onKeyguardScrollChanged(top, mMaxBoundY, UIController.SCROLL_TO_UNLOCK);
+			
+		}else{
+			mUIController.onKeyguardScrollChanged(top, mMaxBoundY, UIController.SCROLL_TO_SECURTY);
 		}
 	}
 	
@@ -1080,7 +1082,7 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 		}, 100);
 	}
 	
-	public void show() {
+	public void show(Bundle options) {
 		// TODO Auto-generated method stub
 		if(mKeyguardPage!=null){
 			if(DebugLog.DEBUG){
@@ -1089,9 +1091,14 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 			mKeyguardPage.show();
 			
 		}
+		DebugLog.d(LOG_TAG, "show()....options="+(options!=null? options.getBoolean(KeyguardViewHostManager.KEYGUARD_LOCK_BY_OTHERAPP) : false ));
+		if(options!=null && options.getBoolean(KeyguardViewHostManager.KEYGUARD_LOCK_BY_OTHERAPP)){
+			resetHostYToHomePosition();
+		}
 		if(mKeyguardBouncer!=null){
 			mKeyguardBouncer.show(true);
 		}
+		
 	}
 	
     public void showBouncerOrKeyguard() {

@@ -41,6 +41,7 @@ import android.widget.Toast;
 
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.KeyguardViewHostManager;
+import com.amigo.navi.keyguard.fingerprint.FingerIdentifyManager;
 import com.amigo.navi.keyguard.security.AmigoAccount;
 import com.amigo.navi.keyguard.security.AmigoUnBindAcountActivity;
 import com.amigo.navi.keyguard.util.TimeUtils;
@@ -294,11 +295,20 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
         } else {
             mSecurityMessageDisplay.setMessage(R.string.kg_pattern_instructions, false);
         }*/
-    	if(KeyguardViewHostManager.isSuppotFinger()){
+    	if(KeyguardViewHostManager.isSuppotFinger()&&getFingerSwitchState()){
     		mSecurityMessageDisplay.setMessage(R.string.keyguard_pattern_enter_code_finger, true);
     	}else{ 		
     		mSecurityMessageDisplay.setMessage(R.string.keyguard_pattern_enter_code, true);
     	}
+    }
+    
+    private boolean getFingerSwitchState(){
+        FingerIdentifyManager fingerIdentifyManager=FingerIdentifyManager.getInstance();
+        boolean isFingerSwitchOpen=false;
+        if(fingerIdentifyManager!=null){
+            isFingerSwitchOpen = fingerIdentifyManager.readFingerprintSwitchValue();
+        }
+        return isFingerSwitchOpen;
     }
 
     @Override

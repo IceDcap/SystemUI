@@ -6,19 +6,28 @@ import android.content.SharedPreferences;
 
 public class Guide {
 
+    private static boolean TEST = true;
+    
+    
     public static final String PREFERENCE_NAME   = "com.amigo.navi.keyguard_guide";
     
     public static final String GUIDE_LONG_PRESS  = "guide_long_press";
     public static final String GUIDE_CLICK_TITLE = "guide_click_title";
+    public static final String GUIDE_SLIDE_AROUND = "guide_slide_around";
     public static final String GUIDE_SCROLL_UP = "guide_scroll_up";
+ 
 
     private static boolean NEED_GUIDE_LONG_PRESS = true;
     private static boolean NEED_GUIDE_CLICK_TITLE = true;
+ 
+    private static boolean NEED_GUIDE_SLIDE_AROUND = true;
+ 
     private static boolean NEED_GUIDE_SCROLL_UP = true;
     
     public static boolean needGuideScrollUp() {
         return NEED_GUIDE_SCROLL_UP;
     }
+ 
 
     public static void setNeedGuideScrollUp(boolean need) {
     	NEED_GUIDE_SCROLL_UP = need;
@@ -39,6 +48,15 @@ public class Guide {
     public static void setNeedGuideClickTitle(boolean need) {
         NEED_GUIDE_CLICK_TITLE = need;
     }
+    
+
+    public static boolean needGuideSlideAround() {
+        return NEED_GUIDE_SLIDE_AROUND;
+    }
+
+    public static void setNeedGuideSlideAround(boolean need) {
+        NEED_GUIDE_SLIDE_AROUND = need;
+    }
 
     public static boolean getBooleanSharedConfig(Context context, String key, boolean defValue) {
         SharedPreferences sp = context.getSharedPreferences(
@@ -56,11 +74,24 @@ public class Guide {
     }
     
     public static void init(Context context) {
+        
         SharedPreferences preferences = context.getSharedPreferences(
                 PREFERENCE_NAME, Context.MODE_PRIVATE);
+        
         setNeedGuideLongPress(preferences.getBoolean(GUIDE_LONG_PRESS, true));
         setNeedGuideClickTitle(preferences.getBoolean(GUIDE_CLICK_TITLE, true));
+        setNeedGuideSlideAround(preferences.getBoolean(GUIDE_SLIDE_AROUND, true));
         setNeedGuideScrollUp(preferences.getBoolean(GUIDE_SCROLL_UP, true));
+
+        if (TEST) {
+             NEED_GUIDE_LONG_PRESS = false;
+             NEED_GUIDE_CLICK_TITLE = false;
+             NEED_GUIDE_SLIDE_AROUND = false;
+             NEED_GUIDE_SCROLL_UP = false;
+        }
+        
+ 
+ 
     }
     
 

@@ -148,7 +148,7 @@ public class KeyguardViewHost extends FrameLayout {
         if(mAmigoKeyguardView==null){
             amigoInflateKeyguardView(options);
         }
-        mAmigoKeyguardView.show();
+        mAmigoKeyguardView.show(options);
     }
     
     public void showBouncerOrKeyguard(){
