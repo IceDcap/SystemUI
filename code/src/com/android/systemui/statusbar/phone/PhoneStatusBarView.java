@@ -130,8 +130,6 @@ public class PhoneStatusBarView extends PanelBar {
             openPanel.sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
         }
         mLastFullyOpenedPanel = openPanel;
-        //Add by wujiujiu, need to call onLayout when notification panel is fully expanded
-        mLastFullyOpenedPanel.requestLayout();
     }
 
     @Override

@@ -133,11 +133,12 @@ public class StackScrollState {
                     child.setTranslationY(newYTranslation);
                 }
 
+                // apply zTranslation
                 // If Child View is notificationLevel, move it to the top of list
-                if (child instanceof GnNotificationLevelHeader) {
-                	Log.v("StackScrollState", "Child view is GnNotificationLevelHeader");
-                	newZTranslation = 24.0f;
-                }
+                //                if (child instanceof GnNotificationLevelHeader) {
+                //                	Log.v("StackScrollState", "Child view is GnNotificationLevelHeader");
+                //                	newZTranslation = 24.0f;
+                //                }
                 if (zTranslation != newZTranslation) {
                     child.setTranslationZ(newZTranslation);
                 }
