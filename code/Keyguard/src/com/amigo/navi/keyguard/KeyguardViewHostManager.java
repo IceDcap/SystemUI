@@ -583,11 +583,12 @@ public class KeyguardViewHostManager {
     	return false;
     }
     
-    public void updateSKylightLocation() {
+    public void updateSKylight() {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
                 mSkylightHost.updateSkylightLocation();
+                showSkylight();
             }
         });
     }

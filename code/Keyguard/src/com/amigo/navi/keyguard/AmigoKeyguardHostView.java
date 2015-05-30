@@ -1217,7 +1217,7 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 	 * invoke by absent sim card
 	 */
 	public void finishIfNoSecure(){
-	    if(!isSecure()){
+	    if(!isSecure()&&mViewMediatorCallback.isShowingAndNotOccluded()){
 	        finish();
 	    }
 	}

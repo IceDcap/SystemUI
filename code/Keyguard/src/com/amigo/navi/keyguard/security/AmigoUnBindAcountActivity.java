@@ -33,7 +33,7 @@ import android.view.View.OnClickListener;
 import amigo.app.AmigoActionBar;
 
 
-public class AmigoUnBindAcountActivity  extends Activity {
+public class AmigoUnBindAcountActivity  extends AmigoActivity {
 	
 	  private Bitmap mWindowBackgroud;
 	
@@ -43,9 +43,8 @@ public class AmigoUnBindAcountActivity  extends Activity {
 		getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);          
 //        getWindow().setStatusBarColor(getResources().getColor(R.color.keyguard_unbind_account_color));
-//
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-        ActionBar actionBar = getActionBar();
+        AmigoActionBar actionBar = getAmigoActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(false);
         actionBar.setTitle(R.string.forget_password);

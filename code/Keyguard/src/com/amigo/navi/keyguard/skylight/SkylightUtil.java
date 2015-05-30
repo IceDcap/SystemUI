@@ -149,7 +149,7 @@ public class SkylightUtil {
     private static void updateSkylightHost(){
         KeyguardViewHostManager hostManager=KeyguardViewHostManager.getInstance();
         if(hostManager!=null){
-            hostManager.updateSKylightLocation();
+            hostManager.updateSKylight();
         }
     }
 }

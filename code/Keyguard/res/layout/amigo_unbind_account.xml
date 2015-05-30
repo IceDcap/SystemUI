@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:amigo="http://schemas.android.com/apk/res/amigo"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -7,43 +8,38 @@
     android:paddingRight="20dp"
     android:paddingTop="20dp">
 
-    <TextView
+    <amigo.widget.AmigoTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:lineSpacingExtra="10dp"
         android:text="@string/forget_password_content"
-        android:textColor="@color/amigo_unbind_acount_text_color"
         android:textSize="@dimen/amigo_unbind_account_text_size" />
 
-    <TextView
+    <amigo.widget.AmigoTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/forget_password_first"
-        android:textColor="@color/amigo_unbind_acount_text_color"
         android:textSize="@dimen/amigo_unbind_account_text_size"
         android:paddingTop="20dp" />
 
-    <TextView
+    <amigo.widget.AmigoTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/forget_password_second"
-        android:textColor="@color/amigo_unbind_acount_text_color"
         android:textSize="@dimen/amigo_unbind_account_text_size"
         android:paddingTop="20dp" />
 
-    <TextView
+    <amigo.widget.AmigoTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/forget_password_third"
-        android:textColor="@color/amigo_unbind_acount_text_color"
         android:textSize="@dimen/amigo_unbind_account_text_size"
         android:paddingTop="20dp" />
 
-    <TextView
+    <amigo.widget.AmigoTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/forget_password_end"
-        android:textColor="#ff9000"
         android:textSize="@dimen/amigo_unbind_account_text_size"
         android:paddingTop="20dp" />
 

@@ -1568,7 +1568,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
     	SharedPreferences sp = mContext.getSharedPreferences("lockDeadline", Context.MODE_PRIVATE);
     	mFailedAttemptTimeoutMS=sp.getLong("failedAttemptTimeoutMS", mFailedAttemptTimeoutMS);
     	mFailedAttempts=sp.getInt("mFailedAttempts", mFailedAttempts);
-    	mFailedTimeOutSize=sp.getInt("mFailedTimeOutSize", mFailedAttempts);
+    	mFailedTimeOutSize=sp.getInt("mFailedTimeOutSize", mFailedTimeOutSize);
     	if(DebugLog.DEBUGMAYBE) DebugLog.d(TAG, "getCurDeadLine。。。。failedAttemptTimeoutMS :"+mFailedAttemptTimeoutMS+".....mFailedAttempts="+mFailedAttempts);
         
         final long now = System.currentTimeMillis();  	
