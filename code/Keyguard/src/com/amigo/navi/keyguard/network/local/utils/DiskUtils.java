@@ -98,7 +98,7 @@ public class DiskUtils {
          }
          options.inJustDecodeBounds = false;
          options.inSampleSize = scale;
-         options.inPreferredConfig = Config.RGB_565;
+         options.inPreferredConfig = Config.ARGB_8888;
          Bitmap bitmap = BitmapFactory.decodeByteArray(ss, 0, ss.length, options);
          return bitmap;
     }
@@ -244,7 +244,7 @@ public class DiskUtils {
             options.inJustDecodeBounds = false;
             options.inSampleSize = scale;
             is = am.open(fileName);  
-            options.inPreferredConfig = Config.RGB_565;
+            options.inPreferredConfig = Config.ARGB_8888;
             image = BitmapFactory.decodeStream(is, null, options);
 //            image = BitmapFactory.decodeStream(is);
             DebugLog.d(TAG,"decodeBitmap image:" + image);
@@ -378,7 +378,7 @@ public class DiskUtils {
 	            }
 	            options.inJustDecodeBounds = false;
 	            options.inSampleSize = scale;
-	            options.inPreferredConfig = Config.RGB_565;
+	            options.inPreferredConfig = Config.ARGB_8888;
 	            DebugLog.d(TAG,"getImageFromSystem path:" + path);
 	            image = BitmapFactory.decodeFile(path, options);
 	            DebugLog.d(TAG,"getImageFromSystem image:" + image);
@@ -410,4 +410,11 @@ public class DiskUtils {
 			return false;
 		}
 	    
+		public static void delFile(Context context,String url){
+    		String key = DiskUtils.constructFileNameByUrl(url);
+    		String filePath = DiskUtils.getCachePath(context) + File.separator +
+    				DiskUtils.WALLPAPER_BITMAP_FOLDER + File.separator + key;
+        	DiskUtils.deleteFile(filePath);
+		}
+		
 }

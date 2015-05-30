@@ -701,6 +701,31 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
     }
 
     
+    private void insertMediaStore(int width, int height, String imageFileName) {
+        long currentTimeMillis = System.currentTimeMillis();
+        long dateSeconds = currentTimeMillis / 1000;
+        
+        ContentValues values = new ContentValues();
+        ContentResolver resolver = getContext().getContentResolver();
+        values.put(MediaStore.Images.ImageColumns.DATA, imageFileName);
+        values.put(MediaStore.Images.ImageColumns.TITLE, imageFileName);
+        values.put(MediaStore.Images.ImageColumns.DISPLAY_NAME, imageFileName);
+        values.put(MediaStore.Images.ImageColumns.DATE_TAKEN, currentTimeMillis);
+        values.put(MediaStore.Images.ImageColumns.DATE_ADDED, dateSeconds);
+        values.put(MediaStore.Images.ImageColumns.DATE_MODIFIED, dateSeconds);
+        values.put(MediaStore.Images.ImageColumns.MIME_TYPE, "image/jpg");
+        values.put(MediaStore.Images.ImageColumns.WIDTH, width);
+        values.put(MediaStore.Images.ImageColumns.HEIGHT, height);
+        
+        DebugLog.d(TAG,
+                "favoriteLocalPath = " + imageFileName + " imageFileName = "
+                        + imageFileName + " dateSeconds = " + dateSeconds
+                        + " width=" + width
+                        + " height = " + height);
+        
+        Uri uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+    }
+    
     /**
      *   
      * @param arcItemButton
@@ -711,72 +736,29 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
             
             @Override
             public void run() {
-                
-                boolean success = false;
-                
+                 
                 Bitmap currentWallpaper = controller.getCurrentWallpaperBitmap(mWallpaper);
                 
-                String imageFileName = new StringBuffer().append(Common.currentTimeDate()).append("_")
+                String imageFileName = new StringBuffer(FileUtil.getDirectoryFavorite()).append("/").append(Common.currentTimeDate()).append("_")
                         .append(mWallpaper.getImgId()).append(".jpg").toString();
                 
-                String favoriteLocalPath = FileUtil.saveWallpaper(currentWallpaper, imageFileName);
-                
-                if (favoriteLocalPath != null) {
-                    mWallpaper.setFavoriteLocalPath(favoriteLocalPath);
-                    mWallpaper.setFavorite(true);
-                    success = true;
-                }
-                
-                int id = WallpaperDB.getInstance(getContext().getApplicationContext()).updateFavorite(mWallpaper);
-                success = (id != -1);
+                final boolean success = FileUtil.saveWallpaper(currentWallpaper, imageFileName);
                 
                 if (success) {
-                    
-                    postDelayed(new Runnable() {
-                        
-                        @Override
-                        public void run() {
-                           
-//                            bindClickItemFeekBackAnimator(arcItemButton, true, R.string.haokan_arc_menu_favorite_ok);
-                            controller.showToast(R.string.haokan_tip_save_gallery);
-                        }
-                    }, 300);
-                    
-                    long currentTimeMillis = System.currentTimeMillis();
-                    long dateSeconds = currentTimeMillis / 1000;
-                    int width = currentWallpaper.getWidth();
-                    int height = currentWallpaper.getHeight();
-                    
-                    ContentValues values = new ContentValues();
-                    ContentResolver resolver = getContext().getContentResolver();
-                    values.put(MediaStore.Images.ImageColumns.DATA, favoriteLocalPath);
-                    values.put(MediaStore.Images.ImageColumns.TITLE, imageFileName);
-                    values.put(MediaStore.Images.ImageColumns.DISPLAY_NAME, imageFileName);
-                    values.put(MediaStore.Images.ImageColumns.DATE_TAKEN, currentTimeMillis);
-                    values.put(MediaStore.Images.ImageColumns.DATE_ADDED, dateSeconds);
-                    values.put(MediaStore.Images.ImageColumns.DATE_MODIFIED, dateSeconds);
-                    values.put(MediaStore.Images.ImageColumns.MIME_TYPE, "image/jpg");
-                    values.put(MediaStore.Images.ImageColumns.WIDTH, width);
-                    values.put(MediaStore.Images.ImageColumns.HEIGHT, height);
-                    
-                    DebugLog.d(TAG,
-                            "favoriteLocalPath = " + favoriteLocalPath + " imageFileName = "
-                                    + imageFileName + " dateSeconds = " + dateSeconds
-                                    + " width=" + width
-                                    + " height = " + height);
-                    
-                    Uri uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-                    
-                }else {
-
-                    postDelayed(new Runnable() {
-                        
-                        @Override
-                        public void run() {
-                            controller.showToast(R.string.haokan_tip_favorite_error);
-                        }
-                    }, 300);
+                    mWallpaper.setFavoriteLocalPath(imageFileName);
+                    mWallpaper.setFavorite(true);
+                    WallpaperDB.getInstance(getContext().getApplicationContext()).updateFavorite(mWallpaper);
+                    insertMediaStore(currentWallpaper.getWidth(), currentWallpaper.getHeight(), imageFileName);
                 }
+                
+                postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        controller.showToast(success ? R.string.haokan_tip_save_gallery
+                                : R.string.haokan_tip_favorite_error);
+                    }
+                }, 300);
+                
             }
         }).start();
     }

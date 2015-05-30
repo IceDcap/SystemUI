@@ -187,7 +187,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
                 mSignalsChangedCallbacks, mSignalClusters, this);
 
         // AIRPLANE_MODE_CHANGED is sent at boot; we've probably already missed it
-        updateAirplaneMode(true /* force callback */);
+        updateAirplaneMode(null, true /* force callback */);
         mAccessPoints.setNetworkController(this);
     }
 
@@ -382,7 +382,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
             handleConfigurationChanged();
         } else if (action.equals(Intent.ACTION_AIRPLANE_MODE_CHANGED)) {
             refreshLocale();
-            updateAirplaneMode(false);
+            updateAirplaneMode(intent, false);
             refreshCarrierLabel();
         } else if (action.equals(TelephonyIntents.ACTION_DEFAULT_VOICE_SUBSCRIPTION_CHANGED)) {
             // We are using different subs now, we might be able to make calls.
@@ -488,6 +488,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
         final int num = subscriptions.size();
         for (int i = 0; i < num; i++) {
             int subId = subscriptions.get(i).getSubscriptionId();
+            Log.d(TAG, "mHasMobileDataFeature = " + mHasMobileDataFeature + " subscriptions.get(" + i + ") = " + subscriptions.get(i).getSimSlotIndex());
             // If we have a copy of this controller already reuse it, otherwise make a new one.
             if (cachedControllers.containsKey(subId)) {
                 mMobileSignalControllers.put(subId, cachedControllers.remove(subId));
@@ -515,7 +516,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
         // There may be new MobileSignalControllers around, make sure they get the current
         // inet condition and airplane mode.
         pushConnectivityToSignals();
-        updateAirplaneMode(true /* force */);
+        updateAirplaneMode(null, true /* force */);
     }
 
     @VisibleForTesting
@@ -531,9 +532,16 @@ public class NetworkControllerImpl extends BroadcastReceiver
         return true;
     }
 
-    private void updateAirplaneMode(boolean force) {
-        boolean airplaneMode = (Settings.Global.getInt(mContext.getContentResolver(),
+    private void updateAirplaneMode(Intent intent,boolean force) {
+    	boolean airplaneMode = false;
+
+        if (intent != null) {
+            airplaneMode = intent.getBooleanExtra("state", false);
+            Log.d(TAG, "updateAirplaneMode: intent state= " + airplaneMode);
+        } else {
+            airplaneMode = (Settings.Global.getInt(mContext.getContentResolver(),
                 Settings.Global.AIRPLANE_MODE_ON, 0) == 1);
+        }
         if (airplaneMode != mAirplaneMode || force) {
             mAirplaneMode = airplaneMode;
             for (MobileSignalController mobileSignalController : mMobileSignalControllers.values()) {
@@ -571,6 +579,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
      */
     private void notifyListeners() {
         int length = mSignalClusters.size();
+        Log.d(TAG, "mSignalClusters.size() = " + length + " mAirplaneMode = " + mAirplaneMode);
         for (int i = 0; i < length; i++) {
             mSignalClusters.get(i).setIsAirplaneMode(mAirplaneMode, TelephonyIcons.FLIGHT_MODE_ICON,
                     R.string.accessibility_airplane_mode);
@@ -1434,7 +1443,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
         private final void updateTelephony() {
             if (DEBUG) {
                 Log.d(TAG, "updateTelephonySignalStrength: hasService=" + hasService()
-                        + " ss=" + mSignalStrength);
+                        + " ss=" + mSignalStrength + " mSubscriptionInfo.getSimSlotIndex() = " + mSubscriptionInfo.getSimSlotIndex() + " mDataNetType = " + mDataNetType);
             }
             mCurrentState.connected = hasService() && mSignalStrength != null;
             if (mCurrentState.connected) {

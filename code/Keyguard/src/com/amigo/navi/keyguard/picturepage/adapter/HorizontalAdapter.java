@@ -64,6 +64,7 @@ public class HorizontalAdapter extends BaseAdapter {
    }
 
    public void updateDataList(WallpaperList wallpaperList) {
+	   DebugLog.d(TAG,"updateDataList wallpaperList size:" + wallpaperList.size());
        mWallpaperList = wallpaperList;
     }
    
@@ -163,6 +164,10 @@ public class HorizontalAdapter extends BaseAdapter {
     	for(int index = 0;index < mWallpaperList.size();index++){
     		mWallpaperList.get(index).setLocked(false);
     	}
+    }
+    
+    public void removeCacheByUrl(String url){
+    	mImageLoader.removeItem(url);
     }
     
 }

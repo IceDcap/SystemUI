@@ -35,12 +35,7 @@ public class ReadAndWriteFileFromSD implements DealWithFromLocalInterface{
 
     @Override
     public boolean writeToLocal(String key, Bitmap bitmap) {
-//		 DebugLog.d(TAG,"writeToLocal obj:" + obj);
-//        Bitmap bitmap = null;
         boolean success = false;
-//        if(obj != null){
-//        	bitmap = (Bitmap) obj;
-//        }
         if(bitmap != null){
             String path = mPath + File.separator + mFolderName;
             success = DiskUtils.saveBitmap(bitmap, key, path);

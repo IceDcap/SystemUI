@@ -251,7 +251,7 @@ public class WallpaperDB extends BaseDB{
 
         WallpaperList list = new WallpaperList();
         
-        while (cursor.moveToNext()) {
+        while (cursor != null && cursor.moveToNext()) {
             Wallpaper wallpaper = queryWallpaper(cursor);
             list.add(wallpaper);
         }
@@ -475,7 +475,6 @@ public class WallpaperDB extends BaseDB{
                 String.valueOf(DataConstant.WALLPAPER_NOT_LOCK),
                 String.valueOf(DataConstant.NOT_TODAY_IMAGE)
             });
-        Wallpaper wallpaper = null;
         int count = 0;
         if(cursor != null){
             count = cursor.getCount();
@@ -488,7 +487,7 @@ public class WallpaperDB extends BaseDB{
         }
     }
     
-    public  synchronized   void deleteWallpaperNotTodayAndNotLock(){
+    public synchronized  void deleteWallpaperNotTodayAndNotLock(){
         final SQLiteDatabase db = mWritableDatabase;
         String sql = "delete from wallpaper where " + DataConstant.WallpaperColumns.LOCK +
                 " = " + DataConstant.WALLPAPER_NOT_LOCK + " and " + DataConstant.WallpaperColumns.TODAY_IMAGE
@@ -506,7 +505,7 @@ public class WallpaperDB extends BaseDB{
         });
     }
     
-    public  synchronized   void clearLock(){
+    public synchronized void clearLock(){
         final SQLiteDatabase db = mWritableDatabase;
         ContentValues values = new ContentValues();
         values.put(DataConstant.WallpaperColumns.LOCK, DataConstant.WALLPAPER_NOT_LOCK);
@@ -620,6 +619,92 @@ public class WallpaperDB extends BaseDB{
         }
         closeCursor(cursor);
         return false;
+    }
+    
+    public synchronized void insertWallpaper(int showOrder,Wallpaper wallpaper) {
+        final SQLiteDatabase db = mWritableDatabase;
+        ContentValues values = getContentValue(showOrder, wallpaper);
+        db.insert(DataConstant.TABLE_WALLPAPER, null, values);
+    }
+    
+    public void updateWallpaper(Wallpaper wallpaper) {
+		final SQLiteDatabase db = mWritableDatabase;
+        ContentValues values = getContentValue((int)wallpaper.getRealOrder(), wallpaper);
+        db.update(TABLE_NAME, values, "img_id = ?", new String[] {
+                String.valueOf(wallpaper.getImgId())
+        });
+	}
+	
+    public synchronized  void deleteWallpaperByID(int id) {
+        final SQLiteDatabase db = mWritableDatabase;
+        String sql = "delete from wallpaper where " + DataConstant.WallpaperColumns.IMG_ID +
+                " = " + id;
+        db.execSQL(sql);
+    }
+    
+    public Wallpaper queryWallpaperNotTodayAndNotLock(){ 
+        final SQLiteDatabase db = mReadableDatabase;
+        Cursor cursor = db.rawQuery("select * from wallpaper where " +
+        DataConstant.WallpaperColumns.LOCK + " = ? and " + 
+        DataConstant.WallpaperColumns.TODAY_IMAGE + " = ?",new String[] {
+                String.valueOf(DataConstant.WALLPAPER_NOT_LOCK),
+                String.valueOf(DataConstant.NOT_TODAY_IMAGE)
+            });
+        Wallpaper wallpaper = null;
+        if(cursor != null && cursor.moveToFirst()){
+        	wallpaper = queryWallpaper(cursor);
+        }
+        closeCursor(cursor);
+        return wallpaper;
+    }	
+    
+    public synchronized void deleteWallpaperFromPhoto(){
+        final SQLiteDatabase db = mWritableDatabase;
+        String sql = "delete from wallpaper where " + DataConstant.WallpaperColumns.SAVE_TYPE +
+                " = " + Wallpaper.WALLPAPER_FROM_PHOTO;
+        db.execSQL(sql);
+    }
+    
+    public boolean queryHasWallpaperFromPhoto(){ 
+        final SQLiteDatabase db = mReadableDatabase;
+        Cursor cursor = db.rawQuery("select * from wallpaper where " +
+        DataConstant.WallpaperColumns.SAVE_TYPE + " = ?",new String[] {
+                String.valueOf(Wallpaper.WALLPAPER_FROM_PHOTO)
+            });
+        int count = 0;
+        if(cursor != null){
+            count = cursor.getCount();
+        }
+        closeCursor(cursor);
+        if(count > 0){
+            return true;
+        }else{
+            return false;
+        }
+    }	
+    
+    public boolean updateShowOrderAndLock(Wallpaper wallpaper){
+        int count = 0;
+        final SQLiteDatabase db = mWritableDatabase;
+        ContentValues valueUpdate = new ContentValues();
+        boolean lock = wallpaper.isLocked();
+        int lockState = 0;
+        if(lock){
+            lockState = 1;
+        }
+        DebugLog.d(TAG,"updateLock lockState:" + lockState);
+        DebugLog.d(TAG,"updateLock wallpaper.getImgId():" + wallpaper.getImgId());
+        valueUpdate.put(DataConstant.WallpaperColumns.LOCK,lockState);
+        valueUpdate.put(WallpaperColumns.SHOW_ORDER, wallpaper.getShowOrder());
+        count = db.update(TABLE_NAME, valueUpdate, DataConstant.WallpaperColumns.IMG_ID + " = ?", new String[] {
+                String.valueOf(wallpaper.getImgId())
+        });
+        DebugLog.d(TAG,"updateLock count:" + count);
+        if(count < 0){
+            return false;
+        }else{
+            return true;
+        }
     }
     
 }

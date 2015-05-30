@@ -1,8 +1,11 @@
 package com.amigo.navi.keyguard.picturepage.widget;
+import java.io.File;
 import java.util.Vector;
 
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.KWDataCache;
+import com.amigo.navi.keyguard.haokan.BitmapUtil;
+import com.amigo.navi.keyguard.haokan.UIController;
 import com.amigo.navi.keyguard.haokan.db.WallpaperDB;
 import com.amigo.navi.keyguard.haokan.entity.Wallpaper;
 import com.amigo.navi.keyguard.network.FailReason;
@@ -14,6 +17,7 @@ import com.amigo.navi.keyguard.network.local.ReadAndWriteFileFromSD;
 import com.amigo.navi.keyguard.network.local.LocalBitmapOperation;
 import com.amigo.navi.keyguard.network.local.LocalFileOperationInterface;
 import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
+import com.amigo.navi.keyguard.network.manager.DownLoadBitmapManager;
 import com.amigo.navi.keyguard.network.theardpool.Job;
 import com.amigo.navi.keyguard.network.theardpool.LoadImagePool;
 import com.amigo.navi.keyguard.network.theardpool.LoadImageThread;
@@ -98,6 +102,8 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
     private static final int GET_BITMAP_FAIL = 0;
     private static final int GET_BITMAP_SUCCESS = 1;
     private static final int GET_BITMAP_START = 2;
+    private static final int REFRESH_LISTVIEW = 3;
+
     private Handler mHandle = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -209,10 +215,27 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
                 if(isPrintLog){
                     Log.v(LOG_TAG, "loadImageBitmap onLoadingFailed imageUri:" + imageUri);
                 }
+                int what = GET_BITMAP_FAIL;
+                if(wallpaper.getType() == Wallpaper.WALLPAPER_FROM_WEB){
+                	Bitmap bitmap = null;
+                	Bitmap bitmapTemp = DownLoadBitmapManager.getInstance().downLoadBitmap(getContext(), imageUri);
+                	String key = DiskUtils.constructFileNameByUrl(imageUri);
+                	if(bitmapTemp != null){
+                		int screenWid = KWDataCache.getScreenWidth(getContext().getResources());
+                		int screenHei = KWDataCache.getAllScreenHeigt(getContext());
+                		bitmap = BitmapUtil.getResizedBitmapForSingleScreen(bitmapTemp, screenHei, screenWid);
+                		String path = DiskUtils.getCachePath(getContext()) + File.separator + DiskUtils.WALLPAPER_BITMAP_FOLDER;
+                		DiskUtils.saveBitmap(bitmap, key, path);
+                		BitmapUtil.recycleBitmap(bitmapTemp);
+                		BitmapUtil.recycleBitmap(bitmap);
+                	}
+                }else if(wallpaper.getType() == Wallpaper.WALLPAPER_FROM_PHOTO){
+                	WallpaperDB.getInstance(getContext()).deleteWallpaperByID(Wallpaper.WALLPAPER_FROM_PHOTO_ID);
+                }
                 HandlerObj handlerObj = new HandlerObj();
                 handlerObj.setUrl(imageUri);
                 handlerObj.setFailReason(failReason);
-                Message message = mHandle.obtainMessage(GET_BITMAP_FAIL);
+                Message message = mHandle.obtainMessage(what);
                 message.obj = handlerObj;
                 message.sendToTarget();
             }
@@ -254,7 +277,7 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
                         DebugLog.d(LOG_TAG,"load image thread url:" + wallpaper.getImgUrl()  + " time begin:" + System.currentTimeMillis());
                         DebugLog.d(LOG_TAG,"load image thread getType():" + wallpaper.getType());
                     }
-                    if(wallpaper.getType() == Wallpaper.WALLPAPER_FROM_FIXED_FOLDER){
+                 if(wallpaper.getType() == Wallpaper.WALLPAPER_FROM_FIXED_FOLDER){
                 	 readImageFromLocal = new ReadFileFromAssets(getContext().getApplicationContext(), PATH);
                  }else{
                 	 readImageFromLocal = mConfig.getReadFromSD();

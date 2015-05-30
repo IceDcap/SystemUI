@@ -1,5 +1,6 @@
 package com.amigo.navi.keyguard.settings;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import amigo.app.AmigoAlertDialog;
@@ -20,6 +21,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -47,12 +49,18 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.amigo.navi.keyguard.DebugLog;
+import com.amigo.navi.keyguard.KWDataCache;
 import com.amigo.navi.keyguard.KeyguardViewHostManager;
 import com.amigo.navi.keyguard.haokan.RequestNicePicturesFromInternet;
 import com.amigo.navi.keyguard.haokan.UIController;
 import com.amigo.navi.keyguard.haokan.WallpaperCutActivity;
 import com.amigo.navi.keyguard.haokan.analysis.Event;
 import com.amigo.navi.keyguard.haokan.analysis.HKAgent;
+import com.amigo.navi.keyguard.haokan.db.DataConstant;
+import com.amigo.navi.keyguard.haokan.db.WallpaperDB;
+import com.amigo.navi.keyguard.haokan.entity.Category;
+import com.amigo.navi.keyguard.haokan.entity.Wallpaper;
+import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
 import com.android.keyguard.KeyguardHostView.OnDismissAction;
 import com.android.keyguard.R;
 import android.content.Intent;
@@ -82,12 +90,15 @@ public class KeyguardSettingsActivity extends Activity {
     private Bitmap mWindowBackgroud;
     
     private TextView mGuideView; 
+	private boolean isSecure;
 
 	@Override
 	protected void onCreate(Bundle arg0) {
  
 		super.onCreate(arg0); 
-	    getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+		
+		setSecure(UIController.getInstance().isSecure());
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
 		initView();
 		
 		UIController.getInstance().setKeyguardSettingsActivity(this);
@@ -122,7 +133,7 @@ public class KeyguardSettingsActivity extends Activity {
         if (mWindowBackgroud != null && !mWindowBackgroud.isRecycled()) {
             mWindowBackgroud.recycle();
         }
-    }
+	}
 	
 	private void findView(){
 		mSettingTitle = (TextView)findViewById(R.id.setting_title);
@@ -234,24 +245,12 @@ public class KeyguardSettingsActivity extends Activity {
     
     private void pickScreenLockWallpaper() {
 
-        if (UIController.getInstance().isSecure()) {
-
-            KeyguardViewHostManager.getInstance().dismissWithDismissAction(new OnDismissAction() {
-                @Override
-                public boolean onDismiss() {
-                    Intent intent=new Intent(Intent.ACTION_GET_CONTENT); 
-                    intent.setType("image/*");  
-                    startActivityForResult(intent, REQUEST_CODE);   
-                    return true;
-                }
-            }, true);
-        } else {
-
-            Intent intent=new Intent(Intent.ACTION_GET_CONTENT); 
-            intent.setType("image/*");  
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        if (!isSecure()) {
             KeyguardViewHostManager.getInstance().showBouncerOrKeyguardDone();
-            startActivityForResult(intent, REQUEST_CODE);   
         }
+        startActivityForResult(intent, REQUEST_CODE);
     }
     
    
@@ -459,6 +458,16 @@ public class KeyguardSettingsActivity extends Activity {
 		networkDialog.setCancelable(false);
 		networkDialog.setCanceledOnTouchOutside(false);
 	}   
+	
+	
+	  public boolean isSecure() {
+        return isSecure;
+    }
+
+    public void setSecure(boolean isSecure) {
+        this.isSecure = isSecure;
+    }   
+
     
 	// 壁纸更新引导动画
 	private void guideEnterAnimation() {

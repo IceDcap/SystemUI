@@ -29,18 +29,9 @@ public class ImageLoader implements ImageLoaderInterface{
     private Context mContext;
     int maxMemory = (int) Runtime.getRuntime().maxMemory() / 1024;
     int mCacheSize = maxMemory / 4;
-	private int mScreenWid;
-	private int mScreenHei;
-	private ReadAndWriteFileFromSD mDealWithWallpaper;  
-	private static final boolean isPrintLog = false;
+	private static final boolean PRINT_LOG = false;
     public ImageLoader(Context context) {
-        mContext = context.getApplicationContext();
-    	mScreenWid = KWDataCache.getScreenWidth(mContext.getResources());
-    	mScreenHei = KWDataCache.getAllScreenHeigt(mContext);
-        LocalFileOperationInterface localFileOperationInterface = new LocalBitmapOperation(mContext);
-        String path = DiskUtils.getCachePath(mContext);
-        mDealWithWallpaper = new ReadAndWriteFileFromSD(mContext
-                ,DiskUtils.WALLPAPER_BITMAP_FOLDER,path,localFileOperationInterface);
+    	mContext = context.getApplicationContext();
     }
     
 
@@ -57,7 +48,7 @@ public class ImageLoader implements ImageLoaderInterface{
                         Bitmap oldValue, Bitmap newValue) {
                     // TODO Auto-generated method stub
             super.entryRemoved(evicted, key, oldValue, newValue);
-            if(isPrintLog){
+            if(PRINT_LOG){
             	DebugLog.d(LOG_TAG,"entryRemoved oldValue:" + oldValue);
             }
             if (oldValue != null) { 
@@ -107,7 +98,7 @@ public class ImageLoader implements ImageLoaderInterface{
 
     public void removeItem(String url){
         mFirstLevelCache.remove(url);
-//        mSecondLevelCache.remove(url);
+        mSecondLevelCache.remove(url);
     }
     
     /**
@@ -142,7 +133,7 @@ public class ImageLoader implements ImageLoaderInterface{
         }
         Bitmap bitmap = loadImageStepByStep(url, loadingListener,
                 dealWithFromLocalInterface); 
-        if(isPrintLog){
+        if(PRINT_LOG){
             DebugLog.d(LOG_TAG,"makeAndAddView loadImage url:" + url + " bitmap:" + bitmap);
         }
 //        if(bitmap != null){
@@ -155,7 +146,7 @@ public class ImageLoader implements ImageLoaderInterface{
     private void dealWithImage(String url,
             ImageLoadingListener loadingListener, boolean isNeedCache,
             Bitmap bitmap,DealWithFromLocalInterface dealWithFromLocalInterface) {
-        if(isPrintLog){
+        if(PRINT_LOG){
         	DebugLog.d(LOG_TAG,"dealWithImage loadImage url:" + url + " bitmap:" + bitmap);
             DebugLog.d(LOG_TAG,"dealWithImage loadImage isNeedCache:" + isNeedCache);
         }
@@ -177,28 +168,17 @@ public class ImageLoader implements ImageLoaderInterface{
     private Bitmap loadImageStepByStep(String url,
             ImageLoadingListener loadingListener,
             DealWithFromLocalInterface dealWithFromLocalInterface) {
-        if(isPrintLog){
+        if(PRINT_LOG){
             DebugLog.d("HorizontalListView","makeAndAddView loadImageStepByStep url:" + url);
         }
         Bitmap bitmap = getBitmapFromCache(url);
-        if(isPrintLog){
+        if(PRINT_LOG){
             DebugLog.d("HorizontalListView","makeAndAddView loadImageStepByStep1 bitmap:" + bitmap);
         }
         if (bitmap == null) {
             bitmap = loadImageFromLocal(dealWithFromLocalInterface, url);
-            if(isPrintLog){
+            if(PRINT_LOG){
                 DebugLog.d("HorizontalListView","makeAndAddView loadImageStepByStep bitmap:" + bitmap);
-            }
-        }
-        if(bitmap == null){
-        	Bitmap bitmapTemp = DownLoadBitmapManager.getInstance().downLoadBitmap(mContext, url);
-            String key = DiskUtils.constructFileNameByUrl(url);
-            if(bitmapTemp != null){
-            	bitmap = BitmapUtil.getResizedBitmapForSingleScreen(bitmapTemp, mScreenHei, mScreenWid);
-            	mDealWithWallpaper.writeToLocal(key,bitmap);
-            	BitmapUtil.recycleBitmap(bitmapTemp);
-            	BitmapUtil.recycleBitmap(bitmap);
-            	return null;
             }
         }
         return bitmap;

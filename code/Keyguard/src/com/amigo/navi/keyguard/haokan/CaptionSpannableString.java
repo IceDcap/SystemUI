@@ -103,7 +103,7 @@ public class CaptionSpannableString extends SpannableStringBuilder{
         
         @Override
         public void onClick(View widget) {
-
+             
             if (isFastClick()) {
                 return;
             }
@@ -123,7 +123,6 @@ public class CaptionSpannableString extends SpannableStringBuilder{
             } else {
                 UIController.getInstance().showToast(R.string.haokan_tip_check_net);
             }
-            HKAgent.onEventIMGLink(mContext, UIController.getInstance().getmCurrentWallpaper());
             
         }
 

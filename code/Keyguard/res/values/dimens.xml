@@ -417,5 +417,7 @@
 	<!-- settings dimens end -->
 	
 	<dimen name="amigo_unbind_account_text_size">16sp</dimen>
+	
+	<dimen name="amigo_unLock_fling_distance">60dp</dimen>
 
 </resources>

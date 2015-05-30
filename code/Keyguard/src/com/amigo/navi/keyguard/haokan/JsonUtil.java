@@ -346,7 +346,6 @@ public class JsonUtil {
                     wallpaper.setRealOrder(i);
                     wallpaper.setShowOrder(i); 
                     wallpaper.setTodayImage(1);
-                    wallpaper.setType(Wallpaper.WALLPAPER_FROM_FIXED_FOLDER);
                     if("1".equals(lock)){
                         wallpaper.setLocked(true);
                     }else{

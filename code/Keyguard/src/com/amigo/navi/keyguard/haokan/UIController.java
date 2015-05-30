@@ -19,6 +19,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -42,12 +43,15 @@ import com.amigo.navi.keyguard.Guide;
 import com.amigo.navi.keyguard.KeyguardViewHost;
 import com.amigo.navi.keyguard.KeyguardViewHostManager;
 import com.amigo.navi.keyguard.haokan.PlayerManager.State;
+import com.amigo.navi.keyguard.haokan.db.DataConstant;
 import com.amigo.navi.keyguard.haokan.db.WallpaperDB;
+import com.amigo.navi.keyguard.haokan.entity.Category;
 import com.amigo.navi.keyguard.haokan.entity.Music;
 import com.amigo.navi.keyguard.haokan.entity.Wallpaper;
 import com.amigo.navi.keyguard.haokan.entity.WallpaperList;
 import com.amigo.navi.keyguard.haokan.menu.ArcLayout;
 import com.amigo.navi.keyguard.infozone.AmigoKeyguardInfoZone;
+import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
 import com.amigo.navi.keyguard.picturepage.adapter.HorizontalAdapter;
 import com.amigo.navi.keyguard.picturepage.widget.KeyguardListView;
 import com.amigo.navi.keyguard.picturepage.widget.HorizontalListView.OnTouchlListener;
@@ -57,6 +61,8 @@ import com.amigo.navi.keyguard.util.VibatorUtil;
 import com.android.keyguard.KeyguardHostView.OnDismissAction;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.keyguard.R;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -178,9 +184,31 @@ public class UIController implements OnTouchlListener{
 
     public void startSettingsActivity(final Context context) {
 
-        Intent intent = new Intent(context, KeyguardSettingsActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-        context.startActivity(intent);
+//        Intent intent = new Intent(context, KeyguardSettingsActivity.class);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+//        context.startActivity(intent);
+        
+        
+        
+        if (UIController.getInstance().isSecure()) {
+
+            KeyguardViewHostManager.getInstance().dismissWithDismissAction(new OnDismissAction() {
+                @Override
+                public boolean onDismiss() {
+                    Intent intent = new Intent(context, KeyguardSettingsActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+                    context.startActivity(intent);
+                    
+                    return true;
+                }
+            }, true);
+        } else {
+
+            Intent intent = new Intent(context, KeyguardSettingsActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+            context.startActivity(intent);
+            
+        }
 
     }
 
@@ -592,17 +620,23 @@ public class UIController implements OnTouchlListener{
         return bitmap;
     }
     
+   private int mKeyguardScrollY = 0;
+   
+   private void cancelAnimatorsOnUnlock(int top,int maxBoundY) {
+       if (mKeyguardScrollY == 0) {
+           getmCaptionsView().cancelAnimator();
+       }
+        
+       mKeyguardScrollY = top;
+       if (top == maxBoundY) {
+           mKeyguardScrollY = 0;
+       }
+   }
    
     public void onKeyguardScrollChanged(int top,int maxBoundY,int model) {
 
-    	
-		if (Guide.needGuideScrollUp()) {
-			if (top > 0) {
-				mGuideScrollUpView.setVisibility(View.GONE);
-			} else {
-				mGuideScrollUpView.setVisibility(View.VISIBLE);
-			}
-		}
+        
+        cancelAnimatorsOnUnlock(top, maxBoundY);
         
         float captionsAlpha = 0f;
         float infozoneAlpha = 0f;
@@ -612,7 +646,8 @@ public class UIController implements OnTouchlListener{
         float captionScrollHeight = maxBoundY * 0.3f;
         
         if (top <= 50) {
-            playerAlpha = 1.0f - top / 50;
+            playerAlpha = 1.0f - top / 50.0f;
+           
         }
 
         if (!mCaptionsView.isContentVisible()) {
@@ -997,7 +1032,51 @@ public class UIController implements OnTouchlListener{
     }
     
     public void setSrceenLockWallpaper(Context context,Bitmap bitmap) {
-        
+    	DebugLog.d(TAG,"setSrceenLockWallpaper bitmap:" + bitmap);
+        if(bitmap != null){
+        	String key = DiskUtils.constructFileNameByUrl(Wallpaper.WALLPAPER_FROM_PHOTO_URL);
+        	String savePath = DiskUtils.getCachePath(context) + File.separator + DiskUtils.WALLPAPER_BITMAP_FOLDER;
+        	DebugLog.d(TAG,"setSrceenLockWallpaper key:" + key);
+        	DebugLog.d(TAG,"setSrceenLockWallpaper savePath:" + savePath);
+        	boolean success = DiskUtils.saveBitmap(bitmap, key, savePath);
+        	if(bitmap != null && !bitmap.isRecycled()){
+        		bitmap.recycle();
+        	}
+        	if(success){
+        		KeyguardListView keyguardListView = getmKeyguardListView();
+        		HorizontalAdapter adapter = (HorizontalAdapter) keyguardListView.getAdapter();
+        		adapter.removeCacheByUrl(Wallpaper.WALLPAPER_FROM_PHOTO_URL);
+        		Wallpaper wallpaper = new Wallpaper();
+                Category category = new Category();
+                category.setTypeId(0);
+                category.setTypeName("photo");
+                wallpaper.setCategory(category);
+                wallpaper.setImgId(Wallpaper.WALLPAPER_FROM_PHOTO_ID);
+                wallpaper.setImgUrl(Wallpaper.WALLPAPER_FROM_PHOTO_URL);
+                wallpaper.setType(Wallpaper.WALLPAPER_FROM_PHOTO);
+                wallpaper.setTodayImage(1);
+                wallpaper.setLocked(true);
+                wallpaper.setRealOrder(0);
+                wallpaper.setShowOrder(0);
+                wallpaper.setDownloadFinish(DataConstant.DOWNLOAD_FINISH);
+                WallpaperDB.getInstance(context).clearLock();
+                WallpaperDB wallpaperDB = WallpaperDB.getInstance(context);    
+                Wallpaper oldWallpaper = wallpaperDB.queryPicturesDownLoadedLock();
+                DebugLog.d(TAG,"save wallpaper setOnClickListener wallpaper oldWallpaper:" + oldWallpaper);
+            	DebugLog.d(TAG,"setSrceenLockWallpaper oldWallpaper:" + oldWallpaper);
+                if(oldWallpaper != null){
+                    oldWallpaper.setShowOrder(oldWallpaper.getRealOrder());
+                    oldWallpaper.setLocked(false);
+                    wallpaperDB.updateShowOrderAndLock(oldWallpaper);
+                    clearAllLock();
+                }
+                if(!wallpaperDB.queryHasWallpaperFromPhoto()){
+                	wallpaperDB.insertWallpaper(0, wallpaper);
+                }else{
+                	wallpaperDB.updateWallpaper(wallpaper);
+                }
+        	}
+        }      
     }
     
     private void hideGuideLongPress() {
@@ -1241,9 +1320,8 @@ public class UIController implements OnTouchlListener{
         DebugLog.d(TAG,"save wallpaper setOnClickListener wallpaper oldWallpaper:" + oldWallpaper);
         if(oldWallpaper != null){
             oldWallpaper.setShowOrder(oldWallpaper.getRealOrder());
-            wallpaperDB.updateShowOrder(oldWallpaper);
             oldWallpaper.setLocked(false);
-            wallpaperDB.updateLock(oldWallpaper);
+            wallpaperDB.updateShowOrderAndLock(oldWallpaper);
             clearAllLock();
         }
         wallpaper.setLocked(true);
@@ -1256,29 +1334,24 @@ public class UIController implements OnTouchlListener{
         
     public boolean clearLock(Context context,Wallpaper wallpaper){
     	boolean success = false;
-//    	if(isLocalData){
-//    		Common.setLockID(context, -1);
-//    		Common.setLockPosition(context, -1);
-//    		mLockWallpaper.setLocked(false);
-//    		mLockWallpaper = null;
-//    		success = true;
-//    	}else{
             WallpaperDB wallpaperDB = WallpaperDB.getInstance(context.getApplicationContext());
             wallpaper.setLocked(false);
-            success = wallpaperDB.updateLock(wallpaper);
             wallpaper.setShowOrder(wallpaper.getRealOrder());
-            wallpaperDB.updateShowOrder(wallpaper);
+            success = wallpaperDB.updateShowOrderAndLock(wallpaper);
             delNotTodayWallpaper(context);
-//    	}
         return success;
     }
     
     private void delNotTodayWallpaper(Context context){
-        WallpaperDB wallpaperDB = WallpaperDB.getInstance(context.getApplicationContext());
-//        boolean hasNeedToDel = wallpaperDB.queryHasWallpaperNotTodayAndNotLock();
-//        if(hasNeedToDel){
-            wallpaperDB.deleteWallpaperNotTodayAndNotLock();
-//        }
+        WallpaperDB wallpaperDB = WallpaperDB.getInstance(context.getApplicationContext());           
+        Wallpaper wallpaperNotToday = wallpaperDB.queryWallpaperNotTodayAndNotLock();
+        if(wallpaperNotToday != null){
+        	String url = wallpaperNotToday.getImgUrl();
+        	if(TextUtils.isEmpty(url)){
+        		DiskUtils.delFile(context,url);
+        	}
+        }
+        wallpaperDB.deleteWallpaperNotTodayAndNotLock();
     }
     
     private void clearAllLock(){

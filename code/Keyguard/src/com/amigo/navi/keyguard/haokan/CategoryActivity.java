@@ -106,7 +106,7 @@ public class CategoryActivity extends Activity{
                     String url = category.getTypeIconUrl();
                     DebugLog.d(TAG,"category onCreate url:" + url);
                     if(!TextUtils.isEmpty(url)){
-                    	if(Category.WALLPAPER_FROM_FIXED_FOLDER == category.getType()){
+                    	if(Category.IMAGE_FROM_FIXED_FOLDER == category.getType()){
                     		String path = PATH + File.separator + url + ".png";
                     		Bitmap bitmap = DiskUtils.getImageFromAssetsFile(getApplicationContext(), path);
                             category.setIcon(bitmap);
@@ -162,6 +162,13 @@ public class CategoryActivity extends Activity{
         RequestNicePicturesFromInternet.getInstance(this.getApplicationContext()).registerData(false);
         if (mWindowBackgroud != null && !mWindowBackgroud.isRecycled()) {
             mWindowBackgroud.recycle();
+        }
+        for (Category category : list) {
+        	Bitmap bitmap = category.getIcon();
+        	if(bitmap != null && !bitmap.isRecycled()){
+        		bitmap.recycle();
+        		category.setIcon(null);
+        	}
         }
     }
     

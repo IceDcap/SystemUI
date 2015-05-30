@@ -167,6 +167,7 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 	private boolean mBouncerIsShowing=false;
 	
 	private GestureDetector mGestureDetector;
+	private int mUnLockFlingDistance=0;
 	
 	public AmigoKeyguardHostView(Context context) {
 		this(context, null,0);
@@ -204,6 +205,7 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 	private void init(Context context) {
 		setOverScrollMode(View.OVER_SCROLL_NEVER);
 		mMaxBoundY = KWDataCache.getXPageHeight(getResources());
+		mUnLockFlingDistance=getResources().getDimensionPixelSize(R.dimen.amigo_unLock_fling_distance);
 		initScrollerData();
 		initScreenHeight();
 		addPageIntoLockScreenPagedView(context);
@@ -795,7 +797,7 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 		releaseVelocityTracker();
 		int flingDirection = FLING_NONE;
 		if(mScrollDirection == DIRECTION_UP){
-			boolean velocityYUnlock = (Math.abs(velY) > mMinFlingVelocity) && velY < 0;
+			boolean velocityYUnlock = (Math.abs(velY) > mMinFlingVelocity) && velY < 0 && totalY>mUnLockFlingDistance ;
 			if((totalY > mMinFlingDistance) || velocityYUnlock){
 				flingDirection=FLING_UP;
 			}else{
@@ -826,7 +828,7 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 		}
 		
 		if(DebugLog.DEBUG){
-			DebugLog.d(LOG_TAG, "onActionUp,totalY:"+totalY+",velY:"+velY+",flingDirection:"+flingDirection);
+			DebugLog.d(LOG_TAG, "onActionUp,totalY:"+totalY+",velY:"+velY+",flingDirection:"+flingDirection+"mUnLockFlingDistance="+mUnLockFlingDistance);
 		}
 		
 //        if (!mIsTriggerShortcut) {

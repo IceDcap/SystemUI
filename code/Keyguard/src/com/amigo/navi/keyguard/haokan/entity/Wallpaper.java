@@ -86,9 +86,11 @@ public class Wallpaper implements Serializable{
     //0 表示从网上获取的壁纸，1表示固定壁纸
     private int type = WALLPAPER_FROM_WEB;
     public static final int WALLPAPER_FROM_WEB = DataConstant.INTERNET;
-    public static final int WALLPAPER_FROM_FIXED_FOLDER = DataConstant.LOCAL;
-    
- 
+    public static final int WALLPAPER_FROM_FIXED_FOLDER = DataConstant.LOCAL_SYSTEM_ETC;
+    public static final int WALLPAPER_FROM_PHOTO = DataConstant.LOCAL_PHOTO;
+    public static final int WALLPAPER_FROM_PHOTO_ID = 500;
+    public static final String WALLPAPER_FROM_PHOTO_URL = "fixedwallpaper";
+
     public int getImgId() {
         return imgId;
     }

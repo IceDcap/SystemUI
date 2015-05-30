@@ -30,17 +30,19 @@ public class FileUtil {
         Log.v(TAG, "deleteMusic  flag = " + flag);
     }
     
+    public static String getDirectoryFavorite() {
+        return getSdCardPath() + DIRECTORY_FAVORITE;
+    }
     
-    public static String saveWallpaper(Bitmap bitmap,String imageFileName) {
+    public static boolean saveWallpaper(Bitmap bitmap,String imageFileName) {
         
+        boolean success = false;
         String localfile = getSdCardPath() + DIRECTORY_FAVORITE;
         isExistDirectory(localfile);
         
         FileOutputStream out = null;
         
-        StringBuffer sb = new StringBuffer(localfile).append("/").append(imageFileName);
- 
-        File file = new File(sb.toString());
+        File file = new File(imageFileName);
         
         if (file != null) {  
             file.delete();  
@@ -48,9 +50,10 @@ public class FileUtil {
         
         try {
             out = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out); 
+            success = bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out); 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+            success = false;
         } finally{
         
             if (out != null) {
@@ -62,7 +65,7 @@ public class FileUtil {
             }
         }
         
-        return sb.toString();
+        return success;
         
     }
     
