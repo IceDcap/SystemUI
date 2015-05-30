@@ -33,9 +33,9 @@ public class Category implements Serializable{
     
     private String nameID = "";
     //0 表示从网上获取的壁纸，1表示固定壁纸
-    public static final int WALLPAPER_FROM_WEB = DataConstant.INTERNET;
-    public static final int WALLPAPER_FROM_FIXED_FOLDER = DataConstant.LOCAL;
-    private int type = WALLPAPER_FROM_WEB;
+    public static final int IMAGE_FROM_WEB = DataConstant.INTERNET;
+    public static final int IMAGE_FROM_FIXED_FOLDER = DataConstant.LOCAL_ASSETS;
+    private int type = IMAGE_FROM_WEB;
     public static final int PIC_DOWNLOAD_FINISH = DataConstant.DOWNLOAD_FINISH;
     public static final int PIC_DOWNLOAD_NOT_FINISH = DataConstant.NOT_DOWNLOAD;
     private int isPicDownLod;

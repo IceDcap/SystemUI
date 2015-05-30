@@ -12,7 +12,9 @@ public class DataConstant {
     public static final String TABLE_WALLPAPER = "wallpaper";
     public static final String TABLE_STATISTICS = "statistics";
     public static final String TABLE_FAVORITE = "favorite";
-    public static final int LOCAL = 1;
+    public static final int LOCAL_PHOTO = 3;
+    public static final int LOCAL_ASSETS = 1;
+    public static final int LOCAL_SYSTEM_ETC = 1;
     public static final int INTERNET = 0;
     public static final int DOWNLOAD_FINISH = 1;
     public static final int NOT_DOWNLOAD = 0;

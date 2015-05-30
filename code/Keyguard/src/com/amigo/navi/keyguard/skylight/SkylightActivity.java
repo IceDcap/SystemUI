@@ -14,7 +14,6 @@ public class SkylightActivity extends Activity {
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.skylightTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.skylight_activity_layout);
         DebugLog.d(LOG_TAG, "SkylightActivity  onCreate");

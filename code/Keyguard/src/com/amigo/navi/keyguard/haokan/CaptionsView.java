@@ -17,6 +17,7 @@ import android.text.method.LinkMovementMethod;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -156,8 +157,8 @@ public class CaptionsView extends RelativeLayout {
 
         mTextViewTitle = (TextView) findViewById(R.id.haokan_captions_title);
         mTextViewContent = (TextView) findViewById(R.id.haokan_captions_content);
-        
-        mTextViewTitle.setOnClickListener(new OnClickListener() {
+        LinearLayout titleContainer = (LinearLayout) findViewById(R.id.haokan_captions_title_container);
+        titleContainer.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {

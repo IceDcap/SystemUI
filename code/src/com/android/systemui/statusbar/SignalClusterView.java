@@ -368,8 +368,8 @@ public class SignalClusterView
             mMobile.setPaddingRelative(mIsMobileTypeIconWide ? mWideTypeIconStartPadding : 0,
                     0, 0, 0);
 
-            if (DEBUG) Log.d(TAG, String.format("mobile: %s sig=%d typ=%d netType=%d mobileType=%d inout=%d mSubId=%d",
-                    (mMobileVisible ? "VISIBLE" : "GONE"), mMobileStrengthId, mMobileTypeId, mNetworkTypeId, mMobileTypeId, mMobileInOutId, mSubId));
+            if (DEBUG) Log.d(TAG, String.format("mobile: %s sig=%d mIsAirPlaneMode=%s netType=%d mobileType=%d inout=%d mSubId=%d",
+                        (mMobileVisible ? "VISIBLE" : "GONE"), mMobileStrengthId, mIsAirplaneMode, mNetworkTypeId, mMobileTypeId, mMobileInOutId, mSubId));
 
             mMobileType.setVisibility(mMobileTypeId != 0 ? View.VISIBLE : View.GONE);
             mNetworkTypeGroup.setVisibility(mWifiVisible ? View.GONE : View.VISIBLE);
