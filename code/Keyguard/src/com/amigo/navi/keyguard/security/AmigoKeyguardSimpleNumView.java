@@ -303,17 +303,13 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
                 final int pwdLength = mPasswordEntry.getText().length();
                 refreshImageStat(pwdLength);
                 resetPinDelete(pwdLength);
-                postDelayed(new Runnable() {
-                    public void run() {
-                        Log.d(LOG_TAG, "afterTextChanged--> password length is " + pwdLength);
-                        if(pwdLength == MIN_PASSWORD_LENGTH_BEFORE_CHECKING) {
-//                          mPasswordEntry.setEnabled(false);
-                            setKeyButtonClickEnable(false);
-//                            String entry = mPasswordEntry.getText().toString();
-                            verifyPasswordAndUnlock();
-                        }
-                    }
-                }, 100);
+                Log.d(LOG_TAG, "afterTextChanged--> password length is " + pwdLength);
+                if (pwdLength == MIN_PASSWORD_LENGTH_BEFORE_CHECKING) {
+                    // mPasswordEntry.setEnabled(false);
+                    setKeyButtonClickEnable(false);
+                    // String entry = mPasswordEntry.getText().toString();
+                    verifyPasswordAndUnlock();
+                }
             }
         });
     }
@@ -335,29 +331,41 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
     
     
     
-    public void checkPasswordResult(boolean isLockDone , int unLockFailReason) {
-		if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "unLockPatternLock UNLOCK_FAIL_REASON_TOO_SHORT..");
-		int mUnLockFailReason=unLockFailReason;
-		
-		if (isLockDone) {
-			// unLockDone
-			if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "checkPasswordResult unLockPatternDone");
-			unLockDone();
-		} else {
-			// unlockFail
-	        // to avoid accidental lockout, only count attempts that are long enough to be a
-	        // real password. This may require some tweaking.
-	        mCallback.reportUnlockAttempt(false);
-	        mUnLockFailReason = UNLOCK_FAIL_REASON_INCORRECT; 
-	        if (mKeyguardUpdateMonitor.getFailedUnlockAttempts() >= LockPatternUtils.FAILED_ATTEMPTS_BEFORE_TIMEOUT) {
-				mUnLockFailReason = UNLOCK_FAIL_REASON_TIMEOUT;
-			} 
-	            if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "checkPasswordResult unLockPatternfailed...mKeyguardUpdateMonitor.getFailedUnlockAttempts()="+mKeyguardUpdateMonitor.getFailedUnlockAttempts());
-	   			 onUnlockFail(mUnLockFailReason);
-			}
-			
-		resetPasswordText(true /* animate */);		
-	}
+    public void checkPasswordResult(boolean isLockDone, int unLockFailReason) {
+        if (DebugLog.DEBUG)
+            DebugLog.d(LOG_TAG, "unLockPatternLock UNLOCK_FAIL_REASON_TOO_SHORT..");
+        int mUnLockFailReason = unLockFailReason;
+
+        if (isLockDone) {
+            // unLockDone
+            if (DebugLog.DEBUG)
+                DebugLog.d(LOG_TAG, "checkPasswordResult unLockPatternDone");
+            unLockDone();
+        } else {
+            // unlockFail
+            // to avoid accidental lockout, only count attempts that are long
+            // enough to be a
+            // real password. This may require some tweaking.
+            mCallback.reportUnlockAttempt(false);
+            mUnLockFailReason = UNLOCK_FAIL_REASON_INCORRECT;
+            if (mKeyguardUpdateMonitor.getFailedUnlockAttempts() >= LockPatternUtils.FAILED_ATTEMPTS_BEFORE_TIMEOUT) {
+                mUnLockFailReason = UNLOCK_FAIL_REASON_TIMEOUT;
+            }
+            if (DebugLog.DEBUG)
+                DebugLog.d(LOG_TAG,
+                        "checkPasswordResult unLockPatternfailed...mKeyguardUpdateMonitor.getFailedUnlockAttempts()="
+                                + mKeyguardUpdateMonitor.getFailedUnlockAttempts());
+            onUnlockFail(mUnLockFailReason);
+        }
+        
+        //temp deal with post delay code to reslove resetPassworkText invoke before PasswordTextView#append();
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                resetPasswordText(true /* animate */);
+            }
+        },100);
+    }
 
 	private void unLockDone() {
 		if(KeyguardViewHostManager.isSuppotFinger()){

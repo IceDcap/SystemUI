@@ -69,6 +69,8 @@ public class GnRotationLockTile extends GnQSTile<GnQSTile.BooleanState> {
         
         state.label = mContext.getString(R.string.gn_qs_rotation);
         state.contentDescription = mContext.getString(R.string.gn_qs_rotation);
+        
+        Log.d(TAG, "handleUpdateState    state.value=" + state.value);
     }
 
     /**

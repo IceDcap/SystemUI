@@ -31,7 +31,7 @@
         android:gravity="center"
         android:text="@string/guide_long_press_tip" />
 
-    <ImageView
+    <com.amigo.navi.keyguard.haokan.CloseView
         android:id="@+id/guide_long_press_close"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

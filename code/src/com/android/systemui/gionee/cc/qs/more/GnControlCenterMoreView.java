@@ -178,10 +178,7 @@ public class GnControlCenterMoreView extends FrameLayout implements View.OnClick
         @Override
         public void onAnimationEnd(Animation animation) {
             setVisibility(View.GONE);
-            Log.d(TAG, "unlock by cc more");
-            GnUtil.setLockState(GnUtil.STATE_LOCK_UNLOCK);
             mDragGridView.showMoreView();
-//            mOnChanageListener.onChange();
             mMoreLayout.setBackgroundColor(0x00000000);
             GnBlurHelper.releaseBitmap(GnBlurHelper.mBlur);
             setOpen(false);

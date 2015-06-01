@@ -1,6 +1,9 @@
 
 package com.amigo.navi.keyguard.haokan;
 
+import android.animation.Animator;
+import android.animation.Animator.AnimatorListener;
+import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.content.Context;
@@ -19,8 +22,10 @@ public class GuideClickView extends View {
     private float mRadiusFirst = 0f, mRadiusSecond = 0f;
     private float mMacRadius;
     private float mFromRadius;
+    
+    private AnimatorSet mAnimatorSet;
 
-    private ValueAnimator mAnimatorFirst, mAnimatorSecond;
+//    private ValueAnimator mAnimatorFirst, mAnimatorSecond;
 
     public GuideClickView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -77,21 +82,21 @@ public class GuideClickView extends View {
 
     public void stopAnimator() {
 
-        if (mAnimatorFirst != null) {
-            mAnimatorFirst.cancel();
-            mAnimatorFirst = null;
+        if (mAnimatorSet != null) {
+            mAnimatorSet.cancel();
+            mAnimatorSet = null;
         }
-
-        if (mAnimatorSecond != null) {
-            mAnimatorSecond.cancel();
-            mAnimatorSecond = null;
-        }
-
     }
-
+    
     public void startAnimator() {
-
-        mAnimatorFirst = ValueAnimator.ofFloat(mFromRadius, mMacRadius).setDuration(1000);
+        
+        if (mAnimatorSet != null) {
+            if (mAnimatorSet.isRunning()) {
+                mAnimatorSet.cancel();
+            }
+        }
+        
+        ValueAnimator mAnimatorFirst = ValueAnimator.ofFloat(mFromRadius, mMacRadius).setDuration(800);
         mAnimatorFirst.setInterpolator(new DecelerateInterpolator());
         mAnimatorFirst.addUpdateListener(new AnimatorUpdateListener() {
             @Override
@@ -103,13 +108,12 @@ public class GuideClickView extends View {
             }
         });
 
-        mAnimatorFirst.setRepeatMode(ValueAnimator.INFINITE);
 
-        mAnimatorSecond = ValueAnimator.ofFloat(mFromRadius, mMacRadius).setDuration(1000);
-
+        ValueAnimator mAnimatorSecond = ValueAnimator.ofFloat(mFromRadius, mMacRadius).setDuration(800);
         mAnimatorSecond.addUpdateListener(new AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
+                
                 float Value = (Float) animation.getAnimatedValue();
                 mRadiusSecond = Value;
                 mPaintSecond.setAlpha((int) (255 * (1.0f - animation.getAnimatedFraction())));
@@ -117,11 +121,41 @@ public class GuideClickView extends View {
             }
         });
 
+        mAnimatorSecond.setInterpolator(new DecelerateInterpolator());
+        mAnimatorSet = new AnimatorSet();
         mAnimatorSecond.setStartDelay(400);
-        mAnimatorFirst.setRepeatCount(ValueAnimator.INFINITE);
-        mAnimatorSecond.setRepeatCount(ValueAnimator.INFINITE);
-        mAnimatorFirst.start();
-        mAnimatorSecond.start();
+        mAnimatorSet.play(mAnimatorFirst).with(mAnimatorSecond);
+        
+        mAnimatorSet.addListener(new AnimatorListener() {
+            
+            private boolean cancel = false;
+            
+            @Override
+            public void onAnimationStart(Animator arg0) {
+                
+            }
+            
+            @Override
+            public void onAnimationRepeat(Animator arg0) {
+                
+            }
+            
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                if (!cancel) {
+                    animator.setStartDelay(450);
+                    animator.start();
+                }
+                cancel = false;
+            }
+            
+            @Override
+            public void onAnimationCancel(Animator arg0) {
+                cancel = true;
+            }
+        });
+        
+        mAnimatorSet.start();
 
     }
 

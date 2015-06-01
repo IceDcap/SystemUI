@@ -1,4 +1,4 @@
-/****************************************************************************
+/*
  * Filename:
  * ---------
  *  GNAudioManagerHelper.java
@@ -13,12 +13,10 @@
  *
  * Author:
  * -------
- *  2013.08.24 caody@gionee.com 
- *
- ****************************************************************************/
+ *  2013.08.24 huangwt
+ */
 package com.android.systemui.gionee.cc.fakecall;
 
-//Gionee <caody><2013-10-24> modify for CR00928733 begin
 import android.media.AudioManager;
 
 public class GnAudioManagerHelper {
@@ -137,4 +135,3 @@ public class GnAudioManagerHelper {
     }
 
 }
-// Gionee <caody><2013-10-24> modify for CR00928733 end

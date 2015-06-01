@@ -7,6 +7,7 @@
 package com.android.systemui.gionee.cc.qs.tiles;
 
 import amigo.provider.AmigoSettings;
+import android.app.StatusBarManager;
 import android.content.Context;
 import android.database.ContentObserver;
 import android.media.AudioManager;
@@ -19,9 +20,12 @@ import com.android.systemui.gionee.GnYouJu;
 public class GnVoiceTile extends GnQSTile<GnQSTile.BooleanState> {
     
     private static final String AMIGO_SETTING_VOICE = "amigo_silent_switch";
+    
+    public StatusBarManager mService;
 
     public GnVoiceTile(Host host, String spec) {
         super(host, spec);
+        mService = (StatusBarManager)mContext.getSystemService(Context.STATUS_BAR_SERVICE);
     }
 
     @Override

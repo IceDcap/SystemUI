@@ -169,8 +169,10 @@ public class SkylightView extends FrameLayout {
         if (action == MotionEvent.ACTION_DOWN) {     
             mTouchDownYPosition = event.getY();
             mTouchDownXPosition = event.getX();
-            Log.d(LOG_TAG, "mTouchDownXPosition: "+mTouchDownXPosition+"  mTouchDownYPosition: "+mTouchDownYPosition);
+            DebugLog.d(LOG_TAG, "mTouchDownXPosition: "+mTouchDownXPosition+"  mTouchDownYPosition: "+mTouchDownYPosition);
         } else if (action == MotionEvent.ACTION_UP||action==MotionEvent.ACTION_CANCEL) {
+            DebugLog.d(LOG_TAG, "mTouchUpXPosition: "+event.getX()+"  mTouchUpYPosition: "+event.getY());
+            
             float yOffset=Math.abs(event.getY()-mTouchDownYPosition);
             float xOffset=Math.abs(event.getX()-mTouchDownXPosition);
             boolean longEnough=yOffset>SkylightHost.getSkylightHeight()/4;

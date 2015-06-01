@@ -2,8 +2,12 @@ package com.amigo.navi.keyguard;
 
 
 import android.animation.Animator;
+import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
+import android.animation.ValueAnimator;
 import android.animation.Animator.AnimatorListener;
+import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -17,15 +21,20 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.UserHandle;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.amigo.navi.keyguard.Guide.GuideState;
 import com.amigo.navi.keyguard.haokan.CaptionsView;
 import com.amigo.navi.keyguard.haokan.Common;
 import com.amigo.navi.keyguard.haokan.PlayerButton;
@@ -76,6 +85,7 @@ public class AmigoKeyguardPage extends RelativeLayout {
 //        setPadding(0, KWDataCache.getStatusBarHeight(), 0, 0);
         
 		showWallpaper();
+		UIController.getInstance().setAmigoKeyguardPage(this);
 	}
 	
 	@Override
@@ -96,7 +106,7 @@ public class AmigoKeyguardPage extends RelativeLayout {
 		addHKMainLayout();
 		addNotificationClickTipView();
 		addNotificationView();
-
+		addGuideNewWallpaperView();
 
 		addFingerIdentifyTip();
 		
@@ -204,18 +214,25 @@ public class AmigoKeyguardPage extends RelativeLayout {
 		animationDrawable = (AnimationDrawable) scroll_up.getDrawable();
 		animationDrawable.start();
 		addView(mGuideScrollUpLayout, lp);
-        UIController controller = UIController.getInstance();
-        controller.setGuideScrollUpView(mGuideScrollUpLayout);
+        Guide.setGuideState(GuideState.SCROLL_UP);
 	}
+	
 	
 	public void removeGuideScrollUpView() {
 
 		if (!Guide.needGuideScrollUp() || mGuideScrollUpLayout == null) {
 			return;
 		}
+		removeView(mGuideScrollUpLayout);
 		Guide.setNeedGuideScrollUp(false);
 		Guide.setBooleanSharedConfig(mContext, Guide.GUIDE_SCROLL_UP, false);
-		removeView(mGuideScrollUpLayout);
+		Guide.resetIdle();
+	}
+	
+	public void setGuideScrollUpVisibility(int visibility) {
+	     if (mGuideScrollUpLayout != null) {
+	         mGuideScrollUpLayout.setVisibility(visibility);
+        }
 	}
 	
 	
@@ -674,6 +691,151 @@ public class AmigoKeyguardPage extends RelativeLayout {
         mHandler.removeMessages(HANDLER_HIDE_IDENTIFY_TIP);
         mShakeAnimator.start();
     }
+    
+    
+    public void startGuideSlideAround() {
+        Log.v("guide", "startGuideSlideAround ");
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        RelativeLayout view = (RelativeLayout)inflater.inflate(R.layout.guide_slide_around, null);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        params.topMargin = getResources().getDimensionPixelSize(R.dimen.guide_slide_margin_top);
+        addView(view, params);
+        ImageView left = (ImageView) view.findViewById(R.id.guide_slide_around_left);
+        ImageView right = (ImageView) view.findViewById(R.id.guide_slide_around_right);
+        ((AnimationDrawable)left.getDrawable()).start();
+        ((AnimationDrawable)right.getDrawable()).start();
+        Guide.setGuideState(GuideState.SLIDE_AROUND);
+    }
+    
+    public void stopGuideSlideAround() {
+        Log.v("guide", "stopGuideSlideAround ");
+        final RelativeLayout view = (RelativeLayout) findViewById(R.id.guide_slide_around);
+        
+        AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0f);
+        alphaAnimation.setDuration(500);
+        alphaAnimation.setAnimationListener(new AnimationListener() {
+            
+            @Override
+            public void onAnimationStart(Animation arg0) {
+                
+            }
+            
+            @Override
+            public void onAnimationRepeat(Animation arg0) {
+                
+            }
+            
+            @Override
+            public void onAnimationEnd(Animation arg0) {
+                Log.v("guide", "onAnimationEnd removeView");
+                removeView(view);
+            }
+        });
+        
+        view.startAnimation(alphaAnimation);
+        
+ 
+        Guide.resetIdle();
+        Guide.setNeedGuideSlideAround(false);
+        Guide.setBooleanSharedConfig(getContext(), Guide.GUIDE_SLIDE_AROUND, false);
+        
+    }
+    
+    private ImageView mGuideNewWallpaperView;
+    private ObjectAnimator mGuideNewWallpaperAnimator;
+    
+    private void addGuideNewWallpaperView() {
+        if (mGuideNewWallpaperView == null) {
+            mGuideNewWallpaperView = new ImageView(getContext());
+        }
+        int size =getResources().getDimensionPixelSize(R.dimen.guide_new_wallpaper_size);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(size, size);
+        params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
+        params.topMargin = getResources().getDimensionPixelSize(R.dimen.guide_slide_margin_top);
+        mGuideNewWallpaperView.setBackgroundResource(R.drawable.guide_new_wallpaper);
+        mGuideNewWallpaperView.setVisibility(GONE);
+        addView(mGuideNewWallpaperView, params);
+    }
+    
+    public void startGuideNewWallpaper() {
+        
+        Log.v("guide", "startGuideNewWallpaper ");
+        
+        if (mGuideNewWallpaperAnimator != null) {
+            if (mGuideNewWallpaperAnimator.isRunning()) {
+                mGuideNewWallpaperAnimator.cancel();
+            }
+        }
+        int size =getResources().getDimensionPixelSize(R.dimen.guide_new_wallpaper_size);
+        PropertyValuesHolder scaleX = PropertyValuesHolder.ofFloat("scaleX", 1.0f, 0.4f);
+        PropertyValuesHolder scaleY = PropertyValuesHolder.ofFloat("scaleY", 1.0f, 0.4f);
+        PropertyValuesHolder alpha = PropertyValuesHolder.ofFloat("alpha", 1.0f, 0f);
+        PropertyValuesHolder translationX = PropertyValuesHolder.ofFloat("translationX", size, -getResources().getDimensionPixelSize(
+                                R.dimen.guide_new_wallpaper_max_translationX));
 
+        mGuideNewWallpaperAnimator = ObjectAnimator.ofPropertyValuesHolder(mGuideNewWallpaperView, translationX,scaleX,scaleY,alpha).setDuration(1500);
+        mGuideNewWallpaperAnimator.addListener(new AnimatorListener() {
+            
+            private boolean cancel = false;
+            
+            @Override
+            public void onAnimationStart(Animator arg0) {
+                
+            }
+            
+            @Override
+            public void onAnimationRepeat(Animator arg0) {
+            }
+            
+            @Override
+            public void onAnimationEnd(Animator arg0) {
+                if (!cancel) {
+                    arg0.setStartDelay(500);
+                    arg0.start();
+                }
+                cancel = false;
+            }
+            
+            @Override
+            public void onAnimationCancel(Animator arg0) {
+                cancel = true;
+            }
+        });
+        mGuideNewWallpaperView.setVisibility(VISIBLE);
+        mGuideNewWallpaperAnimator.start();
+        Guide.setGuideState(GuideState.NEW_WALLPAPER);
+        
+
+    }
+    
+    public void stopGuideNewWallpaper() {
+        if (mGuideNewWallpaperAnimator != null) {
+            if (mGuideNewWallpaperAnimator.isRunning()) {
+                mGuideNewWallpaperAnimator.cancel();
+            }
+        }
+        mGuideNewWallpaperView.setVisibility(GONE);
+        Guide.resetIdle();
+    }
+    
+    
+    public void startGuideSlideFeedBack() {
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        RelativeLayout view = (RelativeLayout)inflater.inflate(R.layout.guide_slide_feedback, null);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        params.topMargin = getResources().getDimensionPixelSize(R.dimen.guide_slide_margin_top);
+        addView(view, params);
+        
+        Guide.setGuideState(GuideState.SLIDE_FEEDBACK);
+
+    }
+    
+    public void stopGuideSlideFeedBack() {
+        final RelativeLayout view = (RelativeLayout) findViewById(R.id.guide_slide_feedback);
+        removeView(view);
+        Guide.resetIdle();
+        Guide.setNeedGuideSlideFeedBack(false);
+        Guide.setBooleanSharedConfig(getContext(), Guide.GUIDE_SLIDE_FEEDBACK, false);
+    }
    
 }

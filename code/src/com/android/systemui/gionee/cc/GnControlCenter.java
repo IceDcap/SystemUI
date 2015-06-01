@@ -208,11 +208,6 @@ public class GnControlCenter extends FrameLayout{
             Log.d(TAG, "return lock by notification");
             return;
         }
-        
-        if (GnUtil.getLockState() == GnUtil.STATE_LOCK_BY_CONTROLCENTER) {
-            Log.d(TAG, "return lock by cc");
-            return;
-        }
 
         if (GnUtil.getLockState() == GnUtil.STATE_LOCK_UNLOCK) {
             Log.d(TAG, "Lock by cc");
@@ -266,7 +261,7 @@ public class GnControlCenter extends FrameLayout{
             return;
         }
         
-        Log.d(TAG, " swipingView  mState = " + sState);
+        if (DEBUG) Log.d(TAG, " swipingView  mState = " + sState);
         if (sState == STATE_IMMERSE_OPEN) {
             mImmerseView.setVisibility(GONE);
             mControlCenterView.setVisibility(VISIBLE);
@@ -277,6 +272,7 @@ public class GnControlCenter extends FrameLayout{
         if (sState == STATE_IMMERSE_OPENING && 
                 (event.getAction() == MotionEvent.ACTION_CANCEL || event.getAction() == MotionEvent.ACTION_UP)) {
             go(STATE_IMMERSE_OPEN);
+            return;
         }
 
         if (mControlCenterView.isShown()) {

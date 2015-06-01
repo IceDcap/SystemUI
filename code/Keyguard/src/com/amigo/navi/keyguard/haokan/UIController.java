@@ -38,8 +38,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.amigo.navi.keyguard.AmigoKeyguardHostView;
+import com.amigo.navi.keyguard.AmigoKeyguardPage;
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.Guide;
+import com.amigo.navi.keyguard.Guide.GuideState;
 import com.amigo.navi.keyguard.KeyguardViewHost;
 import com.amigo.navi.keyguard.KeyguardViewHostManager;
 import com.amigo.navi.keyguard.haokan.PlayerManager.State;
@@ -105,7 +107,7 @@ public class UIController implements OnTouchlListener{
     
     private KeyguardListView mKeyguardListView;
     
-    
+    private AmigoKeyguardPage mAmigoKeyguardPage;
     
     private View mKeyguardNotificationView;
     
@@ -139,7 +141,6 @@ public class UIController implements OnTouchlListener{
     private TextView mTextViewMusicName, mTextViewArtist;
     
     private RelativeLayout mHaoKanLayout;
-    private RelativeLayout mGuideScrollUpView;
     
 
     private boolean mGuideLongPressShowing = false;
@@ -147,13 +148,6 @@ public class UIController implements OnTouchlListener{
     private GuideLondPressLayout mGuideLongPressLayout;
     
     private RelativeLayout toastView;
-    
-    private RelativeLayout getGuideScrollUpView() {
-        return mGuideScrollUpView;
-    }
-    public void setGuideScrollUpView(RelativeLayout guideScrollUpView) {
-        this.mGuideScrollUpView = guideScrollUpView;
-    }
     
  
     public RelativeLayout getmArcMenu() {
@@ -329,6 +323,16 @@ public class UIController implements OnTouchlListener{
             dateFestival.setTranslationX(0);
             mPlayerLayout.setTranslationX(0);
             KeyguardUpdateMonitor.getInstance(getmKeyguardNotification().getContext()).getNotificationModule().removeAllNotifications();
+            if (Guide.needGuideSlideAround() && Guide.getGuideState() == GuideState.SLIDE_AROUND) {
+                Log.v("guide", "stopGuideSlideAround");
+                getAmigoKeyguardPage().stopGuideSlideAround();
+            }
+            Log.v("zhaowei", "Guide.needGuideSlideFeedBack() = " + Guide.needGuideSlideFeedBack() + " !Guide.needGuideSlideAround() = " + !Guide.needGuideSlideAround() + " Guide.isIdle() = " + Guide.isIdle());
+            if (Guide.needGuideSlideFeedBack() && !Guide.needGuideSlideAround() && Guide.isIdle()) {
+                Log.v("guide", "startGuideSlideFeedBack");
+                getAmigoKeyguardPage().startGuideSlideFeedBack();
+            }
+            
         }
         
         mInfozoneTranslationX +=  dx;
@@ -373,19 +377,26 @@ public class UIController implements OnTouchlListener{
         refreshWallpaperInfo();
         mCaptionsView.OnTouchUpAnimator();
         
-        if (Guide.needGuideLongPress()) {
-            if (Guide.getBooleanSharedConfig(getmKeyguardViewHost().getContext(),
-                    Guide.GUIDE_LONG_PRESS, true)) {
-                getmKeyguardViewHost().postDelayed(mGuideLongPressRunnable, 500);
-            }else {
-                Guide.setNeedGuideLongPress(false); 
-            }
-        }
 
         if (Guide.needGuideSlideAround()) {
+            //左右滑动操作过一次后，不再引导
             Guide.setNeedGuideSlideAround(false);
+            Guide.setBooleanSharedConfig(getmKeyguardViewHost().getContext(),
+                    Guide.GUIDE_SLIDE_AROUND, false);
         }
         
+        if (Guide.needGuideNewWallpaper() && Guide.getGuideState() == GuideState.NEW_WALLPAPER) {
+            getAmigoKeyguardPage().stopGuideNewWallpaper();
+        }
+        
+        if (Guide.needGuideSlideFeedBack() &&  Guide.getGuideState() == GuideState.SLIDE_FEEDBACK) {
+            getAmigoKeyguardPage().stopGuideSlideFeedBack();
+        }
+        
+        if (Guide.needGuideLongPress() && !Guide.needGuideScrollUp()
+                && Guide.isIdle()) {
+            getmKeyguardViewHost().postDelayed(mGuideLongPressRunnable, 500);
+        }
     }
     
     Runnable mGuideLongPressRunnable = new Runnable() {
@@ -416,9 +427,9 @@ public class UIController implements OnTouchlListener{
             
             onScreenTurnedOnAnimation();
             
-            if (Guide.needGuideSlideAround() && !Guide.needGuideScrollUp()) {
-            
-                
+            if (!Guide.needGuideScrollUp() && Guide.needGuideSlideAround() && Guide.isIdle()) {
+                Log.v("guide", "startGuideSlideAround");
+                getAmigoKeyguardPage().startGuideSlideAround();
             }
             
         }
@@ -577,6 +588,8 @@ public class UIController implements OnTouchlListener{
     }
     
     public void onLongPress(float motionDowmX,float motionDowmY) {
+        
+        
         if (mArcLayout.animatorRunning() || mArcLayout.isExpanded()
                 || getAmigoKeyguardHostView().getScrollY() != 0) {
             return;
@@ -625,6 +638,9 @@ public class UIController implements OnTouchlListener{
    private void cancelAnimatorsOnUnlock(int top,int maxBoundY) {
        if (mKeyguardScrollY == 0) {
            getmCaptionsView().cancelAnimator();
+            if (Guide.needGuideScrollUp() && Guide.getGuideState() == GuideState.SCROLL_UP) {
+                getAmigoKeyguardPage().setGuideScrollUpVisibility(View.GONE);
+            }
        }
         
        mKeyguardScrollY = top;
@@ -672,6 +688,10 @@ public class UIController implements OnTouchlListener{
             mPlayerLayout.setAlpha(1f);
             if (!mCaptionsView.isContentVisible()) {
                 mKeyguardNotificationView.setAlpha(1f);
+            }
+            
+            if (Guide.needGuideScrollUp() && Guide.getGuideState() == GuideState.SCROLL_UP) {
+                getAmigoKeyguardPage().setGuideScrollUpVisibility(View.VISIBLE);
             }
         }
          
@@ -929,15 +949,17 @@ public class UIController implements OnTouchlListener{
             
             @Override
             public void onAnimationEnd(Animator arg0) {
+                
                 if (!isCancel) {
-                    Log.v("zhaowei", "Guide.needGuideClickTitle() = " + Guide.needGuideClickTitle() + " Guide.needGuideSlideAround() = " + Guide.needGuideSlideAround());
                     
-                    if (Guide.needGuideClickTitle() && !Guide.needGuideSlideAround() && !getmCaptionsView().isGuideClickViewShowing()) {
-                        Log.v("zhaowei", "showGuideClickTitle");
-//                        showGuideClickTitle();
+                    Log.v("guide", "Guide.needGuideClickTitle() = " + Guide.needGuideClickTitle() + " Guide.needGuideSlideAround() = " + Guide.needGuideSlideAround());
+                    
+                    if (Guide.needGuideClickTitle() && !Guide.needGuideSlideAround() && !Guide.needGuideLongPress() && Guide.isIdle()) {
+                        Log.v("guide", "showGuideClickTitle");
                         getmCaptionsView().startGuide();
                     }
                     if (getmCaptionsView().isGuideClickViewShowing()) {
+                        Log.v("guide", "isGuideClickViewShowing showGuideIfNeed");
                         getmCaptionsView().showGuideIfNeed();
                     }
                     
@@ -1110,11 +1132,6 @@ public class UIController implements OnTouchlListener{
         mGuideLongPressLayout.startGuide(); 
     }
     
-//    public void showGuideClickTitle() {
-//        Log.v("zhaowei", "showGuideClickTitle");
-//        getmCaptionsView().startGuide();
-//    }
-    
     
     public RelativeLayout getHaoKanLayout() {
         return mHaoKanLayout;
@@ -1275,6 +1292,12 @@ public class UIController implements OnTouchlListener{
     
     
     
+    public AmigoKeyguardPage getAmigoKeyguardPage() {
+        return mAmigoKeyguardPage;
+    }
+    public void setAmigoKeyguardPage(AmigoKeyguardPage mAmigoKeyguardPage) {
+        this.mAmigoKeyguardPage = mAmigoKeyguardPage;
+    }
     public boolean isGuideLongPressShowing() {
         return mGuideLongPressShowing;
     }

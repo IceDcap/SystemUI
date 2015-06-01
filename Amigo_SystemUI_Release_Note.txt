@@ -2,40 +2,39 @@
 Build Notes
 ==================
 1.版本目的:
--修改录入指纹-设置屏幕锁屏方式为数字密码-在指纹未勾选便捷解锁的情况下-锁屏解锁界面仍显示指纹识别 的问题
--解决简单密码复杂密码界面，输入错误被冻结后，输入账号密码解锁后再上锁，密码界面提示信息错误
--添加隐藏天窗开启指纹识别
--修改黑屏手势上锁时锁屏infozne内容不能到底部的问题
--添加从本地选择壁纸逻辑
--修改上滑解锁时速率达到后距离不满足60dp时不能解锁
-CR01489472
-修改 手机戴皮套》B机给测试A机来电》通话中，合上皮套，天窗处闪屏（必现） 的问题
-CR01491250
-修改 设置图案锁》信息列表横屏》自动屏灭竖屏按power键点亮屏解锁界面显示混乱屏幕一半显示信息，壁纸信息又横竖显示 的问题
+r5599
+CR01466272 去掉调整“重要”“其他”通知的Z轴高度代码 
+---------------------
+r5598
+CR01296451  修改合盖开机 天窗不显示的问题 修改锁屏不上锁时，拔sim卡，会播放锁屏解锁音的问题
+---------------------
+r5596
+CR01408122 修改上忘记密码未绑定账号界面为随着主题变色 修改密码输入错误次数后关机开机后再输入错误时计时错误的问题
+---------------------
+r5593
+CR01489722 【工厂】上滑控制中心，反复开启关闭飞行模式和关闭飞行模式，状态栏飞行模式图标不会消失，5分钟后再次开启关闭恢复【2台机出现2次】 
+---------------------
+
+
 2.功能变更:
--
+--
 3.重点测试的问题:
--
+--
 4.应用数据库是否改变:
 No
 
 ==================
 Release Location
 ==================
-/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.p.zip
+/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.q.zip
 
 ==================
 CR List
 ==================
 [Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
-svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V5.1.0.2v' non-existent in revision 5585
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.af' non-existent in revision 5599
 
 svn: E200009: Could not display info for all targets because some targets don't exist
-svn: E205000: Syntax error in revision argument '5583:'
+svn: E205000: Syntax error in revision argument '5599:'
 File does not exist:  at getAppChangeSet.pl line 48
 
-==================
-Make sonar target URL:
-http://ss.alm.gionee.com/sonar
-http://ss.alm.gionee.com/sonar/dashboard/index/gionee.app:Amigo_SystemUI
-==================

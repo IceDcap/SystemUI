@@ -26,6 +26,7 @@ import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory.Options;
 import android.os.Environment;
 import android.text.TextUtils;
+import android.util.Log;
 
 public class DiskUtils {
     public static final int VERSION = 1;
@@ -99,7 +100,12 @@ public class DiskUtils {
          options.inJustDecodeBounds = false;
          options.inSampleSize = scale;
          options.inPreferredConfig = Config.ARGB_8888;
-         Bitmap bitmap = BitmapFactory.decodeByteArray(ss, 0, ss.length, options);
+         Bitmap bitmap = null;
+         try {
+             bitmap = BitmapFactory.decodeByteArray(ss, 0, ss.length, options);
+         } catch (OutOfMemoryError e) {
+            Log.e("haokan", "", e);
+         }
          return bitmap;
     }
     
@@ -119,7 +125,9 @@ public class DiskUtils {
             return bos.toByteArray();
         } catch (IOException e) {
             e.printStackTrace();
-        }finally{
+        } catch (OutOfMemoryError e) {
+            Log.e("haokan", "", e);
+        } finally{
 
         	if(bos != null){
         		try {
@@ -254,7 +262,9 @@ public class DiskUtils {
         {  
         	DebugLog.d(TAG,"getImageFromAssetsFile error:" + e.getStackTrace());
             e.printStackTrace();  
-        }finally{
+        } catch (OutOfMemoryError e) {
+            Log.e(TAG, "", e);
+        } finally{
         	if(is != null){
         		try {
 					is.close();
@@ -382,12 +392,12 @@ public class DiskUtils {
 	            DebugLog.d(TAG,"getImageFromSystem path:" + path);
 	            image = BitmapFactory.decodeFile(path, options);
 	            DebugLog.d(TAG,"getImageFromSystem image:" + image);
-	        }  
-	        catch (Exception e)  
-	        {  
+	        } catch (Exception e) {  
 	        	DebugLog.d(TAG,"getImageFromAssetsFile error:" + e.getStackTrace());
 	            e.printStackTrace();  
-	        }  
+	        } catch (OutOfMemoryError e) {
+                Log.e("haokan", "", e);
+            }
 	    
 	        return image;  
 	    
