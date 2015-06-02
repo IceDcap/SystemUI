@@ -992,6 +992,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     	
     }
     
+    /**
+     * Call when font type or language changed
+     * see {@code BaseStatusBar.onConfigurationChanged}
+     * */
+    protected void updateHeaderOnConfigChanged() {
+    	mStackScroller.removeView(mImportantHeader);
+    	mStackScroller.removeView(mOtherHeader);
+    	initNotificationHeader();
+    }
     //GIONEE <wujj> <2015-01-24> modify for CR01438299 end
     
 	private void clearNotifications(NotificationType type) {

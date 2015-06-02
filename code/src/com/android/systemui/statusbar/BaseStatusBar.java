@@ -775,6 +775,7 @@ public abstract class BaseStatusBar extends SystemUI implements
         	mPrivLang = currentLang;
         	mPrivFont = currentFont;
         	mOnConfigChanged = true;
+	        updateHeaderOnConfigChanged();
 	        mNotificationListener.onListenerConnected();
         }
         //GIONEE <wujj> <2015-01-24> modify for CR01438299 end
@@ -823,6 +824,8 @@ public abstract class BaseStatusBar extends SystemUI implements
     	return null;
     }
     
+    protected void updateHeaderOnConfigChanged() {
+    }
     //GIONEE <wujj> <2015-01-24> modify for CR01438299 end
     
     protected View updateNotificationVetoButton(View row, StatusBarNotification n) {
