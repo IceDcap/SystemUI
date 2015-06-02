@@ -36,7 +36,7 @@ import java.util.List;
 
  
 public class ArcLayout extends ViewGroup implements View.OnClickListener{
-    private static final String TAG = "ArcLayout";
+    private static final String TAG = "haokan";
     
     private boolean mExpandAnimatorRunning = false;
     private boolean mShrinkAnimatorRunning = false;

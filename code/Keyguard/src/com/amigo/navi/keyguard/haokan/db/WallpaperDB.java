@@ -124,7 +124,12 @@ public class WallpaperDB extends BaseDB{
 		}else{
 			values.put(DataConstant.WallpaperColumns.LOCK,0);
 		}
-		values.put(DataConstant.WallpaperColumns.SAVE_TYPE, wallpaper.getType());
+		
+        values.put(DataConstant.WallpaperColumns.FAVORITE,
+                wallpaper.isFavorite() ? DataConstant.WALLPAPER_FAVORITE
+                        : DataConstant.WALLPAPER_NOT_FAVORITE);
+        
+        values.put(DataConstant.WallpaperColumns.SAVE_TYPE, wallpaper.getType());
 		values.put(DataConstant.WallpaperColumns.DOWNLOAD_PICTURE, wallpaper.getDownloadFinish());
 		return values;
 	}

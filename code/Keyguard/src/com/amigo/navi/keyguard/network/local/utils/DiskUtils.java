@@ -99,7 +99,7 @@ public class DiskUtils {
          }
          options.inJustDecodeBounds = false;
          options.inSampleSize = scale;
-         options.inPreferredConfig = Config.ARGB_8888;
+         options.inPreferredConfig = Config.RGB_565;
          Bitmap bitmap = null;
          try {
              bitmap = BitmapFactory.decodeByteArray(ss, 0, ss.length, options);
@@ -252,7 +252,7 @@ public class DiskUtils {
             options.inJustDecodeBounds = false;
             options.inSampleSize = scale;
             is = am.open(fileName);  
-            options.inPreferredConfig = Config.ARGB_8888;
+            options.inPreferredConfig = Config.RGB_565;
             image = BitmapFactory.decodeStream(is, null, options);
 //            image = BitmapFactory.decodeStream(is);
             DebugLog.d(TAG,"decodeBitmap image:" + image);
@@ -388,7 +388,7 @@ public class DiskUtils {
 	            }
 	            options.inJustDecodeBounds = false;
 	            options.inSampleSize = scale;
-	            options.inPreferredConfig = Config.ARGB_8888;
+	            options.inPreferredConfig = Config.RGB_565;
 	            DebugLog.d(TAG,"getImageFromSystem path:" + path);
 	            image = BitmapFactory.decodeFile(path, options);
 	            DebugLog.d(TAG,"getImageFromSystem image:" + image);

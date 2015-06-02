@@ -107,6 +107,7 @@ public class AmigoKeyguardPage extends RelativeLayout {
 		addNotificationClickTipView();
 		addNotificationView();
 		addGuideNewWallpaperView();
+		addGuideSlideFeedBackView();
 
 		addFingerIdentifyTip();
 		
@@ -820,22 +821,37 @@ public class AmigoKeyguardPage extends RelativeLayout {
     
     
     public void startGuideSlideFeedBack() {
+//        LayoutInflater inflater = LayoutInflater.from(mContext);
+//        RelativeLayout view = (RelativeLayout)inflater.inflate(R.layout.guide_slide_feedback, null);
+//        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+//        params.topMargin = getResources().getDimensionPixelSize(R.dimen.guide_slide_margin_top);
+//        addView(view, params);
+        mGuideSlideFeedBackView.setVisibility(VISIBLE);
+//        Guide.setGuideState(GuideState.SLIDE_FEEDBACK);
+
+    }
+    private RelativeLayout mGuideSlideFeedBackView;
+    private void addGuideSlideFeedBackView() {
         LayoutInflater inflater = LayoutInflater.from(mContext);
         RelativeLayout view = (RelativeLayout)inflater.inflate(R.layout.guide_slide_feedback, null);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         params.topMargin = getResources().getDimensionPixelSize(R.dimen.guide_slide_margin_top);
         addView(view, params);
+        mGuideSlideFeedBackView = view;
         
-        Guide.setGuideState(GuideState.SLIDE_FEEDBACK);
-
     }
     
     public void stopGuideSlideFeedBack() {
-        final RelativeLayout view = (RelativeLayout) findViewById(R.id.guide_slide_feedback);
-        removeView(view);
-        Guide.resetIdle();
-        Guide.setNeedGuideSlideFeedBack(false);
-        Guide.setBooleanSharedConfig(getContext(), Guide.GUIDE_SLIDE_FEEDBACK, false);
+//        final RelativeLayout view = (RelativeLayout) findViewById(R.id.guide_slide_feedback);
+//        removeView(view);
+        mGuideSlideFeedBackView.setVisibility(GONE);
+//        Guide.resetIdle();
+//        Guide.setNeedGuideSlideFeedBack(false);
+//        Guide.setBooleanSharedConfig(getContext(), Guide.GUIDE_SLIDE_FEEDBACK, false);
     }
+    
+//    public void setVisibility(int visibility) {
+//        super.setVisibility(visibility);
+//    }
    
 }

@@ -328,10 +328,12 @@ public class UIController implements OnTouchlListener{
                 getAmigoKeyguardPage().stopGuideSlideAround();
             }
             Log.v("zhaowei", "Guide.needGuideSlideFeedBack() = " + Guide.needGuideSlideFeedBack() + " !Guide.needGuideSlideAround() = " + !Guide.needGuideSlideAround() + " Guide.isIdle() = " + Guide.isIdle());
-            if (Guide.needGuideSlideFeedBack() && !Guide.needGuideSlideAround() && Guide.isIdle()) {
-                Log.v("guide", "startGuideSlideFeedBack");
-                getAmigoKeyguardPage().startGuideSlideFeedBack();
-            }
+//            if (Guide.needGuideSlideFeedBack() && !Guide.needGuideSlideAround() && Guide.isIdle()) {
+//                Log.v("guide", "startGuideSlideFeedBack");
+//                getAmigoKeyguardPage().startGuideSlideFeedBack();
+//            }
+            
+            getAmigoKeyguardPage().startGuideSlideFeedBack();
             
         }
         
@@ -379,7 +381,7 @@ public class UIController implements OnTouchlListener{
         
 
         if (Guide.needGuideSlideAround()) {
-            //左右滑动操作过一次后，不再引导
+             
             Guide.setNeedGuideSlideAround(false);
             Guide.setBooleanSharedConfig(getmKeyguardViewHost().getContext(),
                     Guide.GUIDE_SLIDE_AROUND, false);
@@ -389,9 +391,9 @@ public class UIController implements OnTouchlListener{
             getAmigoKeyguardPage().stopGuideNewWallpaper();
         }
         
-        if (Guide.needGuideSlideFeedBack() &&  Guide.getGuideState() == GuideState.SLIDE_FEEDBACK) {
+//        if (Guide.needGuideSlideFeedBack() &&  Guide.getGuideState() == GuideState.SLIDE_FEEDBACK) {
             getAmigoKeyguardPage().stopGuideSlideFeedBack();
-        }
+//        }
         
         if (Guide.needGuideLongPress() && !Guide.needGuideScrollUp()
                 && Guide.isIdle()) {
@@ -521,12 +523,12 @@ public class UIController implements OnTouchlListener{
             return;
         }
  
-        if (getmCurrentWallpaper() != null) {
-            if (getmCurrentWallpaper().getImgId() == wallpaper.getImgId()) {
-                DebugLog.d(TAG, "getmCurrentWallpaper().getImgId() == wallpaper.getImgId()  return");
-                return;
-            }
-        }
+//        if (getmCurrentWallpaper() != null) {
+//            if (getmCurrentWallpaper().getImgId() == wallpaper.getImgId()) {
+//                DebugLog.d(TAG, "getmCurrentWallpaper().getImgId() == wallpaper.getImgId()  return");
+//                return;
+//            }
+//        }
         
         setmCurrentWallpaper(wallpaper);
         
@@ -588,7 +590,6 @@ public class UIController implements OnTouchlListener{
     }
     
     public void onLongPress(float motionDowmX,float motionDowmY) {
-        
         
         if (mArcLayout.animatorRunning() || mArcLayout.isExpanded()
                 || getAmigoKeyguardHostView().getScrollY() != 0) {
@@ -1081,6 +1082,7 @@ public class UIController implements OnTouchlListener{
                 wallpaper.setRealOrder(0);
                 wallpaper.setShowOrder(0);
                 wallpaper.setDownloadFinish(DataConstant.DOWNLOAD_FINISH);
+                wallpaper.setFavorite(false);
                 WallpaperDB.getInstance(context).clearLock();
                 WallpaperDB wallpaperDB = WallpaperDB.getInstance(context);    
                 Wallpaper oldWallpaper = wallpaperDB.queryPicturesDownLoadedLock();
