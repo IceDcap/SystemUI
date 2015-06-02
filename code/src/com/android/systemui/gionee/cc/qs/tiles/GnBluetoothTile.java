@@ -6,20 +6,15 @@
 */
 package com.android.systemui.gionee.cc.qs.tiles;
 
-import android.content.Context;
 import android.content.Intent;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.android.systemui.R;
 import com.android.systemui.gionee.cc.qs.GnQSTile;
 import com.android.systemui.gionee.cc.qs.policy.GnBluetoothController;
-import com.android.systemui.gionee.cc.qs.policy.GnBluetoothController.PairedDevice;
 import com.android.systemui.gionee.GnYouJu;
-import java.util.Set;
 
 /** Quick settings tile: Bluetooth **/
 public class GnBluetoothTile extends GnQSTile<GnQSTile.BooleanState>  {

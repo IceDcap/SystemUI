@@ -7,7 +7,8 @@
 package com.android.systemui.gionee.cc.qs.tiles;
 
 import amigo.provider.AmigoSettings;
-
+import android.app.StatusBarManager;
+import android.content.Context;
 import android.database.ContentObserver;
 import android.os.Handler;
 
@@ -18,9 +19,12 @@ import com.android.systemui.gionee.GnYouJu;
 public class GnVibrateTile extends GnQSTile<GnQSTile.BooleanState> {
     
     private static final String AMIGO_SETTING_VIBRATE = "amigo_vibration_switch";
-
+    
+    public StatusBarManager mService;
+    
     public GnVibrateTile(Host host, String spec) {
         super(host, spec);
+        mService = (StatusBarManager)mContext.getSystemService(Context.STATUS_BAR_SERVICE);
     }
 
     @Override

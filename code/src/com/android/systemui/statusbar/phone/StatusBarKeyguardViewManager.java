@@ -189,12 +189,16 @@ public class StatusBarKeyguardViewManager implements KeyguardBouncerCallback ,Ke
         }
     }
     
-    public void showSkylight(){
-        mKeyguardViewHostManager.showSkylight();
+    public void showSkylight() {
+        if (mKeyguardViewHostManager != null) {
+            mKeyguardViewHostManager.showSkylight();
+        }
     }
     
-    public void hideSkylight(boolean forceHide){
-        mKeyguardViewHostManager.hideSkylight(forceHide);
+    public void hideSkylight(boolean forceHide) {
+        if (mKeyguardViewHostManager != null) {
+            mKeyguardViewHostManager.hideSkylight(forceHide);
+        }
     }
     public void startFingerIdentify(){
         if(mKeyguardViewHostManager!=null){

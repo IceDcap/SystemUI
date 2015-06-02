@@ -714,17 +714,6 @@ public class GnControlCenterPanel extends ViewGroup implements GestureDetector.O
                 Log.d(TAG, "doAnimation open");
                 mAnimating = false;
                 openDrawer();
-                /*if (mAnimatedVelocityRatio - 0.3f < 0.0f) {
-                    Log.d(TAG, "doAnimation open");
-                    mAnimating = false;
-                    openDrawer();
-                } else {
-                    Log.d(TAG, "doAnimation start ShakeAnimation");
-                    moveHandle(EXPANDED_FULL_OPEN);
-                    mCurrentAnimationTime += ANIMATION_FRAME_DURATION;
-                    mHandler.sendMessageAtTime(mHandler.obtainMessage(MSG_SHAKE_ANIMATE),
-                            mCurrentAnimationTime);
-                }*/
             } else {
                 moveHandle((int) mAnimationPosition);
                 mCurrentAnimationTime += ANIMATION_FRAME_DURATION;
@@ -963,18 +952,6 @@ public class GnControlCenterPanel extends ViewGroup implements GestureDetector.O
     }
     
     private int getColor(int position) {
-        /*int mScrimColor = 0xBF131313;
-        float frac = ((float)(getBottom() - position - getTop())) / ((float)(getBottom() - getTop()));
-        
-        if (DEBUG) Log.d(TAG, "frac = " + frac);
-        
-        final float k = (float)(1f-0.5f*(1f-Math.cos(3.14159f * Math.pow(1f-frac, 2f))));
-        // attenuate background color alpha by k
-        final int color = (int) ((mScrimColor >>> 24) * k) << 24 | (mScrimColor & 0xFFFFFF);
-        
-        if (DEBUG) Log.d(TAG, "color = " + color);
-        return color;*/
-        
         int scrimColor;
         if (mGnControlCenterView.isHighDevice()) {
             scrimColor = 0xBF131313;
@@ -988,13 +965,6 @@ public class GnControlCenterPanel extends ViewGroup implements GestureDetector.O
     	GnBlurHelper.getBlurHelper().createBlurBg(context);
     }
     
-    private void releaseBitmap(Bitmap bitmap) {
-        if (bitmap != null && !bitmap.isRecycled()) {
-            bitmap.recycle();
-            bitmap = null;
-        }
-    }
-
     @Override
     public boolean onDown(MotionEvent e) {
         return false;

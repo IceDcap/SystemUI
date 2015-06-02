@@ -65,16 +65,14 @@ public class GnControlCenterView extends GnControlCenter {
                     mGnControlCenterPanel.animateClose();
                     break;
                 case ACTION_START_ACTIVITY:
-                    mStatusBar.startActivityDismissingKeyguard((Intent)msg.obj, false, true);
+                    mStatusBar.startActivityDismissingKeyguard((Intent) msg.obj, false, true);
                     break;
                 case ACTION_SHOW_MORE:
-                    Log.d(TAG, "Lock by cc more");
-                    GnUtil.setLockState(GnUtil.STATE_LOCK_BY_CONTROLCENTER);
                     mGnMoreView.setVisibility(View.VISIBLE);
                     mGnMoreView.pushUpIn();
                     break;
                 case ACTION_HIDE_MORE:
-                    mGnMoreView.pushDownOut();                    
+                    mGnMoreView.pushDownOut();
                 default:
                     break;
             }
@@ -241,7 +239,6 @@ public class GnControlCenterView extends GnControlCenter {
 
     public void updateResources() {
         mGnQSPanel.updateResources();
-//        mShortcut.updateResources();
     }
 
     public void setBar(PhoneStatusBar statusBar) {

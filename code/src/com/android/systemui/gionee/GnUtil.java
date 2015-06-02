@@ -56,8 +56,7 @@ public class GnUtil {
     }
     
     public static void setLockState(int state) {
-        Log.d(TAG, "set Lock state  " + sState + " -> " + state
-    + "  " + Log.getStackTraceString(new Throwable()));
+        Log.d(TAG, "set Lock state  " + sState + " -> " + state);
         sState = state;
     }
 }

@@ -379,6 +379,10 @@
 	<dimen name="guide_click_title_circle_from_radius">0dp</dimen>
 	<dimen name="guide_click_title_view_size">40dp</dimen>
 	
+	<dimen name="guide_new_wallpaper_size">29dp</dimen>
+	<dimen name="guide_new_wallpaper_max_translationX">15dp</dimen>
+	<dimen name="guide_slide_margin_top">253dp</dimen>
+	
 	
 	<!-- infozone -->
 	<dimen name="keyguard_infozone_time_textsize">55dp</dimen>

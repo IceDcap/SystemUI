@@ -173,13 +173,7 @@ public class GnQSPanel extends ViewGroup {
     private TileRecord addTileView(final GnQSTile<?> tile) {
         final TileRecord r = new TileRecord();
         r.tile = tile;
-        if (tile.getSpec().equals("fakecall")) {
-            r.tileView = tile.createAnimTileView(mContext);
-        } else {
-            r.tileView = tile.createTileView(mContext);
-        }
-        Log.d(TAG, "addTileView   name = " + tile.getClass().getSimpleName() 
-                + "  visible = " + tile.mState.visible + "  " + r.tileView);
+        r.tileView = tile.createTileView(mContext, tile.supportsStateType());
         r.tileView.setVisibility(tile.mState.visible ? View.VISIBLE : View.GONE);
 
         final GnQSTile.Callback callback = new GnQSTile.Callback() {
@@ -249,10 +243,7 @@ public class GnQSPanel extends ViewGroup {
 
         for (TileRecord record : mRecords) {
             record.tileView.setDual(record.tile.supportsDualTargets());
-            if (record.tileView.getVisibility() == GONE) {
-                Log.d(TAG, "onmeasure " + record.tile.getClass().getSimpleName());
-                continue;
-            }
+            if (record.tileView.getVisibility() == GONE) continue;
             final int cw = mCellWidth;
             final int ch = mCellHeight;
             record.tileView.measure(exactly(cw), exactly(ch));
@@ -269,7 +260,7 @@ public class GnQSPanel extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        Log.d(TAG, "onlayout()");
+        Log.d(TAG, "onLayout");
         layoutBrightnessSlider();
 
         final int w = getWidth() - mPanelPaddingLeft * 2;

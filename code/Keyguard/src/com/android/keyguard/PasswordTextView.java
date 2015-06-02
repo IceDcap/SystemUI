@@ -196,7 +196,8 @@ public class PasswordTextView extends View {
             charState = obtainCharState(c);
             mTextChars.add(charState);
         } else {
-            charState = mTextChars.get(newLength - 1);
+            int index=newLength >0?newLength-1:0;
+            charState = mTextChars.get(index);
             charState.whichChar = c;
         }
         charState.startAppearAnimation();

@@ -6,7 +6,6 @@
 */
 package com.android.systemui.gionee.cc.qs;
 
-import android.app.StatusBarManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -14,10 +13,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
 
-import com.android.systemui.gionee.cc.GnControlCenterPanel;
+import com.android.systemui.gionee.cc.GnControlCenterPanel.OnDrawerCloseListener;
 import com.android.systemui.gionee.cc.qs.GnQSTile.State;
 import com.android.systemui.gionee.cc.qs.policy.GnBluetoothController;
 import com.android.systemui.gionee.cc.qs.policy.GnLocationController;
@@ -41,6 +38,10 @@ import java.util.Objects;
 public abstract class GnQSTile<TState extends State> implements Listenable {
     protected final String TAG = "GnQSTile." + getClass().getSimpleName();
     protected static final boolean DEBUG = true;//Log.isLoggable("GnQSTile", Log.DEBUG);
+    
+    public static final int STATE_TYPE_BOOLEAN = 0;
+    public static final int STATE_TYPE_ANIMBOOLEAN = 1;
+    public static final int STATE_TYPE_SIGNAL = 2;
 
     protected final Host mHost;
     protected final Context mContext;
@@ -58,18 +59,20 @@ public abstract class GnQSTile<TState extends State> implements Listenable {
     abstract protected void handleLongClick();
     abstract protected void handleUpdateState(TState state, Object arg);
     
-    public StatusBarManager mService;
 
     protected GnQSTile(Host host, String spec) {
         mHost = host;
         mSpec = spec;
         mContext = host.getContext();
         mHandler = new H(host.getLooper());
-        mService = (StatusBarManager)mContext.getSystemService(Context.STATUS_BAR_SERVICE);
     }
 
     public boolean supportsDualTargets() {
         return false;
+    }
+    
+    public int supportsStateType() {
+        return STATE_TYPE_BOOLEAN;
     }
 
     public Host getHost() {
@@ -80,14 +83,17 @@ public abstract class GnQSTile<TState extends State> implements Listenable {
         return mSpec;
     }
     
-    public GnQSBoolTileView createTileView(Context context) {
-        return new GnQSBoolTileView(context);
+    public GnQSTileView createTileView(Context context, int type) {
+        switch (type) {
+            case STATE_TYPE_ANIMBOOLEAN:                
+                return new GnQSAnimTileView(context);
+            case STATE_TYPE_BOOLEAN:
+                return new GnQSBoolTileView(context);
+            default:
+                return new GnQSBoolTileView(context);
+        }
     }
     
-    public GnQSAnimTileView createAnimTileView(Context context) {
-        return new GnQSAnimTileView(context);
-    }
-
     public void setCallback(Callback callback) {
         mHandler.obtainMessage(H.SET_CALLBACK, callback).sendToTarget();
     }

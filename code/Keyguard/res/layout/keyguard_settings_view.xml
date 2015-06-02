@@ -110,7 +110,7 @@
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:text="@string/preference_only_wlan"
-            android:textColor="@color/keyguard_setting_firstline_color"
+            android:textColor="@color/keyguard_setting_secondline_color"
             android:textSize="@dimen/settings_body_firstline_textsize"
             android:visibility="invisible" />
 

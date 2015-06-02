@@ -29,6 +29,10 @@ public class GnFakeCallTile extends GnQSTile<GnQSTile.AnimBooleanState> {
     protected AnimBooleanState newTileState() {
         return new AnimBooleanState();
     }
+    
+    public int supportsStateType() {
+        return STATE_TYPE_ANIMBOOLEAN;
+    }
 
     @Override
     protected void handleClick() {

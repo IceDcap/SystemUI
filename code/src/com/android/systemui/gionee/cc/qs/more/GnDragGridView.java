@@ -293,7 +293,6 @@ public class GnDragGridView extends ViewGroup {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-//        Log.d(TAG, "dispatchTouchEvent " + ev);
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 int x = (int) ev.getX();
@@ -431,7 +430,6 @@ public class GnDragGridView extends ViewGroup {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-//        Log.d(TAG, "onTouchEvent " + event);
         switch (event.getAction()) {
             case MotionEvent.ACTION_MOVE:
                 if (isDraging && mDragPosition != -1) {
@@ -539,7 +537,7 @@ public class GnDragGridView extends ViewGroup {
     
     private void updateRecords(int from, int to) {
         
-        Log.d(TAG, "@@ from = " + from + "  to = " + to);
+        Log.d(TAG, "updateRecords  from = " + from + "  to = " + to);
         
         TileRecord moreTile = mRecords.get(7);
         TileRecord record = mRecords.get(from);
@@ -587,11 +585,7 @@ public class GnDragGridView extends ViewGroup {
     private TileRecord addTileView(GnQSTile<?> tile) {
         final TileRecord r = new TileRecord();
         r.tile = tile;
-        if (tile.getSpec().equals("fakecall")) {
-            r.tileView = tile.createAnimTileView(mContext);
-        } else {
-            r.tileView = tile.createTileView(mContext);
-        }
+        r.tileView = tile.createTileView(mContext, tile.supportsStateType());
         r.tileView.setVisibility(tile.mState.visible ? View.VISIBLE : View.GONE);
         
         final GnQSTile.Callback callback = new GnQSTile.Callback() {
@@ -679,6 +673,7 @@ public class GnDragGridView extends ViewGroup {
     }
 
     public void showMoreView() {
+        Log.d(TAG, "showMoreView");
         mMoreTile.setVisibleState(true, true);
     }
 

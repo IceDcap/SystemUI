@@ -12,6 +12,8 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 
 import com.android.keyguard.R;
@@ -147,7 +149,7 @@ public class LongPressView extends View {
 
         AnimatorSet set = new AnimatorSet();
         
-        ValueAnimator animator = ValueAnimator.ofFloat(mMaxmRadiusFirst, 0).setDuration(500);  
+        ValueAnimator animator = ValueAnimator.ofFloat(mMaxmRadiusFirst, 0).setDuration(150);  
         animator.setInterpolator(new DecelerateInterpolator());
         animator.addUpdateListener(new AnimatorUpdateListener() {  
             @Override  
@@ -160,8 +162,8 @@ public class LongPressView extends View {
             }  
         });  
         
-        ValueAnimator animatorSecond = ValueAnimator.ofFloat(mMaxmRadiusSecond, 0).setDuration(300);  
-        animatorSecond.setInterpolator(new DecelerateInterpolator());
+        ValueAnimator animatorSecond = ValueAnimator.ofFloat(mMaxmRadiusSecond, 0).setDuration(170);  
+        animatorSecond.setInterpolator(new AccelerateInterpolator());
         animatorSecond.addUpdateListener(new AnimatorUpdateListener() {  
             @Override  
             public void onAnimationUpdate(ValueAnimator animation) {  
@@ -172,10 +174,10 @@ public class LongPressView extends View {
                 invalidate();
             }  
         });  
-        animatorSecond.setStartDelay(400);
+        animatorSecond.setStartDelay(130);
         
-        ValueAnimator animatorThird = ValueAnimator.ofFloat(mMaxmRadiusThird,mFromRadiusThird).setDuration(400);  
-        animatorThird.setInterpolator(new DecelerateInterpolator());
+        ValueAnimator animatorThird = ValueAnimator.ofFloat(mMaxmRadiusThird,mFromRadiusThird).setDuration(80);  
+        animatorThird.setInterpolator(new AccelerateInterpolator());
         animatorThird.addUpdateListener(new AnimatorUpdateListener() {  
             @Override  
             public void onAnimationUpdate(ValueAnimator animation) {  
@@ -183,7 +185,7 @@ public class LongPressView extends View {
                 float Value = (Float) animation.getAnimatedValue();
                 mRadiusThird = Value;
                 int alpha = (int) (DEFAULT_ALPHA_THIRD * (1.0f - animation.getAnimatedFraction()));
-                Log.v("zhaowei", "alpha = " + alpha);
+                Log.v("guide", "alpha = " + alpha);
                 mPaintThird.setAlpha(alpha);
                 invalidate();
             }  

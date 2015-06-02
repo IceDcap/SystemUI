@@ -15,6 +15,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.text.method.LinkMovementMethod;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.LinearLayout;
@@ -23,6 +24,7 @@ import android.widget.TextView;
 
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.Guide;
+import com.amigo.navi.keyguard.Guide.GuideState;
 import com.amigo.navi.keyguard.haokan.analysis.HKAgent;
 import com.amigo.navi.keyguard.haokan.entity.Caption;
 import com.amigo.navi.keyguard.infozone.AmigoKeyguardInfoZone;
@@ -63,7 +65,7 @@ public class CaptionsView extends RelativeLayout {
     
     private GuideClickView mGuideClickView;
     
-    private boolean mGuideClickViewShowing = false;
+//    private boolean mGuideClickViewShowing = false;
     
     public void setContentVisible(boolean visible) {
         if (mContentVisible != visible) {
@@ -389,37 +391,35 @@ public class CaptionsView extends RelativeLayout {
     
     
     public void startGuide() {
-        setGuideClickViewShowing(true);
         setGuideVisibility(VISIBLE);
         changeGuideViewPostion();
-        mGuideClickView.startAnimator();
+        getGuideClickView().startAnimator();
+        Guide.setGuideState(GuideState.CLICK_TITLE);
         
     }
     
     public void stopGuide() {
-        setGuideClickViewShowing(false);
-        mGuideClickView.stopAnimator();
+        getGuideClickView().stopAnimator();
         setGuideVisibility(GONE);
+        Guide.resetIdle();
     }
     
     private void changeGuideViewPostion() {
 
-        RelativeLayout.LayoutParams params = (LayoutParams) mGuideClickView.getLayoutParams();
-        params.leftMargin = mTextViewTitle.getMeasuredWidth() - mGuideClickView.getMeasuredWidth() / 2;
-        mGuideClickView.setLayoutParams(params);
+        RelativeLayout.LayoutParams params = (LayoutParams) getGuideClickView().getLayoutParams();
+        Log.e("guide", "mGuideClickView.getMeasuredWidth() = " + getGuideClickView().getMeasuredWidth());
+        params.leftMargin = getTitleView().getMeasuredWidth() - getGuideClickView().getMeasuredWidth() / 2;
+        getGuideClickView().setLayoutParams(params);
     }
     
     public void setGuideVisibility(int visibility) {
-        mGuideClickView.setVisibility(visibility);
+        getGuideClickView().setVisibility(visibility);
     }
 
     public boolean isGuideClickViewShowing() {
-        return mGuideClickViewShowing;
+        return Guide.getGuideState() == GuideState.CLICK_TITLE;
     }
-
-    public void setGuideClickViewShowing(boolean mGuideClickViewShowing) {
-        this.mGuideClickViewShowing = mGuideClickViewShowing;
-    }
+ 
     
     public void hideGuideIfNeed() {
         if (isGuideClickViewShowing()) {
@@ -433,6 +433,10 @@ public class CaptionsView extends RelativeLayout {
             setGuideVisibility(VISIBLE);
         }
     }
-    
+
+    public GuideClickView getGuideClickView() {
+        return mGuideClickView;
+    }
+
 
 }

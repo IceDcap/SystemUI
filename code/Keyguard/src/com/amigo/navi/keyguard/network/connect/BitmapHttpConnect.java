@@ -105,7 +105,11 @@ public class BitmapHttpConnect {
             BitmapFactory.Options options = new BitmapFactory.Options();  
             options.inPreferredConfig = Config.ARGB_8888;  
             options.inJustDecodeBounds = false;  
-            bitmap = BitmapFactory.decodeByteArray(result, 0, len);  
+            try {
+                bitmap = BitmapFactory.decodeByteArray(result, 0, len);  
+            } catch (OutOfMemoryError e) {
+                Log.e(TAG, "", e);
+            }
         }
         return bitmap;
     }

@@ -71,6 +71,7 @@
             android:id="@+id/haokan_captions_title_container"
             android:layout_width="wrap_content"
             android:paddingTop="10dp"
+            android:layout_marginTop="5dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingBottom="@dimen/haokan_caption_layout_content_margintop" >
@@ -100,12 +101,11 @@
             android:visibility="visible" />
         
         <com.amigo.navi.keyguard.haokan.GuideClickView 
-            android:layout_marginTop="5dp"
             android:id="@+id/guide_click_view"
             android:layout_alignParentTop="true"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:visibility="gone"
+            android:visibility="invisible"
             />
         
     </com.amigo.navi.keyguard.haokan.CaptionsView>

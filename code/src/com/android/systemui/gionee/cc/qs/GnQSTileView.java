@@ -66,9 +66,7 @@ public class GnQSTileView extends ViewGroup {
     }
     
     private void updateFontTypeFace(Configuration newConfig) {
-        Typeface typeface = GnFontHelper.getCurrentFontType(newConfig);
-        
-        mLabel.setTypeface(typeface);
+        GnFontHelper.resetAmigoFont(newConfig, mLabel);
     }
 
     private void recreateLabel() {

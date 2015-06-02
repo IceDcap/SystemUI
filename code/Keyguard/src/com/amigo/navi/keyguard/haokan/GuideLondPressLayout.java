@@ -14,9 +14,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -35,11 +35,13 @@ public class GuideLondPressLayout extends RelativeLayout {
     private View hand;
     private LongPressView longPressView;
     private TextView mTextView;
-    private ImageView mButtonClose;
+    private CloseView mButtonClose;
     
     private UIController controller;
     
     private AnimatorSet longPressAnimatorSet;
+    
+    CloseView myButton;
 
     public GuideLondPressLayout(Context context) {
         this(context, null);
@@ -58,6 +60,12 @@ public class GuideLondPressLayout extends RelativeLayout {
         super(context, attrs, defStyleAttr, defStyleRes);
         controller = UIController.getInstance();
     }
+    
+ 
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return true;
+    }
 
     @Override
     protected void onFinishInflate() {
@@ -66,8 +74,8 @@ public class GuideLondPressLayout extends RelativeLayout {
         hand = findViewById(R.id.hand);
         longPressView = (LongPressView) findViewById(R.id.LongPressView);
         mTextView = (TextView) findViewById(R.id.guide_long_press_tip);
-        mButtonClose =  (ImageView) findViewById(R.id.guide_long_press_close);
-        
+        mButtonClose =  (CloseView) findViewById(R.id.guide_long_press_close);
+       
         mButtonClose.setOnClickListener(new OnClickListener() {
             
             @Override
@@ -138,6 +146,7 @@ public class GuideLondPressLayout extends RelativeLayout {
                 if (!cancel) {
                     longPressAnimatorSet.start();
                 }
+                cancel = false;
             }
 
             @Override
@@ -171,7 +180,7 @@ public class GuideLondPressLayout extends RelativeLayout {
 
     public Animator createShowAnimator() {
 
-        ValueAnimator animator = ValueAnimator.ofInt(0, 255).setDuration(1000);
+        ValueAnimator animator = ValueAnimator.ofInt(0, 255).setDuration(300);
         animator.setInterpolator(new DecelerateInterpolator());
         animator.addUpdateListener(new AnimatorUpdateListener() {
             @Override
@@ -210,7 +219,7 @@ public class GuideLondPressLayout extends RelativeLayout {
 
     public Animator createHideAnimator() {
 
-        ValueAnimator animator = ValueAnimator.ofInt(mAlpha, 0).setDuration(1000);
+        ValueAnimator animator = ValueAnimator.ofInt(mAlpha, 0).setDuration(300);
         animator.setInterpolator(new DecelerateInterpolator());
         animator.addUpdateListener(new AnimatorUpdateListener() {
             @Override
@@ -274,4 +283,5 @@ public class GuideLondPressLayout extends RelativeLayout {
         this.blurBackground = blurBackground;
     }
     
+ 
 }

@@ -64,9 +64,7 @@ public class GnMoreTile extends GnQSTile<GnQSTile.BooleanState> {
             state.iconId = R.drawable.gn_ic_qs_more_disable;
             state.label = "";
         }
-        
-        Log.d(TAG, "state.iconId = " + state.iconId + "  " + R.drawable.gn_ic_qs_more_disable);
-        
+                
         state.value = false;
         state.contentDescription = mContext.getString(R.string.gn_qs_more);
     }
