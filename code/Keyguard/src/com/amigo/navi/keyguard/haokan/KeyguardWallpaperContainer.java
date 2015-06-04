@@ -2,11 +2,8 @@
 package com.amigo.navi.keyguard.haokan;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RadialGradient;
@@ -14,8 +11,6 @@ import android.graphics.Shader;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.View;
 import android.widget.FrameLayout;
 
 import com.android.keyguard.R;
@@ -24,21 +19,25 @@ public class KeyguardWallpaperContainer extends FrameLayout {
 
     private int mTop;
     
-    private LinearGradient mLinearGradient;
     private Paint mPaint = new Paint();
     
     private int mScreenHeight = 2560;
     private int mScreenWidth = 1440;  
-    int heightOffset = 400; //100dp
     private float mRadius;
     
-    float cx,cy;
+    private float cx,cy;
     
-    Bitmap mBitmap = null;
     private float mBlind=0;
+    
     private int mModel;
     
-    Drawable bottomDrawable = null;
+    private Drawable bottomDrawable = null;
+    
+    private static final int BLINDDEGREE = 150;
+    
+    private int[] colors = new int[] {0xffffffff, 0xffffffff, /*0xddffffff, 0xaaffffff, 0x66ffffff, 0x22ffffff, */0x00ffffff,};
+    
+    private float[] stops = new float[] { 0, 0.75f, /*0.75f, 0.80f, 0.85f, 0.90f,*/ 1.0f};
     
     public KeyguardWallpaperContainer(Context context) {
         this(context,null);
@@ -61,19 +60,16 @@ public class KeyguardWallpaperContainer extends FrameLayout {
         
         cx = mScreenWidth / 2.0f;
         cy = mScreenHeight / 2.0f;
-        heightOffset = getResources().getDimensionPixelSize(R.dimen.haokan_wallpaper_alpha_offset);
         
-        mRadius = heightOffset + mScreenHeight;
+        mRadius = mScreenHeight * 2.0f;
         
         UIController.getInstance().setmKeyguardWallpaperContainer(this);
         mPaint.setAntiAlias(true);
-        mPaint.setXfermode(new PorterDuffXfermode(Mode.DST_ATOP));
+//        mPaint.setXfermode(new PorterDuffXfermode(Mode.DST_ATOP));
         
-//        mPaint.setXfermode(new PorterDuffXfermode(Mode.XOR));
-        mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.haokan_wallpaper_alpha).copy(Bitmap.Config.ALPHA_8, true);
+        mPaint.setXfermode(new PorterDuffXfermode(Mode.XOR));
         bottomDrawable = getResources().getDrawable(R.drawable.infozone_background);
         bottomDrawable.setBounds(0, mScreenHeight - getResources().getDimensionPixelSize(R.dimen.ketguard_infozone_height), mScreenWidth, mScreenHeight);
-//        Log.v("zhaowei", Common.formatByteToMB(mBitmap.getByteCount()) + "MB");
     }
     
     public void reset() {
@@ -86,13 +82,8 @@ public class KeyguardWallpaperContainer extends FrameLayout {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
     }
-    private static final int BLINDDEGREE = 150;
     
     
-    
-//    int[] colors = new int[] {0xffffffff, 0xffffffff, /*0xddffffff, 0xaaffffff, 0x66ffffff, 0x22ffffff, */0x00ffffff,};
-//    
-//    float[] stops = new float[] { 0, 0.75f, /*0.75f, 0.80f, 0.85f, 0.90f,*/ 1.0f};
     
     @Override
     protected void dispatchDraw(Canvas canvas) {
@@ -100,13 +91,12 @@ public class KeyguardWallpaperContainer extends FrameLayout {
         bottomDrawable.draw(canvas);
         
         if (mModel!=UIController.SCROLL_TO_SECURTY && mTop != mScreenHeight) {
-            canvas.drawBitmap(mBitmap, 0, mTop, mPaint);
+            cy = mScreenHeight * 3 - mTop;
+            RadialGradient mRadialGradient = new RadialGradient(cx, cy, mRadius ,
+                    colors, stops, Shader.TileMode.CLAMP);
             
-//            RadialGradient mRadialGradient = new RadialGradient(mScreenWidth / 2, mScreenHeight * 3 - mTop, mScreenHeight * 2 ,
-//                    colors, stops, Shader.TileMode.CLAMP);
-//            
-//            mPaint.setShader(mRadialGradient); 
-//            canvas.drawCircle(mScreenWidth / 2, mScreenHeight * 3 - mTop, mScreenHeight * 2, mPaint);
+            mPaint.setShader(mRadialGradient); 
+            canvas.drawCircle(cx, cy, mRadius, mPaint);
         }
         
         
@@ -117,9 +107,8 @@ public class KeyguardWallpaperContainer extends FrameLayout {
 
     
    public void onKeyguardModelChanged(int top,int maxBoundY, int  model) {
-//        mTop = (int) (top * mScreenHeight / (float)maxBoundY);
-        int bitmapHeight = mBitmap.getHeight();
-        mTop = (int) (mScreenHeight - top * (bitmapHeight / (float)maxBoundY));
+        mTop = (int) (top * mScreenHeight / (float)maxBoundY);
+ 
         mModel=model;
         if(model==UIController.SCROLL_TO_SECURTY){
         	mBlind= (float)top/maxBoundY;
@@ -131,6 +120,6 @@ public class KeyguardWallpaperContainer extends FrameLayout {
         }
         postInvalidate();
     }
-
+  
     
 }

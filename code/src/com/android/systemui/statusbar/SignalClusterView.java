@@ -28,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.android.systemui.R;
+import com.android.systemui.gionee.statusbar.GnNetworkType;
 import com.android.systemui.statusbar.policy.NetworkControllerImpl;
 import com.android.systemui.statusbar.policy.SecurityController;
 
@@ -330,6 +331,7 @@ public class SignalClusterView
         private ImageView mMobile, mMobileType;
         private ImageView mNetworkType, mMobileInOut, mSlotIndicator;
         
+        private GnNetworkType mGnNetworkType;
 
         public PhoneState(int subId, Context context) {
             ViewGroup root = (ViewGroup) LayoutInflater.from(context)
@@ -351,7 +353,7 @@ public class SignalClusterView
         public boolean apply(boolean isSecondaryIcon) {
             if (mMobileVisible && !mIsAirplaneMode) {
                 mMobile.setImageResource(mMobileStrengthId);
-                mMobileType.setImageResource(mMobileTypeId);
+                mMobileType.setImageResource(getNetworkTypeIcon(mGnNetworkType));
                 mSlotIndicator.setImageResource(getSlotIndicator(mSubId));
                 mNetworkType.setImageResource(mNetworkTypeId);
                 mMobileInOut.setImageResource(mMobileInOutId);
@@ -413,5 +415,29 @@ public class SignalClusterView
 		}
 		apply();
 	}
+	@Override
+	public void GnsetNetworkType(GnNetworkType networkType, int subId) {
+		Log.d(TAG, "setNetworkType(" + subId + "), NetworkType= " + networkType);
+        PhoneState state = getOrInflateState(subId);
+        state.mGnNetworkType = networkType;
+	}
+	
+	private int getNetworkTypeIcon(GnNetworkType networkType) {
+        if (networkType == GnNetworkType.Type_G) {
+            return R.drawable.gn_stat_sys_mobile_type_g;
+        } else if (networkType == GnNetworkType.Type_E) {
+            return R.drawable.gn_stat_sys_mobile_type_e;
+        } else if (networkType == GnNetworkType.Type_3G) {
+            return R.drawable.gn_stat_sys_mobile_type_3g;
+        } else if (networkType == GnNetworkType.Type_4G) {
+            return R.drawable.gn_stat_sys_mobile_type_4g;
+        } else if (networkType == GnNetworkType.Type_1X) {
+            return R.drawable.gn_stat_sys_mobile_type_1x;
+        } else if (networkType == GnNetworkType.Type_1X3G) {
+            return R.drawable.gn_stat_sys_mobile_type_3g;
+        } else {
+            return -1;
+        }
+    }
 }
 

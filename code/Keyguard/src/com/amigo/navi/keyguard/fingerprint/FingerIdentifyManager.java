@@ -120,12 +120,25 @@ public class FingerIdentifyManager {
         if(unlockValue==0){
             mFingerprintSwitchOpen=false;
         }else{
-            mFingerprintSwitchOpen=true;
+        	int[] ids=getIds();
+        	if(ids==null || ids.length<1){
+                mFingerprintSwitchOpen=false;
+            }else{
+            	mFingerprintSwitchOpen=true;
+            }
         }
+        	
+        	
+        DebugLog.d(LOG_TAG, "readFingerprintSwitchValue: unlockValue"+unlockValue+"mFingerprintSwitchOpen="+mFingerprintSwitchOpen);
+        
         return mFingerprintSwitchOpen;
     }
     
+    public boolean getFingerprintSwitchOpen(){
+    	return mFingerprintSwitchOpen;
+    }
     
+
     private int[] getIds() {
         DebugLog.d(LOG_TAG, "getIds() start  time: "+SystemClock.uptimeMillis());
         try {

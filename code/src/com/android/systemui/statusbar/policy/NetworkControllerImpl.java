@@ -70,6 +70,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import com.android.systemui.gionee.statusbar.GnNetworkType;
 
 /** Platform implementation of the network controller. **/
 public class NetworkControllerImpl extends BroadcastReceiver
@@ -210,6 +211,8 @@ public class NetworkControllerImpl extends BroadcastReceiver
         filter.addAction(ConnectivityManager.INET_CONDITION_ACTION);
         filter.addAction(Intent.ACTION_CONFIGURATION_CHANGED);
         filter.addAction(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+        
+        filter.addAction(TelephonyIntents.ACTION_SUBINFO_RECORD_UPDATED);
         mContext.registerReceiver(this, filter);
         mListening = true;
 
@@ -409,7 +412,14 @@ public class NetworkControllerImpl extends BroadcastReceiver
         } else if (action.equals(TelephonyIntents.ACTION_SIM_STATE_CHANGED)) {
             // Might have different subscriptions now.
             updateMobileControllers();
-        } else {
+        } else if (action.equals(TelephonyIntents.ACTION_SUBINFO_RECORD_UPDATED)) { 
+
+        	for (MobileSignalController controller : mMobileSignalControllers.values()) { 
+        	controller.handleBroadcast(intent); 
+        	} 
+
+        	updateMobileControllers(); 
+        }else {
             int subId = intent.getIntExtra(PhoneConstants.SUBSCRIPTION_KEY,
                     SubscriptionManager.INVALID_SUBSCRIPTION_ID);
             if (SubscriptionManager.isValidSubscriptionId(subId)) {
@@ -436,6 +446,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
     }
 
     private void updateMobileControllers() {
+    	Log.d(TAG, "mListening = " + mListening);
         if (!mListening) {
             return;
         }
@@ -443,6 +454,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
         if (subscriptions == null) {
             subscriptions = Collections.emptyList();
         }
+        Log.d(TAG, "hasCorrectMobileControllers(" + subscriptions + ") = " + hasCorrectMobileControllers(subscriptions));
         // If there have been no relevant changes to any of the subscriptions, we can leave as is.
         if (hasCorrectMobileControllers(subscriptions)) {
             // Even if the controllers are correct, make sure we have the right no sims state.
@@ -1049,6 +1061,8 @@ public class NetworkControllerImpl extends BroadcastReceiver
         private SignalStrength mLastSignalStrength;
         private SignalStrength mNextSignalStrength;
         private int mLastSignalLevel;
+        
+        private GnNetworkType mNetworkType = null;
 
         // TODO: Reduce number of vars passed in, if we have the NetworkController, probably don't
         // need listener lists anymore.
@@ -1263,6 +1277,8 @@ public class NetworkControllerImpl extends BroadcastReceiver
 
             int signalClustersLength = mSignalClusters.size();
             for (int i = 0; i < signalClustersLength; i++) {
+				mSignalClusters.get(i).GnsetNetworkType(mNetworkType,
+	                        mSubscriptionInfo.getSimSlotIndex());
                 mSignalClusters.get(i).setMobileDataIndicators(
                         mCurrentState.enabled && !mCurrentState.airplaneMode,
                         getCurrentIconId(),
@@ -1387,7 +1403,11 @@ public class NetworkControllerImpl extends BroadcastReceiver
                 notifyListenersIfNecessary();
             } else if (action.equals(TelephonyIntents.ACTION_DEFAULT_DATA_SUBSCRIPTION_CHANGED)) {
                 updateDataSim();
-            }
+            }else if(action.equals(TelephonyIntents.ACTION_SUBINFO_RECORD_UPDATED)) { 
+            	resetPhoneState(); 
+            	updateNetworkType(); 
+            	updateTelephony(); 
+            } 
         }
 
         private void updateDataSim() {
@@ -1434,6 +1454,108 @@ public class NetworkControllerImpl extends BroadcastReceiver
                 mCurrentState.networkName = mNetworkNameDefault;
             }
         }
+        
+        private final int getNWTypeByPriority(int cs, int ps) {
+            /// By Network Class.
+            if (TelephonyManager.getNetworkClass(cs) > TelephonyManager.getNetworkClass(ps)) {
+                return cs;
+            } else {
+                return ps;
+            }
+        }
+
+        private final void updateNetworkType() {
+            int tempNetworkType; //Big - switch
+
+            if (mServiceState != null) {
+                int networkTypeData = mDataNetType; //Big - Data
+                if ((mDataState == TelephonyManager.DATA_UNKNOWN ||
+                     mDataState == TelephonyManager.DATA_DISCONNECTED)) {
+                    Log.d(TAG, "updateNetworkType: DataState= " + mDataState
+                           + ", getDataNetworkType= " + mServiceState.getDataNetworkType());
+                    networkTypeData = mServiceState.getDataNetworkType();
+                }
+                tempNetworkType = getNWTypeByPriority(mServiceState.getVoiceNetworkType(),
+                                                      networkTypeData);
+            } else {
+                tempNetworkType = mDataNetType;
+            }
+
+            Log.d(TAG, "updateNetworkType: DataNetType=" + mDataNetType + " / " + tempNetworkType);
+            switch (tempNetworkType) {
+                case TelephonyManager.NETWORK_TYPE_UNKNOWN:
+                    if (!mConfig.showAtLeast3G) {
+                        mNetworkType = GnNetworkType.Type_G;
+                        break;
+                    }
+                case TelephonyManager.NETWORK_TYPE_EDGE:
+                    if (!mConfig.showAtLeast3G) {
+                        mNetworkType = GnNetworkType.Type_E;
+                        break;
+                    }
+                case TelephonyManager.NETWORK_TYPE_UMTS:
+                    mNetworkType = GnNetworkType.Type_3G;
+                    break;
+                case TelephonyManager.NETWORK_TYPE_HSDPA:
+                case TelephonyManager.NETWORK_TYPE_HSUPA:
+                case TelephonyManager.NETWORK_TYPE_HSPA:
+                case TelephonyManager.NETWORK_TYPE_HSPAP:
+                    mNetworkType = GnNetworkType.Type_3G;
+                    break;
+                case TelephonyManager.NETWORK_TYPE_CDMA:
+                case TelephonyManager.NETWORK_TYPE_1xRTT:
+                    mNetworkType = GnNetworkType.Type_1X;
+                    break;
+                case TelephonyManager.NETWORK_TYPE_EVDO_0: //fall through
+                case TelephonyManager.NETWORK_TYPE_EVDO_A:
+                case TelephonyManager.NETWORK_TYPE_EVDO_B:
+                case TelephonyManager.NETWORK_TYPE_EHRPD:
+                    mNetworkType = GnNetworkType.Type_1X3G;
+                    break;
+                case TelephonyManager.NETWORK_TYPE_LTE:
+                    mNetworkType = GnNetworkType.Type_4G;
+                    break;
+                default:
+                    if (!mConfig.showAtLeast3G) {
+                        mNetworkType = GnNetworkType.Type_G;
+                    } else {
+                        mNetworkType = GnNetworkType.Type_3G;
+                    }
+                    break;
+            }
+            if (!hasService()) {
+                mNetworkType = null;
+            }
+
+            Log.d(TAG, "updateNetworkType: mNetworkType= " + mNetworkType);
+        }
+        
+        private int getDataNetworkTypeFromService() {
+            int dataNetType = mDataNetType;
+            if (mServiceState != null) {
+                if (mDataState == TelephonyManager.DATA_UNKNOWN ||
+                     mDataState == TelephonyManager.DATA_DISCONNECTED) {
+                     if (DEBUG) {
+                         Log.d(mTag, "getDataNetworkTypeFromService: DataState= " + mDataState +
+                             ", getDataNetworkType= " + mServiceState.getDataNetworkType());
+                     }
+
+                     final int cs = mServiceState.getVoiceNetworkType();
+                     final int ps = mServiceState.getDataNetworkType();
+                     if (DEBUG) {
+                         Log.d(mTag, "getNWTypeByPriority(), CS = " + cs + ", PS = " + ps);
+                     }
+                     dataNetType = getNWTypeByPriority(cs, ps);
+                }
+            }
+
+            if (DEBUG) {
+                Log.d(mTag, "getDataNetworkTypeFromService: mNetworkType= " + mNetworkType +
+                    ", DataNetType= " + mDataNetType + " / " + dataNetType);
+            }
+
+            return dataNetType;
+        }
 
         /**
          * Updates the current state based on mServiceState, mSignalStrength, mDataNetType,
@@ -1442,8 +1564,8 @@ public class NetworkControllerImpl extends BroadcastReceiver
          */
         private final void updateTelephony() {
             if (DEBUG) {
-                Log.d(TAG, "updateTelephonySignalStrength: hasService=" + hasService()
-                        + " ss=" + mSignalStrength + " mSubscriptionInfo.getSimSlotIndex() = " + mSubscriptionInfo.getSimSlotIndex() + " mDataNetType = " + mDataNetType);
+                Log.d(TAG, "mSubscriptionInfo.getSimSlotIndex() = " + mSubscriptionInfo.getSimSlotIndex() + " updateTelephonySignalStrength: hasService=" + hasService()
+                        + " ss=" + mSignalStrength + " mDataNetType = " + mDataNetType);
             }
             mCurrentState.connected = hasService() && mSignalStrength != null;
             if (mCurrentState.connected) {
@@ -1476,6 +1598,18 @@ public class NetworkControllerImpl extends BroadcastReceiver
             notifyListenersIfNecessary();
         }
 
+        private void resetPhoneState() {
+            // onSignalStrengthsChanged
+            mSignalStrength = null;
+            // onServiceStateChanged
+            mServiceState = null;
+            // onDataConnectionStateChanged
+            mDataNetType = TelephonyManager.NETWORK_TYPE_UNKNOWN;
+            mDataState = TelephonyManager.DATA_DISCONNECTED;
+            // onDataActivity
+            //mDataActivity = TelephonyManager.DATA_ACTIVITY_NONE;
+        }
+		
         @VisibleForTesting
         void setActivity(int activity) {
             mCurrentState.activityIn = activity == TelephonyManager.DATA_ACTIVITY_INOUT
@@ -1517,6 +1651,16 @@ public class NetworkControllerImpl extends BroadcastReceiver
                     Log.d(mTag, "onServiceStateChanged voiceState=" + state.getVoiceRegState()
                             + " dataState=" + state.getDataRegState());
                 }
+                
+                int search=state.getRilVoiceRadioTechnology(); 
+                mServiceState = state; 
+                Log.d(TAG, "onServiceStateChanged mServiceState : DataState= " + mDataState 
+                + ", getDataNetworkType= " + mServiceState.getDataNetworkType()); 
+                mDataNetType = mServiceState.getDataNetworkType(); 
+                mDataNetType = getDataNetworkTypeFromService(); 
+                updateNetworkType(); 
+                updateTelephony(); 
+                
                 mServiceState = state;
                 updateTelephony();
             }
@@ -1960,6 +2104,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
         void setIsAirplaneMode(boolean is, int airplaneIcon, int contentDescription);
         void setNetworkType(int networkType, int subId);
         void setMobileInout(boolean visible, int mobileInOut, int subId);
+        void GnsetNetworkType(GnNetworkType networkType, int subId);
     }
 
     public interface EmergencyListener {

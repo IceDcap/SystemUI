@@ -12,14 +12,14 @@ import android.util.Log;
 
 public class GnStartTaskReciver extends BroadcastReceiver {
     
-    private static final String LOG_TAG = "StartTaskReciver";
+    private static final String TAG = "GnStartTaskReciver";
 
     @Override
     public void onReceive(Context context, Intent intent) {
 
         boolean ringFakeCall = intent.getBooleanExtra(GnConstants.START_TASK_OPTR, false);
         
-        Log.d(LOG_TAG, "ring the phone: " + ringFakeCall);
+        Log.d(TAG, "ring the phone: " + ringFakeCall);
 
         GnFakeCallControllerImpl gnFakeCallHelper = GnFakeCallControllerImpl.getInstance();
         if (ringFakeCall) {

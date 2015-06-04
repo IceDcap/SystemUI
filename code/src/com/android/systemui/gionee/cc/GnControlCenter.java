@@ -140,7 +140,9 @@ public class GnControlCenter extends FrameLayout{
     public GnControlCenter(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
-        
+    }
+
+    public void initControlCenter() {
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         filter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);

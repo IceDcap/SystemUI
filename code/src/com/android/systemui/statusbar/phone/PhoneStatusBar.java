@@ -738,6 +738,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mGnControlCenter = new GnControlCenter(mContext);
         mGnControlCenter.addControlCenter(mGnControlCenterView);
         mGnControlCenter.addGnImmerseModeView(mGnImmerseView);
+        mGnControlCenter.initControlCenter();
         mGnControlCenter.setBar(this);
         // Gionee <huangwt> <2014-12-13> add for CR01425226 end
 
@@ -4665,6 +4666,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     activityManager.stopLockTaskModeOnCurrent();
                     // When exiting refresh disabled flags.
                     mNavigationBarView.setDisabledFlags(mDisabled, true);
+                    if (!mWindowManagerService.hasNavigationBar()) { 
+                    	hideNavBar();
+                    }
                 } else if ((v.getId() == R.id.back)
                         && !mNavigationBarView.getRecentsButton().isPressed()) {
                     // If we aren't pressing recents right now then they presses
@@ -4682,6 +4686,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     activityManager.stopLockTaskModeOnCurrent();
                     // When exiting refresh disabled flags.
                     mNavigationBarView.setDisabledFlags(mDisabled, true);
+                    if (!mWindowManagerService.hasNavigationBar()) { 
+                    	hideNavBar(); 
+                    }
                 }
             }
             if (sendBackLongPress) {
@@ -4743,6 +4750,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     public void showScreenPinningRequest(boolean allowCancel) {
         mScreenPinningRequest.showPrompt(allowCancel);
+        showNavBar();
     }
 
     public boolean hasActiveNotifications() {
@@ -4971,4 +4979,49 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     public boolean isKeyguardShowing() {
         return mStatusBarKeyguardViewManager.isShowing();
     }
+    
+    private void showNavBar() { 
+    	/// Inflate navigation bar.
+    	if(mNavigationBarView != null && mNavigationBarView.isAttachedToWindow()){
+    		return;
+    	}
+    	
+    	try { 
+    		boolean showNav = mWindowManagerService.hasNavigationBar(); 
+    		if(showNav) {
+        		return;
+        	}
+    		if (DEBUG) Log.v(TAG, "hasNavigationBar=" + showNav); 
+    		int layoutId = R.layout.navigation_bar; 
+    		mNavigationBarView = (NavigationBarView) View.inflate(mContext, layoutId, null); 
+    		mNavigationBarView.setDisabledFlags(mDisabled);
+    		mNavigationBarView.setBar(this);
+    		mNavigationBarView.setOnVerticalChangedListener( new NavigationBarView.OnVerticalChangedListener() { 
+    			@Override 
+    			public void onVerticalChanged(boolean isVertical) { 
+    				if (mSearchPanelView != null) {
+    					mSearchPanelView.setHorizontal(isVertical); 
+    				} 
+    				mNotificationPanel.setQsScrimEnabled(!isVertical);
+    			} });
+    		mNavigationBarView.setOnTouchListener(
+    				new View.OnTouchListener() { 
+    					@Override 
+    					public boolean onTouch(View v, MotionEvent event) {
+    						checkUserAutohide(v, event);
+    						return false; 
+    						}}); 
+    		} catch (RemoteException ex) { 
+    			// no window manager? good luck with that } 
+    	}
+    	addNavigationBar();
+    }
+    
+  /// Add to WM. addNavigationBar(); }
+    private void hideNavBar() {
+    	if (mNavigationBarView != null) {
+    		mWindowManager.removeViewImmediate(mNavigationBarView); 
+    		mNavigationBarView = null;
+    		} 
+    	}
 }

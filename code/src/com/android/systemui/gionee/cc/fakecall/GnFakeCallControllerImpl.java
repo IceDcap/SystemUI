@@ -13,6 +13,7 @@ import java.util.TimerTask;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
+import android.os.SystemClock;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.animation.Animation;
@@ -21,11 +22,12 @@ import com.android.systemui.R;
 
 public class GnFakeCallControllerImpl implements GnFakeCallController {
     
-    private static final String TAG = "VirtualCallHelper";
+    private static final String TAG = "GnFakeCallController";
 
     private Timer mTimer = null;
     private TimerTask mTimerTask = null;
-    private long mCountTime = GnConstants.CALL_PHONE_TIME;
+    private long mStartTime;
+    private long mLeftTime;
 
     private static GnFakeCall mVirtualPhone;
     protected Animation animation;
@@ -106,8 +108,6 @@ public class GnFakeCallControllerImpl implements GnFakeCallController {
     }
 
     private void stopTimer() {
-        mCountTime = GnConstants.CALL_PHONE_TIME;
-        
         if (mTimer != null) {
             mTimer.cancel();
             mTimer = null;
@@ -128,8 +128,8 @@ public class GnFakeCallControllerImpl implements GnFakeCallController {
             if (mTimerTask == null) {
                 mTimerTask = new TimerTask() {
                     public void run() {
-                        mCountTime --;
-                        if (mCountTime <= 0) {
+                        final long countTime = (SystemClock.elapsedRealtime() - mStartTime) / 1000;
+                        if (countTime >= GnConstants.CALL_PHONE_TIME) {
                             stopTimer();
                             if (!GnFakeCallActivity.getIsVirtualCallIsRunning()) {
                                 Intent intent = mVirtualPhone.createFakeCallIntent();
@@ -137,15 +137,17 @@ public class GnFakeCallControllerImpl implements GnFakeCallController {
                             }
                             notifyChanged(mContext.getString(R.string.gn_sc_fake_call), false, false);
                         } else {
+                            mLeftTime = GnConstants.CALL_PHONE_TIME - countTime;
                             notifyChanged(getCurrentTime(), true, true);
                         }
-                        Log.d(TAG, "mCountTime = " + mCountTime);
+                        Log.d(TAG, "mLeftTime = " + mLeftTime);
                     }
                 };
             }
             
             if (mTimer != null && mTimerTask != null) {
-                mTimer.schedule(mTimerTask, 0, 1000);
+                mStartTime = SystemClock.elapsedRealtime();
+                mTimer.scheduleAtFixedRate(mTimerTask, 0, 1000);
             }
             
         } catch (RuntimeException ex) {
@@ -156,11 +158,11 @@ public class GnFakeCallControllerImpl implements GnFakeCallController {
     public String getCurrentTime() {
         String timeString = "";
         String s = mContext.getResources().getString(R.string.gn_fc_call_tip);
-        int length = String.valueOf(mCountTime).length();
+        int length = String.valueOf(mLeftTime).length();
         if (length == 1) {
-            timeString = "0" + mCountTime;
+            timeString = "0" + mLeftTime;
         } else {
-            timeString = mCountTime + "";
+            timeString = mLeftTime + "";
         }
         
         return timeString + s;

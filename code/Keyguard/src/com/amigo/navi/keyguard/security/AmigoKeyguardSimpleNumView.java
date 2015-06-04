@@ -463,7 +463,7 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
         FingerIdentifyManager fingerIdentifyManager=FingerIdentifyManager.getInstance();
         boolean isFingerSwitchOpen=false;
         if(fingerIdentifyManager!=null){
-            isFingerSwitchOpen = fingerIdentifyManager.readFingerprintSwitchValue();
+            isFingerSwitchOpen = fingerIdentifyManager.getFingerprintSwitchOpen();
         }
         DebugLog.d(LOG_TAG, "getFingerSwitchState  isFingerSwitchOpen: "+isFingerSwitchOpen);
         return isFingerSwitchOpen;

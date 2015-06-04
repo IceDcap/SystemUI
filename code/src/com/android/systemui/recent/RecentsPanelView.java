@@ -670,6 +670,10 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
                             //    mRecentsContainer.getAlpha() > ViewConfiguration.ALPHA_THRESHOLD;
                             boolean animateShow = false;
                             updateLock(h, isLockAppName(td.packageName), animateShow);
+                            if(i == 0 && mLockToAppEnabled) {
+        						h.lockToScreenView.setVisibility(View.VISIBLE);
+        						mLockTaskId = h.taskDescription.persistentTaskId;
+        					}
                             //updateIcon(h, td.getIcon(), true, animateShow);
                             updateThumbnail(h, td.getThumbnail(), true, animateShow);
                             h.loadedThumbnailAndIcon = true;

@@ -306,7 +306,7 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
         FingerIdentifyManager fingerIdentifyManager=FingerIdentifyManager.getInstance();
         boolean isFingerSwitchOpen=false;
         if(fingerIdentifyManager!=null){
-            isFingerSwitchOpen = fingerIdentifyManager.readFingerprintSwitchValue();
+            isFingerSwitchOpen = fingerIdentifyManager.getFingerprintSwitchOpen();
         }
         return isFingerSwitchOpen;
     }

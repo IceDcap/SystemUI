@@ -20,7 +20,7 @@
         xmlns:androidprv="http://schemas.android.com/apk/prv/res/android"
         package="com.android.systemui"
         android:sharedUserId="android.uid.systemui"
-		android:versionName="6.1.0.v"
+		android:versionName="6.1.0.w"
         coreApp="true">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -545,5 +545,11 @@
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
+        
+        <meta-data
+            android:name="AmigoAlarmAlignPermissioin"
+            android:value="522B46260F2AC82415E734D617BC63497F3A73AC25C17C8AA788805A22188624" >
+        </meta-data>
+        
     </application>
 </manifest>

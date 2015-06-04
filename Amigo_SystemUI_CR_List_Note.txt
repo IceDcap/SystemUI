@@ -779,3 +779,12 @@ svn: E205000: Syntax error in revision argument '5715:'
 File does not exist:  at getAppChangeSet.pl line 48
 
 ==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.am' non-existent in revision 5757
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '5756:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
