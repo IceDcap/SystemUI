@@ -80,6 +80,8 @@ public class KeyguardService extends Service {
         @Override // Binder interface
         public void keyguardDone(boolean authenticated, boolean wakeup) {
             checkPermission();
+            Log.d(TAG, "KeyguardService  keyguardDone");
+            if(mKeyguardViewMediator.getIsHallClose())return;
             mKeyguardViewMediator.keyguardDone(authenticated, wakeup);
         }
 

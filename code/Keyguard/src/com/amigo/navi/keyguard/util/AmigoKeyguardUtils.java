@@ -354,4 +354,21 @@ public class AmigoKeyguardUtils {
         }
         return true;
     }
+    
+    
+    private static final String ALARM_ACTIVITY_NAME="com.android.deskclock.alarmclock.AlarmAlert";
+    private static final String IN_CALL_ACTIVITY_NAME="com.android.incallui.InCallActivity";
+
+    public static boolean isAlarmOrInCallActivityTop(Context context){
+        boolean isTop=false;
+        ActivityManager am=(ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<RunningTaskInfo> taskInfos=am.getRunningTasks(1);
+        if(taskInfos!=null&&taskInfos.size()>0){
+            RunningTaskInfo topTaskInfo=taskInfos.get(0);
+            String topActivityName=topTaskInfo.topActivity.getClassName();
+            isTop=ALARM_ACTIVITY_NAME.equals(topActivityName)||IN_CALL_ACTIVITY_NAME.equals(topActivityName);
+            DebugLog.d(LOG_TAG, "topActivityName: "+topActivityName+"  isTop: "+isTop);
+        }
+        return isTop;
+    }
 }

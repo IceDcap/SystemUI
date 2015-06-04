@@ -63,12 +63,12 @@ public class LoadImagePool {
     }
 
     public void loadImage(LoadImageThread runnable,String url) {
-            synchronized (objSync) {
-                if (containInThreadPool(url)) {
-                    return;
-                }
-                mThreadList.add(runnable);
-            }
+//            synchronized (objSync) {
+//                if (containInThreadPool(url)) {
+//                    return;
+//                }
+//                mThreadList.add(runnable);
+//            }
             gnDownLoadExecute(runnable);
     }
     

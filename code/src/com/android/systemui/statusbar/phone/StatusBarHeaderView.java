@@ -42,8 +42,6 @@ import com.android.keyguard.KeyguardStatusView;
 import com.android.systemui.FontSizeUtils;
 import com.android.systemui.R;
 import com.android.systemui.gionee.GnFontHelper;
-import com.android.systemui.qs.QSPanel;
-import com.android.systemui.qs.QSTile;
 import com.android.systemui.statusbar.policy.UserInfoController;
 
 import java.text.NumberFormat;
@@ -90,8 +88,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     private float mAvatarCollapsedScaleFactor;
 
     private ActivityStarter mActivityStarter;
-    private QSPanel mQSPanel;
-
 
     //private final Rect mClipBounds = new Rect();
 
@@ -381,14 +377,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     	mActivityStarter.startActivity(intent, true);
     }
 
-    public void setQSPanel(QSPanel qsp) {
-        mQSPanel = qsp;
-        if (mQSPanel != null) {
-            mQSPanel.setCallback(mQsPanelCallback);
-        }
-        mMultiUserSwitch.setQsPanel(qsp);
-    }
-
     @Override
     public boolean shouldDelayChildPressedState() {
         return true;
@@ -501,73 +489,4 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
             dateCollapsedAlpha = v1.dateCollapsedAlpha * (1 - t3) + v2.dateCollapsedAlpha * t3;
         }
     }
-
-    private final QSPanel.Callback mQsPanelCallback = new QSPanel.Callback() {
-        private boolean mScanState;
-
-        @Override
-        public void onToggleStateChanged(final boolean state) {
-            post(new Runnable() {
-                @Override
-                public void run() {
-                    handleToggleStateChanged(state);
-                }
-            });
-        }
-
-        @Override
-        public void onShowingDetail(final QSTile.DetailAdapter detail) {
-            post(new Runnable() {
-                @Override
-                public void run() {
-                    handleShowingDetail(detail);
-                }
-            });
-        }
-
-        @Override
-        public void onScanStateChanged(final boolean state) {
-            post(new Runnable() {
-                @Override
-                public void run() {
-                    handleScanStateChanged(state);
-                }
-            });
-        }
-
-        private void handleToggleStateChanged(boolean state) {
-        }
-
-        private void handleScanStateChanged(boolean state) {
-            if (mScanState == state) return;
-        }
-
-        private void handleShowingDetail(final QSTile.DetailAdapter detail) {
-            final boolean showingDetail = detail != null;
-            transition(mClock, !showingDetail);
-            transition(mDateGroup, !showingDetail);
-            mShowingDetail = showingDetail;
-        }
-
-        private void transition(final View v, final boolean in) {
-            if (in) {
-                v.bringToFront();
-                v.setVisibility(VISIBLE);
-            }
-            if (v.hasOverlappingRendering()) {
-                v.animate().withLayer();
-            }
-            v.animate()
-                    .alpha(in ? 1 : 0)
-                    .withEndAction(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (!in) {
-                                v.setVisibility(INVISIBLE);
-                            }
-                        }
-                    })
-                    .start();
-        }
-    };
 }

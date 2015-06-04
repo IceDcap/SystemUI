@@ -835,6 +835,7 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 		unlockWithVelocity((int) velY, flingDirection);
 //        }
 //		mIsTriggerShortcut=false;
+		mScrollDirection=DIRECTION_NONE;
 		return true;
 	}
 	
@@ -1094,13 +1095,12 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 			
 		}
 		DebugLog.d(LOG_TAG, "show()....options="+(options!=null? options.getBoolean(KeyguardViewHostManager.KEYGUARD_LOCK_BY_OTHERAPP) : false ));
-		if(options!=null && options.getBoolean(KeyguardViewHostManager.KEYGUARD_LOCK_BY_OTHERAPP)){
-			resetHostYToHomePosition();
-		}
+		resetHostYToHomePosition();
 		if(mKeyguardBouncer!=null){
 			mKeyguardBouncer.show(true);
 		}
 		
+		mBouncerIsShowing=false;
 	}
 	
     public void showBouncerOrKeyguard() {
@@ -1454,6 +1454,14 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 	public void securityViewRemoveAnimationUpdating(int top ,int maxBoundY) {
 		mUIController.securityViewRemoveAnimationUpdating(top, maxBoundY);
 		
+	}
+	
+	public  boolean isTriggerMove(){
+		if(mScrollDirection==DIRECTION_NONE){
+			return false;
+		}else{
+			return true;
+		}
 	}
 
 }

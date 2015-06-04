@@ -71,6 +71,7 @@
     <dimen name="gn_recent_thumbnail_padding_left">4dp</dimen>
     <dimen name="gn_recent_linear_panding_left">81dp</dimen>
     <dimen name="gn_recent_scan_view_width">48dp</dimen>
+    <dimen name="gn_recents_lock_to_app_size">30dp</dimen>
 	
     <!-- Control center -->
     <dimen name="gn_cc_height">324dp</dimen>

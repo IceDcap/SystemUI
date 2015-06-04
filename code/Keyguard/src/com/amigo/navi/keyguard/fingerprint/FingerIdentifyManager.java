@@ -80,32 +80,36 @@ public class FingerIdentifyManager {
         if(!isSupportFinger){
             return false;
         }
+        DebugLog.d(LOG_TAG, "isActiveFingerPrint  switchOpen: "+mFingerprintSwitchOpen);
         if (!mFingerprintSwitchOpen) {
             return false;
         }
         boolean isSecure = manager.isSecure();
+        DebugLog.d(LOG_TAG, "isActiveFingerPrint  isSecure: "+isSecure);
         if (!isSecure) {
             return false;
         }
         boolean isSkylightShown = manager.getIsSkylightShown();
+        DebugLog.d(LOG_TAG, "isActiveFingerPrint  isSkylightShown: "+isSkylightShown);
         if (isSkylightShown) {
             return false;
         }
         boolean isKeyguardShown = manager.isShowingAndNotOccluded();
+        DebugLog.d(LOG_TAG, "isActiveFingerPrint  isKeyguardShown: "+isKeyguardShown);
         if (!isKeyguardShown) {
             return false;
         }
         boolean isScreenOn=manager.isScreenOn();
+        DebugLog.d(LOG_TAG, "isActiveFingerPrint  isScreenOn: "+isScreenOn);
         if(!isScreenOn){
             return false;
         }
         
         boolean isSimRequired = manager.needsFullscreenBouncer();
+        DebugLog.d(LOG_TAG, "isActiveFingerPrint  isSimRequired: "+isSimRequired);
         if (isSimRequired) {
             return false;
         }
-        
-        
         return true;
     }
     
@@ -269,7 +273,7 @@ public class FingerIdentifyManager {
         KeyguardViewHostManager hostManager = KeyguardViewHostManager.getInstance();
         boolean isSecureFrozen = hostManager.passwordViewIsForzen();
         boolean isAtHomePosition = hostManager.isAmigoHostYAtHomePostion();
-        DebugLog.d(LOG_TAG, "onFingerIdentify  isSecureFrozen: "+isSecureFrozen);
+        DebugLog.d(LOG_TAG, "onFingerIdentify  isSecureFrozen: "+isSecureFrozen+"  isScreenOn:"+hostManager.isScreenOn());
         if (isSecureFrozen) {
             if (isAtHomePosition) {
                 hostManager.scrollToUnlockHeightByOther(true);

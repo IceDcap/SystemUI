@@ -118,8 +118,6 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
                 loadFailDealWith(url, failReason);
                 break;
             case GET_BITMAP_SUCCESS:
-                Log.v(LOG_TAG,
-                        "handleMessage this.hashCode():" + this.hashCode());
                 loadBitmapCompleteDealWith(url, bitmap);
                 break;
             case GET_BITMAP_START:
@@ -162,6 +160,7 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
         }
         if (!isCurUrl) {
             this.setImageResource(mConfig.startBitmapID);
+//            this.setImageBitmap(null);
         }
         if(isPrintLog){
             DebugLog.d(LOG_TAG,"loadImageBitmap mConfig:" + mConfig);
@@ -194,9 +193,8 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
             @Override
             public void onLoadingStarted(String imageUri) {
                 if(isPrintLog){
-                    DebugLog.d("HorizontalListView","makeAndAddView onLoadingStarted");
+                    DebugLog.d(LOG_TAG,"onLoadingStarted imageUri:" + imageUri);
                 }
-                Log.v(LOG_TAG, "loadImageBitmap onLoadingStarted");
                 HandlerObj handlerObj = new HandlerObj();
                 handlerObj.setUrl(imageUri);
                 Message message = mHandle.obtainMessage(GET_BITMAP_START);
@@ -207,13 +205,10 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
 
             @Override
             public void onLoadingFailed(String imageUri, FailReason failReason) {
-                if(isPrintLog){
-                	DebugLog.d("HorizontalListView","makeAndAddView onLoadingFailed");
-                }
 //                WallpaperDB.getInstance(getContext().getApplicationContext()).updateDownLoadNotFinish(wallpaper);
                 mLoadState = State.FAILED;
                 if(isPrintLog){
-                    Log.v(LOG_TAG, "loadImageBitmap onLoadingFailed imageUri:" + imageUri);
+                    DebugLog.d(LOG_TAG, "onLoadingFailed imageUri:" + imageUri);
                 }
                 int what = GET_BITMAP_FAIL;
                 if(wallpaper.getType() == Wallpaper.WALLPAPER_FROM_WEB){
@@ -245,11 +240,8 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
                 // TODO Auto-generated method stub
                 mLoadState = State.LOADED;
                 if(isPrintLog){
-                    Log.v(LOG_TAG, "loadImageBitmap onLoadingComplete imageUri:"
-                            + imageUri);
-                    Log.v(LOG_TAG, "onLoadingComplete loadedImage:" + loadedImage);
-                    DebugLog.d("HorizontalListView","makeAndAddView imageUri:" + imageUri);
-                    DebugLog.d("HorizontalListView","makeAndAddView loadedImage:" + loadedImage);
+                    DebugLog.d(LOG_TAG,"onLoadingComplete imageUri:" + imageUri);
+                    DebugLog.d(LOG_TAG,"onLoadingComplete loadedImage:" + loadedImage);
                 }
                 HandlerObj handlerObj = new HandlerObj();
                 handlerObj.setUrl(imageUri);
@@ -262,7 +254,7 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
             @Override
             public void onLoadingCancelled(String imageUri) {
                 if(isPrintLog){
-                    DebugLog.d("HorizontalListView","makeAndAddView onLoadingCancelled");
+                    DebugLog.d(LOG_TAG,"onLoadingCancelled onLoadingCancelled");
                 }
                 mLoadState = State.CANCELLED;
             }
@@ -390,7 +382,11 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
     }
 
     private void loadBitmapCompleteDealWith(String url, Bitmap loadedImage) {
-        if (this.getTag() != null && url.equals(this.getTag())) {
+        if(isPrintLog){
+            DebugLog.d(LOG_TAG,"loadBitmapCompleteDealWith url:" + url + 
+            		" loadedImage:" + loadedImage + " this.getTag():" + this.getTag());
+        }
+    	if (this.getTag() != null && url.equals(this.getTag())) {
             loadBitmapCompleted(url, loadedImage);
         } else if (this.getTag() == null) {
             loadBitmapCompleted(url, loadedImage);

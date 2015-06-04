@@ -50,8 +50,6 @@ import com.android.systemui.R;
 import com.android.systemui.gionee.GnBlurHelper;
 import com.android.systemui.gionee.nc.ui.GnNotficationHandlerView;
 import com.android.systemui.keyguard.KeyguardViewMediator;
-import com.android.systemui.qs.QSContainer;
-import com.android.systemui.qs.QSPanel;
 import com.android.systemui.statusbar.ExpandableView;
 import com.android.systemui.statusbar.FlingAnimationUtils;
 import com.android.systemui.statusbar.GestureRecorder;

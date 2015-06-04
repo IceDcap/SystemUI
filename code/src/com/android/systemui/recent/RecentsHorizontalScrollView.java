@@ -232,9 +232,18 @@ public class RecentsHorizontalScrollView extends HorizontalScrollView
                     mCallback.handleOnClick(view);
                 }
             };
+            
+            OnClickListener lockToScreenClickListener =  new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					mCallback.handleLockToScreen(view);
+				}
+			};
 
             RecentsPanelView.ViewHolder holder = (RecentsPanelView.ViewHolder) view.getTag();
             final View thumbnailView = holder.thumbnailView;
+            final View lockToScreenView = holder.lockToScreenView;
             /*OnLongClickListener longClickListener = new OnLongClickListener() {
                 public boolean onLongClick(View v) {
                     final View anchorView = view.findViewById(R.id.app_description);
@@ -244,6 +253,8 @@ public class RecentsHorizontalScrollView extends HorizontalScrollView
             };*/
             thumbnailView.setClickable(true);
             thumbnailView.setOnClickListener(launchAppListener);
+            lockToScreenView.setClickable(true);
+            lockToScreenView.setOnClickListener(lockToScreenClickListener);
             //thumbnailView.setOnLongClickListener(longClickListener);
 
             // We don't want to dismiss recents if a user clicks on the app title

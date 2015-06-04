@@ -50,6 +50,7 @@ public abstract class GnQSTile<TState extends State> implements Listenable {
     protected final String mSpec;
 
     private ArrayList<Callback> mCallback = new ArrayList<Callback>();
+    private ArrayList<ExtendCallback> mExtendCallback = new ArrayList<ExtendCallback>();
     public final TState mState = newTileState();
     private final TState mTmpState = newTileState();
     private boolean mAnnounceNextStateChange;
@@ -97,6 +98,10 @@ public abstract class GnQSTile<TState extends State> implements Listenable {
     public void setCallback(Callback callback) {
         mHandler.obtainMessage(H.SET_CALLBACK, callback).sendToTarget();
     }
+    
+    public void setExtendCallback(ExtendCallback callback) {
+        mHandler.obtainMessage(H.SET_EXTEND_CALLBACK, callback).sendToTarget();
+    }
 
     public void click() {
         mHandler.sendEmptyMessage(H.CLICK);
@@ -143,6 +148,11 @@ public abstract class GnQSTile<TState extends State> implements Listenable {
         mCallback.add(callback);
         handleRefreshState(null);
     }
+    
+    private void handleSetExtendCallback(ExtendCallback callback) {
+        mExtendCallback.add(callback);
+        handleRefreshState(null);
+    }
 
     protected void handleSecondaryClick() {
         // optional
@@ -157,11 +167,15 @@ public abstract class GnQSTile<TState extends State> implements Listenable {
     }
 
     private void handleStateChanged() {
-        boolean delayAnnouncement = shouldAnnouncementBeDelayed();
         for (Callback callback : mCallback) {
             callback.onStateChanged(mState);
         }
         
+        for (ExtendCallback cb : mExtendCallback) {
+            cb.onStateChanged(mState);
+        }
+        
+        boolean delayAnnouncement = shouldAnnouncementBeDelayed();
         mAnnounceNextStateChange = mAnnounceNextStateChange && delayAnnouncement;
     }
 
@@ -180,6 +194,7 @@ public abstract class GnQSTile<TState extends State> implements Listenable {
     protected void handleDestroy() {
         setListening(false);
         mCallback.clear();
+        mExtendCallback.clear();
     }
 
     protected final class H extends Handler {
@@ -193,6 +208,7 @@ public abstract class GnQSTile<TState extends State> implements Listenable {
         private static final int TOGGLE_STATE_CHANGED = 8;
         private static final int SCAN_STATE_CHANGED = 9;
         private static final int DESTROY = 10;
+        private static final int SET_EXTEND_CALLBACK = 11;
 
         private H(Looper looper) {
             super(looper);
@@ -224,6 +240,9 @@ public abstract class GnQSTile<TState extends State> implements Listenable {
                 } else if (msg.what == DESTROY) {
                     name = "handleDestroy";
                     handleDestroy();
+                } else if (msg.what == SET_EXTEND_CALLBACK) {
+                    name = "handleSetExtendCallback";
+                    handleSetExtendCallback((GnQSTile.ExtendCallback) msg.obj);
                 } else {
                     throw new IllegalArgumentException("Unknown msg: " + msg.what);
                 }
@@ -236,6 +255,10 @@ public abstract class GnQSTile<TState extends State> implements Listenable {
     }
 
     public interface Callback {
+        void onStateChanged(State state);
+    }
+    
+    public interface ExtendCallback {
         void onStateChanged(State state);
     }
 

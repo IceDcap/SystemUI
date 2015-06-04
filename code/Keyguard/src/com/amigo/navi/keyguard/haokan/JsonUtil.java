@@ -302,7 +302,7 @@ public class JsonUtil {
         WallpaperList list = null;
         FileInputStream is = null;
         try {
-            is = new FileInputStream(FileUtil.WALLPAPER_LOCATION_FILE);
+            is = new FileInputStream(FileUtil.WALLPAPER_XML_LOCATION);
 //            is = context.getAssets().open("wallpaper.xml");
             int size = is.available();
             byte[] buffer = new byte[size];

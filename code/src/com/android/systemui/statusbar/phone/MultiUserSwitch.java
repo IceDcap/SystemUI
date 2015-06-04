@@ -28,7 +28,7 @@ import android.view.accessibility.AccessibilityEvent;
 import android.widget.FrameLayout;
 
 import com.android.systemui.R;
-import com.android.systemui.qs.QSPanel;
+//import com.android.systemui.qs.QSPanel;
 import com.android.systemui.statusbar.policy.KeyguardUserSwitcher;
 import com.android.systemui.statusbar.policy.UserSwitcherController;
 
@@ -37,7 +37,7 @@ import com.android.systemui.statusbar.policy.UserSwitcherController;
  */
 public class MultiUserSwitch extends FrameLayout implements View.OnClickListener {
 
-    private QSPanel mQsPanel;
+//    private QSPanel mQsPanel;
     private KeyguardUserSwitcher mKeyguardUserSwitcher;
     private boolean mKeyguardMode;
     final UserManager mUserManager;
@@ -53,9 +53,9 @@ public class MultiUserSwitch extends FrameLayout implements View.OnClickListener
         setOnClickListener(this);
     }
 
-    public void setQsPanel(QSPanel qsPanel) {
-        mQsPanel = qsPanel;
-    }
+//    public void setQsPanel(QSPanel qsPanel) {
+//        mQsPanel = qsPanel;
+//    }
 
     public void setKeyguardUserSwitcher(KeyguardUserSwitcher keyguardUserSwitcher) {
         mKeyguardUserSwitcher = keyguardUserSwitcher;
@@ -73,13 +73,13 @@ public class MultiUserSwitch extends FrameLayout implements View.OnClickListener
                     mKeyguardUserSwitcher.show(true /* animate */);
                 }
             } else {
-                if (mQsPanel != null) {
-                    UserSwitcherController userSwitcherController =
-                            mQsPanel.getHost().getUserSwitcherController();
-                    if (userSwitcherController != null) {
-                        mQsPanel.showDetailAdapter(true, userSwitcherController.userDetailAdapter);
-                    }
-                }
+//                if (mQsPanel != null) {
+//                    UserSwitcherController userSwitcherController =
+//                            mQsPanel.getHost().getUserSwitcherController();
+//                    if (userSwitcherController != null) {
+//                        mQsPanel.showDetailAdapter(true, userSwitcherController.userDetailAdapter);
+//                    }
+//                }
             }
         } else {
             Intent intent = ContactsContract.QuickContact.composeQuickContactsIntent(
@@ -97,13 +97,13 @@ public class MultiUserSwitch extends FrameLayout implements View.OnClickListener
             String text;
             if (UserSwitcherController.isUserSwitcherAvailable(mUserManager)) {
                 String currentUser = null;
-                if (mQsPanel != null) {
-                    UserSwitcherController controller = mQsPanel.getHost()
-                            .getUserSwitcherController();
-                    if (controller != null) {
-                        currentUser = controller.getCurrentUserName(mContext);
-                    }
-                }
+//                if (mQsPanel != null) {
+//                    UserSwitcherController controller = mQsPanel.getHost()
+//                            .getUserSwitcherController();
+//                    if (controller != null) {
+//                        currentUser = controller.getCurrentUserName(mContext);
+//                    }
+//                }
                 if (TextUtils.isEmpty(currentUser)) {
                     text = mContext.getString(R.string.accessibility_multi_user_switch_switcher);
                 } else {

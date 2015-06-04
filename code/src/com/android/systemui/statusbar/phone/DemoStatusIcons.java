@@ -27,7 +27,7 @@ import com.android.internal.statusbar.StatusBarIcon;
 import com.android.systemui.DemoMode;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.StatusBarIconView;
-import com.android.systemui.statusbar.policy.LocationControllerImpl;
+import com.android.systemui.gionee.cc.qs.policy.GnLocationControllerImpl;
 
 public class DemoStatusIcons extends LinearLayout implements DemoMode {
     private final LinearLayout mStatusIcons;
@@ -80,9 +80,9 @@ public class DemoStatusIcons extends LinearLayout implements DemoMode {
             }
             String location = args.getString("location");
             if (location != null) {
-                int iconId = location.equals("show") ? LocationControllerImpl.LOCATION_STATUS_ICON_ID
+                int iconId = location.equals("show") ? GnLocationControllerImpl.LOCATION_STATUS_ICON_ID
                         : 0;
-                updateSlot(LocationControllerImpl.LOCATION_STATUS_ICON_PLACEHOLDER, null, iconId);
+                updateSlot(GnLocationControllerImpl.LOCATION_STATUS_ICON_PLACEHOLDER, null, iconId);
             }
             String alarm = args.getString("alarm");
             if (alarm != null) {

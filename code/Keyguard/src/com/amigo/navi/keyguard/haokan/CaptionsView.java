@@ -170,8 +170,10 @@ public class CaptionsView extends RelativeLayout {
                 if (mContentVisible) {
                     UIController.getInstance().hideKeyguardNotification();
                     
-                    if (isGuideClickViewShowing() && Guide.needGuideClickTitle()) {
-                        stopGuide();
+                    if (Guide.needGuideClickTitle()) {
+                        if (isGuideClickViewShowing()) {
+                            stopGuide();
+                        }
                         Guide.setBooleanSharedConfig(getContext(), Guide.GUIDE_CLICK_TITLE, false);
                         Guide.setNeedGuideClickTitle(false);
                     }

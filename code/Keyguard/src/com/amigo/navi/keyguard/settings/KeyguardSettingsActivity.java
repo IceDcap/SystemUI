@@ -471,7 +471,8 @@ public class KeyguardSettingsActivity extends Activity {
     
 	// 壁纸更新引导动画
 	private void guideEnterAnimation() {
-		if (KeyguardSettings.getEverOpened(getApplicationContext())) {
+		// 安装时不清数据会出现壁纸更新开关未操作但是为开启情况
+		if (KeyguardSettings.getEverOpened(getApplicationContext()) || KeyguardSettings.getWallpaperUpadteState(getApplicationContext())) {
 			return;
 		}
 		

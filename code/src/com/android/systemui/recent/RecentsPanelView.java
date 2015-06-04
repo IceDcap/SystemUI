@@ -31,6 +31,7 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.database.ContentObserver;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -106,6 +107,9 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
     private final static String LOCK_APP_NAME_FILE = "lock";
     private final static String PACKAGE_NAME = "packageName";
     private final int MSG_STOP_SCAN_ANIM = 0;
+    
+    private boolean mLockToAppEnabled;
+    private int mLockTaskId;
 
     public static interface RecentsScrollView {
         public int numItemsInOneScreenful();
@@ -205,6 +209,8 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
         boolean loadedThumbnailAndIcon;
         ImageView lockView;
         boolean isLockApp;
+        //screen lock
+        ImageView lockToScreenView;
     }
     
     // Gionee <hunagwt> <2015-3-14> add for CR01453589 begin
@@ -218,7 +224,8 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
                 && v.descriptionView != null
                 && v.calloutLine != null
                 && v.taskDescription != null
-                && v.lockView != null;
+                && v.lockView != null
+        		&& v.lockToScreenView != null;
     }
     // Gionee <hunagwt> <2015-3-14> add for CR01453589 end
 
@@ -258,6 +265,7 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
             holder.descriptionView = (TextView) convertView.findViewById(R.id.app_description);
 
             holder.lockView = (ImageView) convertView.findViewById(R.id.app_lock);
+            holder.lockToScreenView = (ImageView) convertView.findViewById(R.id.lock_to_app_fab);
             
             convertView.setTag(holder);
             return convertView;
@@ -377,6 +385,9 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
         mRecentItemLayoutId = a.getResourceId(R.styleable.RecentsPanelView_recentItemLayout, 0);
         mRecentTasksLoader = RecentTasksLoader.getInstance(context);
         a.recycle();
+        context.getContentResolver().registerContentObserver(
+        		Settings.System.getUriFor(Settings.System.LOCK_TO_APP_ENABLED), false, mScreenLockObserver);
+        mLockToAppEnabled = Settings.System.getInt(getContext().getContentResolver(), Settings.System.LOCK_TO_APP_ENABLED, 0) != 0;
     }
 
     public int numItemsInOneScreenful() {
@@ -681,6 +692,10 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
 				if(view != null && view.getTag() instanceof ViewHolder) {
 					ViewHolder holder = (ViewHolder) view.getTag();
 					updateLock(holder, isLockAppName(holder.taskDescription.packageName), true);
+					if(i == 0 && mLockToAppEnabled) {
+						holder.lockToScreenView.setVisibility(View.VISIBLE);
+						mLockTaskId = holder.taskDescription.persistentTaskId;
+					}
 				}
 			}
 		}
@@ -1058,4 +1073,19 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
 			}
 		}
     };
+
+	@Override
+	public void handleLockToScreen(View selectedView) {
+		// TODO Auto-generated method stub
+		((RecentsActivity) getContext()).onScreenPinningRequest();
+		simulateClick(mLockTaskId);
+	}
+	
+	private ContentObserver mScreenLockObserver = new ContentObserver(new Handler()) {
+
+		@Override
+		public void onChange(boolean selfChange) {
+			mLockToAppEnabled = Settings.System.getInt(getContext().getContentResolver(), Settings.System.LOCK_TO_APP_ENABLED, 0) != 0;
+		}
+	};
 }

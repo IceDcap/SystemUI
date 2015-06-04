@@ -95,6 +95,8 @@ public class GnControlCenterMoreView extends FrameLayout implements View.OnClick
             updateHeaderTextSize(res, R.dimen.gn_qs_more_header_text_size);
         }
         mHeader.setLayoutParams(lp);
+        mSave.setText(R.string.gn_qs_more_save);
+        mCancel.setText(R.string.gn_qs_more_cancel);
     }
 
     private void updateHeaderTextSize(Resources res, int size) {

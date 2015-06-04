@@ -737,3 +737,45 @@ Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.b
 Code difference: svn diff -r 5641:4744 http://192.168.110.97/svn/Amigo_SystemUI/trunk
 
 ==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V' non-existent in revision 5674
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '5674:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01296451      Opened     jingyn     解决rom锁屏bug
+CR01459185      Opened     zhaowei    {Navi锁屏}提交Navi锁屏代码
+CR01476621      Opened     hanjuan    好看壁纸代码合入（统计）
+CR01490826      Coded      huangwt    【5.1MP】工厂：后台运行多个程序,截屏保存,按APP键,点击一键清除,拉下通知栏,点击关闭,一键清除图标抖动,一直显示,按返回恢复
+CR01493413      Coded      jiating    时钟：屏幕锁定方式设置图案锁，休眠时间设置无限时，时钟，计时器，时间到点击确定，屏幕显示锁屏壁纸，屏幕锁定
+CR01494700      Coded      jiating    【5.1MP】品质压力:灭屏状态下翻转手机》自动亮屏后解锁界面右边的边缘显示为红色》1min后操作恢复正常 5/50
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.t
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.s
+Code difference: svn diff -r 5690:5676 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01425226      Opened     huangwt    android L 新功能 控制中心
+CR01459185      Opened     zhaowei    {Navi锁屏}提交Navi锁屏代码
+CR01476432      Opened     pengwei    【好看壁纸】代码合入SystemUI
+CR01490112      Coded      guozj      【5.1MP】Amigo桌面：点击APP键-灭屏亮屏解锁，桌面会显示多任务界面的清除应用进程按钮并且闪一下（必现）
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.u
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.t
+Code difference: svn diff -r 5707:5693 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.aj' non-existent in revision 5719
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '5715:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================

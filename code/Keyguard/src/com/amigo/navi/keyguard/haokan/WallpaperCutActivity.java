@@ -26,6 +26,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -77,6 +78,8 @@ public class WallpaperCutActivity extends Activity {
     protected boolean mInit = false;
 
     private Handler mHandler = new Handler();
+    
+    private String filePath = null;
 
     private Runnable mToastRunnable = new Runnable() {
         @Override
@@ -100,7 +103,7 @@ public class WallpaperCutActivity extends Activity {
         mImageView = (CutImageView) findViewById(R.id.image);
         mCropImageView = (CropImageView) findViewById(R.id.display_crop);
 
-        String filePath = null;
+        
         Intent intent = getIntent();
         if (Intent.ACTION_ATTACH_DATA.equals(intent.getAction())) {
             filePath = intent.getDataString();
@@ -276,7 +279,13 @@ public class WallpaperCutActivity extends Activity {
     private void setSrceenLockWallpaper(Bitmap bitmap) {
  
         Log.v(TAG, "bitmap " + bitmap.getWidth() + " " + bitmap.getHeight());
-        UIController.getInstance().setSrceenLockWallpaper(this.getApplicationContext(),bitmap);
+        Log.v("haokan", "filePath = " + filePath);
+        String fileName = null; 
+        if (!TextUtils.isEmpty(filePath)) {
+            fileName = filePath.substring(filePath.lastIndexOf("%") + 1);
+        }
+        Log.v("haokan", "fileName = " + fileName);
+        UIController.getInstance().setSrceenLockWallpaper(this.getApplicationContext(), bitmap, fileName);
     }
 
     private Bitmap getCropBitmap() throws ArithmeticException {

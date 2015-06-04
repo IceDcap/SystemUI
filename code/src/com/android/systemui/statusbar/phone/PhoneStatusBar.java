@@ -136,7 +136,6 @@ import com.android.systemui.gionee.nc.GnNotificationService;
 import com.android.systemui.gionee.nc.GnNotificationService.NotificationType;
 import com.android.systemui.gionee.nc.ui.GnNotificationLevelHeader;
 import com.android.systemui.keyguard.KeyguardViewMediator;
-import com.android.systemui.qs.QSPanel;
 import com.android.systemui.recent.ScreenPinningRequest;
 import com.android.systemui.statusbar.ActivatableNotificationView;
 import com.android.systemui.statusbar.BackDropView;
@@ -159,20 +158,14 @@ import com.android.systemui.statusbar.phone.UnlockMethodCache.OnUnlockMethodChan
 import com.android.systemui.statusbar.policy.AccessibilityController;
 import com.android.systemui.statusbar.policy.BatteryController;
 import com.android.systemui.statusbar.policy.BatteryController.BatteryStateChangeCallback;
-import com.android.systemui.statusbar.policy.BluetoothControllerImpl;
-import com.android.systemui.statusbar.policy.BrightnessMirrorController;
-import com.android.systemui.statusbar.policy.CastControllerImpl;
 import com.android.systemui.statusbar.policy.FlashlightController;
 import com.android.systemui.statusbar.policy.HeadsUpNotificationView;
-import com.android.systemui.statusbar.policy.HotspotControllerImpl;
 import com.android.systemui.statusbar.policy.KeyButtonView;
 import com.android.systemui.statusbar.policy.KeyguardMonitor;
 import com.android.systemui.statusbar.policy.KeyguardUserSwitcher;
-import com.android.systemui.statusbar.policy.LocationControllerImpl;
 import com.android.systemui.statusbar.policy.NetworkControllerImpl;
 import com.android.systemui.statusbar.policy.NextAlarmController;
 import com.android.systemui.statusbar.policy.PreviewInflater;
-import com.android.systemui.statusbar.policy.RotationLockControllerImpl;
 import com.android.systemui.statusbar.policy.SecurityControllerImpl;
 import com.android.systemui.statusbar.policy.UserInfoController;
 import com.android.systemui.statusbar.policy.UserSwitcherController;
@@ -263,22 +256,16 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     PhoneStatusBarPolicy mIconPolicy;
 
     // These are no longer handled by the policy, because we need custom strategies for them
-    BluetoothControllerImpl mBluetoothController;
     SecurityControllerImpl mSecurityController;
     BatteryController mBatteryController;
-    LocationControllerImpl mLocationController;
     NetworkControllerImpl mNetworkController;
-    HotspotControllerImpl mHotspotController;
-    RotationLockControllerImpl mRotationLockController;
     UserInfoController mUserInfoController;
     ZenModeController mZenModeController;
-    CastControllerImpl mCastController;
     VolumeComponent mVolumeComponent;
     KeyguardUserSwitcher mKeyguardUserSwitcher;
     UserSwitcherController mUserSwitcherController;
     NextAlarmController mNextAlarmController;
     KeyguardMonitor mKeyguardMonitor;
-    BrightnessMirrorController mBrightnessMirrorController;
     GnNetworkSpeedController mGnNetworkSpeedController;
     GnSkyLightStatusBar mGnSkyLightStatusBar;
 
@@ -620,7 +607,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         // Gionee <huangwt> <2014-12-13> add for CR01425226 end
 
         // Lastly, call to the icon policy to install/update all the icons.
-        mIconPolicy = new PhoneStatusBarPolicy(mContext, mCastController, mHotspotController);
+        mIconPolicy = new PhoneStatusBarPolicy(mContext);
         mSettingsObserver.onChange(false); // set up
 
         mHeadsUpObserver.onChange(true); // set up
@@ -825,7 +812,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mHandlerThread.start();
 
         // Other icons
-        mLocationController = new LocationControllerImpl(mContext); // will post a notification
         mBatteryController = new BatteryController(mContext);
         mBatteryController.addIconView((ImageView) mStatusBarView.findViewById(R.id.battery));
         mBatteryController.addIconView((ImageView) mStatusBarView.findViewById(R.id.batterycharge));
@@ -847,18 +833,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             }
         });*/
         mNetworkController = new NetworkControllerImpl(mContext);
-        mHotspotController = new HotspotControllerImpl(mContext);
-        mBluetoothController = new BluetoothControllerImpl(mContext, mHandlerThread.getLooper());
         mSecurityController = new SecurityControllerImpl(mContext);
-        if (mContext.getResources().getBoolean(R.bool.config_showRotationLock)) {
-            mRotationLockController = new RotationLockControllerImpl(mContext);
-        }
         mUserInfoController = new UserInfoController(mContext);
         mVolumeComponent = getComponent(VolumeComponent.class);
         if (mVolumeComponent != null) {
             mZenModeController = mVolumeComponent.getZenController();
         }
-        mCastController = new CastControllerImpl(mContext);
         final SignalClusterView signalCluster =
                 (SignalClusterView) mStatusBarView.findViewById(R.id.signal_cluster);
 //        final SignalClusterView signalClusterKeyguard =
@@ -3546,12 +3526,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (mNetworkController != null) {
             mNetworkController.dump(fd, pw, args);
         }
-        if (mBluetoothController != null) {
-            mBluetoothController.dump(fd, pw, args);
-        }
-        if (mCastController != null) {
-            mCastController.dump(fd, pw, args);
-        }
         if (mUserSwitcherController != null) {
             mUserSwitcherController.dump(fd, pw, args);
         }
@@ -3824,9 +3798,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
         if (mHeadsUpNotificationView != null) {
             mHeadsUpNotificationView.updateResources();
-        }
-        if (mBrightnessMirrorController != null) {
-            mBrightnessMirrorController.updateResources();
         }
     }
 

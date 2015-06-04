@@ -326,6 +326,7 @@ public class RequestNicePicturesFromInternet {
                     	savedSuccess = dealWithBitmap.writeToLocal(key,cutBitmap);
                     	BitmapUtil.recycleBitmap(bitmap);
                     	BitmapUtil.recycleBitmap(cutBitmap);
+                    	System.gc();
                     }
                     DebugLog.d(TAG,"downloadWallpaperPicturesFromNet savedSuccess:" + savedSuccess);
                     if(savedSuccess){
@@ -408,6 +409,7 @@ public class RequestNicePicturesFromInternet {
                 wallpaperDB.insertAfterDeleteAll(wallpaperList);
                 Common.setUpdateWallpaperDate(mContext,date);
                 isFirst = false;
+                UIController.getInstance().setNewWallpaperToDisplay(true);
             }
 			return isFirst;
 		}

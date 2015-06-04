@@ -51,7 +51,9 @@ import android.widget.Toast;
 
 import com.android.systemui.R;
 import com.android.systemui.SwipeHelper;
+import com.android.systemui.SystemUIApplication;
 import com.android.systemui.statusbar.StatusBarPanel;
+import com.android.systemui.statusbar.phone.PhoneStatusBar;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -107,6 +109,9 @@ public class RecentsActivity extends Activity implements OnClickListener , OnLon
     private int mPreAngle = 0;
     private int mAngle = 0;
     private int mStopTime = 0;
+    private boolean isClearing = false;
+    
+    private PhoneStatusBar mStatusBar;
 
     private BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
         @Override
@@ -160,6 +165,7 @@ public class RecentsActivity extends Activity implements OnClickListener , OnLon
         if (mRecentsPanel != null) {
         	mRecentsPanel.show(false);
             mRecentsPanel.onUiHidden();
+            mRecentsPanel.setVisibility(View.GONE);
         }
         super.onStop();
         finish();
@@ -291,6 +297,8 @@ public class RecentsActivity extends Activity implements OnClickListener , OnLon
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);*/
         mRecentsPanel.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+        mStatusBar = ((SystemUIApplication) getApplication())
+                .getComponent(PhoneStatusBar.class);
 
         final RecentTasksLoader recentTasksLoader = RecentTasksLoader.getInstance(this);
         recentTasksLoader.setRecentsPanel(mRecentsPanel, mRecentsPanel);
@@ -399,6 +407,7 @@ public class RecentsActivity extends Activity implements OnClickListener , OnLon
 
     @Override
     public void onClick(View v) {
+        isClearing = true;
         mStopTime = 10;
         mMemoryUsed = getMemoryAvailable();
         mHandler.removeMessages(MSG_SCAN);
@@ -487,6 +496,7 @@ public class RecentsActivity extends Activity implements OnClickListener , OnLon
                         formatMemory(getMemoryAvailable()),
                         formatMemory(getPhoneRamMemory()));
                 mMemoryInfo.setText(memoryInfo);
+
                 long memorySavedSize = (getMemoryAvailable() > mMemoryUsed) ? (getMemoryAvailable() - mMemoryUsed)
                         : (mMemoryUsed - getMemoryAvailable());
                 String memorySaved = String.format(
@@ -495,6 +505,7 @@ public class RecentsActivity extends Activity implements OnClickListener , OnLon
                 Toast.makeText(mContext, memorySaved, Toast.LENGTH_SHORT).show();
                 
                 finish();
+                isClearing = false;
                 return;
             }
             
@@ -505,6 +516,10 @@ public class RecentsActivity extends Activity implements OnClickListener , OnLon
 	};
 	
 	public void updateMemoryInfo() {
+	    if (isClearing) {
+	        return;
+	    }
+	    
         String memoryInfo = String.format(
         		mContext.getResources().getString(R.string.gn_memory_available), 
                 formatMemory(getMemoryAvailable()),
@@ -604,4 +619,10 @@ public class RecentsActivity extends Activity implements OnClickListener , OnLon
 			}
 		}
 	}
+    
+    public void onScreenPinningRequest() {
+        if (mStatusBar != null) {
+            mStatusBar.showScreenPinningRequest(false);
+        }
+    }
 }

@@ -28,6 +28,7 @@ import android.widget.FrameLayout.LayoutParams;
 
 import com.amigo.navi.keyguard.AmigoKeyguardBouncer.KeyguardBouncerCallback;
 import com.amigo.navi.keyguard.haokan.Common;
+import com.amigo.navi.keyguard.haokan.FileUtil;
 import com.amigo.navi.keyguard.haokan.KeyguardDataModelInit;
 import com.amigo.navi.keyguard.haokan.KeyguardWallpaperContainer;
 import com.amigo.navi.keyguard.haokan.RequestNicePicturesFromInternet;
@@ -46,6 +47,7 @@ import com.amigo.navi.keyguard.picturepage.widget.KeyguardListView;
 import com.amigo.navi.keyguard.picturepage.widget.HorizontalListView.OnScrollListener;
 import com.amigo.navi.keyguard.picturepage.widget.OnViewTouchListener;
 import com.amigo.navi.keyguard.fingerprint.FingerIdentifyManager;
+import com.amigo.navi.keyguard.settings.KeyguardSettings;
 import com.amigo.navi.keyguard.skylight.SkylightActivity;
 import com.amigo.navi.keyguard.skylight.SkylightHost;
 import com.amigo.navi.keyguard.skylight.SkylightUtil;
@@ -122,6 +124,8 @@ public class KeyguardViewHostManager {
         Log.i(TAG,"isSuppotFinger....isSuppotFinger="+isSuppotFinger);
         
         Guide.init(context);
+        onBootCompleted();
+        
     }
     
     KeyguardViewHost.ConfigChangeCallback mConfigChangeCallback = new KeyguardViewHost.ConfigChangeCallback() {
@@ -233,6 +237,7 @@ public class KeyguardViewHostManager {
         mKeyguardViewHost.onScreenTurnedOff();
         finishStatistics();
         savePage(false);
+//        mImageLoader.printFirstCacheSize();
         updateHorizontalListViewWhenScreenChanged();
         releaseCache();
         cancelFingerIdentify();
@@ -419,7 +424,11 @@ public class KeyguardViewHostManager {
         /**
          * if alarm boot , do not start activity 
          */
-        if (mViewMediatorCallback.isShowingAndNotOccluded()&&!AmigoKeyguardUtils.isAlarmBoot()) {
+        
+        boolean isKeyguardShow=mViewMediatorCallback.isShowingAndNotOccluded();
+        boolean isAlarmBoot=AmigoKeyguardUtils.isAlarmBoot();
+        boolean isAlarmOrIncallTop=AmigoKeyguardUtils.isAlarmOrInCallActivityTop(mContext);
+        if (isKeyguardShow&&!isAlarmBoot&&!isAlarmOrIncallTop) {
             if (mActivitys.size() == 0) {
                 Intent intent = new Intent(mContext, SkylightActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -492,7 +501,6 @@ public class KeyguardViewHostManager {
                     mViewMediatorCallback.setKeyguardWallpaperShow(true);
                 }else{
                     refreshHorizontalListView(wallpapers); 
-                    mKeyguardListView.setPosition(mShowPage);
                     UIController.getInstance().refreshWallpaperInfo();
                 }
                 break;
@@ -507,7 +515,7 @@ public class KeyguardViewHostManager {
         if(wallpaperList.size() <= 1){
             mKeyguardListView.setCanLoop(false);
         }else{
-            mKeyguardListView.setCanLoop(true);
+        	mKeyguardListView.setCanLoop(true);
         }
     }
     
@@ -545,7 +553,7 @@ public class KeyguardViewHostManager {
     }
     
     public void unLockBySensor(){
-    	if(isShowing() && SkylightUtil.getIsHallOpen(mContext) && isAmigoHostYAtHomePostion()){
+    	if(isShowing() && SkylightUtil.getIsHallOpen(mContext) && isAmigoHostYAtHomePostion() &&  !mKeyguardViewHost.isTriggerMove()){
     		scrollToUnlockHeightByOther(true);
     	}
     }
@@ -842,6 +850,7 @@ public class KeyguardViewHostManager {
     private void refreshHorizontalListView(WallpaperList wallpaperList) {
         updateHorizontalListLoopState(wallpaperList);
         mWallpaperAdapter.updateDataList(wallpaperList);
+        mKeyguardListView.setPosition(mShowPage);
         mWallpaperAdapter.notifyDataSetChanged();
     }
     
@@ -967,4 +976,19 @@ public class KeyguardViewHostManager {
 	      	AmigoLockOrUnlockReceiver unlockExt = AmigoLockOrUnlockReceiver.getInstance(mContext);
 	      	unlockExt.setUnlockCallback(callback);
 	     }
+	    
+	    
+	    public void onBootCompleted() {
+	        if (KeyguardSettings.getBooleanSharedConfig(mContext, KeyguardSettings.PF_NEED_COPY_WALLPAPER, true)) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        FileUtil.copyDefaultWallpaperToGallery(mContext);
+                        
+                        KeyguardSettings.setBooleanSharedConfig(mContext, KeyguardSettings.PF_NEED_COPY_WALLPAPER, false);
+                    }
+                }).start();
+            }
+        }
+	    
 }

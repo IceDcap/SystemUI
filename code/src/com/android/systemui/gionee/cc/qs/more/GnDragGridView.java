@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import com.android.systemui.R;
 import com.android.systemui.gionee.cc.qs.GnQSTile;
+import com.android.systemui.gionee.cc.qs.GnQSTile.ExtendCallback;
 import com.android.systemui.gionee.cc.qs.GnQSTileView;
 import com.android.systemui.gionee.cc.qs.tiles.GnMoreTile;
 
@@ -146,6 +147,9 @@ public class GnDragGridView extends ViewGroup {
         }
         
         hideMoreView();
+        
+        mHideLabel.setText(R.string.gn_qs_more_hide_title);
+        mShowLabel.setText(R.string.gn_qs_more_show_title);
     }
 
     @Override
@@ -586,20 +590,25 @@ public class GnDragGridView extends ViewGroup {
         final TileRecord r = new TileRecord();
         r.tile = tile;
         r.tileView = tile.createTileView(mContext, tile.supportsStateType());
-        r.tileView.setVisibility(tile.mState.visible ? View.VISIBLE : View.GONE);
+        r.tileView.setVisibility(VISIBLE);
+
+        Log.d(TAG, "add view name " + r.tile.getClass().getSimpleName() + " view " + r.tileView + " visible = " + tile.mState.visible);
         
-        final GnQSTile.Callback callback = new GnQSTile.Callback() {
+        final ExtendCallback callback = new GnQSTile.ExtendCallback() {
             @Override
             public void onStateChanged(GnQSTile.State state) {
                 int visibility = state.visible ? VISIBLE : GONE;
                 if (isPortrait() && r.tile.getSpec().equals("more")) {
                     visibility = state.visible ? VISIBLE : INVISIBLE;
                 }
+                
+                Log.d(TAG, "name " + r.tile.getClass().getSimpleName() + " view " + r.tileView + " visible = " + visibility);
+                
                 setTileVisibility(r.tileView, visibility);
                 r.tileView.onStateChanged(state);
             }
         };
-        r.tile.setCallback(callback);
+        r.tile.setExtendCallback(callback);
         
         final View.OnClickListener click = new View.OnClickListener() {
             @Override
@@ -633,6 +642,7 @@ public class GnDragGridView extends ViewGroup {
     
     private void handleSetTileVisibility(View v, int visibility) {
         if (visibility == v.getVisibility()) return;
+        Log.d(TAG, " v = " + v + " visible = " + visibility);
         v.setVisibility(visibility);
     }
 

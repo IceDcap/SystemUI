@@ -419,4 +419,8 @@ public class KeyguardViewHost extends FrameLayout {
     public void setConfigChangeCallback(ConfigChangeCallback callback){
     	mConfigChangeCallback = callback;
     }
+    
+	public  boolean isTriggerMove(){
+		return mAmigoKeyguardView.isTriggerMove();
+	}
 }

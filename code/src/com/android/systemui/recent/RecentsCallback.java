@@ -31,4 +31,5 @@ public interface RecentsCallback {
     void removeTaskDescription(View selectedView);
     void clearTaskDescription();
     void removeTask();
+    void handleLockToScreen(View selectedView);
 }

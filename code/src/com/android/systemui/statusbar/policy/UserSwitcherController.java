@@ -44,7 +44,7 @@ import com.android.internal.util.UserIcons;
 import com.android.systemui.BitmapHelper;
 import com.android.systemui.GuestResumeSessionReceiver;
 import com.android.systemui.R;
-import com.android.systemui.qs.QSTile;
+//import com.android.systemui.qs.QSTile;
 import com.android.systemui.qs.tiles.UserDetailView;
 import com.android.systemui.statusbar.phone.SystemUIDialog;
 
@@ -475,7 +475,7 @@ public class UserSwitcherController {
         }
     }
 
-    public final QSTile.DetailAdapter userDetailAdapter = new QSTile.DetailAdapter() {
+    /*public final QSTile.DetailAdapter userDetailAdapter = new QSTile.DetailAdapter() {
         private final Intent USER_SETTINGS_INTENT = new Intent("android.settings.USER_SETTINGS");
 
         @Override
@@ -509,7 +509,7 @@ public class UserSwitcherController {
         @Override
         public void setToggleState(boolean state) {
         }
-    };
+    };*/
 
     private final KeyguardMonitor.Callback mCallback = new KeyguardMonitor.Callback() {
         @Override

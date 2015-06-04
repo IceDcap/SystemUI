@@ -27,9 +27,9 @@
         android:layout_height="@dimen/screen_pinning_request_width"
         layout="@layout/screen_pinning_request_text_area" />
 
-    <include
+<!--     <include
         android:layout_width="wrap_content"
         android:layout_height="@dimen/screen_pinning_request_width"
-        layout="@layout/screen_pinning_request_buttons_land" />
+        layout="@layout/screen_pinning_request_buttons_land" /> -->
 
 </LinearLayout>

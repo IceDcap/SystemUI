@@ -200,6 +200,11 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
         mGioneeAccount = GioneeAccount.getInstance(mContext);
         setVisibility(INVISIBLE);
     }
+    
+    @Override
+    public void onResume(int reason) {
+        resetState();
+    }
 
     private void setKeyButtonClickEnable(boolean enabled){
         for (Button button : mKeyButtons) {
@@ -460,6 +465,7 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
         if(fingerIdentifyManager!=null){
             isFingerSwitchOpen = fingerIdentifyManager.readFingerprintSwitchValue();
         }
+        DebugLog.d(LOG_TAG, "getFingerSwitchState  isFingerSwitchOpen: "+isFingerSwitchOpen);
         return isFingerSwitchOpen;
     }
     

@@ -324,16 +324,12 @@ public class UIController implements OnTouchlListener{
             mPlayerLayout.setTranslationX(0);
             KeyguardUpdateMonitor.getInstance(getmKeyguardNotification().getContext()).getNotificationModule().removeAllNotifications();
             if (Guide.needGuideSlideAround() && Guide.getGuideState() == GuideState.SLIDE_AROUND) {
-                Log.v("guide", "stopGuideSlideAround");
                 getAmigoKeyguardPage().stopGuideSlideAround();
             }
-            Log.v("zhaowei", "Guide.needGuideSlideFeedBack() = " + Guide.needGuideSlideFeedBack() + " !Guide.needGuideSlideAround() = " + !Guide.needGuideSlideAround() + " Guide.isIdle() = " + Guide.isIdle());
-//            if (Guide.needGuideSlideFeedBack() && !Guide.needGuideSlideAround() && Guide.isIdle()) {
-//                Log.v("guide", "startGuideSlideFeedBack");
-//                getAmigoKeyguardPage().startGuideSlideFeedBack();
-//            }
-            
-            getAmigoKeyguardPage().startGuideSlideFeedBack();
+
+            if (Guide.needGuideSlideFeedBack() && Guide.isIdle()) {
+                getAmigoKeyguardPage().setGuideSlideFeedBackVisibility(View.VISIBLE);
+            }
             
         }
         
@@ -367,6 +363,7 @@ public class UIController implements OnTouchlListener{
 
     }
     
+    private boolean mNewWallpaperToDisplay = false;
     
     
     @Override
@@ -379,6 +376,7 @@ public class UIController implements OnTouchlListener{
         refreshWallpaperInfo();
         mCaptionsView.OnTouchUpAnimator();
         
+        getAmigoKeyguardPage().setGuideSlideFeedBackVisibility(View.GONE);
 
         if (Guide.needGuideSlideAround()) {
              
@@ -387,14 +385,10 @@ public class UIController implements OnTouchlListener{
                     Guide.GUIDE_SLIDE_AROUND, false);
         }
         
-        if (Guide.needGuideNewWallpaper() && Guide.getGuideState() == GuideState.NEW_WALLPAPER) {
+        if (Guide.getGuideState() == GuideState.NEW_WALLPAPER) {
             getAmigoKeyguardPage().stopGuideNewWallpaper();
         }
-        
-//        if (Guide.needGuideSlideFeedBack() &&  Guide.getGuideState() == GuideState.SLIDE_FEEDBACK) {
-            getAmigoKeyguardPage().stopGuideSlideFeedBack();
-//        }
-        
+ 
         if (Guide.needGuideLongPress() && !Guide.needGuideScrollUp()
                 && Guide.isIdle()) {
             getmKeyguardViewHost().postDelayed(mGuideLongPressRunnable, 500);
@@ -430,9 +424,29 @@ public class UIController implements OnTouchlListener{
             onScreenTurnedOnAnimation();
             
             if (!Guide.needGuideScrollUp() && Guide.needGuideSlideAround() && Guide.isIdle()) {
-                Log.v("guide", "startGuideSlideAround");
+                DebugLog.d("guide", "startGuideSlideAround");
                 getAmigoKeyguardPage().startGuideSlideAround();
             }
+            
+            if (isNewWallpaperToDisplay() && Guide.needGuideNewWallpaper()) {
+
+                DebugLog.d("guide", "isNewWallpaperToDisplay");
+                HorizontalAdapter mWallpaperAdapter = (HorizontalAdapter) getmKeyguardListView().getAdapter(); 
+                WallpaperList list = mWallpaperAdapter.getWallpaperList();
+                boolean hasLocked = false;
+                for (Wallpaper wallpaper : list) {
+                    if (wallpaper.isLocked()) {
+                        hasLocked = true;
+                        break;
+                    }
+                }
+                setNewWallpaperToDisplay(false);
+                DebugLog.d("guide", "hasLocked = " + hasLocked + " Guide.isIdle() = " + Guide.isIdle());
+                if (!hasLocked && Guide.isIdle()) {
+                    getAmigoKeyguardPage().startGuideNewWallpaper();
+                }
+            }
+            
             
         }
     }
@@ -523,12 +537,13 @@ public class UIController implements OnTouchlListener{
             return;
         }
  
-//        if (getmCurrentWallpaper() != null) {
-//            if (getmCurrentWallpaper().getImgId() == wallpaper.getImgId()) {
-//                DebugLog.d(TAG, "getmCurrentWallpaper().getImgId() == wallpaper.getImgId()  return");
-//                return;
-//            }
-//        }
+        if (getmCurrentWallpaper() != null) {
+            if (getmCurrentWallpaper().getImgId() == wallpaper.getImgId()
+                    && getmCurrentWallpaper().getImgId() != Wallpaper.WALLPAPER_FROM_PHOTO_ID) {
+                DebugLog.d(TAG, "getmCurrentWallpaper().getImgId() == wallpaper.getImgId()  return");
+                return;
+            }
+        }
         
         setmCurrentWallpaper(wallpaper);
         
@@ -591,6 +606,7 @@ public class UIController implements OnTouchlListener{
     
     public void onLongPress(float motionDowmX,float motionDowmY) {
         
+        
         if (mArcLayout.animatorRunning() || mArcLayout.isExpanded()
                 || getAmigoKeyguardHostView().getScrollY() != 0) {
             return;
@@ -614,6 +630,13 @@ public class UIController implements OnTouchlListener{
         mArcLayout.refreshItemState();
         isArcExpanding = true;
         mArcLayout.startShow();
+        
+        if (Guide.needGuideLongPress()) {
+            Guide.setNeedGuideLongPress(false);
+            Guide.setBooleanSharedConfig(getmKeyguardViewHost().getContext(),
+                    Guide.GUIDE_LONG_PRESS, false);
+        }
+        
     }
     
     public Bitmap getCurrentWallpaperBitmap(Wallpaper wallpaper) {
@@ -953,14 +976,12 @@ public class UIController implements OnTouchlListener{
                 
                 if (!isCancel) {
                     
-                    Log.v("guide", "Guide.needGuideClickTitle() = " + Guide.needGuideClickTitle() + " Guide.needGuideSlideAround() = " + Guide.needGuideSlideAround());
-                    
                     if (Guide.needGuideClickTitle() && !Guide.needGuideSlideAround() && !Guide.needGuideLongPress() && Guide.isIdle()) {
-                        Log.v("guide", "showGuideClickTitle");
+                        DebugLog.d("guide", "showGuideClickTitle");
                         getmCaptionsView().startGuide();
                     }
                     if (getmCaptionsView().isGuideClickViewShowing()) {
-                        Log.v("guide", "isGuideClickViewShowing showGuideIfNeed");
+                        DebugLog.d("guide", "isGuideClickViewShowing showGuideIfNeed");
                         getmCaptionsView().showGuideIfNeed();
                     }
                     
@@ -1054,7 +1075,16 @@ public class UIController implements OnTouchlListener{
         
     }
     
-    public void setSrceenLockWallpaper(Context context,Bitmap bitmap) {
+    
+    
+    public boolean isNewWallpaperToDisplay() {
+        return mNewWallpaperToDisplay;
+    }
+    public void setNewWallpaperToDisplay(boolean mNewWallpaperToDisplay) {
+        this.mNewWallpaperToDisplay = mNewWallpaperToDisplay;
+    }
+    
+    public void setSrceenLockWallpaper(Context context,Bitmap bitmap, String name) {
     	DebugLog.d(TAG,"setSrceenLockWallpaper bitmap:" + bitmap);
         if(bitmap != null){
         	String key = DiskUtils.constructFileNameByUrl(Wallpaper.WALLPAPER_FROM_PHOTO_URL);
@@ -1075,6 +1105,7 @@ public class UIController implements OnTouchlListener{
                 category.setTypeName("photo");
                 wallpaper.setCategory(category);
                 wallpaper.setImgId(Wallpaper.WALLPAPER_FROM_PHOTO_ID);
+                wallpaper.setImgName(name);
                 wallpaper.setImgUrl(Wallpaper.WALLPAPER_FROM_PHOTO_URL);
                 wallpaper.setType(Wallpaper.WALLPAPER_FROM_PHOTO);
                 wallpaper.setTodayImage(1);
@@ -1089,10 +1120,7 @@ public class UIController implements OnTouchlListener{
                 DebugLog.d(TAG,"save wallpaper setOnClickListener wallpaper oldWallpaper:" + oldWallpaper);
             	DebugLog.d(TAG,"setSrceenLockWallpaper oldWallpaper:" + oldWallpaper);
                 if(oldWallpaper != null){
-                    oldWallpaper.setShowOrder(oldWallpaper.getRealOrder());
-                    oldWallpaper.setLocked(false);
-                    wallpaperDB.updateShowOrderAndLock(oldWallpaper);
-                    clearAllLock();
+                    unLockWallpaper(context,oldWallpaper);
                 }
                 if(!wallpaperDB.queryHasWallpaperFromPhoto()){
                 	wallpaperDB.insertWallpaper(0, wallpaper);
@@ -1344,27 +1372,26 @@ public class UIController implements OnTouchlListener{
         Wallpaper oldWallpaper = wallpaperDB.queryPicturesDownLoadedLock();
         DebugLog.d(TAG,"save wallpaper setOnClickListener wallpaper oldWallpaper:" + oldWallpaper);
         if(oldWallpaper != null){
-            oldWallpaper.setShowOrder(oldWallpaper.getRealOrder());
-            oldWallpaper.setLocked(false);
-            wallpaperDB.updateShowOrderAndLock(oldWallpaper);
-            clearAllLock();
+            unLockWallpaper(context,oldWallpaper);
         }
         wallpaper.setLocked(true);
         DebugLog.d(TAG,"save wallpaper setOnClickListener wallpaper wallpaper id:" + wallpaper.getImgId());
         success = WallpaperDB.getInstance(context.getApplicationContext()).updateLock(wallpaper);
         DebugLog.d(TAG,"save wallpaper setOnClickListener success:" + success);
-        delNotTodayWallpaper(context);
+		return success;
+	}
+	private boolean unLockWallpaper(final Context context,Wallpaper oldWallpaper) {
+		boolean success = false;
+		oldWallpaper.setShowOrder(oldWallpaper.getRealOrder());
+		oldWallpaper.setLocked(false);
+		success = WallpaperDB.getInstance(context).updateShowOrderAndLock(oldWallpaper);
+		clearAllLock();
+		delNotTodayWallpaper(context);
 		return success;
 	}
         
     public boolean clearLock(Context context,Wallpaper wallpaper){
-    	boolean success = false;
-            WallpaperDB wallpaperDB = WallpaperDB.getInstance(context.getApplicationContext());
-            wallpaper.setLocked(false);
-            wallpaper.setShowOrder(wallpaper.getRealOrder());
-            success = wallpaperDB.updateShowOrderAndLock(wallpaper);
-            delNotTodayWallpaper(context);
-        return success;
+    	return unLockWallpaper(context,wallpaper);
     }
     
     private void delNotTodayWallpaper(Context context){

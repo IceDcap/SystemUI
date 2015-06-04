@@ -1188,11 +1188,12 @@ public class KeyguardViewMediator extends SystemUI {
     
     BroadcastReceiver mHallStatusChangeReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
-            int hallOpenState = intent.getIntExtra(AppConstants.HALL_STATUS_KEY, 1);
-            Log.d(TAG, "HallStatusChangeReceiver  hallOpenState: " + hallOpenState + " mShowing: " + mShowing);
-            if (hallOpenState == 1) {
+            updateHallState();
+//            int hallOpenState = intent.getIntExtra(AppConstants.HALL_STATUS_KEY, 1);
+            Log.d(TAG, "HallStatusChangeReceiver  hallOpenState: " + mHallState + " mShowing: " + mShowing);
+            if (mHallState == HallState.OPEN) {
                 hideSkylight(false);
-            } else if(hallOpenState==0&&!mOccluded){
+            } else if(mHallState == HallState.CLOSE&&!mOccluded){
                 showSkylight();
             }
         };
@@ -1217,7 +1218,7 @@ public class KeyguardViewMediator extends SystemUI {
     };
 
     public void keyguardDone(boolean authenticated, boolean wakeup) {
-        if (DEBUG) Log.d(TAG, "keyguardDone(" + authenticated + ")"+"  isSkylightShown: "+getIsSkylightShown());
+        if (DEBUG) Log.d(TAG, "keyguardDone(" + authenticated + ")"+"  isSkylightShown: "+mHallState);
 //        if (getIsSkylightShown()) {return;}
         EventLog.writeEvent(70000, 2);
         Message msg = mHandler.obtainMessage(KEYGUARD_DONE, authenticated ? 1 : 0, wakeup ? 1 : 0);
@@ -1689,13 +1690,17 @@ public class KeyguardViewMediator extends SystemUI {
     }
     
     
+    
     private void showSkylightIfNeed() {
         if(!SkylightHost.isSkylightSizeExist()){return;}
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                boolean isHallOpen = SkylightUtil.getIsHallOpen(mContext);
-                if (!isHallOpen) {
+                if(mHallState==HallState.UNKNOW){
+                    boolean isHallOpen = SkylightUtil.getIsHallOpen(mContext);
+                    mHallState=isHallOpen?HallState.OPEN:HallState.CLOSE;
+                }
+                if (mHallState==HallState.CLOSE) {
                     showSkylight();
                 }
             }
@@ -1745,6 +1750,9 @@ public class KeyguardViewMediator extends SystemUI {
         }
         return false;
     }
+    protected boolean getIsHallClose(){
+        return mHallState==HallState.CLOSE;
+    }
     
     private void setKeyguardShowWallpaer(boolean isShow){
         if(mStatusBarKeyguardViewManager!=null){
@@ -1752,4 +1760,20 @@ public class KeyguardViewMediator extends SystemUI {
         }
         
     }
+    
+    private HallState mHallState;
+     enum HallState{
+        UNKNOW,
+        OPEN,
+        CLOSE
+    }
+     
+     private void updateHallState(){
+         if(SkylightHost.isSkylightSizeExist()){
+             boolean isHallOpen = SkylightUtil.getIsHallOpen(mContext);
+             mHallState=isHallOpen?HallState.OPEN:HallState.CLOSE;
+         }else{
+             mHallState=HallState.OPEN;
+         }
+     }
 }

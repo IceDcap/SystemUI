@@ -33,9 +33,6 @@ import android.util.Log;
 import com.android.internal.telephony.IccCardConstants;
 import com.android.internal.telephony.TelephonyIntents;
 import com.android.systemui.R;
-import com.android.systemui.statusbar.policy.CastController;
-import com.android.systemui.statusbar.policy.CastController.CastDevice;
-import com.android.systemui.statusbar.policy.HotspotController;
 import android.database.ContentObserver;
 import amigo.provider.AmigoSettings;
 import android.nfc.NfcAdapter;
@@ -70,8 +67,6 @@ public class PhoneStatusBarPolicy {
     private final Context mContext;
     private final StatusBarManager mService;
     private final Handler mHandler = new Handler();
-    private final CastController mCast;
-    private final HotspotController mHotspot;
     private NfcAdapter mNfcAdapter;
 
     // Assume it's all good unless we hear otherwise.  We don't always seem
@@ -117,10 +112,8 @@ public class PhoneStatusBarPolicy {
         }
     };
 
-    public PhoneStatusBarPolicy(Context context, CastController cast, HotspotController hotspot) {
+    public PhoneStatusBarPolicy(Context context) {
         mContext = context;
-        mCast = cast;
-        mHotspot = hotspot;
         mService = (StatusBarManager)context.getSystemService(Context.STATUS_BAR_SERVICE);
         mNfcAdapter = NfcAdapter.getDefaultAdapter(context);
 
@@ -184,11 +177,6 @@ public class PhoneStatusBarPolicy {
         updateGlovePattern();
         updateVoiceMode();
         updateVolumeZen();
-
-        // cast
-        mService.setIcon(SLOT_CAST, R.drawable.stat_sys_cast, 0, null);
-        mService.setIconVisibility(SLOT_CAST, false);
-        mCast.addCallback(mCastCallback);
     }
 
 	private void initObserver() {
@@ -346,36 +334,6 @@ public class PhoneStatusBarPolicy {
         }
     }
 
-    private void updateCast() {
-        boolean isCasting = false;
-        for (CastDevice device : mCast.getCastDevices()) {
-            if (device.state == CastDevice.STATE_CONNECTING
-                    || device.state == CastDevice.STATE_CONNECTED) {
-                isCasting = true;
-                break;
-            }
-        }
-        if (DEBUG) Log.v(TAG, "updateCast: isCasting: " + isCasting);
-        if (isCasting) {
-            mService.setIcon(SLOT_CAST, R.drawable.stat_sys_cast, 0,
-                    mContext.getString(R.string.accessibility_casting));
-        }
-        mService.setIconVisibility(SLOT_CAST, isCasting);
-    }
-
-    private final HotspotController.Callback mHotspotCallback = new HotspotController.Callback() {
-        @Override
-        public void onHotspotChanged(boolean enabled) {
-            mService.setIconVisibility(SLOT_HOTSPOT, enabled);
-        }
-    };
-
-    private final CastController.Callback mCastCallback = new CastController.Callback() {
-        @Override
-        public void onCastDevicesChanged() {
-            updateCast();
-        }
-    };
     //guest mode
     private ContentObserver mGuestModeChangeObserver = new ContentObserver(new Handler()){
 

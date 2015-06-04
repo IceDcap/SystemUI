@@ -701,30 +701,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
     }
 
     
-    private void insertMediaStore(int width, int height, String imageFileName) {
-        long currentTimeMillis = System.currentTimeMillis();
-        long dateSeconds = currentTimeMillis / 1000;
-        
-        ContentValues values = new ContentValues();
-        ContentResolver resolver = getContext().getContentResolver();
-        values.put(MediaStore.Images.ImageColumns.DATA, imageFileName);
-        values.put(MediaStore.Images.ImageColumns.TITLE, imageFileName);
-        values.put(MediaStore.Images.ImageColumns.DISPLAY_NAME, imageFileName);
-        values.put(MediaStore.Images.ImageColumns.DATE_TAKEN, currentTimeMillis);
-        values.put(MediaStore.Images.ImageColumns.DATE_ADDED, dateSeconds);
-        values.put(MediaStore.Images.ImageColumns.DATE_MODIFIED, dateSeconds);
-        values.put(MediaStore.Images.ImageColumns.MIME_TYPE, "image/jpg");
-        values.put(MediaStore.Images.ImageColumns.WIDTH, width);
-        values.put(MediaStore.Images.ImageColumns.HEIGHT, height);
-        
-        DebugLog.d(TAG,
-                "favoriteLocalPath = " + imageFileName + " imageFileName = "
-                        + imageFileName + " dateSeconds = " + dateSeconds
-                        + " width=" + width
-                        + " height = " + height);
-        
-        Uri uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-    }
+     
     
     /**
      *   
@@ -739,8 +716,11 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                  
                 Bitmap currentWallpaper = controller.getCurrentWallpaperBitmap(mWallpaper);
                 
+          
+                boolean isLocalImage = mWallpaper.getImgId() == Wallpaper.WALLPAPER_FROM_PHOTO_ID;
+                
                 String imageFileName = new StringBuffer(FileUtil.getDirectoryFavorite()).append("/").append(Common.currentTimeDate()).append("_")
-                        .append(mWallpaper.getImgId()).append(".jpg").toString();
+                        .append(isLocalImage ? mWallpaper.getImgName() : mWallpaper.getImgId()).append(".jpg").toString();
                 
                 final boolean success = FileUtil.saveWallpaper(currentWallpaper, imageFileName);
                 
@@ -748,7 +728,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                     mWallpaper.setFavoriteLocalPath(imageFileName);
                     mWallpaper.setFavorite(true);
                     WallpaperDB.getInstance(getContext().getApplicationContext()).updateFavorite(mWallpaper);
-                    insertMediaStore(currentWallpaper.getWidth(), currentWallpaper.getHeight(), imageFileName);
+                    Common.insertMediaStore(getContext().getApplicationContext(),currentWallpaper.getWidth(), currentWallpaper.getHeight(), imageFileName);
                 }
                 
                 postDelayed(new Runnable() {
@@ -777,18 +757,23 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                     success = controller.clearLock(getContext(),mWallpaper);
                 }else{
                     success = controller.lockWallpaper(getContext(), mWallpaper);
+                    
+                    String imageFileName = new StringBuffer(FileUtil.getDirectoryFavorite()).append("/").append(Common.currentTimeDate()).append("_")
+                            .append(mWallpaper.getImgId()).append(".jpg").toString();
+                    Bitmap currentWallpaper = controller.getCurrentWallpaperBitmap(mWallpaper);
+                    success = FileUtil.saveWallpaper(currentWallpaper, imageFileName);
+                    if (success) {
+                        Common.insertMediaStore(getContext().getApplicationContext(),currentWallpaper.getWidth(), currentWallpaper.getHeight(), imageFileName);
+                    }
                 }
                 if (success) {
+                    
                     HKAgent.onEventWallpaperLock(getContext().getApplicationContext(), mWallpaper);
                     postDelayed(new Runnable() {
 
                         @Override
                         public void run() {
-                            
                             boolean isLocked = mWallpaper.isLocked();
-//                            int stringId = isLocked ? R.string.haokan_arc_menu_lock_ok : R.string.haokan_arc_menu_tip_no_locked;
-//                            bindClickItemFeekBackAnimator(arcItemButton, isLocked, stringId);
-                            
                             controller.showToast(isLocked ? R.string.haokan_tip_screen_on_show : R.string.haokan_tip_no_lock_show);
                         }
                     }, 500);

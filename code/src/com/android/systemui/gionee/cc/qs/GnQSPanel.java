@@ -174,7 +174,7 @@ public class GnQSPanel extends ViewGroup {
         final TileRecord r = new TileRecord();
         r.tile = tile;
         r.tileView = tile.createTileView(mContext, tile.supportsStateType());
-        r.tileView.setVisibility(tile.mState.visible ? View.VISIBLE : View.GONE);
+        r.tileView.setVisibility(VISIBLE);
 
         final GnQSTile.Callback callback = new GnQSTile.Callback() {
             @Override

@@ -185,7 +185,7 @@ public class VolumePanel extends Handler implements DemoMode {
 
     //Gionee <hanbj> <20150427> for amigo begin
     private boolean ISCTSTEST = false;
-    private String CTSACTIVITY = "com.android.cts.verifier.notifications.NotificationAttentionManagementVerifierActivity";
+    private String CTSACTIVITY = "com.android.cts.verifier.notifications.AttentionManagementVerifierActivity";
     //Gionee <hanbj> <20150427> for amigo end
     
     /** Currently active stream that shows up at the top of the list of sliders */

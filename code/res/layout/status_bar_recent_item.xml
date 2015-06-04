@@ -47,6 +47,24 @@
                 android:layout_gravity="center"
                 android:layout_width="@android:dimen/thumbnail_width"
                 android:layout_height="@android:dimen/thumbnail_height" />
+            <!-- screen lock -->
+            <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:translationZ="2dp"
+            android:contentDescription="@string/recents_lock_to_app_button_label">
+            <ImageView
+	            android:id="@+id/lock_to_app_fab"
+                android:layout_width="@dimen/gn_recents_lock_to_app_size"
+                android:layout_height="@dimen/gn_recents_lock_to_app_size"
+                android:layout_gravity="center"
+    	        android:visibility="gone"
+                android:src="@drawable/gn_app_lock2screen" />
+        	</FrameLayout>
+        	<!-- screen lock -->
         </FrameLayout>
 
         <TextView

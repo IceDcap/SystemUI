@@ -695,7 +695,7 @@ public class AmigoKeyguardPage extends RelativeLayout {
     
     
     public void startGuideSlideAround() {
-        Log.v("guide", "startGuideSlideAround ");
+        DebugLog.d("guide", "startGuideSlideAround ");
         LayoutInflater inflater = LayoutInflater.from(mContext);
         RelativeLayout view = (RelativeLayout)inflater.inflate(R.layout.guide_slide_around, null);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
@@ -709,7 +709,7 @@ public class AmigoKeyguardPage extends RelativeLayout {
     }
     
     public void stopGuideSlideAround() {
-        Log.v("guide", "stopGuideSlideAround ");
+        DebugLog.d("guide", "stopGuideSlideAround ");
         final RelativeLayout view = (RelativeLayout) findViewById(R.id.guide_slide_around);
         
         AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0f);
@@ -728,7 +728,7 @@ public class AmigoKeyguardPage extends RelativeLayout {
             
             @Override
             public void onAnimationEnd(Animation arg0) {
-                Log.v("guide", "onAnimationEnd removeView");
+                DebugLog.d("guide", "stopGuideSlideAround removeView");
                 removeView(view);
             }
         });
@@ -760,7 +760,7 @@ public class AmigoKeyguardPage extends RelativeLayout {
     
     public void startGuideNewWallpaper() {
         
-        Log.v("guide", "startGuideNewWallpaper ");
+        DebugLog.d("guide", "startGuideNewWallpaper ");
         
         if (mGuideNewWallpaperAnimator != null) {
             if (mGuideNewWallpaperAnimator.isRunning()) {
@@ -819,17 +819,7 @@ public class AmigoKeyguardPage extends RelativeLayout {
         Guide.resetIdle();
     }
     
-    
-    public void startGuideSlideFeedBack() {
-//        LayoutInflater inflater = LayoutInflater.from(mContext);
-//        RelativeLayout view = (RelativeLayout)inflater.inflate(R.layout.guide_slide_feedback, null);
-//        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-//        params.topMargin = getResources().getDimensionPixelSize(R.dimen.guide_slide_margin_top);
-//        addView(view, params);
-        mGuideSlideFeedBackView.setVisibility(VISIBLE);
-//        Guide.setGuideState(GuideState.SLIDE_FEEDBACK);
-
-    }
+ 
     private RelativeLayout mGuideSlideFeedBackView;
     private void addGuideSlideFeedBackView() {
         LayoutInflater inflater = LayoutInflater.from(mContext);
@@ -841,17 +831,8 @@ public class AmigoKeyguardPage extends RelativeLayout {
         
     }
     
-    public void stopGuideSlideFeedBack() {
-//        final RelativeLayout view = (RelativeLayout) findViewById(R.id.guide_slide_feedback);
-//        removeView(view);
-        mGuideSlideFeedBackView.setVisibility(GONE);
-//        Guide.resetIdle();
-//        Guide.setNeedGuideSlideFeedBack(false);
-//        Guide.setBooleanSharedConfig(getContext(), Guide.GUIDE_SLIDE_FEEDBACK, false);
+    public void setGuideSlideFeedBackVisibility(int visibility) {
+        mGuideSlideFeedBackView.setVisibility(visibility);
     }
-    
-//    public void setVisibility(int visibility) {
-//        super.setVisibility(visibility);
-//    }
    
 }

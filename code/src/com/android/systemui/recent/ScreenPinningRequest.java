@@ -116,7 +116,7 @@ public class ScreenPinningRequest implements View.OnClickListener {
     public FrameLayout.LayoutParams getRequestLayoutParams(boolean isLandscape) {
         return new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.FILL_PARENT,
                 isLandscape ? (Gravity.CENTER_VERTICAL | Gravity.RIGHT)
                             : (Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM));
     }
@@ -200,11 +200,11 @@ public class ScreenPinningRequest implements View.OnClickListener {
             // Status bar is always on the right.
             mLayout.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
             // Buttons and text do switch sides though.
-            View buttons = mLayout.findViewById(R.id.screen_pinning_buttons);
-            buttons.setLayoutDirection(View.LAYOUT_DIRECTION_LOCALE);
+            /*View buttons = mLayout.findViewById(R.id.screen_pinning_buttons);
+            buttons.setLayoutDirection(View.LAYOUT_DIRECTION_LOCALE);*/
             mLayout.findViewById(R.id.screen_pinning_text_area)
                     .setLayoutDirection(View.LAYOUT_DIRECTION_LOCALE);
-            swapChildrenIfRtlAndVertical(buttons);
+            //swapChildrenIfRtlAndVertical(buttons);
 
             ((Button) mLayout.findViewById(R.id.screen_pinning_ok_button))
                     .setOnClickListener(ScreenPinningRequest.this);
@@ -223,8 +223,8 @@ public class ScreenPinningRequest implements View.OnClickListener {
                     .setText(description);
             final int backBgVisibility =
                     mAccessibilityService.isEnabled() ? View.INVISIBLE : View.VISIBLE;
-            mLayout.findViewById(R.id.screen_pinning_back_bg).setVisibility(backBgVisibility);
-            mLayout.findViewById(R.id.screen_pinning_back_bg_light).setVisibility(backBgVisibility);
+            //mLayout.findViewById(R.id.screen_pinning_back_bg).setVisibility(backBgVisibility);
+            //mLayout.findViewById(R.id.screen_pinning_back_bg_light).setVisibility(backBgVisibility);
 
             addView(mLayout, getRequestLayoutParams(isLandscape));
         }

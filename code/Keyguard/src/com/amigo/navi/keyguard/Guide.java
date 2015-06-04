@@ -7,7 +7,7 @@ import android.util.Log;
 
 public class Guide {
 
-    private static boolean TEST = false;
+    private static boolean TEST = true;
 
     public enum GuideState {
         IDLE, LONG_PRESS, CLICK_TITLE, SLIDE_AROUND, SCROLL_UP, NEW_WALLPAPER, SLIDE_FEEDBACK
@@ -28,6 +28,7 @@ public class Guide {
     private static boolean NEED_GUIDE_CLICK_TITLE = true;
     private static boolean NEED_GUIDE_SLIDE_AROUND = true;
     private static boolean NEED_GUIDE_SCROLL_UP = true;
+    
     private static boolean NEED_NEW_WALLPAPER = true;
     private static boolean NEED_SLIDE_FEEDBACK = true;
 
@@ -103,7 +104,6 @@ public class Guide {
         setNeedGuideClickTitle(preferences.getBoolean(GUIDE_CLICK_TITLE, true));
         setNeedGuideSlideAround(preferences.getBoolean(GUIDE_SLIDE_AROUND, true));
         setNeedGuideScrollUp(preferences.getBoolean(GUIDE_SCROLL_UP, true));
-        setNeedGuideSlideFeedBack(preferences.getBoolean(GUIDE_SLIDE_FEEDBACK, true));
 
         Log.v("guide", "Guide init needGuideScrollUp=" + needGuideScrollUp()
                 + " needGuideLongPress=" + needGuideLongPress() + " needGuideNewWallpaper="
@@ -115,6 +115,7 @@ public class Guide {
             NEED_GUIDE_CLICK_TITLE = false;
             NEED_GUIDE_SLIDE_AROUND = false;
             NEED_GUIDE_SCROLL_UP = false;
+            
             NEED_NEW_WALLPAPER = false;
             NEED_SLIDE_FEEDBACK = false;
             

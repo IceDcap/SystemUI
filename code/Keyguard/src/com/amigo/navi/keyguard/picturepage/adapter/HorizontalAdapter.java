@@ -105,7 +105,6 @@ public class HorizontalAdapter extends BaseAdapter {
             holder.img.setConfig(mConfig);
             convertView.setTag(holder);             
         }else {
-             
             holder = (ViewHolder)convertView.getTag();
         }
         if(!isAllowLoad){

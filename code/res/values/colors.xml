@@ -123,7 +123,8 @@
     <color name="fake_shadow_end_color">#03000000</color>
 
     <color name="screen_pinning_nav_icon_highlight_outer">#4080cbc4</color><!-- 25% deep teal 200 -->
-    <color name="screen_pinning_request_bg">#ff009688</color><!-- deep teal 500 -->
+    <!-- <color name="screen_pinning_request_bg">#ff009688</color>deep teal 500 -->
+    <color name="screen_pinning_request_bg">#FFFFFF</color><!-- deep teal 500 -->
     <color name="screen_pinning_request_window_bg">#80000000</color>
 
     <color name="segmented_button_selected">#FFFFFFFF</color>

@@ -1,37 +1,33 @@
 package com.amigo.navi.keyguard.haokan;
 
 import android.annotation.SuppressLint;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
-
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.everydayphoto.NavilSettings;
 import com.amigo.navi.keyguard.haokan.entity.Client;
-import com.amigo.navi.keyguard.haokan.entity.Wallpaper;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Common {
 
-    public static final boolean DEBUG = true;
     
     private static String USER_ID = null;
     
@@ -434,6 +430,31 @@ public class Common {
         Common.isPowerSaverMode = isPowerSaverMode;
     }
     
-    
+    public static void insertMediaStore(Context context,int width, int height, String imageFileName) {
+        long currentTimeMillis = System.currentTimeMillis();
+        long dateSeconds = currentTimeMillis / 1000;
+        
+        ContentValues values = new ContentValues();
+        ContentResolver resolver = context.getContentResolver();
+        values.put(MediaStore.Images.ImageColumns.DATA, imageFileName);
+        values.put(MediaStore.Images.ImageColumns.TITLE, imageFileName);
+        values.put(MediaStore.Images.ImageColumns.DISPLAY_NAME, imageFileName);
+        values.put(MediaStore.Images.ImageColumns.DATE_TAKEN, currentTimeMillis);
+        values.put(MediaStore.Images.ImageColumns.DATE_ADDED, dateSeconds);
+        values.put(MediaStore.Images.ImageColumns.DATE_MODIFIED, dateSeconds);
+        values.put(MediaStore.Images.ImageColumns.MIME_TYPE, "image/jpg");
+        if (width != 0 && height != 0) {
+            values.put(MediaStore.Images.ImageColumns.WIDTH, width);
+            values.put(MediaStore.Images.ImageColumns.HEIGHT, height);
+        }
+        
+        DebugLog.d(TAG,
+                "favoriteLocalPath = " + imageFileName + " imageFileName = "
+                        + imageFileName + " dateSeconds = " + dateSeconds
+                        + " width=" + width
+                        + " height = " + width);
+        
+        Uri uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+    }
     
 }

@@ -1,21 +1,26 @@
 
 package com.amigo.navi.keyguard.haokan;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Environment;
 import android.util.Log;
 
 import com.amigo.navi.keyguard.DebugLog;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
 
 public class FileUtil {
     
     public static final String DIRECTORY_MUSIC          = "/Amigo/ScreenLock/Music/";
     public static final String DIRECTORY_FAVORITE       = "/Amigo/ScreenLock/Favorite";
-    public static final String WALLPAPER_LOCATION_FILE  = "/system/etc/ScreenLock/wallpaper.xml";
+    public static final String WALLPAPER_XML_LOCATION  = "/system/etc/ScreenLock/wallpaper.xml";
+    
+    public static final String SCREENLOCK_WALLPAPER_LOCATION  = "/system/etc/ScreenLock";
     
     
     private static final String TAG = "haokan";
@@ -126,5 +131,47 @@ public class FileUtil {
             file.mkdirs();
         }
     }
+    
+    
+    
+    public static void copyDefaultWallpaperToGallery(Context context) {
+
+        File fileScreenLock = new File(SCREENLOCK_WALLPAPER_LOCATION);
+
+        String localfile = getSdCardPath() + DIRECTORY_FAVORITE;
+        isExistDirectory(localfile);
+        if (fileScreenLock.isDirectory()) {
+            File[] files = fileScreenLock.listFiles();
+            Log.v(TAG, "files.length = " + files.length);
+            for (final File file : files) {
+
+                String absolutePath = file.getAbsolutePath();
+                if (file.isFile() && file.getAbsolutePath().endsWith(".jpg")) {
+                    try {
+                        String destPath = localfile
+                                + file.getAbsolutePath().substring(absolutePath.lastIndexOf("/"));
+                        Log.v(TAG, "destPath = " + destPath);
+                        File dest = new File(destPath);
+                        if (!dest.exists()) {
+                            dest.createNewFile();
+                        }
+
+                        FileInputStream fis = new FileInputStream(file);
+                        FileOutputStream fos = new FileOutputStream(dest);
+                        FileChannel sourceCh = fis.getChannel();
+                        FileChannel destCh = fos.getChannel();
+                        long value = sourceCh.transferTo(0, sourceCh.size(), destCh); 
+                        Log.v(TAG, "value = " + value);
+                        Common.insertMediaStore(context,0, 0, destPath);
+                        sourceCh.close();
+                        destCh.close();
+                    } catch (Exception e) {
+                        Log.v(TAG, "", e);
+                    }
+                }
+            }
+        }
+    }
+    
     
 }

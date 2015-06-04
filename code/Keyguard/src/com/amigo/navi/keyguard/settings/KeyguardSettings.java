@@ -38,6 +38,8 @@ public class KeyguardSettings {
 	private static final String TAG = "KeyguardSettings";
 	
 	
+	public static final String PF_NEED_COPY_WALLPAPER = "pf_need_copy_wallpaper";
+	
     
     public static void setDoubleDesktopLockState(Context context,boolean value){
         SharedPreferences sp = context.getSharedPreferences(PREFERENCE_NAME,
@@ -137,6 +139,21 @@ public class KeyguardSettings {
             mNotificationManager.cancel(NOTIFICATION_ID_SETTING);
         } catch (Exception e) {
         }
+    }
+    
+    public static boolean getBooleanSharedConfig(Context context, String key, boolean defValue) {
+        SharedPreferences sp = context.getSharedPreferences(
+                PREFERENCE_NAME, Context.MODE_PRIVATE);
+        boolean value = sp.getBoolean(key, defValue);
+        return value;
+    }
+
+    public static boolean setBooleanSharedConfig(Context context, String key, boolean value) {
+        SharedPreferences sp = context.getSharedPreferences(
+                PREFERENCE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putBoolean(key, value);
+        return editor.commit();
     }
 
 }

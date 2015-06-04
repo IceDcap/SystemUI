@@ -9,9 +9,13 @@ import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.PorterDuffXfermode;
+import android.graphics.RadialGradient;
+import android.graphics.Shader;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.View;
 import android.widget.FrameLayout;
 
 import com.android.keyguard.R;
@@ -65,11 +69,11 @@ public class KeyguardWallpaperContainer extends FrameLayout {
         mPaint.setAntiAlias(true);
         mPaint.setXfermode(new PorterDuffXfermode(Mode.DST_ATOP));
         
-        mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.haokan_wallpaper_alpha).copy(Bitmap.Config.ARGB_8888, true);
-        
+//        mPaint.setXfermode(new PorterDuffXfermode(Mode.XOR));
+        mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.haokan_wallpaper_alpha).copy(Bitmap.Config.ALPHA_8, true);
         bottomDrawable = getResources().getDrawable(R.drawable.infozone_background);
         bottomDrawable.setBounds(0, mScreenHeight - getResources().getDimensionPixelSize(R.dimen.ketguard_infozone_height), mScreenWidth, mScreenHeight);
-        
+//        Log.v("zhaowei", Common.formatByteToMB(mBitmap.getByteCount()) + "MB");
     }
     
     public void reset() {
@@ -84,13 +88,27 @@ public class KeyguardWallpaperContainer extends FrameLayout {
     }
     private static final int BLINDDEGREE = 150;
     
+    
+    
+//    int[] colors = new int[] {0xffffffff, 0xffffffff, /*0xddffffff, 0xaaffffff, 0x66ffffff, 0x22ffffff, */0x00ffffff,};
+//    
+//    float[] stops = new float[] { 0, 0.75f, /*0.75f, 0.80f, 0.85f, 0.90f,*/ 1.0f};
+    
     @Override
     protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
         bottomDrawable.draw(canvas);
+        
         if (mModel!=UIController.SCROLL_TO_SECURTY && mTop != mScreenHeight) {
             canvas.drawBitmap(mBitmap, 0, mTop, mPaint);
+            
+//            RadialGradient mRadialGradient = new RadialGradient(mScreenWidth / 2, mScreenHeight * 3 - mTop, mScreenHeight * 2 ,
+//                    colors, stops, Shader.TileMode.CLAMP);
+//            
+//            mPaint.setShader(mRadialGradient); 
+//            canvas.drawCircle(mScreenWidth / 2, mScreenHeight * 3 - mTop, mScreenHeight * 2, mPaint);
         }
+        
         
         int color = Color.argb((int)(BLINDDEGREE * mBlind), 0, 0, 0);
 		canvas.drawColor(color);
@@ -99,7 +117,7 @@ public class KeyguardWallpaperContainer extends FrameLayout {
 
     
    public void onKeyguardModelChanged(int top,int maxBoundY, int  model) {
-        
+//        mTop = (int) (top * mScreenHeight / (float)maxBoundY);
         int bitmapHeight = mBitmap.getHeight();
         mTop = (int) (mScreenHeight - top * (bitmapHeight / (float)maxBoundY));
         mModel=model;
