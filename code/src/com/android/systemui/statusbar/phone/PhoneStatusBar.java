@@ -1674,8 +1674,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     
     private boolean mShowOther = false;
 	private void gnUpdateNotificationShade() {
-		if (mStackScroller == null)
+		if (mStackScroller == null) {
+			Log.v(TAG, "mStackScroller == null");
 			return;
+		}
 
 		// GIONEE <wujj> <2015-03-02> modify for CR01448583 begin
 		/*
@@ -1715,6 +1717,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 		final int IMPORTANT = importantView.size();
 		final int OTHER = otherView.size();
 		
+		Log.v(TAG, "ONGOING = "+ONGOING+" IMPORTANT = "+IMPORTANT+" OTHER = "+OTHER);
 		// Step 2
 		ArrayList<View> toRemove = new ArrayList<View>();
 		for (int i = 0; i < mStackScroller.getChildCount(); i++) {
@@ -1742,6 +1745,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 		}
 		mGnNotificationService.resetChangedList();
 		
+		Log.v(TAG, "ToRemoveView's size is "+toRemove.size());
 		for (View remove : toRemove) {
 			mStackScroller.removeView(remove);
 		}
@@ -4622,14 +4626,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     public void onScreenTurnedOff() {
         mScreenOnFromKeyguard = false;
 //        mScreenOnComingFromTouch = false;
-        mStackScroller.setAnimationsEnabled(false);
+//        mStackScroller.setAnimationsEnabled(false);
     	animateCollapsePanels(CommandQueue.FLAG_EXCLUDE_RECENTS_PANEL, true /* force */);
         updateVisibleToUser();
     }
 
     public void onScreenTurnedOn() {
         mScreenOnFromKeyguard = true;
-        mStackScroller.setAnimationsEnabled(true);
+//        mStackScroller.setAnimationsEnabled(true);
 //        mNotificationPanel.onScreenTurnedOn();
 //        mNotificationPanel.setTouchDisabled(false);
         updateVisibleToUser();

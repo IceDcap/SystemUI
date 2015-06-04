@@ -342,17 +342,7 @@ public abstract class PanelView extends FrameLayout {
                     DozeLog.traceFling(expand, mTouchAboveFalsingThreshold,
                             mStatusBar.isFalsingThresholdNeeded(),
                             mStatusBar.isScreenOnComingFromTouch());
-                    // Log collapse gesture if on lock screen.
-                  //jiating modify for keyguard begin
-                   /* if (!expand && mStatusBar.getBarState() == StatusBarState.KEYGUARD) {
-                        float displayDensity = mStatusBar.getDisplayDensity();
-                        int heightDp = (int) Math.abs((y - mInitialTouchY) / displayDensity);
-                        int velocityDp = (int) Math.abs(vel / displayDensity);
-                        EventLogTags.writeSysuiLockscreenGesture(
-                                EventLogConstants.SYSUI_LOCKSCREEN_GESTURE_SWIPE_UP_UNLOCK,
-                                heightDp, velocityDp);
-                    }*/
-                  //jiating modify for keyguard end
+                    Log.v(TAG, "ACTION_UP : expand = "+expand + "  vel = "+ vel);
                     fling(vel, expand);
                     mUpdateFlingOnLayout = expand && mPanelClosedOnDown && !mHasLayoutedSinceDown;
                     if (mUpdateFlingOnLayout) {
@@ -561,7 +551,12 @@ public abstract class PanelView extends FrameLayout {
             notifyExpandingFinished();
             return;
         }
+        Log.v(TAG, (expand?"Expanding panel:":"Collapsing panel:")+" target="+target+" vel="+vel);
         mOverExpandedBeforeFling = getOverExpansionAmount() > 0f;
+        if (mHeightAnimator != null && mHeightAnimator.isRunning()) {
+        	Log.v(TAG, "HeightAnimator is running");
+        	return;
+        }
         ValueAnimator animator = createHeightAnimator(target);
         if (expand) {
             boolean belowFalsingThreshold = isBelowFalsingThreshold();

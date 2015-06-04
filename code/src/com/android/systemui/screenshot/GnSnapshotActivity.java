@@ -74,16 +74,24 @@ public class GnSnapshotActivity extends Activity {
 			if (msg.what == CAPTURE_EVENT) {
 				// Play the shutter sound to notify that we've taken a screenshot
 				mCameraSound.play(MediaActionSound.SHUTTER_CLICK);
-				mService.mLocation.startX = (int) mSnapshotView.getX();
-				mService.mLocation.startY = (int) mSnapshotView.getY();
+				int x = (int) mSnapshotView.getX();
+				int y = (int) mSnapshotView.getY();
+				if (x <=0 ) {
+					x = 0;
+				}
+				if (y <= 0 ) {
+					y = 0;
+				}
+				mService.mLocation.startX = x;
+				mService.mLocation.startY = y;
 				mService.mLocation.width = mSnapshotView.getWidth();
 				mService.mLocation.height = mSnapshotView.getHeight();
 				mService.captureSelectedArea(mService.mLocation);
 				// finish();
 			} else if (msg.what == INFLATE_EVENT) {
-				resizeLayout(mSnapshotView, mLeftMargins.getRight(), mTopMargins.getBottom(),
-						mScreenWidth - mRightMargins.getLeft(),
-						mScreenHeight - mBottomMargins.getTop(), 0, 0, ACTION_MOVE_DEFAULT);
+				resizeLayout(mSnapshotView, mLeftMargins.getRight()-2, mTopMargins.getBottom()-2,
+						mScreenWidth - mRightMargins.getLeft()-2,
+						mScreenHeight - mBottomMargins.getTop()-2, 0, 0, ACTION_MOVE_DEFAULT);
 				updateCornerTouchArea();
 			}
 		}
@@ -171,8 +179,8 @@ public class GnSnapshotActivity extends Activity {
 		resizeLayout(mRightMargins, 0, mHoverHeight + SNAPAREA_INIT_OFFSET, 0, mHoverHeight
 				+ SNAPAREA_INIT_OFFSET, mHoverWidth, 0, ACTION_MOVE_RIGHT);
 
-		resizeLayout(mSnapshotView, mHoverWidth, mHoverHeight + SNAPAREA_INIT_OFFSET, mHoverWidth,
-				mHoverHeight + SNAPAREA_INIT_OFFSET, 0, 0, ACTION_MOVE_DEFAULT);
+		resizeLayout(mSnapshotView, mHoverWidth-2, mHoverHeight + SNAPAREA_INIT_OFFSET-2, mHoverWidth-2,
+				mHoverHeight + SNAPAREA_INIT_OFFSET-2, 0, 0, ACTION_MOVE_DEFAULT);
 	}
 
 	void initConerTouchView() {
@@ -314,9 +322,9 @@ public class GnSnapshotActivity extends Activity {
 				break;
 			}
 
-			resizeLayout(mSnapshotView, mLeftMargins.getRight(), mTopMargins.getBottom(),
-					mScreenWidth - mRightMargins.getLeft(),
-					mScreenHeight - mBottomMargins.getTop(), 0, 0, ACTION_MOVE_DEFAULT);
+			resizeLayout(mSnapshotView, mLeftMargins.getRight()-2, mTopMargins.getBottom()-2,
+					mScreenWidth - mRightMargins.getLeft()-2,
+					mScreenHeight - mBottomMargins.getTop()-2, 0, 0, ACTION_MOVE_DEFAULT);
 			updateCornerTouchArea();
 		}
 

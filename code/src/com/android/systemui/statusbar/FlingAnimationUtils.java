@@ -35,6 +35,7 @@ public class FlingAnimationUtils {
     private static final float LINEAR_OUT_FASTER_IN_Y2_MAX = 0.5f;
     private static final float MIN_VELOCITY_DP_PER_SECOND = 250;
     private static final float HIGH_VELOCITY_DP_PER_SECOND = 3000;
+    private static final float MAX_ANIMA_SECONDS = 2f;
 
     /**
      * Crazy math. http://en.wikipedia.org/wiki/B%C3%A9zier_curve
@@ -132,10 +133,16 @@ public class FlingAnimationUtils {
     private AnimatorProperties getProperties(float currValue,
             float endValue, float velocity, float maxDistance) {
         float maxLengthSeconds = (float) (mMaxLengthSeconds
-                * Math.sqrt(Math.abs(endValue - currValue) / maxDistance));
+                * Math.sqrt(Math.abs(endValue - currValue) / (maxDistance+1f)));
         float diff = Math.abs(endValue - currValue);
         float velAbs = Math.abs(velocity);
-        float durationSeconds = LINEAR_OUT_SLOW_IN_START_GRADIENT * diff / velAbs;
+        float durationSeconds = LINEAR_OUT_SLOW_IN_START_GRADIENT * diff / (velAbs+1f);
+        // When pull out Notification panel view once it boot completed, the panel cannot expanded fully
+        // In this case value of maxLengthSeconds and durationSeconds would be too large, so limit the time to 2 seconds
+        if (maxLengthSeconds > MAX_ANIMA_SECONDS) {
+        	maxLengthSeconds = MAX_ANIMA_SECONDS;
+        }
+        
         if (durationSeconds <= maxLengthSeconds) {
             mAnimatorProperties.interpolator = mLinearOutSlowIn;
         } else if (velAbs >= mMinVelocityPxPerSecond) {

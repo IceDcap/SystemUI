@@ -32,6 +32,7 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.MathUtils;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -171,6 +172,13 @@ public class NotificationPanelView extends PanelView implements
     private int mNotificationHandlerHeight = 0;
     //private int mNavigationBarHeight = 0;
     private int mCarrierLabelHeight = 0;
+    // GIONEE <wujj> <2015-06-03> add for CR01494595 begin
+    // The panel height is not adapt to screen height when first expanding notification panel
+    // after boot up. However, there is no QS panel in notification panel view in Amigo style UI.
+    // So we can use a fixed height for Notification panel view.
+    private int mScrollPadding = 0;
+    private int mMaxPanelHeight = 0;
+    // GIONEE <wujj> <2015-06-03> add for CR01494595 end
 
     public NotificationPanelView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -228,6 +236,13 @@ public class NotificationPanelView extends PanelView implements
         mCarrierLabelHeight = res.getDimensionPixelSize(R.dimen.carrier_label_height);
         mNotificationHandlerHeight = res.getDimensionPixelSize(R.dimen.gn_notification_drawner_height);
         //mNavigationBarHeight = res.getDimensionPixelSize(com.android.internal.R.dimen.navigation_bar_height);
+        
+        // GIONEE <wujj> <2015-06-03> add for CR01494595 begin
+        mScrollPadding = res.getDimensionPixelSize(R.dimen.close_handle_height);
+        int screenHeight = res.getDisplayMetrics().heightPixels;
+        mMaxPanelHeight = screenHeight - mScrollPadding;
+        Log.v(TAG, "loadDimens: mMaxPanelHeight = "+mMaxPanelHeight);
+        // GIONEE <wujj> <2015-06-03> add for CR01494595 end
     }
 
     public void updateResources() {
@@ -1052,16 +1067,17 @@ public class NotificationPanelView extends PanelView implements
 
     @Override
     protected int getMaxPanelHeight() {
-        int min = mStatusBarMinHeight;
-        if (/*mStatusBar.getBarState() != StatusBarState.KEYGUARD
-                &&*/ mNotificationStackScroller.getNotGoneChildCount() == 0) {
-            int minHeight = (int) ((mQsMinExpansionHeight + getOverExpansionAmount())
-                    * HEADER_RUBBERBAND_FACTOR);
-            min = Math.max(min, minHeight);
-        }
-        int maxHeight = calculatePanelHeightShade();
-        maxHeight = Math.max(maxHeight, min);
-        return maxHeight;
+//        int min = mStatusBarMinHeight;
+//        if (/*mStatusBar.getBarState() != StatusBarState.KEYGUARD
+//                &&*/ mNotificationStackScroller.getNotGoneChildCount() == 0) {
+//            int minHeight = (int) ((mQsMinExpansionHeight + getOverExpansionAmount())
+//                    * HEADER_RUBBERBAND_FACTOR);
+//            min = Math.max(min, minHeight);
+//        }
+//        int maxHeight = calculatePanelHeightShade();
+//        maxHeight = Math.max(maxHeight, min);
+//        return maxHeight;
+    	return mMaxPanelHeight;
     }
       //jiating modify for keyguard end
 
@@ -1417,6 +1433,11 @@ public class NotificationPanelView extends PanelView implements
     @Override
     protected void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+        // GIONEE <wujj> <2015-06-03> add for CR01494595 begin
+        int screenHeight = getContext().getResources().getDisplayMetrics().heightPixels;
+        mMaxPanelHeight = screenHeight - mScrollPadding;
+        Log.v(TAG, "onConfigurationChanged: mMaxPanelHeight = "+mMaxPanelHeight);
+        // GIONEE <wujj> <2015-06-03> add for CR01494595 end
     }
 
     @Override
