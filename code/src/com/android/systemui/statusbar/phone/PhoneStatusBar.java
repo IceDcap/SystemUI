@@ -1718,7 +1718,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 		final int IMPORTANT = importantView.size();
 		final int OTHER = otherView.size();
 		
-		Log.v(TAG, "ONGOING = "+ONGOING+" IMPORTANT = "+IMPORTANT+" OTHER = "+OTHER);
 		// Step 2
 		ArrayList<View> toRemove = new ArrayList<View>();
 		for (int i = 0; i < mStackScroller.getChildCount(); i++) {
@@ -1760,46 +1759,25 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
 		// Step 3
 		// Add onGoing notification view to mStackScroller
+		Log.v(TAG, "Loading ongoing list. ONGOING size: "+ONGOING);
 		for (int i = 0; i < ONGOING; i++) {
 			View v = onGoingView.get(i);
-			if (v.getParent() == null) {
-				mStackScroller.addView(v);
-			}
+			gnAddNotificationView(v);
 		}
 
 		// Add important notification view to mStackScroller
+		Log.v(TAG, "Loading important list. IMPORTANT size: "+IMPORTANT);
 		for (int i = 0; i < IMPORTANT; i++) {
 			View v = importantView.get(i);
-			if (v.getParent() == null) {
-				mStackScroller.addView(v);
-			}
+			gnAddNotificationView(v);
 		}
 
 		if (mShowOther == true) {
 			// Add other notification view to mStackScroller
+			Log.v(TAG, "Loading other list. OTHER size: "+OTHER);
 			for (int i = 0; i < OTHER; i++) {
 				View v = otherView.get(i);
-				if (v.getParent() == null) {
-					mStackScroller.addView(v);
-				} else {
-					// Notice: if user show & hide other notifications too frequently,
-					// v's parent will not be null, and it's parent will not be mStackScroller.
-					// This will cause all other notifications not adding to mStackScroller,
-					// in this case other header will gone
-					Log.v(TAG, "View's Parent:"+v.getParent());
-					if(v.getParent() instanceof NotificationStackScrollLayout) {
-						Log.v(TAG, "Child is instanceof NotificationStackScrollLayout");
-						// TODO: if v's parent is NotificationStackScrollLayout, do nothing
-					} else if (v.getParent() instanceof ViewGroup) {
-						try {
-							Log.v(TAG, "try to cast to ViewGroup ");
-							((ViewGroup)v.getParent()).removeView(v);
-							mStackScroller.addView(v);
-						} catch (Exception e) {
-							Log.v(TAG, "cast to ViewGroup exception");
-						}
-					}
-				}
+				gnAddNotificationView(v);
 			}
 		}
 
@@ -1904,6 +1882,30 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 		mShadeUpdates.check();
 	}
     
+	private void gnAddNotificationView(final View view) {
+		if (view.getParent() == null) {
+			mStackScroller.addView(view);
+		} else {
+			// Notice: if user show & hide other notifications too frequently,
+			// v's parent will not be null, and it's parent will not be mStackScroller.
+			// This will cause all other notifications not adding to mStackScroller,
+			// in this case other header will gone
+			//Log.v(TAG, "View's Parent:"+view.getParent());
+			if(view.getParent() instanceof NotificationStackScrollLayout) {
+				Log.v(TAG, "Child is instanceof NotificationStackScrollLayout");
+				// TODO: if v's parent is NotificationStackScrollLayout, do nothing
+			} else if (view.getParent() instanceof ViewGroup) {
+				try {
+					Log.v(TAG, "try to cast to ViewGroup ");
+					((ViewGroup)view.getParent()).removeView(view);
+					mStackScroller.addView(view);
+				} catch (Exception e) {
+					Log.v(TAG, "cast to ViewGroup exception");
+				}
+			}
+		}
+	}
+	
     private void updateNotificationShade() {
         if (mStackScroller == null) return;
 
