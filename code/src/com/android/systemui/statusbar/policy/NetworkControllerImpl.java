@@ -1591,10 +1591,20 @@ public class NetworkControllerImpl extends BroadcastReceiver
                 mNetworkController.recalculateEmergency();
             }
             // Fill in the network name if we think we have it.
-            if (mCurrentState.networkName == mNetworkNameDefault && mServiceState != null
-                    && mServiceState.getOperatorAlphaShort() != null) {
-                mCurrentState.networkName = mServiceState.getOperatorAlphaShort();
+            // GIONEE <wujj> <2015-06-06> modify for CR01496755 begin
+            if (mCurrentState.networkName == mNetworkNameDefault && mServiceState != null) {
+//                    && mServiceState.getOperatorAlphaShort() != null) {
+            	String longName = mServiceState.getOperatorAlphaLong();
+            	String shortName = mServiceState.getOperatorAlphaShort();
+            	Log.v(TAG, "updateTelephony--- Long name:[" + longName + "] Short name:[" + shortName+"]");
+            	if (longName != null) {
+            		mCurrentState.networkName = longName;
+            	} else if (shortName != null) {
+            		mCurrentState.networkName = shortName;
+            	}
+//                mCurrentState.networkName = mServiceState.getOperatorAlphaShort();
             }
+            // GIONEE <wujj> <2015-06-06> modify for CR01496755 end
             notifyListenersIfNecessary();
         }
 
