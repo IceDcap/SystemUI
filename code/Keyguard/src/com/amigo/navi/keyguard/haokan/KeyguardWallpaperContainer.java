@@ -11,13 +11,14 @@ import android.graphics.Shader;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.FrameLayout;
 
 import com.android.keyguard.R;
 
 public class KeyguardWallpaperContainer extends FrameLayout {
 
-    private int mTop;
+    private int mTop = Integer.MAX_VALUE;
     
     private Paint mPaint = new Paint();
     
@@ -56,7 +57,7 @@ public class KeyguardWallpaperContainer extends FrameLayout {
         super(context, attrs, defStyleAttr, defStyleRes);
         mScreenHeight = Common.getScreenHeight(getContext().getApplicationContext());
         mScreenWidth =  Common.getScreenWidth(getContext().getApplicationContext());
-        mTop = mScreenHeight;
+//        mTop = mScreenHeight;
         
         cx = mScreenWidth / 2.0f;
         cy = mScreenHeight / 2.0f;
@@ -73,7 +74,7 @@ public class KeyguardWallpaperContainer extends FrameLayout {
     }
     
     public void reset() {
-        mTop = mScreenHeight;
+        mTop = Integer.MAX_VALUE;
 		mBlind=0;
         invalidate();
     }
@@ -90,8 +91,9 @@ public class KeyguardWallpaperContainer extends FrameLayout {
         super.dispatchDraw(canvas);
         bottomDrawable.draw(canvas);
         
-        if (mModel!=UIController.SCROLL_TO_SECURTY && mTop != mScreenHeight) {
+        if (mModel!=UIController.SCROLL_TO_SECURTY && mTop != Integer.MAX_VALUE) {
             cy = mScreenHeight * 3 - mTop;
+            
             RadialGradient mRadialGradient = new RadialGradient(cx, cy, mRadius ,
                     colors, stops, Shader.TileMode.CLAMP);
             
@@ -108,7 +110,7 @@ public class KeyguardWallpaperContainer extends FrameLayout {
     
    public void onKeyguardModelChanged(int top,int maxBoundY, int  model) {
         mTop = (int) (top * mScreenHeight / (float)maxBoundY);
- 
+        
         mModel=model;
         if(model==UIController.SCROLL_TO_SECURTY){
         	mBlind= (float)top/maxBoundY;

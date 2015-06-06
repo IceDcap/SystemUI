@@ -788,3 +788,20 @@ svn: E205000: Syntax error in revision argument '5756:'
 File does not exist:  at getAppChangeSet.pl line 48
 
 ==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01495985      Coded      jiating    锁屏：手机插双卡，且SIM卡全设置PIN码锁，重启手机，分别输入卡1和卡2 PIN码，卡2输入时界面跳转到锁屏，再切换到输入PIN码2次
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.x
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.w
+Code difference: svn diff -r 5762:5759 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.c' non-existent in revision 5779
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '5779:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================

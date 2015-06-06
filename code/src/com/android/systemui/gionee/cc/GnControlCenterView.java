@@ -151,15 +151,15 @@ public class GnControlCenterView extends GnControlCenter {
                     mBluetoothController, mLocationController, mRotationLockController,
                     mGnWifiController, mGnMobileDataController, mGnNextAlarmController);
             mGnQSPanel.setHost(mGnQSH);
-            mGnQSPanel.setTiles(mGnQSH.getTiles());
-            mGnQSPanel.setListening(true);
             mGnQSH.setCallback(new GnQSTileHost.Callback() {
                 @Override
                 public void onTilesChanged() {
                     mGnQSPanel.setTiles(mGnQSH.getTiles());
-                    mGnMoreView.initMoreView(mGnQSH.getTiles());
+                    mGnMoreView.setTiles(mGnQSH.getTiles());
                 }
             });
+
+            updateResources();
         }
     }
 
@@ -238,7 +238,10 @@ public class GnControlCenterView extends GnControlCenter {
     }
 
     public void updateResources() {
-        mGnQSPanel.updateResources();
+        Collection<GnQSTile<?>> collection = mGnQSH.getTiles();
+        for (GnQSTile<?> tile : collection) {
+            tile.refreshState();
+        }
     }
 
     public void setBar(PhoneStatusBar statusBar) {
@@ -267,8 +270,18 @@ public class GnControlCenterView extends GnControlCenter {
 
     public void addGnMoreView(GnControlCenterMoreView moreView) {
         mGnMoreView = moreView;
-        mGnMoreView.initMoreView(mGnQSH.getTiles());
-//        mGnMoreView.setChanageListener(mGnQSPanel.getChangeListener());
+    }
+
+    public void initQS() {
+        mHandler.postDelayed(new Runnable() {
+            
+            @Override
+            public void run() {                
+                mGnMoreView.setTiles(mGnQSH.getTiles());
+                mGnQSPanel.setTiles(mGnQSH.getTiles());
+                mGnQSPanel.setListening(true);
+            }
+        }, 500);
     }
 
     public void openMoreView() {

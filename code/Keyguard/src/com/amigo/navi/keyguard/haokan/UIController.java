@@ -389,7 +389,7 @@ public class UIController implements OnTouchlListener{
             getAmigoKeyguardPage().stopGuideNewWallpaper();
         }
  
-        if (Guide.needGuideLongPress() && !Guide.needGuideScrollUp()
+        if (Guide.needGuideLongPress() && !Guide.needGuideScrollUp() && !Guide.needGuideSlideAround()
                 && Guide.isIdle()) {
             getmKeyguardViewHost().postDelayed(mGuideLongPressRunnable, 500);
         }

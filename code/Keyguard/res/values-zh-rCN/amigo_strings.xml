@@ -132,8 +132,8 @@
     <string name="kg_too_many_failed_mixed_password_attempts_dialog_message" msgid="7813713389422226531">"您已经 <xliff:g id="NUMBER_0">%d</xliff:g> 次错误地输入了密码。\n\n请在 <xliff:g id="NUMBER_1">%d</xliff:g> 秒后重试。"</string>
     <string name="finger_identify_fail_tip">指纹错误，请再试一次</string>
     <string name="amigo_kg_too_many_failed_attempts_countdown">"输入错误<xliff:g id="NUMBER_0">%d</xliff:g>次，请在 <xliff:g id="NUMBER_1">%s</xliff:g>后重试。"</string>
-    <string name="keyguard_pattern_enter_code_finger">"请输入密码或者使用指纹识别"</string>
-    <string name="keyguard_password_enter_code_finger">"请输入密码或者使用指纹识别"</string>
+    <string name="keyguard_pattern_enter_code_finger">"请输入密码或使用指纹识别"</string>
+    <string name="keyguard_password_enter_code_finger">"请输入密码或使用指纹识别"</string>
     <string name="keyguard_pattern_enter_code">"请输入密码"</string>
     <string name="keyguard_password_enter_code">"请输入密码"</string>
     <string name="forget_password">忘记密码</string>

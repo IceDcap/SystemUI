@@ -5,7 +5,7 @@ import java.util.Collection;
 
 import com.android.systemui.R;
 import com.android.systemui.gionee.cc.qs.GnQSTile;
-import com.android.systemui.gionee.cc.qs.GnQSTile.ExtendCallback;
+import com.android.systemui.gionee.cc.qs.GnQSTile.Callback;
 import com.android.systemui.gionee.cc.qs.GnQSTileView;
 import com.android.systemui.gionee.cc.qs.tiles.GnMoreTile;
 
@@ -594,7 +594,7 @@ public class GnDragGridView extends ViewGroup {
 
         Log.d(TAG, "add view name " + r.tile.getClass().getSimpleName() + " view " + r.tileView + " visible = " + tile.mState.visible);
         
-        final ExtendCallback callback = new GnQSTile.ExtendCallback() {
+        final Callback callback = new GnQSTile.Callback() {
             @Override
             public void onStateChanged(GnQSTile.State state) {
                 int visibility = state.visible ? VISIBLE : GONE;
@@ -608,7 +608,7 @@ public class GnDragGridView extends ViewGroup {
                 r.tileView.onStateChanged(state);
             }
         };
-        r.tile.setExtendCallback(callback);
+        r.tile.setCallback(callback);
         
         final View.OnClickListener click = new View.OnClickListener() {
             @Override

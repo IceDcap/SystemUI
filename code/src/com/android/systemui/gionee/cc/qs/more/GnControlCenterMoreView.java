@@ -75,7 +75,7 @@ public class GnControlCenterMoreView extends FrameLayout implements View.OnClick
         mContext.registerReceiver(mReceiver, filter);
     }
 
-    public void initMoreView(Collection<GnQSTile<?>> collection) {
+    public void setTiles(Collection<GnQSTile<?>> collection) {
         mDragGridView.setTiles(collection);
         mDragGridView.showMoreView();
     }

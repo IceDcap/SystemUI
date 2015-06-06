@@ -1095,7 +1095,8 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 			
 		}
 		DebugLog.d(LOG_TAG, "show()....options="+(options!=null? options.getBoolean(KeyguardViewHostManager.KEYGUARD_LOCK_BY_OTHERAPP) : false ));
-		resetHostYToHomePosition();
+		
+//		resetHostYToHomePosition();
 		if(mKeyguardBouncer!=null){
 			mKeyguardBouncer.show(true);
 		}
@@ -1124,6 +1125,7 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 //        mGuestModeUtil.checkAndOpenGuestMode();
         resetDisMissAction();
         mBouncerIsShowing=false;
+        resetHostYToHomePosition();
        
     }
 	

@@ -587,4 +587,10 @@ public class StatusBarKeyguardViewManager implements KeyguardBouncerCallback ,Ke
     	mKeyguardViewHostManager.unlockKeyguardByOtherApp();
     }
     
+    public void releaseCache() {
+        if (mKeyguardViewHostManager != null) {
+            mKeyguardViewHostManager.releaseCache();
+        }
+    }
+    
 }

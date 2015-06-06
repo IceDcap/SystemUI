@@ -740,6 +740,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mGnControlCenter.addGnImmerseModeView(mGnImmerseView);
         mGnControlCenter.initControlCenter();
         mGnControlCenter.setBar(this);
+        
+        mGnControlCenterView.initQS();
         // Gionee <huangwt> <2014-12-13> add for CR01425226 end
 
         // figure out which pixel-format to use for the status bar.

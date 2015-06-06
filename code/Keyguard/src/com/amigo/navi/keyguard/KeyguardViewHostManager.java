@@ -216,6 +216,7 @@ public class KeyguardViewHostManager {
     
     
     public void hide() {
+         
         DataStatistics.getInstance().unlockScreenWhenHasNotification(mContext);
         destroyAcivityIfNeed();
         mKeyguardViewHost.hide();
@@ -227,7 +228,7 @@ public class KeyguardViewHostManager {
         mContainer.reset();
     }
 
-	private void releaseCache() {
+	public void releaseCache() {
 		if(mImageLoader != null){
         	mImageLoader.clearCache();
         }

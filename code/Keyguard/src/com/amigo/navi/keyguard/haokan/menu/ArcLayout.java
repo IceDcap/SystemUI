@@ -757,9 +757,9 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                     success = controller.clearLock(getContext(),mWallpaper);
                 }else{
                     success = controller.lockWallpaper(getContext(), mWallpaper);
-                    
+                    boolean isLocalImage = mWallpaper.getImgId() == Wallpaper.WALLPAPER_FROM_PHOTO_ID;
                     String imageFileName = new StringBuffer(FileUtil.getDirectoryFavorite()).append("/").append(Common.currentTimeDate()).append("_")
-                            .append(mWallpaper.getImgId()).append(".jpg").toString();
+                            .append(isLocalImage ? mWallpaper.getImgName() : mWallpaper.getImgId()).append(".jpg").toString();
                     Bitmap currentWallpaper = controller.getCurrentWallpaperBitmap(mWallpaper);
                     success = FileUtil.saveWallpaper(currentWallpaper, imageFileName);
                     if (success) {

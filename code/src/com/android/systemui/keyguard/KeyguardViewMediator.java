@@ -854,6 +854,7 @@ public class KeyguardViewMediator extends SystemUI {
                 mNeedToReshowWhenReenabled = true;
                 updateInputRestrictedLocked();
                 hideLocked();
+                releaseCache();
             } else if (enabled && mNeedToReshowWhenReenabled) {
                 // reenabled after previously hidden, reshow
                 if (DEBUG) Log.d(TAG, "previously hidden, reshowing, reenabling "
@@ -971,6 +972,9 @@ public class KeyguardViewMediator extends SystemUI {
                 updateActivityLockScreenState();
                 adjustStatusBarLocked();
                 setSkylightOccluded();
+            }
+            if (isOccluded) {
+                releaseCache();
             }
         }
     }
@@ -1774,6 +1778,12 @@ public class KeyguardViewMediator extends SystemUI {
              mHallState=isHallOpen?HallState.OPEN:HallState.CLOSE;
          }else{
              mHallState=HallState.OPEN;
+         }
+     }
+     
+     private void releaseCache() {
+         if (mStatusBarKeyguardViewManager != null) {
+             mStatusBarKeyguardViewManager.releaseCache();
          }
      }
 }
