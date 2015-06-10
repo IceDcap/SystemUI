@@ -38,7 +38,7 @@ public class KeyguardWallpaperContainer extends FrameLayout {
     
     private int[] colors = new int[] {0xffffffff, 0xffffffff, /*0xddffffff, 0xaaffffff, 0x66ffffff, 0x22ffffff, */0x00ffffff,};
     
-    private float[] stops = new float[] { 0, 0.75f, /*0.75f, 0.80f, 0.85f, 0.90f,*/ 1.0f};
+    private float[] stops = new float[] { 0, 0.82f, /*0.75f, 0.80f, 0.85f, 0.90f,*/ 1.0f};
     
     public KeyguardWallpaperContainer(Context context) {
         this(context,null);
@@ -109,7 +109,7 @@ public class KeyguardWallpaperContainer extends FrameLayout {
 
     
    public void onKeyguardModelChanged(int top,int maxBoundY, int  model) {
-        mTop = (int) (top * mScreenHeight / (float)maxBoundY);
+        mTop = (int) (top * mScreenHeight * 1.175f / (float)maxBoundY);
         
         mModel=model;
         if(model==UIController.SCROLL_TO_SECURTY){

@@ -311,6 +311,7 @@ public class KeyguardViewMediator extends SystemUI {
     private KeyguardDisplayManager mKeyguardDisplayManager;
 
     private final ArrayList<IKeyguardStateCallback> mKeyguardStateCallbacks = new ArrayList<>();
+    private boolean isKeyguardGoingAwayRunning=false;
 
     KeyguardUpdateMonitorCallback mUpdateCallback = new KeyguardUpdateMonitorCallback() {
 
@@ -693,6 +694,7 @@ public class KeyguardViewMediator extends SystemUI {
             if (DEBUG) Log.d(TAG, "onScreenTurnedOff(" + why + ")");
 
             resetKeyguardDonePendingLocked();
+            resetKeyguardGoingAwayRunningState();
             mHideAnimationRun = false;
 
             // Lock immediately based on setting if secure (user has a pin/pattern/password).
@@ -964,9 +966,13 @@ public class KeyguardViewMediator extends SystemUI {
     private void handleSetOccluded(boolean isOccluded) {
         synchronized (KeyguardViewMediator.this) {
             if (DEBUG) {
-                Log.d(TAG, "mOccluded: "+mOccluded+" isOccluded: "+isOccluded);
+                Log.d(TAG, "mOccluded: "+mOccluded+" isOccluded: "+isOccluded+"isKeyguardGoingAwayRunning="+isKeyguardGoingAwayRunning);
             }
             if (mOccluded != isOccluded) {
+            	if(!isOccluded && isKeyguardGoingAwayRunning){
+            		handleStartKeyguardExitAnimation( SystemClock.uptimeMillis() + mHideAnimation.getStartOffset(),
+                            mHideAnimation.getDuration());
+            	}
                 mOccluded = isOccluded;
                 mStatusBarKeyguardViewManager.setOccluded(isOccluded);
                 updateActivityLockScreenState();
@@ -1303,7 +1309,7 @@ public class KeyguardViewMediator extends SystemUI {
         synchronized (this) {
             resetKeyguardDonePendingLocked();
         }
-
+        resetKeyguardGoingAwayRunningState();
         if (authenticated) {
             mUpdateMonitor.clearFailedUnlockAttempts();
         }
@@ -1428,6 +1434,7 @@ public class KeyguardViewMediator extends SystemUI {
             mStatusBarKeyguardViewManager.show(options);
             mHiding = false;
             resetKeyguardDonePendingLocked();
+            resetKeyguardGoingAwayRunningState();
             mHideAnimationRun = false;
             updateActivityLockScreenState();
             adjustStatusBarLocked();
@@ -1452,6 +1459,7 @@ public class KeyguardViewMediator extends SystemUI {
 //                        mStatusBarKeyguardViewManager.shouldDisableWindowAnimationsForUnlock(),
 //                        mStatusBarKeyguardViewManager.isGoingToNotificationShade());
             	Log.d(TAG, "mKeyguardGoingAwayRunnable....run");
+            	isKeyguardGoingAwayRunning=true;
                 mWM.keyguardGoingAway(
                         true,
                         mStatusBarKeyguardViewManager.isGoingToNotificationShade());
@@ -1498,6 +1506,7 @@ public class KeyguardViewMediator extends SystemUI {
     private void handleStartKeyguardExitAnimation(long startTime, long fadeoutDuration) {
         synchronized (KeyguardViewMediator.this) {
 			if (DEBUG) Log.d(TAG, "handleStartKeyguardExitAnimation...mHiding="+mHiding );
+			resetKeyguardGoingAwayRunningState();
             if (!mHiding) {
                 return;
             }
@@ -1618,6 +1627,10 @@ public class KeyguardViewMediator extends SystemUI {
         mHandler.removeMessages(KEYGUARD_DONE_PENDING_TIMEOUT);
     }
 
+    private void resetKeyguardGoingAwayRunningState(){
+    	isKeyguardGoingAwayRunning=false;
+    }
+    
     public void onBootCompleted() {
         if(DEBUG){Log.d(TAG, "onBootCompleted");}
         mUpdateMonitor.dispatchBootCompleted();

@@ -326,7 +326,22 @@ public class JsonUtil {
                     String background = jsonObjectImg.optString("Background");
                     String showTimeBegin = jsonObjectImg.optString("ShowTimeBegin");
                     String showTimeEnd = jsonObjectImg.optString("ShowTimeEnd");
+                    
+                    String MusicName = jsonObjectImg.optString("MusicName");
+                    String MusicSinger = jsonObjectImg.optString("MusicSinger");
+                    String MusicURL = jsonObjectImg.optString("MusicURL");
+                    
                     String lock = jsonObjectImg.optString("Lock");
+                    
+                    Music music = null;
+                    if (!TextUtils.isEmpty(MusicURL)) {
+                        music = new Music();
+                        music.setmMusicName(MusicName);
+                        music.setmArtist(MusicSinger);
+                        music.setDownLoadUrl(MusicURL);
+                        music.setPlayerUrl(MusicURL);
+                    }
+                    wallpaper.setMusic(music);
  
                     Category category = new Category();
                     category.setTypeId(0);

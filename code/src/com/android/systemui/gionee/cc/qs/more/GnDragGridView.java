@@ -617,7 +617,7 @@ public class GnDragGridView extends ViewGroup {
             }
         };
 
-        r.tileView.init(click);
+        r.tileView.setClickListener(click);
         r.tile.refreshState();
         callback.onStateChanged(r.tile.getState());
         addView(r.tileView);

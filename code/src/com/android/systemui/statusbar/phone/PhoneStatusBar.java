@@ -738,7 +738,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mGnControlCenter = new GnControlCenter(mContext);
         mGnControlCenter.addControlCenter(mGnControlCenterView);
         mGnControlCenter.addGnImmerseModeView(mGnImmerseView);
-        mGnControlCenter.initControlCenter();
         mGnControlCenter.setBar(this);
         
         mGnControlCenterView.initQS();
@@ -1452,6 +1451,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (SPEW) Log.d(TAG, "addIcon slot=" + slot + " index=" + index + " viewIndex=" + viewIndex
                 + " icon=" + icon);
         StatusBarIconView view = new StatusBarIconView(mContext, slot, null);
+        //CR01490949 begin
+        view.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        //CR01490949 end
         view.set(icon);
         mStatusIcons.addView(view, viewIndex, new LinearLayout.LayoutParams(
                 LayoutParams.WRAP_CONTENT, mIconSize));

@@ -63,12 +63,12 @@ public class LoadImagePool {
     }
 
     public void loadImage(LoadImageThread runnable,String url) {
-//            synchronized (objSync) {
-//                if (containInThreadPool(url)) {
-//                    return;
-//                }
-//                mThreadList.add(runnable);
-//            }
+            synchronized (objSync) {
+                if (containInThreadPool(url)) {
+                    return;
+                }
+                mThreadList.add(runnable);
+            }
             gnDownLoadExecute(runnable);
     }
     
@@ -85,10 +85,26 @@ public class LoadImagePool {
                 continue;
             }
             ret = th.compareThread(url);
+            if (ret){
+            	return true;
+            }
         }
         return ret;
     }
 
+    public void cancelAllThread(){
+        LoadImageThread th = null;
+        for (int i = 0; i < mThreadList.size(); i++) {
+        	try {
+        		th = mThreadList.get(i);
+    		} catch (Exception e) {
+    			DebugLog.d(LOG_TAG,"containInThreadPool error:" + e.getStackTrace());
+    		}
+            if (null != th) {
+                th.stop();
+            }
+        }
+    }
     private URL constructRequestURL(String reqUrl, String queryStr) {
         // URL conUrl = null;
         // StringBuilder url = new StringBuilder();

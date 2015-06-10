@@ -99,7 +99,7 @@ public class Clock extends TextView implements DemoMode {
             filter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
             filter.addAction(Intent.ACTION_CONFIGURATION_CHANGED);
             filter.addAction(Intent.ACTION_USER_SWITCHED);
-
+            filter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
             getContext().registerReceiverAsUser(mIntentReceiver, UserHandle.ALL, filter,
                     null, getHandler());
         }

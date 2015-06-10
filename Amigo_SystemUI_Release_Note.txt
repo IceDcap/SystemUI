@@ -2,37 +2,32 @@
 Build Notes
 ==================
 1.版本目的:
-bug fix
+- 修改为锁屏不需要判断是否需要横屏显示，不需要获取系统配置的属性来决定是否可以横屏，直接就竖屏显示
+- 壁纸加载优化
 2.功能变更:
-No
+-
 3.重点测试的问题:
-CR01459185
-锁定保存壁纸
-CR01495803
-提交英文字串
-CR01495853
-【5.1MP】系统界面：刷机和恢复出厂完成后，进入更多界面图标丢失。（5/8）【请查看备注】
-CR01459185
-离开锁屏，清除壁纸缓存
-CR01490470
-【品质压力】建立通话，挂断，下拉状态栏，无后台程序运行的图标，打开音乐后台播放，下拉状态栏恢复正常【3/10】
-CR01459185
-解锁时出现锁屏壁纸
+-
 4.应用数据库是否改变:
 No
 
 ==================
 Release Location
 ==================
-/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.y.zip
+/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ae.zip
 
 ==================
 CR List
 ==================
 [Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
-svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.c' non-existent in revision 5779
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.ar' non-existent in revision 5865
 
 svn: E200009: Could not display info for all targets because some targets don't exist
-svn: E205000: Syntax error in revision argument '5779:'
+svn: E205000: Syntax error in revision argument '5865:'
 File does not exist:  at getAppChangeSet.pl line 48
 
+==================
+Make sonar target URL:
+http://ss.alm.gionee.com/sonar
+http://ss.alm.gionee.com/sonar/dashboard/index/gionee.app:Amigo_SystemUI
+==================

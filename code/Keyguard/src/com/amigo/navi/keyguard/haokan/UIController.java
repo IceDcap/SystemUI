@@ -15,28 +15,22 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
-import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
-import android.view.animation.BounceInterpolator;
-import android.view.animation.CycleInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
-import android.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import com.amigo.navi.keyguard.AmigoKeyguardBouncer;
 import com.amigo.navi.keyguard.AmigoKeyguardHostView;
 import com.amigo.navi.keyguard.AmigoKeyguardPage;
 import com.amigo.navi.keyguard.DebugLog;
@@ -149,6 +143,7 @@ public class UIController implements OnTouchlListener{
     
     private RelativeLayout toastView;
     
+    private AmigoKeyguardBouncer mKeyguardBouncer;
  
     public RelativeLayout getmArcMenu() {
         return mArcMenu;
@@ -342,7 +337,7 @@ public class UIController implements OnTouchlListener{
             week.setTranslationX(translationX / 4.0f);
             dateFestival.setTranslationX(translationX / 4.0f);
             
-            if (getmCurrentWallpaper() != null && getmCurrentWallpaper().getMusic() != null) {
+            if (mPlayerLayout.getVisibility() == View.VISIBLE) {
                 float playerTranslationX = translationX / (infozoneMaxTranslationX * 4.0f) * playerMaxTranslationX;
                 mPlayerLayout.setTranslationX(playerTranslationX);
                 float alpha =  1.0f - playerTranslationX / playerMaxTranslationX;
@@ -431,20 +426,27 @@ public class UIController implements OnTouchlListener{
             if (isNewWallpaperToDisplay() && Guide.needGuideNewWallpaper()) {
 
                 DebugLog.d("guide", "isNewWallpaperToDisplay");
-                HorizontalAdapter mWallpaperAdapter = (HorizontalAdapter) getmKeyguardListView().getAdapter(); 
+                HorizontalAdapter mWallpaperAdapter = (HorizontalAdapter) getmKeyguardListView()
+                        .getAdapter();
                 WallpaperList list = mWallpaperAdapter.getWallpaperList();
                 boolean hasLocked = false;
+
                 for (Wallpaper wallpaper : list) {
                     if (wallpaper.isLocked()) {
                         hasLocked = true;
                         break;
                     }
                 }
-                setNewWallpaperToDisplay(false);
-                DebugLog.d("guide", "hasLocked = " + hasLocked + " Guide.isIdle() = " + Guide.isIdle());
-                if (!hasLocked && Guide.isIdle()) {
-                    getAmigoKeyguardPage().startGuideNewWallpaper();
+                
+                if (list.size() > 1) {
+                    DebugLog.d("guide",
+                            "hasLocked = " + hasLocked + " Guide.isIdle() = " + Guide.isIdle());
+                    if (hasLocked && Guide.isIdle()) {
+                        getAmigoKeyguardPage().startGuideNewWallpaper();
+                        setNewWallpaperToDisplay(false);
+                    }
                 }
+
             }
             
             
@@ -500,24 +502,24 @@ public class UIController implements OnTouchlListener{
                 setDetailActivity(null);
             }
         }
+        
+        if (Guide.needGuideScrollUp() && Guide.isIdle() && !getKeyguardBouncer().isSimSecure()) {
+            getAmigoKeyguardPage().addGuideScrollUpView();
+        }
+        
 
     }
     
     
     public void refreshWallpaperInfo() {
         int pos = getmKeyguardListView().getNextPage();
-        DebugLog.d(TAG,"OnTouchUp pos:" + pos);
-        DebugLog.d(TAG, "OnTouchUp getPage = " + pos);
+        DebugLog.d(TAG,"refreshWallpaperInfo pos:" + pos);
+        DebugLog.d(TAG, "refreshWallpaperInfo getPage = " + pos);
         HorizontalAdapter mWallpaperAdapter = (HorizontalAdapter) getmKeyguardListView().getAdapter(); 
         WallpaperList list = mWallpaperAdapter.getWallpaperList();
         Wallpaper wallpaper = null;
         if (list.size() > pos) {
             wallpaper = list.get(pos);
-        }
-        
-        if (wallpaper != null) {
-            DebugLog.d(TAG, "refreshWallpaperInfo() : pos = " + pos + "  " + wallpaper.toString());
-            refreshWallpaperInfo(wallpaper);
         }
         
         if (getDetailActivity() != null) {
@@ -528,52 +530,32 @@ public class UIController implements OnTouchlListener{
             }
         }
         
-
-    }
-    
-    public void refreshWallpaperInfo(final Wallpaper wallpaper) {
-
-        if (wallpaper == null) {
-            return;
-        }
- 
-        if (getmCurrentWallpaper() != null) {
-            if (getmCurrentWallpaper().getImgId() == wallpaper.getImgId()
-                    && getmCurrentWallpaper().getImgId() != Wallpaper.WALLPAPER_FROM_PHOTO_ID) {
-                DebugLog.d(TAG, "getmCurrentWallpaper().getImgId() == wallpaper.getImgId()  return");
-                return;
-            }
-        }
-        
-        setmCurrentWallpaper(wallpaper);
-        
-        PlayerManager playerManager = PlayerManager.getInstance();
-        if (playerManager.getState() != State.NULL) {
-            DebugLog.d(TAG, "player/pause Music");
-            mPlayerButton.setState(State.NULL);
-            playerManager.stopMusicPlayer(true); 
-            hideMusicPlayer(false);
-        }
-        
-        
-        if (wallpaper.getMusic() == null) {
-             
-            if (mPlayerLayout.getVisibility() == View.VISIBLE) {
-                mPlayerLayout.setVisibility(View.GONE);
+        if (wallpaper != null) {
+            DebugLog.d(TAG, "refreshWallpaperInfo() : pos = " + pos + "  " + wallpaper.toString());
+            
+            if (getmCurrentWallpaper() != null) {
+                if (getmCurrentWallpaper().getImgId() == wallpaper.getImgId()
+                        && getmCurrentWallpaper().getImgId() != Wallpaper.WALLPAPER_FROM_PHOTO_ID) {
+                    DebugLog.d(TAG, "getmCurrentWallpaper().getImgId() == wallpaper.getImgId()  return");
+                    return;
+                }
             }
             
-        }else {
-             
-            if (mPlayerLayout.getVisibility() != View.VISIBLE) {
-                mPlayerLayout.setVisibility(View.VISIBLE);
-            }
+            setmCurrentWallpaper(wallpaper);
             
+            PlayerManager playerManager = PlayerManager.getInstance();
+            boolean musicIsExist = wallpaper.getMusic() != null;
+            if (playerManager.getState() == State.NULL) {
+                setPlayerLayoutVisibility(musicIsExist);
+            }
+     
             PlayerManager.getInstance().setmCurrentMusic(wallpaper.getMusic());
-             
+     
+            mInfozone.setFestivalText(wallpaper.getFestival());
+            mCaptionsView.setContentText(wallpaper.getCaption());
         }
         
-        mInfozone.setFestivalText(wallpaper.getFestival());
-        mCaptionsView.setContentText(wallpaper.getCaption());
+
     }
     
     
@@ -1007,33 +989,62 @@ public class UIController implements OnTouchlListener{
             @Override
             public void run() {
 
-                mTextViewMusicName.setText(mCurrentMusic.getmMusicName());
- 
-                mTextViewArtist.setText(mCurrentMusic.getmArtist());
- 
+                final String musicName = mCurrentMusic.getmMusicName();
+                final String musicArtist = mCurrentMusic.getmArtist();
+                boolean isEmptyMusicName = TextUtils.isEmpty(musicName);
+                boolean isEmptyMusicArtist = TextUtils.isEmpty(musicArtist);
+                
                 PropertyValuesHolder pvhTranslationX = PropertyValuesHolder.ofFloat(
                         "translationX", 100, 0f);
- 
                 PropertyValuesHolder alpha = PropertyValuesHolder.ofFloat("alpha", 0.1f, 1.0f);
 
-                ObjectAnimator translationName = ObjectAnimator.ofPropertyValuesHolder(
-                        mTextViewMusicName, pvhTranslationX, alpha).setDuration(300);
-                ObjectAnimator translationArtist = ObjectAnimator.ofPropertyValuesHolder(
-                        mTextViewArtist, pvhTranslationX, alpha).setDuration(300);
-
-                translationName.setInterpolator(new OvershootInterpolator(2.5f));
-                translationArtist.setInterpolator(new OvershootInterpolator(2.5f));
-                translationArtist.setStartDelay(70);
                 AnimatorSet animatorSet = new AnimatorSet();
-                animatorSet.play(translationName).with(translationArtist);
-                animatorSet.start();
+
+                if (!isEmptyMusicName) {
+                    mTextViewMusicName.setText(musicName);
+                    mTextViewMusicName.setVisibility(View.VISIBLE);
+                    ObjectAnimator translationName = ObjectAnimator.ofPropertyValuesHolder(
+                            mTextViewMusicName, pvhTranslationX, alpha).setDuration(300);
+                    translationName.setInterpolator(new OvershootInterpolator(2.5f));
+                    animatorSet.play(translationName);
+                }else {
+                    mTextViewMusicName.setVisibility(View.GONE);
+                }
+                
+                if (!isEmptyMusicArtist) {
+                    mTextViewArtist.setText(musicArtist);
+                    mTextViewArtist.setVisibility(View.VISIBLE);
+                    ObjectAnimator translationArtist = ObjectAnimator.ofPropertyValuesHolder(
+                            mTextViewArtist, pvhTranslationX, alpha).setDuration(300);
+                    translationArtist.setInterpolator(new OvershootInterpolator(2.5f));
+                    translationArtist.setStartDelay(70);
+                    animatorSet.play(translationArtist);
+                }else {
+                    mTextViewArtist.setVisibility(View.GONE);
+                }
+
+                if (!isEmptyMusicArtist || !isEmptyMusicName) {
+                    animatorSet.start();
+                }
             }
         }, 50);
 
     }
     
+    public void setPlayerLayoutVisibility(boolean musicIsExist) {
+
+        if (musicIsExist) {
+            if (mPlayerLayout.getVisibility() != View.VISIBLE) {
+                mPlayerLayout.setVisibility(View.VISIBLE);
+            }
+        } else {
+            if (mPlayerLayout.getVisibility() == View.VISIBLE) {
+                mPlayerLayout.setVisibility(View.GONE);
+            }
+        }
+    }
     
-    public void hideMusicPlayer(boolean anim) {
+    public void hideMusicPlayer(boolean anim, final boolean hasMusic) {
 
         if (anim) {
             
@@ -1055,14 +1066,37 @@ public class UIController implements OnTouchlListener{
                     translationArtist.setStartDelay(70);
                     AnimatorSet animatorSet = new AnimatorSet();
                     animatorSet.play(translationName).with(translationArtist);
+                    animatorSet.addListener(new AnimatorListener() {
+                        
+                        @Override
+                        public void onAnimationStart(Animator arg0) {
+                            
+                        }
+                        
+                        @Override
+                        public void onAnimationRepeat(Animator arg0) {
+                            
+                        }
+                        
+                        @Override
+                        public void onAnimationEnd(Animator arg0) {
+                            setPlayerLayoutVisibility(hasMusic);
+                        }
+                        
+                        @Override
+                        public void onAnimationCancel(Animator arg0) {
+                            
+                        }
+                    });
                     animatorSet.start();
-
+                    
                 }
             }, 50);
 
         } else {
             mTextViewMusicName.setAlpha(0f);
             mTextViewArtist.setAlpha(0f);
+            setPlayerLayoutVisibility(hasMusic);
         }
 
     }
@@ -1233,7 +1267,17 @@ public class UIController implements OnTouchlListener{
     }
     
      
-    public KeyguardListView getmKeyguardListView() {
+/*	public int getCurrentIndex(boolean isAllowLoad) {
+		int currentIndex;
+		if (isAllowLoad) {
+			currentIndex = mKeyguardListView.getPage();
+		} else {
+			currentIndex = mKeyguardListView.getPageWhenMoving();
+		}
+		return currentIndex;
+	}*/
+
+	public KeyguardListView getmKeyguardListView() {
         return mKeyguardListView;
     }
     public void setmKeyguardListView(KeyguardListView mKeyguardListView) {
@@ -1427,6 +1471,12 @@ public class UIController implements OnTouchlListener{
     
     public boolean getLocalData(){
     	return isLocalData;
+    }
+    public AmigoKeyguardBouncer getKeyguardBouncer() {
+        return mKeyguardBouncer;
+    }
+    public void setKeyguardBouncer(AmigoKeyguardBouncer mKeyguardBouncer) {
+        this.mKeyguardBouncer = mKeyguardBouncer;
     }
     
     

@@ -100,7 +100,6 @@ public class AmigoKeyguardPage extends RelativeLayout {
 		// TODO Auto-generated method stub
 		super.onAttachedToWindow();
 		
-		addGuideScrollUpView();
 		addCarrierView();
 		addBatteryView();
 		addHKMainLayout();
@@ -156,6 +155,10 @@ public class AmigoKeyguardPage extends RelativeLayout {
 	private int mNotificationHeight = 0;
 	
 	
+	
+	private RelativeLayout mPlayerLayout;
+	private CaptionsView mCaptionsView;
+	
 	private void addHKMainLayout() {
 
 	    
@@ -170,17 +173,17 @@ public class AmigoKeyguardPage extends RelativeLayout {
 	    
 	    LayoutInflater inflater=LayoutInflater.from(mContext);
 	    mHaoKanLayout = (RelativeLayout)inflater.inflate(R.layout.haokan_main_layout, null);
-        RelativeLayout playerRelativeLayout = (RelativeLayout) mHaoKanLayout.findViewById(R.id.haokan_page_layout_player);
-        CaptionsView captionsView = (CaptionsView) mHaoKanLayout.findViewById(R.id.haokan_page_layout_captions);
-        PlayerButton playerButton = (PlayerButton) playerRelativeLayout.findViewById(R.id.haokan_page_layout_imageButton);
+	    mPlayerLayout = (RelativeLayout) mHaoKanLayout.findViewById(R.id.haokan_page_layout_player);
+	    mCaptionsView = (CaptionsView) mHaoKanLayout.findViewById(R.id.haokan_page_layout_captions);
+        PlayerButton playerButton = (PlayerButton) mPlayerLayout.findViewById(R.id.haokan_page_layout_imageButton);
         
         
-        TextView musicName = (TextView) playerRelativeLayout.findViewById(R.id.haokan_page_layout_music);
-        TextView musicArtist = (TextView) playerRelativeLayout.findViewById(R.id.haokan_page_layout_Artist);
+        TextView musicName = (TextView) mPlayerLayout.findViewById(R.id.haokan_page_layout_music);
+        TextView musicArtist = (TextView) mPlayerLayout.findViewById(R.id.haokan_page_layout_Artist);
         
         UIController controller = UIController.getInstance();
-        controller.setmLayoutPlayer(playerRelativeLayout);
-        controller.setmCaptionsView(captionsView);
+        controller.setmLayoutPlayer(mPlayerLayout);
+        controller.setmCaptionsView(mCaptionsView);
         controller.setmPlayerButton(playerButton);
         controller.setmTextViewMusicName(musicName);
         controller.setmTextViewArtist(musicArtist);
@@ -202,11 +205,7 @@ public class AmigoKeyguardPage extends RelativeLayout {
         
     }
 	
-	private void addGuideScrollUpView(){
-		if (!Guide.needGuideScrollUp()){
-			return;
-		}		
-		
+	public void addGuideScrollUpView(){
 	    LayoutInflater inflater=LayoutInflater.from(mContext);
 	    mGuideScrollUpLayout = (RelativeLayout)inflater.inflate(R.layout.keyguard_guide_scroll_up, null);
 	    ImageView scroll_up = (ImageView)mGuideScrollUpLayout.findViewById(R.id.keyguard_guide_scroll_up);
@@ -833,6 +832,22 @@ public class AmigoKeyguardPage extends RelativeLayout {
     
     public void setGuideSlideFeedBackVisibility(int visibility) {
         mGuideSlideFeedBackView.setVisibility(visibility);
+    }
+    
+    public boolean isTouchInvalidArea(float x, float y) {
+
+//        if (mCaptionsView.isContentVisible()) {
+//            if (y < mCaptionsView.getBottom() && y > mCaptionsView.getTop()) {
+//                return false;
+//            }
+//        }else {
+//            
+//        }
+//        
+//        Log.v("zhaowei", "mCaptionsView.isContentVisible()" + mCaptionsView.isContentVisible());
+//        Log.v("zhaowei", "mCaptionsView.getLeft() = " + mCaptionsView.getTop() + "  " + mCaptionsView.getBottom());
+        return false;
+        
     }
    
 }

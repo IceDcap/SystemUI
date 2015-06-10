@@ -1,6 +1,7 @@
 package com.android.systemui.gionee.cc.qs.tiles;
 
 import android.content.Intent;
+import android.util.Log;
 
 import com.android.systemui.R;
 import com.android.systemui.gionee.GnYouJu;
@@ -32,8 +33,14 @@ public class GnCameraTile extends GnQSTile<GnQSTile.BooleanState> {
     }
 
     @Override
+    public boolean supportsLongClick() {
+        return true;
+    }
+
+    @Override
     protected void handleClick() {
         GnYouJu.onEvent(mContext, "Amigo_SystemUI_CC", "GnCameraTile");
+        Log.d(TAG, "handleClick");
         Intent intent = new Intent();
         intent.setClassName(CAMERA_PKG, CAMERA_CLS);
         mHost.startSettingsActivity(intent);
@@ -42,6 +49,7 @@ public class GnCameraTile extends GnQSTile<GnQSTile.BooleanState> {
     @Override
     protected void handleLongClick() {
         if (mGnTorchController.isCameraAvailable()) {
+            Log.d(TAG, "handleLongClick");
             GnYouJu.onEvent(mContext, "Amigo_SystemUI_CC", "mCamera_longClicked");
             Intent intent = new Intent(mContext, GnBlindShootActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

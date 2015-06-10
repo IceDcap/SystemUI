@@ -6,6 +6,8 @@ import android.animation.Animator.AnimatorListener;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
+import android.animation.ValueAnimator;
+import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
@@ -40,6 +42,8 @@ public class DetailActivity extends Activity {
     private RelativeLayout mWebLayout;
     
     private String link = null;
+    
+    private View lineView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +82,7 @@ public class DetailActivity extends Activity {
 
         mFrameLayout = (FrameLayout) findViewById(R.id.haokan_layout_webview_container);
         mButtonCloseLink = (ImageView) findViewById(R.id.haokan_layout_close_link);
+        lineView = findViewById(R.id.line);
         mButtonCloseLink.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -189,6 +194,14 @@ public class DetailActivity extends Activity {
 
         ObjectAnimator animatorCloseLink = ObjectAnimator.ofFloat(getmButtonCloseLink(),
                 "alpha", 0f, 1f).setDuration(300);
+        animatorCloseLink.addUpdateListener(new AnimatorUpdateListener() {
+            
+            @Override
+            public void onAnimationUpdate(ValueAnimator arg0) {
+
+                lineView.setAlpha(arg0.getAnimatedFraction());
+            }
+        });
 
         AnimatorSet set = new AnimatorSet();
 
@@ -202,6 +215,17 @@ public class DetailActivity extends Activity {
 
         ObjectAnimator animatorWebView = ObjectAnimator.ofFloat(mWebView, "translationY",0f,mFrameLayout.getMeasuredHeight()).setDuration(400);
         ObjectAnimator animatorCloseLink = ObjectAnimator.ofFloat(getmButtonCloseLink(), "alpha",1,0f).setDuration(300);
+        
+        animatorCloseLink.addUpdateListener(new AnimatorUpdateListener() {
+            
+            @Override
+            public void onAnimationUpdate(ValueAnimator arg0) {
+
+                lineView.setAlpha(1.0f - arg0.getAnimatedFraction());
+            }
+        });
+        
+        
         animatorCloseLink.setStartDelay(300);
         
         AnimatorSet set = new AnimatorSet();

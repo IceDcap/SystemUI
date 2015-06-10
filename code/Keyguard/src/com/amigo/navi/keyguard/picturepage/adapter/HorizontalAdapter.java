@@ -4,6 +4,7 @@ package com.amigo.navi.keyguard.picturepage.adapter;
 import java.util.ArrayList;
 
 import com.amigo.navi.keyguard.DebugLog;
+import com.amigo.navi.keyguard.haokan.UIController;
 import com.amigo.navi.keyguard.haokan.entity.WallpaperList;
 import com.amigo.navi.keyguard.network.ImageLoader;
 import com.amigo.navi.keyguard.network.local.LocalBitmapOperation;
@@ -30,7 +31,7 @@ public class HorizontalAdapter extends BaseAdapter {
    private LayoutInflater mInflater;
    private ImageLoader mImageLoader = null;
    private boolean isAllowLoad = true;
-   private static final boolean PRINT_LOG = false;
+   private static final boolean PRINT_LOG = true;
    private ArrayList<OnReloadListener> mReloadListeners = new ArrayList<OnReloadListener>();
 //   private int[] mIDList = new int[]{R.drawable.a,R.drawable.b,R.drawable.c,R.drawable.d};
 //   ArrayList<Bitmap> bitmapList = new ArrayList<Bitmap>();
@@ -91,15 +92,18 @@ public class HorizontalAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        DebugLog.d(TAG, "getView position:" + position);
-//        DebugLog.d(TAG, "getView mWallpaperList size:" + mWallpaperList.size());
-//        DebugLog.d(TAG, "getView img url :" + mWallpaperList.get(position).getImgUrl());
+		if (PRINT_LOG) {
+			DebugLog.d(TAG, "getView position:" + position);
+			DebugLog.d(TAG,
+					"getView mWallpaperList size:" + mWallpaperList.size());
+			DebugLog.d(TAG, "getView img url :"
+					+ mWallpaperList.get(position).getImgUrl());
+			DebugLog.d(TAG, "getView convertView:" + convertView);
+		}
+		
         ViewHolder holder = null;
-        DebugLog.d(TAG, "getView convertView:" + convertView);
         if (convertView == null) {
-
-            holder=new ViewHolder();  
-             
+            holder=new ViewHolder();              
             convertView = mInflater.inflate(R.layout.image_view_show, null);
             holder.img = (ImageViewWithLoadBitmap)convertView.findViewById(R.id.image);
             holder.img.setConfig(mConfig);
@@ -107,19 +111,43 @@ public class HorizontalAdapter extends BaseAdapter {
         }else {
             holder = (ViewHolder)convertView.getTag();
         }
-        if(!isAllowLoad){
-            if(mReloadListeners.contains((OnReloadListener) holder.img)){
-                mReloadListeners.remove(holder.img);
-            }
-            mReloadListeners.add((OnReloadListener) holder.img);
+//        if(!isAllowLoad){
+//            if(mReloadListeners.contains((OnReloadListener) holder.img)){
+//                mReloadListeners.remove(holder.img);
+//            }
+//            mReloadListeners.add((OnReloadListener) holder.img);
+//        }
+		if (PRINT_LOG) {
+			DebugLog.d(TAG,"makeAndAddView getView begin");
         }
-        DebugLog.d("HorizontalListView","makeAndAddView getView begin");
-        holder.img.loadImageBitmap(mWallpaperList.get(position),true,isAllowLoad);
+		
+//		int listenerPositon = getListenerPositon(position, isAllowLoad);
+        holder.img.loadImageBitmap(mWallpaperList.get(position)/*,listenerPositon*/, isAllowLoad);
+
+        
 //        holder.img.setImageResource(mIDList[position]);
 //        holder.img.setImageBitmap(bitmapList.get(position));
         return convertView;
     }
-
+    
+/*    public int  getListenerPositon(int showPostion, isAllowLoad){
+    	int currentPage = UIController.getInstance().getCurrentIndex(isAllowLoad);
+		if (PRINT_LOG) {
+			DebugLog.d(TAG, "getListenerPositon showPostion" + showPostion +"url" + mWallpaperList.get(showPostion).getImgUrl() );
+			DebugLog.d(TAG, "getListenerPositon currentPage" + currentPage +"url" + mWallpaperList.get(currentPage).getImgUrl() );
+		}
+    	if (showPostion == currentPage){
+    		return 1;
+    	}
+    	if (showPostion-currentPage == -1 || showPostion-currentPage == mWallpaperList.size()-1){
+    		return 0;
+    	}
+    	if (currentPage - showPostion == -1 ||currentPage-showPostion == mWallpaperList.size()-1){
+    		return 2;
+    	}
+    	return -1;
+    } */
+    
     public final class ViewHolder{
         public ImageViewWithLoadBitmap img;
 //        public ImageView img;
@@ -149,9 +177,9 @@ public class HorizontalAdapter extends BaseAdapter {
 
     }
  
-    public Bitmap getBitmapFromCache(String url){
+/*    public Bitmap getBitmapFromCache(String url){
         return mImageLoader.getBitmapFromCache(url);
-    }
+    }*/
     
     
     public Bitmap getWallpaperByUrl(String url) {

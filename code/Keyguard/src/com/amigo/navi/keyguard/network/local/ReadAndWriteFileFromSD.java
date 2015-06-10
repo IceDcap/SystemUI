@@ -15,7 +15,13 @@ public class ReadAndWriteFileFromSD implements DealWithFromLocalInterface{
     private String mFolderName;
     private String mPath;
     private int mScreenWid = 0;
-    private LocalFileOperationInterface mLocalFileOperationInterface = null;
+    private Bitmap mReuseBitmap = null;
+    
+	public void setmReuseBitmap(Bitmap mReuseBitmap) {
+		this.mReuseBitmap = mReuseBitmap;
+	}
+
+	private LocalFileOperationInterface mLocalFileOperationInterface = null;
     public ReadAndWriteFileFromSD(Context context,String folderName,String path,
             LocalFileOperationInterface localFileOperation){
         mContext = context.getApplicationContext();
@@ -29,7 +35,7 @@ public class ReadAndWriteFileFromSD implements DealWithFromLocalInterface{
     public Bitmap readFromLocal(String key) {
         DebugLog.d(TAG,"readFromLocal url:" + key);
         String file = mPath + File.separator + mFolderName + File.separator + key;
-        Bitmap bitmap = DiskUtils.readFile(file,mScreenWid);
+        Bitmap bitmap = DiskUtils.readFile(file,mScreenWid, mReuseBitmap);
         return bitmap;
     }
 
@@ -53,6 +59,9 @@ public class ReadAndWriteFileFromSD implements DealWithFromLocalInterface{
     public boolean deleteFile(String key) {
         String file = mPath + File.separator + mFolderName + File.separator + key;
     	DiskUtils.deleteFile(file);
+    	
+    	DiskUtils.deleteFile(file + DiskUtils.THUMBNAIL);
+        
     	return true;
     }
     

@@ -4,10 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.text.TextUtils;
 
@@ -22,18 +19,13 @@ import com.amigo.navi.keyguard.haokan.entity.WallpaperList;
 import com.amigo.navi.keyguard.network.connect.NetWorkUtils;
 import com.amigo.navi.keyguard.network.local.DealWithByteFile;
 import com.amigo.navi.keyguard.network.local.ReadAndWriteFileFromSD;
-import com.amigo.navi.keyguard.network.local.DealWithFromLocalInterface;
 import com.amigo.navi.keyguard.network.local.LocalBitmapOperation;
 import com.amigo.navi.keyguard.network.local.LocalFileOperationInterface;
 import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
 import com.amigo.navi.keyguard.network.manager.DownLoadBitmapManager;
 import com.amigo.navi.keyguard.network.manager.DownLoadJsonManager;
-import com.amigo.navi.keyguard.network.theardpool.DownLoadJsonThreadPool;
-import com.amigo.navi.keyguard.network.theardpool.DownLoadThreadPool;
-import com.amigo.navi.keyguard.network.theardpool.DownLoadWorker;
 import com.amigo.navi.keyguard.network.theardpool.Job;
 import com.amigo.navi.keyguard.network.theardpool.LoadDataPool;
-import com.amigo.navi.keyguard.network.theardpool.LoadImagePool;
 import com.amigo.navi.keyguard.network.theardpool.LoadImageThread;
 import com.amigo.navi.keyguard.settings.KeyguardSettings;
 
@@ -41,10 +33,7 @@ public class RequestNicePicturesFromInternet {
     private static final String TAG = "NicePicturesInit";
     private static RequestNicePicturesFromInternet sInitInstance = null;
     private static Context mContext;
-    private DownLoadThreadPool mThreadPool = null;
-    private DataChangedInterface mDataChangedInterface = null;
     private static String mPath = null;
-    private static  final String GET_DATA = "get_data";
     private DealWithByteFile  mDealWithCategory;
     private ReadAndWriteFileFromSD  mDealWithWallpaper;
     public synchronized static RequestNicePicturesFromInternet getInstance(Context context) {
@@ -238,14 +227,7 @@ public class RequestNicePicturesFromInternet {
         downloadCategoryImage(date, dealWithBitmap, isStop, categoryList, false, mFirstSaveImageForCategory,null);
     }
 
-    /**
-     * 
-     */
-    private void notifyDataChanged(String url,Bitmap bitmap) {
-        if(mDataChangedInterface != null){
-            mDataChangedInterface.onDataChanged(url,bitmap);
-        }
-    }
+ 
     
     private void requestPictureList(boolean isStop){
                 String currentDate = Common.formatCurrentDate();
@@ -270,8 +252,7 @@ public class RequestNicePicturesFromInternet {
     private void downloadWallpaperPicturesFromDB(ReadAndWriteFileFromSD dealWithBitmap,boolean isStop) {
         WallpaperList wallpaperList = WallpaperDB.getInstance(mContext).queryPicturesNoDownLoad();
         DebugLog.d(TAG,"downloadWallpaperPicturesFromDB wallpaperList size:" + wallpaperList.size());
-        downloadWallpaperImage(0,dealWithBitmap, isStop, wallpaperList,
-				false,null);
+        downloadWallpaperImage(0,dealWithBitmap, isStop, wallpaperList,false);
     }
     
     private void downloadWallpaperPicturesFromNet( ReadAndWriteFileFromSD dealWithBitmap
@@ -285,26 +266,24 @@ public class RequestNicePicturesFromInternet {
         if(DownLoadJsonManager.ERROR.equals(result)){
         	return;
         }
-//        if(TextUtils.isEmpty(result)){
-//            Common.setUpdateWallpaperDate(mContext,date);
-//            return;
-//        }
+ 
         DebugLog.d(TAG,"downloadWallpaperPicturesFromNet 1");
         WallpaperList wallpaperList = JsonUtil.parseJsonToWallpaperList(result);
         wallpaperList.quickSort();
         DebugLog.d(TAG,"downloadWallpaperPicturesFromNet 2");
-        boolean isFirstBitmapOfCurrentDay = true;
         String currentDate = Common.formatCurrentDate();
         int date = Integer.valueOf(currentDate);
-        downloadWallpaperImage(date,dealWithBitmap, isStop, wallpaperList,
-				isFirstBitmapOfCurrentDay,mFirstSaveImageForWallpaper);
+        downloadWallpaperImage(date,dealWithBitmap, isStop, wallpaperList, true);
     }
     
 	private void downloadWallpaperImage(int date,
 			ReadAndWriteFileFromSD dealWithBitmap, boolean isStop,
-			WallpaperList wallpaperList, boolean isFirstBitmapOfCurrentDay,
-			FirstSaveImage firstSaveImage) {
-		WallpaperList delList = new WallpaperList();
+			WallpaperList wallpaperList, boolean isFirstBitmapOfCurrentDay) {
+	    
+	    boolean isFirst = isFirstBitmapOfCurrentDay;
+	    final WallpaperDB wallpaperDB = WallpaperDB.getInstance(mContext);
+		WallpaperList deleteList = null;
+		
         for(int index = 0;index < wallpaperList.size();index++){
             DebugLog.d(TAG,"downloadWallpaperPicturesFromNet isStop:" + isStop);
             if(isStop){
@@ -317,7 +296,7 @@ public class RequestNicePicturesFromInternet {
                     Bitmap bitmap = DownLoadBitmapManager.getInstance().downLoadBitmap(mContext, picUrl);
 //                    byte[] bitmapByte = DownLoadBitmapManager.getInstance().downLoadBitmapByByte(mContext, picUrl);
                     DebugLog.d(TAG,"downloadWallpaperPicturesFromNet bitmap:" + bitmap);
-                    WallpaperDB wallpaperDB = WallpaperDB.getInstance(mContext);
+                    
                     String key = DiskUtils.constructFileNameByUrl(picUrl);
                     boolean savedSuccess = false;
                     if(bitmap != null){
@@ -331,25 +310,29 @@ public class RequestNicePicturesFromInternet {
                     DebugLog.d(TAG,"downloadWallpaperPicturesFromNet savedSuccess:" + savedSuccess);
                     if(savedSuccess){
                         DebugLog.d(TAG,"downloadWallpaperPicturesFromNet isFirstBitmapOfCurrentDay:" + isFirstBitmapOfCurrentDay);
-                        if(mFirstSaveImageForWallpaper != null){
-                        	isFirstBitmapOfCurrentDay = mFirstSaveImageForWallpaper.operationAfterSaveImage(wallpaperList,
-                        			isFirstBitmapOfCurrentDay,date,delList);
+                        
+                        if (isFirst) {
+                            DebugLog.d(TAG,"downloadWallpaperPicturesFromNet 1");
+                            deleteList = wallpaperDB.queryExcludeFixedWallpaper();
+                            wallpaperDB.insertAfterDeleteAll(wallpaperList);
+                            Common.setUpdateWallpaperDate(mContext,date);
+                            UIController.getInstance().setNewWallpaperToDisplay(true);
+                            isFirst = false;
+                            FileUtil.deleteMusic();
                         }
+                        
                         wallpaperDB.updateDownLoadFinish(wallpaper);
-                        DebugLog.d(TAG,"downloadWallpaperPicturesFromNet 2 wallPaperList:" + delList.size());
-                        FileUtil.deleteMusic();
+                        
                     }
             }
         }
-        if(mFirstSaveImageForWallpaper != null){
-        	mFirstSaveImageForWallpaper.delOldImage(dealWithBitmap, !isFirstBitmapOfCurrentDay, delList);
-        }
+        
+        delOldWallpaper(dealWithBitmap, !isFirst, deleteList);
 	}
 
-	private void delOldWallpaper(
-			ReadAndWriteFileFromSD dealWithBitmap,
-			boolean savedSuccess, WallpaperList delList) {
-		if(savedSuccess){
+	private void delOldWallpaper(ReadAndWriteFileFromSD dealWithBitmap, boolean savedSuccess, WallpaperList delList) {
+		
+	    if(savedSuccess && delList != null){
             for(int delIndex = 0;delIndex < delList.size();delIndex++){
                 String key = DiskUtils.constructFileNameByUrl(delList.get(delIndex).getImgUrl());
                 dealWithBitmap.deleteFile(key);
@@ -383,44 +366,13 @@ public class RequestNicePicturesFromInternet {
         public void onDataChanged(String url,Bitmap bitmap);
     }
     
-    public void setDataChangedListener(DataChangedInterface dataChangedInterface){
-        mDataChangedInterface = dataChangedInterface;
-    }
-    
-    private interface FirstSaveImage{
-    	public boolean operationAfterSaveImage(WallpaperList wallpaperList,boolean isFirst,int date,WallpaperList delWallpaperList);
-    	public void delOldImage(ReadAndWriteFileFromSD dealWithBitmap,boolean savedSuccess, WallpaperList delList);
-    }
 
     private interface FirstSaveCategoryImage{
     	public boolean operationAfterSaveImage(List<Category> list,boolean isFirst,int date,List<Category> delList,String result);
     	public void delOldImage(DealWithByteFile dealWithBitmap,boolean savedSuccess, List<Category> delList);
     }
     
-    FirstSaveImage mFirstSaveImageForWallpaper = new FirstSaveImage() {
-		
-		@Override
-		public boolean operationAfterSaveImage(WallpaperList wallpaperList,boolean isFirst,
-				int date,WallpaperList delWallpaperList) {
-            if(isFirst){
-                DebugLog.d(TAG,"downloadWallpaperPicturesFromNet 1");
-                WallpaperDB wallpaperDB = WallpaperDB.getInstance(mContext);
-                delWallpaperList = wallpaperDB.queryExcludeFixedWallpaper();
-                wallpaperDB.insertAfterDeleteAll(wallpaperList);
-                Common.setUpdateWallpaperDate(mContext,date);
-                isFirst = false;
-                UIController.getInstance().setNewWallpaperToDisplay(true);
-            }
-			return isFirst;
-		}
-
-		@Override
-		public void delOldImage(ReadAndWriteFileFromSD dealWithBitmap,
-				boolean savedSuccess, WallpaperList delList) {
-			delOldWallpaper(dealWithBitmap,savedSuccess,delList);
-		}
-	};
-    
+     
 	FirstSaveCategoryImage mFirstSaveImageForCategory = new FirstSaveCategoryImage() {
 		
 		@Override

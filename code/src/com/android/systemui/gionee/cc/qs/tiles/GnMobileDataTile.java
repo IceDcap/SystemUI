@@ -51,6 +51,11 @@ public class GnMobileDataTile extends GnQSTile<GnQSTile.BooleanState> {
     }
 
     @Override
+    public boolean supportsLongClick() {
+        return true;
+    }
+
+    @Override
     protected void handleClick() {
         Log.d(TAG, "setMobileDataEnabled " + !mState.value);
         mController.setMobileDataEnabled(!mState.value);

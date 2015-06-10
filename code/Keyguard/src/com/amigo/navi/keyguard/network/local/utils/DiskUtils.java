@@ -6,6 +6,7 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -77,8 +78,11 @@ public class DiskUtils {
         }
          return flag;
     }
-    
     public static Bitmap decodeBitmap(InputStream is,int screenWid){
+    	return decodeBitmap(is, screenWid, null);
+    }
+    
+    public static Bitmap decodeBitmap(InputStream is,int screenWid,Bitmap reuseBitmap){
         //解密图片
          byte[] ss = getBitmapFromSdkard(is);
          DebugLog.d("HorizontalListView","makeAndAddView decodeBitmap ss:" + ss);
@@ -99,7 +103,16 @@ public class DiskUtils {
          }
          options.inJustDecodeBounds = false;
          options.inSampleSize = scale;
-         options.inPreferredConfig = Config.RGB_565;
+         options.inPreferredConfig = Config.ARGB_8888;
+         if (null != reuseBitmap) {
+        	if (options.outWidth == reuseBitmap.getWidth() 
+        			&& options.outHeight == reuseBitmap.getHeight()){
+	         options.inMutable = true;
+	         options.inBitmap = reuseBitmap; 
+        	}else{
+        		reuseBitmap = null;
+        	}
+         }
          Bitmap bitmap = null;
          try {
              bitmap = BitmapFactory.decodeByteArray(ss, 0, ss.length, options);
@@ -252,7 +265,7 @@ public class DiskUtils {
             options.inJustDecodeBounds = false;
             options.inSampleSize = scale;
             is = am.open(fileName);  
-            options.inPreferredConfig = Config.RGB_565;
+            options.inPreferredConfig = Config.ARGB_8888;
             image = BitmapFactory.decodeStream(is, null, options);
 //            image = BitmapFactory.decodeStream(is);
             DebugLog.d(TAG,"decodeBitmap image:" + image);
@@ -285,6 +298,19 @@ public class DiskUtils {
 		try {
 			fis = new FileInputStream(path);
 			bitmap = decodeBitmap(fis, screenWid);
+			return bitmap;
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} 
+		return bitmap;
+    }
+    
+    public static Bitmap readFile(String path,int screenWid,Bitmap reuseBitmap){
+		FileInputStream fis;
+		Bitmap bitmap = null;
+		try {
+			fis = new FileInputStream(path);
+			bitmap = decodeBitmap(fis, screenWid,reuseBitmap);
 			return bitmap;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -388,7 +414,7 @@ public class DiskUtils {
 	            }
 	            options.inJustDecodeBounds = false;
 	            options.inSampleSize = scale;
-	            options.inPreferredConfig = Config.RGB_565;
+	            options.inPreferredConfig = Config.ARGB_8888;
 	            DebugLog.d(TAG,"getImageFromSystem path:" + path);
 	            image = BitmapFactory.decodeFile(path, options);
 	            DebugLog.d(TAG,"getImageFromSystem image:" + image);
@@ -412,6 +438,7 @@ public class DiskUtils {
 				 DebugLog.d(TAG,"saveBitmap path:" + path);
 				 DebugLog.d(TAG,"saveBitmap key:" + key);
 				 byte[] bts = convertBitmap(bt);
+				 saveThumbnail(bts, key, path);
 				 return saveBitmap(bts, key, path);
 			} catch (Exception e) {
 				DebugLog.d(TAG,"saveBitmap error");
@@ -425,6 +452,125 @@ public class DiskUtils {
     		String filePath = DiskUtils.getCachePath(context) + File.separator +
     				DiskUtils.WALLPAPER_BITMAP_FOLDER + File.separator + key;
         	DiskUtils.deleteFile(filePath);
+        	DiskUtils.deleteFile(filePath + DiskUtils.THUMBNAIL);
 		}
+		
+		
+	      
+        
+
+        
+        
+    public static String THUMBNAIL = "_thumbnail";
+
+    public static Bitmap Bytes2Bimap(byte[] b) {
+        if (b.length != 0) {
+            return BitmapFactory.decodeByteArray(b, 0, b.length);
+        } else {
+            return null;
+        }
+    }
+
+    public static byte[] Bitmap2Bytes(Bitmap bm) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        return baos.toByteArray();
+    }
+
+    /**
+     * 保存缩略图
+     * 
+     * @param bitmap 原始图片
+     * @param key 原始图片名字
+     * @param path 路径
+     */
+    public static void saveThumbnail(Bitmap bitmap, String key, String path) {
+        byte[] byteArray = convertBitmap(bitmap);
+        saveThumbnail(byteArray, key, path);
+    }
+
+    /**
+     * 保存缩略图
+     * 
+     * @param byteArray 原始数据
+     * @param key
+     * @param path
+     */
+    public static void saveThumbnail(byte[] byteArray, String key, String path) {
+
+        BitmapFactory.Options newOpts = new BitmapFactory.Options();
+        newOpts.inSampleSize = 2;
+        newOpts.inJustDecodeBounds = false;
+        Bitmap thumbnailBitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length,
+                newOpts);
+        Log.v("zhaowei",
+                "saveThumbnail byteArray getWidth = " + thumbnailBitmap.getWidth()
+                        + "  getHeight =" + thumbnailBitmap.getHeight());
+        byte[] thumbByteArray = convertBitmap(thumbnailBitmap);
+        saveBitmap(thumbByteArray, key + THUMBNAIL, path);
+        thumbnailBitmap.recycle();
+    }
+    
+    public static void saveDefaultThumbnail(Context context, FileInputStream fis, String absolutePath) {
+        FileDescriptor fd;
+        String key = constructFileNameByUrl(absolutePath);
+        
+        String path = getCachePath(context) + File.separator +
+                DiskUtils.WALLPAPER_BITMAP_FOLDER;
+        try {
+            fd = fis.getFD();
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            options.inJustDecodeBounds = false;
+            options.inSampleSize = 2;
+            Bitmap bitmap = BitmapFactory.decodeFileDescriptor(fd, null, options);
+            saveThumbnail(bitmap, key, path);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } catch (OutOfMemoryError e) {
+            Log.v("haokan", "", e);
+        }
+    }
+    
+
+    /**
+     * 获取系统内置图片的缩略图
+     * 
+     * @param path
+     * @return
+     */
+    public static Bitmap getSystemImageThumb(String path) {
+        Bitmap bitmap = null;
+
+        File file = new File(path);
+        FileInputStream is = null;
+        try {
+            is = new FileInputStream(file);
+
+            FileDescriptor fd = is.getFD();
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            options.inJustDecodeBounds = false;
+            options.inSampleSize = 2;
+            bitmap = BitmapFactory.decodeFileDescriptor(fd, null, options);
+
+        } catch (Exception e) {
+        } catch (OutOfMemoryError e) {
+        } finally {
+            try {
+                if (is != null) {
+                    is.close();
+                }
+            } catch (IOException e) {
+                Log.v("haokan", "", e);
+            }
+        }
+        return bitmap;
+    }
+
+    public static String constructThumbFileNameByUrl(String url) {
+        return constructFileNameByUrl(url) + THUMBNAIL;
+    }
 		
 }

@@ -84,6 +84,7 @@ public class DateView extends TextView {
         filter.addAction(Intent.ACTION_TIME_CHANGED);
         filter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
         filter.addAction(Intent.ACTION_LOCALE_CHANGED);
+        filter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
         getContext().registerReceiver(mIntentReceiver, filter, null, null);
 
         updateClock();

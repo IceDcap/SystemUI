@@ -56,8 +56,7 @@ public class GnControlCenterMoreView extends FrameLayout implements View.OnClick
             String action = intent.getAction();
             if (Intent.ACTION_SCREEN_OFF.equals(action) 
                     || Intent.ACTION_CLOSE_SYSTEM_DIALOGS.equals(action)){
-                mDragGridView.recovery();
-                pushDownOut();
+                pushDownOut(true);
             }
         }
     };
@@ -110,7 +109,7 @@ public class GnControlCenterMoreView extends FrameLayout implements View.OnClick
     public boolean dispatchKeyEvent(KeyEvent event) {
         switch (event.getKeyCode()) {
             case KeyEvent.KEYCODE_BACK:
-                pushDownOut();
+                pushDownOut(true);
                 break;
             default:
                 break;
@@ -159,9 +158,13 @@ public class GnControlCenterMoreView extends FrameLayout implements View.OnClick
         mMoreLayout.startAnimation(loadAnim(R.anim.gn_push_up_in, null));
     }
 
-    public void pushDownOut() {
+    public void pushDownOut(boolean needRecover) {
         if (isAnimating) {
             return;
+        }
+        
+        if (needRecover) {
+            mDragGridView.recovery();
         }
         
         mMoreLayout.startAnimation(loadAnim(R.anim.gn_push_down_out, moveOutListener));
@@ -202,11 +205,10 @@ public class GnControlCenterMoreView extends FrameLayout implements View.OnClick
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.cancel:
-                pushDownOut();
-                mDragGridView.recovery();
+                pushDownOut(true);
                 break;
             case R.id.save:
-                pushDownOut();
+                pushDownOut(false);
                 Handler mHandler = new Handler();
                 mHandler.postDelayed(new Runnable() {
                     

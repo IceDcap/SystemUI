@@ -11,9 +11,11 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.StatFs;
 import android.provider.MediaStore;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 import com.amigo.navi.keyguard.DebugLog;
@@ -456,5 +458,20 @@ public class Common {
         
         Uri uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
     }
+    
+    
+    public static long getSDFreeSize() {
+        File path = Environment.getExternalStorageDirectory();
+        StatFs sf = new StatFs(path.getPath());
+        long blockSize = sf.getBlockSizeLong();
+        long freeBlocks = sf.getAvailableBlocksLong();
+         
+        return (freeBlocks * blockSize) / 1024l / 1024l;  
+    }  
+    
+    public static boolean SDfree() {
+        return getSDFreeSize() >= 10l;
+    }
+    
     
 }

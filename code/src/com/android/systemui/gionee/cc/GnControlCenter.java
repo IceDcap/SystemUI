@@ -10,7 +10,6 @@ package com.android.systemui.gionee.cc;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.android.systemui.R;
 import com.android.systemui.gionee.GnBlurHelper;
 import com.android.systemui.gionee.GnUtil;
 import com.android.systemui.gionee.cc.qs.more.GnControlCenterMoreView;
@@ -37,7 +36,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 
-public class GnControlCenter extends FrameLayout{
+public class GnControlCenter {
 
     public static final boolean DEBUG = true;
     public static final String TAG = "GnControlCenter";
@@ -51,7 +50,7 @@ public class GnControlCenter extends FrameLayout{
     // bool
     private boolean isLockScreenAccess;
     private boolean isAppAccess;
-    private boolean isHighDevice = false;
+    private static boolean isHighDevice = false;
     private boolean mLock;
     private boolean mImmerseState;
     
@@ -73,27 +72,27 @@ public class GnControlCenter extends FrameLayout{
     public static final int STATE_IMMERSE_OPEN = 5;
     private static int sState = STATE_CLOSED;
     
-    public void go(int state) {
+    public static void go(int state) {
         if (DEBUG) Log.d(TAG, "go state: %d " + sState + " -> %d " + state);
         sState = state;
     }
     
-    public int getState() {
+    public static int getState() {
         return sState;
     }
     
     // Callback list
-    private ArrayList<Callback> mCallbackList = new ArrayList<GnControlCenter.Callback>();
+    private static ArrayList<Callback> mCallbackList = new ArrayList<GnControlCenter.Callback>();
     
-    public interface Callback {
+    public static interface Callback {
         void dismissPanel();
     }
     
-    public void addCallback(Callback callback) {
+    public static void addCallback(Callback callback) {
         mCallbackList.add(callback);
     }
     
-    public void dismiss() {
+    public static void dismiss() {
         for(Callback callback : mCallbackList) {
             callback.dismissPanel();
         }
@@ -108,10 +107,10 @@ public class GnControlCenter extends FrameLayout{
             Log.d(TAG, "onReceive actions " + actions);
             if (Intent.ACTION_SCREEN_OFF.equals(actions)) {
                 if (mControlCenterView != null) {
-                    mControlCenterView.setVisibility(GONE);
+                    mControlCenterView.setVisibility(View.GONE);
                 }
                 if (mImmerseView != null) {
-                    mImmerseView.setVisibility(GONE);
+                    mImmerseView.setVisibility(View.GONE);
                 }
                 GnUtil.setLockState(GnUtil.STATE_LOCK_UNLOCK);
             } else if (TelephonyManager.ACTION_PHONE_STATE_CHANGED.equals(actions)) {
@@ -126,7 +125,7 @@ public class GnControlCenter extends FrameLayout{
                     NavigationBarView naviBar = mStatusBar.getNavigationBarView();
                     if (naviBar != null) {
                         Log.d(TAG, "set NavigationBar visible");
-                        naviBar.setVisibility(VISIBLE);
+                        naviBar.setVisibility(View.VISIBLE);
                     }
                 }
             }
@@ -138,8 +137,9 @@ public class GnControlCenter extends FrameLayout{
     }
     
     public GnControlCenter(Context context, AttributeSet attrs) {
-        super(context, attrs);
         mContext = context;
+        
+        initControlCenter();
     }
 
     public void initControlCenter() {
@@ -182,6 +182,12 @@ public class GnControlCenter extends FrameLayout{
 
     public void setVisible(boolean visible) {
         if (mControlCenterView.isShown()) {
+            Log.d(TAG, "mControlCenterView.isShown()");
+            return;
+        }
+        
+        if (GnControlCenterMoreView.isOpen()) {
+            Log.d(TAG, "GnControlCenterMoreView.isOpen()");
             return;
         }
         
@@ -219,31 +225,27 @@ public class GnControlCenter extends FrameLayout{
         Log.d(TAG, "mState = " + sState + " mImmerseState = " + mImmerseState);
         if (isLandscape()) {
             if (sState == STATE_CLOSED) {
-                if (isHighDevice) {
-                    Log.d(TAG, "setVisible createBlurBg");
-                    createBlurBg(mContext);
-                }
+                Log.d(TAG, "setVisible createBlurBg");
+                createBlurBg(mContext);
 
-                mImmerseView.setVisibility(VISIBLE);
+                mImmerseView.setVisibility(View.VISIBLE);
                 mImmerseView.pushUpIn();
                 go(STATE_IMMERSE_OPENING);
             }
         } else {
-            if (isHighDevice) {
-                Log.d(TAG, "setVisible createBlurBg");
-                createBlurBg(mContext);
-            }
+            Log.d(TAG, "setVisible createBlurBg");
+            createBlurBg(mContext);
 
             boolean hasNavigationBar = mStatusBar.hasNavigationBar();
             Log.d(TAG, "hasNavigationBar = " + hasNavigationBar);
             if (mImmerseState && !hasNavigationBar) {
                 if (sState == STATE_CLOSED) {
-                    mImmerseView.setVisibility(VISIBLE);
+                    mImmerseView.setVisibility(View.VISIBLE);
                     mImmerseView.pushUpIn();
                     go(STATE_IMMERSE_OPENING);
                 }
             } else {
-                mControlCenterView.setVisibility(VISIBLE);
+                mControlCenterView.setVisibility(View.VISIBLE);
                 go(STATE_OPENING);
             }
         }
@@ -265,8 +267,8 @@ public class GnControlCenter extends FrameLayout{
         
         if (DEBUG) Log.d(TAG, " swipingView  mState = " + sState);
         if (sState == STATE_IMMERSE_OPEN) {
-            mImmerseView.setVisibility(GONE);
-            mControlCenterView.setVisibility(VISIBLE);
+            mImmerseView.setVisibility(View.GONE);
+            mControlCenterView.setVisibility(View.VISIBLE);
             go(STATE_OPENING);
             return;
         }
@@ -315,11 +317,7 @@ public class GnControlCenter extends FrameLayout{
     private boolean isLandscape() {
         return mContext.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
     }
-    
-    public boolean isHighDevice() {
-        return isHighDevice;
-    }
-    
+        
     private ContentObserver mLockScreenAccessObserver = new ContentObserver(new Handler()) {
 
         @Override
@@ -353,10 +351,13 @@ public class GnControlCenter extends FrameLayout{
         mStatusBar = phoneStatusBar;
     }
     
-    public void createBlurBg(Context context) {
+    public static void createBlurBg(Context context) {
         if (GnControlCenterMoreView.isOpen()) {
             return;
         }
-        GnBlurHelper.getBlurHelper().createBlurBg(context);
+		
+        if (isHighDevice) {
+            GnBlurHelper.getBlurHelper().createBlurBg(context);
+        }
     }
 }

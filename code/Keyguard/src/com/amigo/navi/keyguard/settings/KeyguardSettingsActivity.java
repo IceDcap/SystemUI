@@ -250,7 +250,8 @@ public class KeyguardSettingsActivity extends Activity {
         if (!isSecure()) {
             KeyguardViewHostManager.getInstance().showBouncerOrKeyguardDone();
         }
-        startActivityForResult(intent, REQUEST_CODE);
+        Intent wrapperIntent = Intent.createChooser(intent, null);
+        startActivityForResult(wrapperIntent, REQUEST_CODE);
     }
     
    

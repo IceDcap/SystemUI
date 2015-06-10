@@ -340,7 +340,7 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
         }
 
         public void onPatternDetected(List<LockPatternView.Cell> pattern) {
-            Log.d(TAG, "onPatternDetected  checkPattern: "+mLockPatternUtils.checkPattern(pattern));
+            Log.d(TAG, "onPatternDetected  checkPattern: ");
             handlePatternDetected(pattern);
         }
 

@@ -87,6 +87,8 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     private int mFlingThresholdVelocity;
     public static final int INVALID_PAGE = -1;
     private static final int MIN_LENGTH_FOR_FLING = 25;
+    
+    private boolean mIsFirstMove = false;
 
     UIController controller;
     public HorizontalListView(Context context) {
@@ -184,7 +186,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         // TODO Auto-generated method stub
         // super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        mMinDistance = (int) (mChildWidth * 0.1);
+        mMinDistance = (int) (mChildWidth * 0.3);
         final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         final int widthSize = MeasureSpec.getSize(widthMeasureSpec);
         final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
@@ -387,7 +389,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         return setupChild(child, isEnd, recycled);
     }
     
-    private static final boolean PRINT_LOG = false;
+    private static final boolean PRINT_LOG = true;
     private View setupChild(View child, boolean isEnd, boolean recycled) {
         ViewGroup.LayoutParams p = (ViewGroup.LayoutParams) child
                 .getLayoutParams();
@@ -527,6 +529,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     }
 
     public boolean isBeginScroll(int motionX) {
+       
         if (Math.abs(motionX - mDownMotionX) > 2 * mTouchSlop) {
             if (mScrollListener != null) {
                 mScrollListener.onScrollBegin();
@@ -550,7 +553,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         if(PRINT_LOG){
         	DebugLog.d(TAG, "motionUp -> action1 = " + action);
         }
-        if (controller.isArcExpanded()) {
+        if (controller.isArcExpanded() || mAdapter.getCount() == 1) {
             return false;
         }
         if(PRINT_LOG){
@@ -563,9 +566,14 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
             initOrResetVelocityTracker();
             mActivePointerId = event.getPointerId(0);
             motionDown(motionX);
+            mIsFirstMove = true;
             break;
         case MotionEvent.ACTION_MOVE:
-            motionMove(motionX);
+        	if(mIsFirstMove){
+        		mIsFirstMove = false;
+        		stopScroll();
+        	}
+        	motionMove(motionX);
             break;
         case MotionEvent.ACTION_UP:
         case MotionEvent.ACTION_CANCEL:
@@ -586,7 +594,6 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     private void motionDown(int motionX) {
         mDownMotionX = motionX;
         mLastMotionX = motionX;
-        stopScroll();
     }
 
     /**
@@ -772,9 +779,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     @Override
     public void scrollTo(int x, int y) {
         DebugLog.d(TAG,"testscroll scrollTo");
-        //<Keyguard> <jingyn> modify for CR01491250 begin 
-        if(mAdapter.getCount()==1)return;
-        //<Keyguard> <jingyn> modify for CR01491250 end 
+ 
         if (scrollOutFirstPageBound(x)) {
             DebugLog.d(TAG,"testscroll scrollTo1");
             x = getMaxScrollX();

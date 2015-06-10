@@ -36,12 +36,13 @@ import android.view.View.MeasureSpec;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 
-public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListener{
+public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListener, ImageLoadingListener{
     
     public enum State { LOADING, LOADED, CANCELLED, FAILED};
+    public enum ShowState { SHOW_NOIMAGE, SHOW_THUMBNAIL, SHOW_IMAGE};
     
     private Bitmap mImageBitmap;
-    private static final String LOG_TAG = "ImageViewForHeadCompound";
+    private static final String LOG_TAG = "ImageViewWithLoadBitmap";
     // private int mWid = 0;
     // private int mHei = 0;
     private String mUrl = "";
@@ -49,11 +50,12 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
     private String mColor;
     
     private State mLoadState = State.CANCELLED;
-    
-    private int mWidth = 0;
+
+	private int mWidth = 0;
     private int mHeight = 0;
-    private static final String PATH = "wallpaper_pics";
-    private static final boolean isPrintLog = false;
+//    private static final String PATH = "wallpaper_pics";
+    private static final boolean isPrintLog = true;
+	private static final String THUMBNAIL_POSTFIX = "_thumbnail";
     public ImageViewWithLoadBitmap(Context context) {
         super(context);
         init();
@@ -121,7 +123,7 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
                 loadBitmapCompleteDealWith(url, bitmap);
                 break;
             case GET_BITMAP_START:
-                loadStartDealWith(url);
+                //loadStartDealWith(url);
                 break;
             default:
                 break;
@@ -133,170 +135,49 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
 
     };
 
-    private int mPosition;
+    private int mPosOfListener; // 0:left 1.currentPage 2.right
     private Wallpaper mWallPaper;
-    private boolean mNeedCache;
+    private ShowState mShowState = ShowState.SHOW_NOIMAGE;//0:loading 1.thumbnail 2.image
     
+    public ShowState getmShowState() {
+		return mShowState;
+	}
+
+	public void setmShowState(ShowState mShowState) {
+		this.mShowState = mShowState;
+	}
+
+	
     public void loadImageBitmap() {
         if(mWallPaper != null){
-            loadImageBitmap(mWallPaper, true);
+            loadImageBitmap(mWallPaper);
         }
     }
-
-    public void loadImageBitmap(Wallpaper wallPaper, boolean isNeedCache) {
-        loadImageBitmap(wallPaper, isNeedCache, true);
+    public void loadImageBitmap(Wallpaper wallPaper) {
+        loadImageBitmap(wallPaper/*,mPosOfListener*/, true);
     }
     
-    public void loadImageBitmap(Wallpaper wallpaper, boolean isNeedCache, boolean immediatelyLoad) {
+    public void loadImageBitmap(Wallpaper wallpaper/*, int posOfListener*/,  boolean immediatelyLoad) {
+//    	mPosOfListener = posOfListener;
         mWallPaper = wallpaper;
-        mNeedCache = isNeedCache;
-        if(isPrintLog){
-        	DebugLog.d(LOG_TAG,"makeAndAddView loadImageBitmap mUrl:" + mUrl);
-        	DebugLog.d(LOG_TAG,"makeAndAddView loadImageBitmap wallpaper.getImgUrl():" + wallpaper.getImgUrl());
-        }
-        boolean isCurUrl = mUrl.equals(wallpaper.getImgUrl());
-        if(isPrintLog){
-            DebugLog.d(LOG_TAG,"makeAndAddView loadImageBitmap wallpaper.isCurUrl:" + isCurUrl);
-        }
-        if (!isCurUrl) {
-            this.setImageResource(mConfig.startBitmapID);
-//            this.setImageBitmap(null);
-        }
-        if(isPrintLog){
-            DebugLog.d(LOG_TAG,"loadImageBitmap mConfig:" + mConfig);
-        }
-        if (mConfig == null) {
-            mConfig = new Config();
-        }
         this.mUrl = wallpaper.getImgUrl();
-        if(isPrintLog){
-            DebugLog.d(LOG_TAG,"loadImageBitmap mUrl:" + mUrl);
-        }
         this.setTag(mUrl);
         if(isPrintLog){
-            DebugLog.d(LOG_TAG,"loadImageBitmap immediatelyLoad:" + immediatelyLoad);
-            DebugLog.d(LOG_TAG,"makeAndAddView mUrl:" + mUrl + "loadImageBitmap immediatelyLoad:" + immediatelyLoad);
+            DebugLog.d(LOG_TAG,"loadImageBitmap mUrl" + mUrl);
         }
-        if(immediatelyLoad){
-            immediateLoadImageBitmap(wallpaper, isNeedCache);
-        } else {
-            loadFromCache();
-        }
-    }
-
-    private void immediateLoadImageBitmap(final Wallpaper wallpaper, final boolean isNeedCache) {
-        if(isPrintLog){
-        	DebugLog.d(LOG_TAG,"makeAndAddView immediateLoadImageBitmap");
-        }
-        mLoadState = State.LOADING;
-        final ImageLoadingListener loadingListener = new ImageLoadingListener() {
-            @Override
-            public void onLoadingStarted(String imageUri) {
-                if(isPrintLog){
-                    DebugLog.d(LOG_TAG,"onLoadingStarted imageUri:" + imageUri);
-                }
-                HandlerObj handlerObj = new HandlerObj();
-                handlerObj.setUrl(imageUri);
-                Message message = mHandle.obtainMessage(GET_BITMAP_START);
-                message.obj = handlerObj;
-                message.sendToTarget();
-
-            }
-
-            @Override
-            public void onLoadingFailed(String imageUri, FailReason failReason) {
-//                WallpaperDB.getInstance(getContext().getApplicationContext()).updateDownLoadNotFinish(wallpaper);
-                mLoadState = State.FAILED;
-                if(isPrintLog){
-                    DebugLog.d(LOG_TAG, "onLoadingFailed imageUri:" + imageUri);
-                }
-                int what = GET_BITMAP_FAIL;
-                if(wallpaper.getType() == Wallpaper.WALLPAPER_FROM_WEB){
-                	Bitmap bitmap = null;
-                	Bitmap bitmapTemp = DownLoadBitmapManager.getInstance().downLoadBitmap(getContext(), imageUri);
-                	String key = DiskUtils.constructFileNameByUrl(imageUri);
-                	if(bitmapTemp != null){
-                		int screenWid = KWDataCache.getScreenWidth(getContext().getResources());
-                		int screenHei = KWDataCache.getAllScreenHeigt(getContext());
-                		bitmap = BitmapUtil.getResizedBitmapForSingleScreen(bitmapTemp, screenHei, screenWid);
-                		String path = DiskUtils.getCachePath(getContext()) + File.separator + DiskUtils.WALLPAPER_BITMAP_FOLDER;
-                		DiskUtils.saveBitmap(bitmap, key, path);
-                		BitmapUtil.recycleBitmap(bitmapTemp);
-                		BitmapUtil.recycleBitmap(bitmap);
-                	}
-                }else if(wallpaper.getType() == Wallpaper.WALLPAPER_FROM_PHOTO){
-                	WallpaperDB.getInstance(getContext()).deleteWallpaperByID(Wallpaper.WALLPAPER_FROM_PHOTO_ID);
-                }
-                HandlerObj handlerObj = new HandlerObj();
-                handlerObj.setUrl(imageUri);
-                handlerObj.setFailReason(failReason);
-                Message message = mHandle.obtainMessage(what);
-                message.obj = handlerObj;
-                message.sendToTarget();
-            }
-
-            @Override
-            public void onLoadingComplete(String imageUri, Bitmap loadedImage) {
-                // TODO Auto-generated method stub
-                mLoadState = State.LOADED;
-                if(isPrintLog){
-                    DebugLog.d(LOG_TAG,"onLoadingComplete imageUri:" + imageUri);
-                    DebugLog.d(LOG_TAG,"onLoadingComplete loadedImage:" + loadedImage);
-                }
-                HandlerObj handlerObj = new HandlerObj();
-                handlerObj.setUrl(imageUri);
-                handlerObj.setBitmap(loadedImage);
-                Message message = mHandle.obtainMessage(GET_BITMAP_SUCCESS);
-                message.obj = handlerObj;
-                message.sendToTarget();
-            }
-
-            @Override
-            public void onLoadingCancelled(String imageUri) {
-                if(isPrintLog){
-                    DebugLog.d(LOG_TAG,"onLoadingCancelled onLoadingCancelled");
-                }
-                mLoadState = State.CANCELLED;
-            }
-        };
-        if (mConfig.mImageLoader != null) {
-            Job job = new Job() {
-                
-                @Override
-                public void runTask() {
-                    DealWithFromLocalInterface readImageFromLocal = null;
-                    if(isPrintLog){
-                        DebugLog.d(LOG_TAG,"load image thread url:" + wallpaper.getImgUrl()  + " time begin:" + System.currentTimeMillis());
-                        DebugLog.d(LOG_TAG,"load image thread getType():" + wallpaper.getType());
-                    }
-                 if(wallpaper.getType() == Wallpaper.WALLPAPER_FROM_FIXED_FOLDER){
-                	 readImageFromLocal = new ReadFileFromAssets(getContext().getApplicationContext(), PATH);
-                 }else{
-                	 readImageFromLocal = mConfig.getReadFromSD();
-                 }
-                 
-                  mConfig.mImageLoader.loadImage(wallpaper.getImgUrl(), loadingListener,
-                  readImageFromLocal, isNeedCache);  
-                  if(isPrintLog){
-                      DebugLog.d(LOG_TAG,"load image thread url:" + wallpaper.getImgUrl()  + " time end:" + System.currentTimeMillis());
-                  }
-                }
-                
-                @Override
-                public int getProgress() {
-                    return 0;
-                }
-                
-                @Override
-                public void cancelTask() {
-                    
-                }
-            };
-        	Vector<LoadImageThread> threadList = null;
-            threadList = LoadImagePool.getInstance(getContext())
-                    .getDownLoadThreadList();
-            LoadImageThread loadImageThread = new LoadImageThread(wallpaper.getImgUrl(), job,threadList);
-			LoadImagePool.getInstance(getContext().getApplicationContext()).loadImage(loadImageThread, wallpaper.getImgUrl());
+        this.setmShowState(ShowState.SHOW_NOIMAGE);
+        boolean isLoadFromCache = loadFromCache();
+        if (!isLoadFromCache){ 
+            mConfig.mImageLoader.loadImageToView(this/*, posOfListener*/);
+        	boolean isLoadThumbnailFromCache = loadThumbnailFromCache();
+        	if (!isLoadThumbnailFromCache){
+        		this.setImageResource(mConfig.startBitmapID);
+        		this.setmShowState(ShowState.SHOW_NOIMAGE);
+        	}else{
+        		 this.setmShowState(ShowState.SHOW_THUMBNAIL);
+        	}
+        }else{
+            this.setmShowState(ShowState.SHOW_IMAGE);
         }
     }
 
@@ -305,40 +186,6 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
     }
 
     
-    private void loadStartDealWith(String url) {
-        if(isPrintLog){
-            Log.v(LOG_TAG, "loadImageBitmap loadStartDealWith url:" + url);
-            Log.v(LOG_TAG, "loadImageBitmap loadStartDealWith this.getTag():"
-                    + this.getTag());
-            Log.v(LOG_TAG, "loadImageBitmap loadStartDealWith this.hashCode():"
-                    + this.hashCode());
-        }
-        if (this.getTag() != null && url.equals(this.getTag())) {
-            loadStart();
-        } else if (this.getTag() == null) {
-            loadStart();
-        }
-    }
-
-    private void loadStart() {
-//        if (mConfig.startBitmap != null) {
-//            recyleImageBitmap();
-//            mImageBitmap = mConfig.startBitmap;
-//            setBitmap(mImageBitmap);
-//        } else {
-////            setImageResource(R.drawable.emotion_loading);
-//        }
-    if(isPrintLog){
-       DebugLog.d(LOG_TAG,"loadFromCache mUrl:" + mUrl + "loadImageBitmap mConfig.startBitmapID:" + mConfig.startBitmapID);
-    }
-  	if(mConfig.startBitmapID != 0){
-          recyleImageBitmap();
-  		  setImageResource(mConfig.startBitmapID);
-      } else {
-
-      }
-    }
-
     private void setImageBackground() {
         if (mColor != null && !"".equals(mColor)) {
             this.setBackgroundColor(Color.parseColor(mColor));
@@ -380,31 +227,77 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
         mConfig.setStartBitmap(null);
         mConfig.setFailBitmap(null);
     }
-
-    private void loadBitmapCompleteDealWith(String url, Bitmap loadedImage) {
+    
+	private void loadBitmapCompleteDealWith(String url, Bitmap loadedImage) {
         if(isPrintLog){
-            DebugLog.d(LOG_TAG,"loadBitmapCompleteDealWith url:" + url + 
-            		" loadedImage:" + loadedImage + " this.getTag():" + this.getTag());
+            DebugLog.d(LOG_TAG,"loadBitmapCompleteDealWith url:" + url);
         }
-    	if (this.getTag() != null && url.equals(this.getTag())) {
-            loadBitmapCompleted(url, loadedImage);
-        } else if (this.getTag() == null) {
-            loadBitmapCompleted(url, loadedImage);
-        }
-    }
+		if (this.getmShowState() == ShowState.SHOW_IMAGE) {
+	        if(isPrintLog){
+	            DebugLog.d(LOG_TAG,"loadBitmapCompleteDealWith url SHOW_IMAGE");
+	        }
+//			if (url.equals(this.getUrl())) {
+//				if (loadedImage != null) {
+//					recyleImageBitmap();
+//					mImageBitmap = loadedImage;
+//					setBitmap(mImageBitmap);
+//					setmShowState(ShowState.SHOW_IMAGE);
+//				}
+//			}
+			return;
+		}
+		if (this.getmShowState() == ShowState.SHOW_THUMBNAIL) {
+	        if(isPrintLog){
+	            DebugLog.d(LOG_TAG,"loadBitmapCompleteDealWith url SHOW_THUMBNAIL");
+	        }
+			if (loadBitmapCompleted(url, loadedImage)) {
+				return;
+			}
+		}
+		if (this.getmShowState() == ShowState.SHOW_NOIMAGE) {
+	        if(isPrintLog){
+	            DebugLog.d(LOG_TAG,"loadBitmapCompleteDealWith url SHOW_NOIMAGE");
+	        }
+			if (loadBitmapCompleted(url, loadedImage)) {
+				return;
+			}
+		}
 
-    private void loadBitmapCompleted(String imageUri, Bitmap loadedImage) {
-        if (loadedImage != null) {
-            recyleImageBitmap();
-            mImageBitmap = loadedImage;
-        }
-        if (mImageBitmap != null) {
-            setBitmap(mImageBitmap);
-        } else {
-            loadFailDealWith(imageUri, null);
-        }
-    }
+	}
 
+    private boolean loadBitmapCompleted(String url, Bitmap loadedImage){
+        if(isPrintLog){
+            DebugLog.d(LOG_TAG,"loadBitmapCompleted url "+ url);
+        }
+    	boolean loadingSuccess = false;
+    	if (url.equals(this.getUrl())){
+            if (loadedImage != null) {
+                recyleImageBitmap();
+                mImageBitmap = loadedImage;
+                setBitmap(mImageBitmap);
+                setmShowState(ShowState.SHOW_IMAGE);
+    	        if(isPrintLog){
+    	            DebugLog.d(LOG_TAG,"loadBitmapCompleted url SHOW_IMAGE");
+    	        }
+                loadingSuccess = true;
+            }
+    	}else if (url.equals(this.getUrl() + THUMBNAIL_POSTFIX)){
+            if (loadedImage != null) {
+                recyleImageBitmap();
+                mImageBitmap = loadedImage;
+                setBitmap(mImageBitmap);
+                setmShowState(ShowState.SHOW_THUMBNAIL);
+    	        if(isPrintLog){
+    	            DebugLog.d(LOG_TAG,"loadBitmapCompleted url SHOW_THUMBNAIL");
+    	        }
+                loadingSuccess = true;
+            }
+    	}else{
+
+    	}
+    	return loadingSuccess;
+    }
+    
     class HandlerObj {
 
         private String url;
@@ -504,24 +397,13 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
 
     }
     
-    public void addImage2Cache() {
-        if (mConfig.mImageLoader != null && mUrl != null && mLoadState == State.LOADED) {
-            mConfig.mImageLoader.addImage2Cache(mUrl, mImageBitmap);
-        }
-    }
 
-    public void removeCache() {
-        Log.v(LOG_TAG, "removeCache mImageLoader:" + mConfig.mImageLoader);
-        Log.v(LOG_TAG, "removeCache mUrl1:" + mUrl);
-        if (mConfig.mImageLoader != null && mUrl != null) {
-            Log.v(LOG_TAG, "removeCache mUrl2:" + mUrl);
-            mConfig.mImageLoader.removeItem(mUrl);
-        }
+    public void setPosOfListener(int position) {
+        this.mPosOfListener = position;
     }
     
-
-    public void setPosition(int position) {
-        this.mPosition = position;
+    public int getPosOfListener(){
+    	return mPosOfListener;
     }
 
     public String getUrl() {
@@ -536,33 +418,54 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
         }
 
         if (mConfig != null && mLoadState == State.FAILED) {
-            loadImageBitmap(mWallPaper, mNeedCache);
+            loadImageBitmap(mWallPaper);
         }
         return super.onTouchEvent(event);
     }
 
-    private void loadFromCache(){
+    private boolean loadFromCache(){
         DebugLog.d(LOG_TAG,"loadFromCache mUrl:" + mUrl + " mConfig:" + mConfig);
         DebugLog.d(LOG_TAG,"loadFromCache mUrl:" + mUrl + " mConfig.mImageLoader:" + mConfig.mImageLoader);
         if(mConfig == null || mConfig.mImageLoader == null){
-            return;
+            return false;
         }
         Bitmap bitmap = mConfig.mImageLoader.getBitmapFromCache(mWallPaper.getImgUrl());
         DebugLog.d(LOG_TAG,"loadFromCache mUrl:" + mUrl + "loadImageBitmap bitmap:" + bitmap);
         if (bitmap != null) {
             this.setUrl(mWallPaper.getImgUrl());
             this.setImageBitmap(bitmap);
+            return true;
         }else{
-            this.setBackGroundColorAndRemoveImage(mWallPaper);
-            loadStart();
+//            this.setBackGroundColorAndRemoveImage(mWallPaper);
+//            loadStart();
+            return false;
         }
+    }
+    
+    private boolean loadThumbnailFromCache(){
+        DebugLog.d(LOG_TAG,"loadThumbnailFromCache loadFromCache mUrl:" + mUrl + " mConfig:" + mConfig);
+        DebugLog.d(LOG_TAG,"loadThumbnailFromCache loadFromCache mUrl:" + mUrl + " mConfig.mImageLoader:" + mConfig.mImageLoader);
+        if(mConfig == null || mConfig.mImageLoader == null){
+            return false;
+        }
+        Bitmap bitmap = mConfig.mImageLoader.getBitmapFromCache(mWallPaper.getImgUrl()+ THUMBNAIL_POSTFIX);
+        DebugLog.d(LOG_TAG,"loadThumbnailFromCache loadFromCache mUrl:" + mUrl + "loadImageBitmap bitmap:" + bitmap);
+        if (bitmap != null) {
+            this.setUrl(mWallPaper.getImgUrl());
+            this.setImageBitmap(bitmap);
+            return true;
+        }else{
+//            this.setBackGroundColorAndRemoveImage(mWallPaper);
+//            loadStart();
+            return false;
+        }	
     }
 
     @Override
     public void onReload() {
         // TODO Auto-generated method stub
         loadImageBitmap();
-    }
+    }    
  
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -573,5 +476,79 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
                 mHeight, MeasureSpec.EXACTLY);
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
-    
+
+	@Override
+	public void onLoadingStarted(String imageUri) {
+/*		if (isPrintLog) {
+			DebugLog.d(LOG_TAG, "onLoadingStarted imageUri:" + imageUri);
+		}
+		HandlerObj handlerObj = new HandlerObj();
+		handlerObj.setUrl(imageUri);
+		Message message = mHandle.obtainMessage(GET_BITMAP_START);
+		message.obj = handlerObj;
+		message.sendToTarget();*/
+
+	}
+
+	@Override
+	public void onLoadingFailed(String imageUri, FailReason failReason) {
+		// WallpaperDB.getInstance(getContext().getApplicationContext()).updateDownLoadNotFinish(wallpaper);
+		mLoadState = State.FAILED;
+		if (isPrintLog) {
+			DebugLog.d(LOG_TAG, "onLoadingFailed imageUri:" + imageUri);
+		}
+/*		int what = GET_BITMAP_FAIL;
+		if (mWallpaper.getType() == Wallpaper.WALLPAPER_FROM_WEB) {
+			Bitmap bitmap = null;
+			Bitmap bitmapTemp = DownLoadBitmapManager.getInstance()
+					.downLoadBitmap(getContext(), imageUri);
+			String key = DiskUtils.constructFileNameByUrl(imageUri);
+			if (bitmapTemp != null) {
+				int screenWid = KWDataCache.getScreenWidth(getContext()
+						.getResources());
+				int screenHei = KWDataCache.getAllScreenHeigt(getContext());
+				bitmap = BitmapUtil.getResizedBitmapForSingleScreen(bitmapTemp,
+						screenHei, screenWid);
+				String path = DiskUtils.getCachePath(getContext())
+						+ File.separator + DiskUtils.WALLPAPER_BITMAP_FOLDER;
+				DiskUtils.saveBitmap(bitmap, key, path);
+				BitmapUtil.recycleBitmap(bitmapTemp);
+				BitmapUtil.recycleBitmap(bitmap);
+				//TODO 生成缩略图
+			}
+		} else if (mWallpaper.getType() == Wallpaper.WALLPAPER_FROM_PHOTO) {
+			WallpaperDB.getInstance(getContext()).deleteWallpaperByID(
+					Wallpaper.WALLPAPER_FROM_PHOTO_ID);
+		}
+		HandlerObj handlerObj = new HandlerObj();
+		handlerObj.setUrl(imageUri);
+		handlerObj.setFailReason(failReason);
+		Message message = mHandle.obtainMessage(what);
+		message.obj = handlerObj;
+		message.sendToTarget();*/
+	}
+
+	@Override
+	public void onLoadingComplete(String imageUri, Bitmap loadedImage) {
+		mLoadState = State.LOADED;
+		if (isPrintLog) {
+			DebugLog.d(LOG_TAG, "onLoadingComplete imageUri:" + imageUri);
+			DebugLog.d(LOG_TAG, "onLoadingComplete loadedImage:" + loadedImage);
+		}
+		HandlerObj handlerObj = new HandlerObj();
+		handlerObj.setUrl(imageUri);
+		handlerObj.setBitmap(loadedImage);
+		Message message = mHandle.obtainMessage(GET_BITMAP_SUCCESS);
+		message.obj = handlerObj;
+		message.sendToTarget();
+	}
+
+	@Override
+	public void onLoadingCancelled(String imageUri) {
+		if (isPrintLog) {
+			DebugLog.d(LOG_TAG, "onLoadingCancelled onLoadingCancelled");
+		}
+		mLoadState = State.CANCELLED;
+	}
+
 }

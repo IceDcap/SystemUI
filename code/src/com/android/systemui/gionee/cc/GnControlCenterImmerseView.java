@@ -9,6 +9,7 @@ package com.android.systemui.gionee.cc;
 
 import com.android.systemui.R;
 import com.android.systemui.gionee.GnUtil;
+import com.android.systemui.gionee.cc.GnControlCenter.Callback;
 
 import android.content.Context;
 import android.os.Handler;
@@ -19,10 +20,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-public class GnControlCenterImmerseView extends GnControlCenter {
+public class GnControlCenterImmerseView extends FrameLayout {
 
+    private static final String TAG = "GnControlCenterImmerseView";
+    
     private Context mContext;
     private ImageView mImmerseArrow;
     
@@ -47,7 +51,7 @@ public class GnControlCenterImmerseView extends GnControlCenter {
         @Override
         public void dismissPanel() {
             setVisibility(View.GONE);
-            go(STATE_CLOSED);
+            GnControlCenter.go(GnControlCenter.STATE_CLOSED);
         }
         
     };
@@ -56,7 +60,7 @@ public class GnControlCenterImmerseView extends GnControlCenter {
         super(context, attrs);
         mContext = context;
         
-        addCallback(mCallback);
+        GnControlCenter.addCallback(mCallback);
     }
 
     @Override
@@ -75,7 +79,7 @@ public class GnControlCenterImmerseView extends GnControlCenter {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (getState() != GnControlCenter.STATE_IMMERSE_CLOSING
+        if (GnControlCenter.getState() != GnControlCenter.STATE_IMMERSE_CLOSING 
                 && event.getAction() == MotionEvent.ACTION_OUTSIDE) {
             pushDownOut();
         }
@@ -116,7 +120,7 @@ public class GnControlCenterImmerseView extends GnControlCenter {
         @Override
         public void onAnimationEnd(Animation animation) {
             setVisibility(View.GONE);
-            go(STATE_CLOSED);
+            GnControlCenter.go(GnControlCenter.STATE_CLOSED);
             GnUtil.setLockState(GnUtil.STATE_LOCK_UNLOCK);
         }
 
@@ -127,7 +131,7 @@ public class GnControlCenterImmerseView extends GnControlCenter {
 
         @Override
         public void onAnimationStart(Animation animation) {
-            go(STATE_IMMERSE_CLOSING);
+            GnControlCenter.go(GnControlCenter.STATE_IMMERSE_CLOSING);
         }
     };
 

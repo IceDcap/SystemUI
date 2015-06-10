@@ -7,7 +7,7 @@ import android.util.Log;
 
 public class Guide {
 
-    private static boolean TEST = true;
+    private static boolean TEST = false;
 
     public enum GuideState {
         IDLE, LONG_PRESS, CLICK_TITLE, SLIDE_AROUND, SCROLL_UP, NEW_WALLPAPER, SLIDE_FEEDBACK

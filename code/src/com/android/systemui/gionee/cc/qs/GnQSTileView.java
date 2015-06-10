@@ -36,7 +36,7 @@ public class GnQSTileView extends ViewGroup {
 
     protected TextView mLabel;
     private OnClickListener mClickPrimary;
-    private OnLongClickListener mLongClick;
+    private OnLongClickListener mLongClickPrimary;
     
     public GnQSTileView(Context context) {
         
@@ -96,20 +96,19 @@ public class GnQSTileView extends ViewGroup {
 
     public void setDual(boolean dual) {
         setOnClickListener(mClickPrimary);
-        setOnLongClickListener(mLongClick);
+        setOnLongClickListener(mLongClickPrimary);
         setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
 
         setFocusable(!dual);
         postInvalidate();
     }
     
-    public void init(OnClickListener clickPrimary) {
+    public void setClickListener(OnClickListener clickPrimary) {
         mClickPrimary = clickPrimary;
     }
 
-    public void init(OnClickListener clickPrimary, OnClickListener clickSecondary, OnLongClickListener longClick) {
-        mClickPrimary = clickPrimary;
-        mLongClick = longClick;
+    public void setLongClickListener(OnLongClickListener longClickPrimary) {
+        mLongClickPrimary = longClickPrimary;
     }
 
     protected View createIcon() {

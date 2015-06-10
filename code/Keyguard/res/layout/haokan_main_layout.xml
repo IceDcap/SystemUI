@@ -7,7 +7,7 @@
     <RelativeLayout
         android:id="@+id/haokan_page_layout_player"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="35dp"
         android:layout_marginTop="@dimen/haokan_music_player_button_margintop"
         android:gravity="center_vertical"
         android:visibility="gone" >
@@ -27,7 +27,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/haokan_music_player_music_marginright"
             android:layout_toLeftOf="@+id/haokan_page_layout_imageButton"
-            android:gravity="right"
+            android:gravity="right|center_vertical"
             android:orientation="vertical" >
 
             <TextView
@@ -65,8 +65,7 @@
         android:paddingRight="@dimen/haokan_caption_layout_padding"
         android:translationY="@dimen/haokan_caption_layout_translationY" >
 
-        <!-- 
-         -->
+   
         <LinearLayout
             android:id="@+id/haokan_captions_title_container"
             android:layout_width="wrap_content"

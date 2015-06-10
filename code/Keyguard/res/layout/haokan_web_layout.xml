@@ -28,9 +28,11 @@
         android:visibility="visible" >
 
         <View
+            android:id="@+id/line"
             android:layout_width="match_parent"
             android:layout_height="1px"
             android:layout_alignParentTop="true"
+            android:alpha="0"
             android:background="#50808080" />
 
         <ImageView

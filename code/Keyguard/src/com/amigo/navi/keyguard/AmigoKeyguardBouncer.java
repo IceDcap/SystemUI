@@ -1,6 +1,7 @@
 package com.amigo.navi.keyguard;
 
 
+import com.amigo.navi.keyguard.haokan.UIController;
 import com.android.keyguard.KeyguardViewBase;
 import com.android.internal.widget.LockPatternUtils;
 
@@ -41,6 +42,7 @@ public class AmigoKeyguardBouncer {
 	        mContainer = container;
 	    	mMaxBoundY = KWDataCache.getXPageHeight(context.getResources());
 	    	inflateView();
+	    	UIController.getInstance().setKeyguardBouncer(this);
 	    }
 
 	  private void inflateView() {
@@ -123,6 +125,14 @@ public class AmigoKeyguardBouncer {
 	    
 	    public boolean isSecure() {
             return mKeyguardView == null || mKeyguardView.getSecurityMode() != SecurityMode.None;
+        }
+	    
+	    public boolean isSimSecure() {
+	        if (mKeyguardView != null) {
+                SecurityMode mode = mKeyguardView.getSecurityMode();
+                return mode == SecurityMode.SimPin || mode == SecurityMode.SimPuk;
+            }
+            return false;
         }
 	    
 	    public boolean needsFullscreenBouncer() {

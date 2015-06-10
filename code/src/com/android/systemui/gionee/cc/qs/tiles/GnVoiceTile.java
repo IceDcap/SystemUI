@@ -12,6 +12,7 @@ import android.content.Context;
 import android.database.ContentObserver;
 import android.media.AudioManager;
 import android.os.Handler;
+import android.util.Log;
 
 import com.android.systemui.gionee.cc.qs.GnQSTile;
 import com.android.systemui.R;
@@ -46,7 +47,8 @@ public class GnVoiceTile extends GnQSTile<GnQSTile.BooleanState> {
     @Override
     protected void handleClick() {
     	GnYouJu.onEvent(mContext, "Amigo_SystemUI_CC", "GnVoiceTile");
-        boolean value = mState.value;
+        boolean value = AmigoSettings.getInt(mContext.getContentResolver(), AMIGO_SETTING_VOICE, 0) == 0;
+        Log.d(TAG, "handleClick  value = " + value);
         AmigoSettings.putInt(mContext.getContentResolver(), AMIGO_SETTING_VOICE, value ? 1 : 0);
         
         int volumeMusic = 0;

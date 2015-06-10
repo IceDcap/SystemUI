@@ -49,6 +49,11 @@ public class GnWifiTile extends GnQSTile<GnQSTile.BooleanState> {
     }
 
     @Override
+    public boolean supportsLongClick() {
+        return true;
+    }
+
+    @Override
     protected void handleClick() {
         final boolean isEnabled = (Boolean)mState.value;
         Log.d(TAG, "setWifiEnabled " + !isEnabled);

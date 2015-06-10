@@ -43,8 +43,9 @@ import android.view.SurfaceView;
 
 public class GnBlindShootActivity extends Activity {
 
-    private static final String LOG_TAG = "Blind_Shoot";
-    private static final int NOTIFICATON_ID=95766219;
+    private static final String TAG = "GnBlindShootActivity";
+
+    private static final int NOTIFICATON_ID = R.drawable.gn_sc_contact_pic;
 
     private SurfaceView mSurfaceView;
     private SurfaceHolder mHolder;
@@ -67,7 +68,7 @@ public class GnBlindShootActivity extends Activity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gn_sc_activity_blind_shoot);
-        Log.d("jings", "onCreate: " + SystemClock.elapsedRealtime());
+        Log.d(TAG, "onCreate: " + SystemClock.elapsedRealtime());
         initSurface();
 
         new Thread(new Runnable() {
@@ -94,14 +95,13 @@ public class GnBlindShootActivity extends Activity {
     }
 
     private void initCamera() {
-
+        Log.d(TAG, "initCamera");
         if (checkCameraHardware(getApplicationContext())) {
             if (openFacingBackCameraPrior()) {
-                Log.d(LOG_TAG, "openCameraSuccess");
-                Log.d("jings", "initCamera: " + SystemClock.elapsedRealtime());
+                Log.d(TAG, "openCameraSuccess");
                 autoFocus();
             } else {
-                Log.d(LOG_TAG, "openCameraFailed");
+                Log.d(TAG, "openCameraFailed");
                 finish();
             }
 
@@ -113,7 +113,7 @@ public class GnBlindShootActivity extends Activity {
     public static void setOrientation(int cameraId, Camera camera, Parameters parameters) {
         CameraInfo info = new CameraInfo();
         Camera.getCameraInfo(cameraId, info);
-        Log.d(LOG_TAG, "info.orientation=" + info.orientation);
+        Log.d(TAG, "info.orientation=" + info.orientation);
 
         int degrees = 0;
         if (cameraId == Camera.CameraInfo.CAMERA_FACING_BACK) {
@@ -123,7 +123,7 @@ public class GnBlindShootActivity extends Activity {
             degrees = 90;
             parameters.setRotation(270);
         }
-        Log.d(LOG_TAG, "setOrientation(), degrees=" + degrees);
+        Log.d(TAG, "setOrientation(), degrees=" + degrees);
 
         camera.setDisplayOrientation(degrees);
         camera.setParameters(parameters);
@@ -144,7 +144,7 @@ public class GnBlindShootActivity extends Activity {
                     if (size.width > targetSize.width) {
                         targetSize.width = size.width;
                         targetSize.height = size.height;
-                        Log.d(LOG_TAG, "size width: " + targetSize.width + "  height: " + targetSize.height);
+                        Log.d(TAG, "size width: " + targetSize.width + "  height: " + targetSize.height);
                     }
                 }
 
@@ -162,34 +162,31 @@ public class GnBlindShootActivity extends Activity {
     }
 
     private void bindPhotoService() {
-        Log.d(LOG_TAG, "bindPhotoService()");
+        Log.d(TAG, "bindPhotoService()");
         if (mPhotoService == null || mServiceConn == null) {
             mServiceConn = new ServiceConnection() {
                 @Override
                 public void onServiceConnected(ComponentName name, IBinder service) {
-                    Log.d(LOG_TAG, "photo service is connected");
+                    Log.d(TAG, "photo service is connected");
                     mPhotoService = IPhotoService.Stub.asInterface(service);
                 }
 
                 @Override
                 public void onServiceDisconnected(ComponentName name) {
-                    Log.d(LOG_TAG, "photo service is disconnected");
+                    Log.d(TAG, "photo service is disconnected");
                     mPhotoService = null;
                 }
             };
 
-            Log.d(LOG_TAG, IPhotoService.class.getName());
+            Log.d(TAG, IPhotoService.class.getName());
             Intent intent = new Intent();
-//            intent.setAction("com.android.systemui.controlcenter.service.IPhotoService");
             intent.setClassName("com.android.systemui", "com.android.systemui.gionee.cc.service.GnShortCutServices");
             bindService(intent, mServiceConn, Context.BIND_AUTO_CREATE);
         }
     }
 
     private void autoFocus() {
-        // SystemClock.sleep(2000);
-        // mCamera.autoFocus(mAutoFocus);
-        Log.d(LOG_TAG, "autoFocus: " + SystemClock.elapsedRealtime());
+        Log.d(TAG, "autoFocus");
         try {
             mCamera.takePicture(null, null, mPicCallback);
         } catch (RuntimeException e) {
@@ -214,10 +211,11 @@ public class GnBlindShootActivity extends Activity {
             Camera.getCameraInfo(camIdx, cameraInfo);
             if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
                 try {
-                    Log.d(LOG_TAG, "tryToOpenCamera");
+                    Log.d(TAG, "tryToOpenCamera");
                     mCamera = Camera.open(camIdx);
                     mCameraId = cameraInfo.facing;
                 } catch (RuntimeException e) {
+                    Log.d(TAG, "open camera error");
                     e.printStackTrace();
                     return false;
                 }
@@ -229,9 +227,11 @@ public class GnBlindShootActivity extends Activity {
                 Camera.getCameraInfo(camIdx, cameraInfo);
                 if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
                     try {
+                        Log.d(TAG, "tryToOpenCamera again");
                         mCamera = Camera.open(camIdx);
                         mCameraId = cameraInfo.facing;
                     } catch (RuntimeException e) {
+                        Log.d(TAG, "open camera error !!!");
                         return false;
                     }
                 }
@@ -244,80 +244,58 @@ public class GnBlindShootActivity extends Activity {
             e.printStackTrace();
             releaseCamera();
         }
+        
         initParameters();
+        
         try {
             mCamera.startPreview();
         } catch (RuntimeException e) {
             e.printStackTrace();
             releaseCamera();
         }
+        
         registerOrientationEventListener();
+        
         return true;
     }
-
-    private AutoFocusCallback mAutoFocus = new AutoFocusCallback() {
-        @Override
-        public void onAutoFocus(boolean success, Camera camera) {
-            if (success) {
-                // camera.takePicture(null, null, mPicCallback);
-            }
-        }
-    };
 
     private PictureCallback mPicCallback = new PictureCallback() {
 
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
-            Log.d("jings", "onPictureTaken: " + SystemClock.elapsedRealtime());
+            Log.d(TAG, "onPictureTaken");
             GnBlindShootActivity.this.finish();
             unregisterOrientationEventListener();
             storeImage(data);
-            GnVibrateUtil.vibrate(GnBlindShootActivity.this);
+            // GnVibrateUtil.vibrate(GnBlindShootActivity.this);
             releaseCamera();
-            Log.d("jings", "onPictureTakened: " + SystemClock.elapsedRealtime());
         }
     };
     
-    //TODO:查看是否是异步线程，改成异步线程
     public int storeImage(byte[] data) {
-        Log.i(LOG_TAG, "storeImage() begin  threadname: "+Thread.currentThread().getName());
+        Log.i(TAG, "storeImage() begin  threadname: "+Thread.currentThread().getName());
         int result = 0;
         try {
             if (mPhotoService != null) {
                 int[] degree = new int[1];
                 Uri uri = mPhotoService.savePic(degree, data);
-                Log.i(LOG_TAG, "uri is null: " + (uri == null));
+                Log.i(TAG, "uri is null: " + (uri == null));
                 if (uri != null) {
-                    Log.i(LOG_TAG, "uri: " + uri.getPath());
+                    Log.i(TAG, "uri: " + uri.getPath());
                     result = degree[0];
                     sendNotification(uri);
                 } else {
-                    Log.d(LOG_TAG, "fail to obtain uri");
+                    Log.d(TAG, "fail to obtain uri");
                 }
             } else {
-                Log.d(LOG_TAG, "mPhotoService is null");
+                Log.d(TAG, "mPhotoService is null");
             }
         } catch (Exception ex) {
-            Log.e(LOG_TAG, "fail to store image");
+            Log.e(TAG, "fail to store image");
         }
 
-        Log.i(LOG_TAG, "storeImage() end");
+        Log.i(TAG, "storeImage() end");
         return result;
-    }
-
-    private Bitmap createThumbnail(byte[] data, Size s) {
-        int ratio = (int) Math.ceil((double) s.width / 80);
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = Integer.highestOneBit(ratio);
-
-        Bitmap bitmap = null;
-        try {
-            bitmap = BitmapFactory.decodeByteArray(data, 0, data.length, options);
-        } catch (OutOfMemoryError e) {
-            Log.e(LOG_TAG, "fail to create bitmap");
-        }
-
-        return bitmap;
     }
 
     @SuppressLint("NewApi")
@@ -363,14 +341,14 @@ public class GnBlindShootActivity extends Activity {
     }
 
     private void registerOrientationEventListener() {
-        Log.d(LOG_TAG, "registerOrientationEventListener()");
+        Log.d(TAG, "registerOrientationEventListener()");
         if (mOrientationEventListener.canDetectOrientation()) {
             mOrientationEventListener.enable();
         }
     }
 
     private void unregisterOrientationEventListener() {
-        Log.d(LOG_TAG, "unregisterOrientationEventListener()");
+        Log.d(TAG, "unregisterOrientationEventListener()");
         mOrientationEventListener.disable();
     }
 
@@ -385,51 +363,54 @@ public class GnBlindShootActivity extends Activity {
             if (Math.abs(orientation - mLastOrientation) < 30) {
                 return;
             }
+
+            if (mCamera == null) {
+                return;
+            }
+            
             mLastOrientation = orientation;
-            Log.d(LOG_TAG, "orientation changed to " + mLastOrientation);
+            Log.d(TAG, "orientation changed to " + mLastOrientation);
 
             orientation = (orientation + 45) / 90 * 90;
-            if (mCamera != null) {
-                CameraInfo info = new CameraInfo();
-                Camera.getCameraInfo(mCameraId, info);
+            CameraInfo info = new CameraInfo();
+            Camera.getCameraInfo(mCameraId, info);
+            int rotation = (info.orientation - orientation + 360) % 360;
+            if (mLastRotation == rotation) {
+                return;
+            }
+            
+            Log.d(TAG, info.orientation + "/" + orientation);
+            Log.d(TAG, "set rotation to " + rotation);
+            mLastRotation = rotation;
 
-                int rotation = (info.orientation - orientation + 360) % 360;
-                if (mLastRotation != rotation) {
-                    Log.d(LOG_TAG, info.orientation + "/" + orientation);
-                    Log.d(LOG_TAG, "set rotation to " + rotation);
-                    mLastRotation = rotation;
-
-                    // }
-                    if (mCameraId == CameraInfo.CAMERA_FACING_FRONT) {
-                        if (rotation == 0) {
-                            rotation = 180;
-                        } else if (rotation == 180) {
-                            rotation = 0;
-                        } else if (rotation == 270) {
-                            rotation = 180;
-                        } else if (rotation == 90) {
-                            rotation = 270;
-                        }
-                    } else { // back facing
-                        if (rotation == 0) {
-                            rotation = 180;
-                        } else if (rotation == 180) {
-                            rotation = 0;
-                        } else if (rotation == 270) {
-                            rotation = 270;
-                        } else if (rotation == 90) {
-                            rotation = 90;
-                        }
-                    }
-                    Log.d(LOG_TAG, "2 - set rotation to " + rotation);
-
-                    try {
-                        mParameters.setRotation(rotation);
-                        mCamera.setParameters(mParameters);
-                    } catch (Exception e) {
-                        Log.d(LOG_TAG, "fail to invoke Camera.setParameters()");
-                    }
+            if (mCameraId == CameraInfo.CAMERA_FACING_FRONT) {
+                if (rotation == 0) {
+                    rotation = 180;
+                } else if (rotation == 180) {
+                    rotation = 0;
+                } else if (rotation == 270) {
+                    rotation = 180;
+                } else if (rotation == 90) {
+                    rotation = 270;
                 }
+            } else { // back facing
+                if (rotation == 0) {
+                    rotation = 180;
+                } else if (rotation == 180) {
+                    rotation = 0;
+                } else if (rotation == 270) {
+                    rotation = 270;
+                } else if (rotation == 90) {
+                    rotation = 90;
+                }
+            }
+            Log.d(TAG, "2 - set rotation to " + rotation);
+
+            try {
+                mParameters.setRotation(rotation);
+                mCamera.setParameters(mParameters);
+            } catch (Exception e) {
+                Log.d(TAG, "fail to invoke Camera.setParameters()");
             }
         }
     }

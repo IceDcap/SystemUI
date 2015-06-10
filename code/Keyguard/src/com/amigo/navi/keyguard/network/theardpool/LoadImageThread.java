@@ -41,6 +41,7 @@ public class LoadImageThread implements Runnable {
     
     
     public void stop(){
+    	mThreadList.remove(this);
     	mJob.cancelTask();
     }
     

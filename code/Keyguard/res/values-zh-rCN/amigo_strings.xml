@@ -117,7 +117,7 @@
     <string name="haokan_wallpaper_subscription">壁纸订阅</string>
     <string name="haokan_tip_check_net">请检查网络设置</string>
    	<string name="haokan_tip_favorite_error">保存失败</string>
-   	<string name="haokan_tip_save_gallery">已保存到图库</string>
+   	<string name="haokan_tip_save_gallery">已保存到 Amigo/ScreenLock/Favorite</string>
    	<string name="haokan_tip_screen_on_show">每次亮屏时固定显示该壁纸</string>
     <string name="haokan_tip_no_lock_show">该壁纸不再固定显示</string>
    	
@@ -162,4 +162,5 @@
    	<string name="jinxuan">amigo精选</string>
 
    	<string name="set_screenlock_wallpaper_fail">设置锁屏壁纸失败</string>
+   	<string name="insufficient_memory">存储空间不足，请释放空间</string>
 </resources>

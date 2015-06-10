@@ -3,6 +3,10 @@
     android:oneshot="false" >
 
     <item
+        android:drawable="@drawable/haokan_guide_right_slip_0"
+        android:duration="150">
+    </item>
+    <item
         android:drawable="@drawable/haokan_guide_left_slip_1"
         android:duration="150">
     </item>

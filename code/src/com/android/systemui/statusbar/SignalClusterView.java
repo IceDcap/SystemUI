@@ -309,6 +309,16 @@ public class SignalClusterView
             mWifiSignalSpacer.setVisibility(View.GONE);
         }
 
+        if (mNoSimsVisible) {
+            mWifiSignalSpacer.setVisibility(View.GONE);
+        }
+        
+        if (mNoSimsVisible && !mWifiVisible && !mIsAirplaneMode) {
+            Log.i(TAG,"setVisibility:" + (mNoSimsVisible && !mWifiVisible && !mIsAirplaneMode));
+            setVisibility(View.GONE);
+        } else {
+            setVisibility(View.VISIBLE);
+        }
         //mNoSims.setVisibility(mNoSimsVisible ? View.VISIBLE : View.GONE);
 
         boolean anythingVisible = mNoSimsVisible || mWifiVisible || mIsAirplaneMode
@@ -436,7 +446,7 @@ public class SignalClusterView
         } else if (networkType == GnNetworkType.Type_1X3G) {
             return R.drawable.gn_stat_sys_mobile_type_3g;
         } else {
-            return -1;
+            return 0;
         }
     }
 }

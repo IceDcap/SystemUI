@@ -156,7 +156,7 @@
             android:id="@+id/set_keyguard_wallpaper"
             android:layout_width="match_parent"
             android:layout_height="@dimen/settings_body_firstline_height"
-            android:gravity="center_vertical"
+            android:gravity="bottom"
             android:text="@string/preference_set_screenlock_wallpaper"
             android:textColor="@color/keyguard_setting_firstline_color"
             android:textSize="@dimen/settings_body_firstline_textsize"

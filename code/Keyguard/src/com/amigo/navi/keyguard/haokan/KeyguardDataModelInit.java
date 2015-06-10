@@ -73,7 +73,9 @@ public class KeyguardDataModelInit {
 
 	private void insertLocalDataToDB() {
 		WallpaperList WallpaperList = JsonUtil.getDefaultWallpaperList();
-		WallpaperDB.getInstance(mContext).replaceWallpapers(WallpaperList);
+		if (WallpaperList != null) {
+		    WallpaperDB.getInstance(mContext).replaceWallpapers(WallpaperList);
+        }
 	}
     
     public void initAlarm(){

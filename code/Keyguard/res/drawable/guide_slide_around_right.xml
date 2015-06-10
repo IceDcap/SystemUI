@@ -3,20 +3,24 @@
     android:oneshot="false" >
 
     <item
+        android:drawable="@drawable/haokan_guide_right_slip_0"
+        android:duration="150">
+    </item>
+    <item
         android:drawable="@drawable/haokan_guide_right_slip_1"
-        android:duration="200">
+        android:duration="150">
     </item>
     <item
         android:drawable="@drawable/haokan_guide_right_slip_2"
-        android:duration="200">
+        android:duration="150">
     </item>
     <item
         android:drawable="@drawable/haokan_guide_right_slip_3"
-        android:duration="200">
+        android:duration="150">
     </item>
     <item
         android:drawable="@drawable/haokan_guide_right_slip_4"
-        android:duration="200">
+        android:duration="150">
     </item>
 
 </animation-list>

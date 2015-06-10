@@ -32,6 +32,7 @@ import android.widget.ImageView;
 
 import com.android.systemui.R;
 import com.android.systemui.gionee.GnBlurHelper;
+import com.android.systemui.gionee.GnUtil;
 import com.android.systemui.screenshot.GnSnapshotService;
 
 public class GnControlCenterPanel extends ViewGroup implements GestureDetector.OnGestureListener{
@@ -95,6 +96,7 @@ public class GnControlCenterPanel extends ViewGroup implements GestureDetector.O
     private int mTouchDelta;
     private boolean mAllowSingleTap;
     private boolean mAnimateOnClick;
+    private boolean isHighDevice = false;
 
     private final int mTapThreshold;
     private final int mMaximumTapVelocity;
@@ -187,6 +189,9 @@ public class GnControlCenterPanel extends ViewGroup implements GestureDetector.O
         
         mDetector = new GestureDetector(context, this);
         GnBlurHelper.addCallbacks(mBlurCallback);
+        
+        isHighDevice = GnUtil.isHighDevice(mContext);
+        Log.d(TAG, "isHighDevice:" + isHighDevice);
     }
 
     @Override
@@ -247,7 +252,7 @@ public class GnControlCenterPanel extends ViewGroup implements GestureDetector.O
         final View handle = mHandle;
 
         // draw blur
-        if (mGnControlCenterView.isHighDevice()) {
+        if (isHighDevice) {
             synchronized (GnBlurHelper.LOCK) {
                 if (GnBlurHelper.mBlur != null && !GnBlurHelper.mBlur.isRecycled()) {
                     if (false) Log.d(TAG, "GnControlCenterView draw blur");
@@ -561,7 +566,7 @@ public class GnControlCenterPanel extends ViewGroup implements GestureDetector.O
             handle.offsetTopAndBottom(mTopOffset - handle.getTop());
             invalidate();
             if (mGnControlCenterView.isShown()) {
-                mGnControlCenterView.go(GnControlCenter.STATE_OPEN);
+                GnControlCenter.go(GnControlCenter.STATE_OPEN);
             }
         } else if (position == COLLAPSED_FULL_CLOSED) {
             handle.offsetTopAndBottom(mBottomOffset + mBottom - mTop - mHandleHeight
@@ -953,16 +958,12 @@ public class GnControlCenterPanel extends ViewGroup implements GestureDetector.O
     
     private int getColor(int position) {
         int scrimColor;
-        if (mGnControlCenterView.isHighDevice()) {
+        if (isHighDevice) {
             scrimColor = 0xBF131313;
         } else {
             scrimColor = 0xFA222222;            
         }
         return scrimColor;
-    }
-
-    public void createBlurBg(Context context) {
-    	GnBlurHelper.getBlurHelper().createBlurBg(context);
     }
     
     @Override

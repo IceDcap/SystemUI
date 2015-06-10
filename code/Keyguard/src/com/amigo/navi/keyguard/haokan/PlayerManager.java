@@ -61,6 +61,7 @@ public class PlayerManager {
     private Context mApplicationContext;
     
     private Music mCurrentMusic;
+    private Music mPlayingMusic;
     
     private NotificationManager mNotificationManager;
     private Notification mNotification;
@@ -179,6 +180,7 @@ public class PlayerManager {
                 mMediaPlayer.setDataSource(dataSource);
                 mMediaPlayer.prepareAsync();
                 setState(State.PREPARE);
+                setPlayingMusic(mCurrentMusic);
             } catch (Exception e) {
                 Log.e(TAG, "player  Exception");
                 e.printStackTrace();
@@ -226,10 +228,12 @@ public class PlayerManager {
  
     
     private void notifyNotification() {
-        mNotification.contentView.setImageViewResource(R.id.haokan_notification_player_or_pause,
-                State.PLAYER == mState ? R.drawable.haokan_notification_music_player
-                        : R.drawable.haokan_notification_music_pause);
-        mNotificationManager.notify(NOTIFICATION_ID, mNotification);
+        if (mNotification != null && mNotification.contentView != null) {
+            mNotification.contentView.setImageViewResource(R.id.haokan_notification_player_or_pause,
+                    State.PLAYER == mState ? R.drawable.haokan_notification_music_player
+                            : R.drawable.haokan_notification_music_pause);
+            mNotificationManager.notify(NOTIFICATION_ID, mNotification);
+        }
     }
     
     private void cancelNotification() {
@@ -268,11 +272,11 @@ public class PlayerManager {
     
     public void pauseOrPlayer() {
         
-        if (mCurrentMusic == null) {
-            DebugLog.d(TAG, "pauseOrPlayer  mCurrentMusic == null");
-            return;
-        }
-        DebugLog.d(TAG, mCurrentMusic.getmMusicName());
+//        if (mCurrentMusic == null) {
+//            DebugLog.d(TAG, "pauseOrPlayer  mCurrentMusic == null");
+//            return;
+//        }
+//        DebugLog.d(TAG, mCurrentMusic.getmMusicName());
         
         if (mState == State.PAUSE) {
             DebugLog.d(TAG, "pauseOrPlayer  start");
@@ -375,7 +379,7 @@ public class PlayerManager {
     }
  
     public void stopAndRelease() {
-        
+        setPlayingMusic(null);
         cancelTimeTask();
         mBufferingPercent = 0;
         if (mMediaPlayer != null) {
@@ -405,7 +409,7 @@ public class PlayerManager {
         public void onCompletion(MediaPlayer mp) {
             DebugLog.d(TAG, "onCompletion ");
             stopAndRelease();
-            UIController.getInstance().hideMusicPlayer(true);
+            UIController.getInstance().hideMusicPlayer(true, isExistMusic());
         }
     };
     
@@ -427,7 +431,7 @@ public class PlayerManager {
             
             if (what == MediaPlayer.MEDIA_ERROR_UNKNOWN /*&& extra == -2147483648*/) {//-2147483648
                 stopAndRelease();
-                UIController.getInstance().hideMusicPlayer(true);
+                UIController.getInstance().hideMusicPlayer(true, isExistMusic());
             }
             
             return true;
@@ -517,9 +521,15 @@ public class PlayerManager {
     public void closeNotificationAndMusic() {
         cancelNotification();
         stopAndRelease();
-        UIController.getInstance().hideMusicPlayer(false);
+        UIController.getInstance().hideMusicPlayer(false, isExistMusic());
+        resetPlayerIcon();
     }
     
+    private void resetPlayerIcon() {
+        if (mCurrentMusic != null) {
+            setState(State.NULL);
+        } 
+    }
     
     private OnAudioFocusChangeListener mAudioFocusListener = new OnAudioFocusChangeListener() {
         
@@ -615,11 +625,23 @@ public class PlayerManager {
         if (!connect) {
             if (mState == State.PLAYER && !isLocalMusic() && mBufferingPercent != 100) {
                 stopAndRelease();
-                UIController.getInstance().hideMusicPlayer(true);
+                UIController.getInstance().hideMusicPlayer(true, isExistMusic());
             }
         }
     }
-    
-    
+
+    public Music getPlayingMusic() {
+        return mPlayingMusic;
+    }
+
+    public void setPlayingMusic(Music mPlayingMusic) {
+        this.mPlayingMusic = mPlayingMusic;
+    }
+
+  
+    private boolean isExistMusic() {
+        return getmCurrentMusic() != null;
+
+    }
     
 }

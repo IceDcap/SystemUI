@@ -273,7 +273,7 @@ public class GnFakeCallActivity extends Activity {
     private BroadcastReceiver mReceiver;
     
     // Gionee <caody><2013-11-23> modify for CR00947966 begin
-    private static final int FACK_CALL_ID = 1;
+    private static final int FACK_CALL_ID = R.drawable.gn_stat_sys_fake_call;
     private NotificationManager mNotificationManager;
     private Notification mNotification;
     // Gionee <caody><2013-11-23> modify for CR00947966 end

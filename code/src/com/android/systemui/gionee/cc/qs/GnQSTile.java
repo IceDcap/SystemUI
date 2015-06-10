@@ -74,6 +74,10 @@ public abstract class GnQSTile<TState extends State> implements Listenable {
     public int supportsStateType() {
         return STATE_TYPE_BOOLEAN;
     }
+    
+    public boolean supportsLongClick() {
+        return false;
+    }
 
     public Host getHost() {
         return mHost;

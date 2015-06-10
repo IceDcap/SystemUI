@@ -45,6 +45,7 @@ import com.amigo.navi.keyguard.network.theardpool.ThreadUtil;
 import com.amigo.navi.keyguard.picturepage.adapter.HorizontalAdapter;
 import com.amigo.navi.keyguard.picturepage.widget.KeyguardListView;
 import com.amigo.navi.keyguard.picturepage.widget.HorizontalListView.OnScrollListener;
+import com.amigo.navi.keyguard.picturepage.widget.LoadCacheManager;
 import com.amigo.navi.keyguard.picturepage.widget.OnViewTouchListener;
 import com.amigo.navi.keyguard.fingerprint.FingerIdentifyManager;
 import com.amigo.navi.keyguard.settings.KeyguardSettings;
@@ -97,6 +98,8 @@ public class KeyguardViewHostManager {
     private static boolean isSuppotFinger=false;
     private static final int MSG_UPDATE_HAOKAN_LIST_SCREEN_OFF = 4;
     public static final String KEYGUARD_LOCK_BY_OTHERAPP="lockByOtherApp";
+    
+    private LoadCacheManager mCacheManger;
 
 	public KeyguardViewHostManager(Context context,KeyguardViewHost host,SkylightHost skylight,LockPatternUtils lockPatternUtils,ViewMediatorCallback callback){
         DebugLog.d(TAG,"KeyguardViewHostManager");
@@ -248,6 +251,7 @@ public class KeyguardViewHostManager {
         mKeyguardViewHost.onScreenTurnedOn();
         Wallpaper wallpaper= UIController.getInstance().getmCurrentWallpaper();
         if (wallpaper != null){
+        	mCacheManger.refreshCache(mContext, mImageLoader, mWallpaperAdapter.getWallpaperList(),wallpaper, false);
         	HKAgent.onEventScreenOn(mContext, UIController.getInstance().getmCurrentWallpaper());
         	HKAgent.onEventIMGShow(mContext, UIController.getInstance().getmCurrentWallpaper());
         }
@@ -503,6 +507,12 @@ public class KeyguardViewHostManager {
                 }else{
                     refreshHorizontalListView(wallpapers); 
                     UIController.getInstance().refreshWallpaperInfo();
+                    // load the image to cache, which is to be shown after ScreenTurnedOn
+					mCacheManger
+							.refreshCache(mContext, mImageLoader,
+									mWallpaperAdapter.getWallpaperList(),
+									UIController.getInstance()
+											.getmCurrentWallpaper(), true);
                 }
                 break;
             default:
@@ -615,6 +625,7 @@ public class KeyguardViewHostManager {
           mContainer.reset();
           return;
       }
+      mCacheManger = new LoadCacheManager();
       mContainer  = new KeyguardWallpaperContainer(mContext.getApplicationContext());
       mKeyguardListView = new KeyguardListView(mContext.getApplicationContext());
       mImageLoader = new ImageLoader(mContext.getApplicationContext());
@@ -626,8 +637,7 @@ public class KeyguardViewHostManager {
       mKeyguardListView.setOnScrollListener(mKeyguardListViewScrollListener);
       mContainer.addView(mKeyguardListView, 0);
       mKeyguardViewHost.addView(mContainer, 0);
-//      mKeyguardViewHost.addView(mKeyguardListView, 0);
-      RequestNicePicturesFromInternet.getInstance(mContext).setDataChangedListener(mDataChangedListener);
+ 
       UIController controller = UIController.getInstance();
       mKeyguardListView.setTouchlListener(controller);
       
@@ -787,7 +797,7 @@ public class KeyguardViewHostManager {
         }
     };
     
-    private static final boolean PRINT_LOG = false;
+    private static final boolean PRINT_LOG = true;
     private ThreadUtil mThreadUtil = null;
     OnScrollListener mKeyguardListViewScrollListener = new OnScrollListener() {
         @Override
@@ -814,6 +824,7 @@ public class KeyguardViewHostManager {
             Object obj = mKeyguardListView.getCurrentItem();
             if(obj != null){
                 wallpaper = (Wallpaper) obj;
+            	mCacheManger.refreshCache(mContext,mImageLoader, mWallpaperAdapter.getWallpaperList(),wallpaper, false);
         		HKAgent.onEventIMGSwitch(mContext.getApplicationContext(), wallpaper);
             	HKAgent.onEventIMGShow(mContext.getApplicationContext(), wallpaper);
             }

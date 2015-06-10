@@ -19,6 +19,7 @@ import android.provider.Settings.Secure;
 import android.util.Log;
 
 import com.android.systemui.R;
+import com.android.systemui.gionee.cc.GnControlCenter;
 import com.android.systemui.gionee.cc.GnControlCenterView;
 import com.android.systemui.gionee.cc.qs.policy.GnBluetoothController;
 import com.android.systemui.gionee.cc.qs.policy.GnLocationController;
@@ -123,7 +124,7 @@ public class GnQSTileHost implements GnQSTile.Host {
 
     @Override
     public void collapsePanels() {
-        mGnControlCenterView.dismiss();
+        GnControlCenter.dismiss();
     }
     
     @Override

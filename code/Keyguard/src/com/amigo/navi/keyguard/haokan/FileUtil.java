@@ -7,6 +7,8 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.amigo.navi.keyguard.DebugLog;
+import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -40,7 +42,7 @@ public class FileUtil {
     }
     
     public static boolean saveWallpaper(Bitmap bitmap,String imageFileName) {
-        
+      
         boolean success = false;
         String localfile = getSdCardPath() + DIRECTORY_FAVORITE;
         isExistDirectory(localfile);
@@ -56,7 +58,7 @@ public class FileUtil {
         try {
             out = new FileOutputStream(file);
             success = bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out); 
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             success = false;
         } finally{
@@ -157,6 +159,9 @@ public class FileUtil {
                         }
 
                         FileInputStream fis = new FileInputStream(file);
+                        
+                        DiskUtils.saveDefaultThumbnail(context, fis, file.getName());
+                        
                         FileOutputStream fos = new FileOutputStream(dest);
                         FileChannel sourceCh = fis.getChannel();
                         FileChannel destCh = fos.getChannel();
@@ -172,6 +177,8 @@ public class FileUtil {
             }
         }
     }
+    
+    
     
     
 }

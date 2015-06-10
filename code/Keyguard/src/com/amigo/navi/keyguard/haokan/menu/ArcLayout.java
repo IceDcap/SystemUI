@@ -5,15 +5,10 @@ import android.animation.Animator.AnimatorListener;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
-import android.net.Uri;
-import android.provider.MediaStore;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,14 +42,36 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
     private int[][] mMenuItemNameIds = {
             { R.string.haokan_arc_menu_favorite, R.string.haokan_arc_menu_favorite_ok }, 
             { R.string.haokan_arc_menu_lock, R.string.haokan_arc_menu_lock_ok }, 
-            { R.string.haokan_arc_menu_subscribe, -1 }, 
-            { R.string.haokan_arc_menu_setting, -1 }};
+            { R.string.haokan_arc_menu_subscribe, R.string.haokan_arc_menu_subscribe }, 
+            { R.string.haokan_arc_menu_setting, R.string.haokan_arc_menu_setting }};
     
-    private static int[] MENU_ITEM_DRAWABLES = {
-        R.drawable.arcmenu_favorite_background, R.drawable.arcmenu_locked_background,
-        R.drawable.arcmenu_subscribe_background,
-        R.drawable.arcmenu_setting_background
+//    private static int[] MENU_ITEM_DRAWABLES = {
+//        R.drawable.arcmenu_favorite_background, R.drawable.arcmenu_locked_background,
+//        R.drawable.arcmenu_subscribe_background,
+//        R.drawable.arcmenu_setting_background
+//    };
+    
+    private static int[][] MENU_ITEM_DRAWABLES = {
+            {
+                    R.drawable.haokan_arcmenu_favorite, R.drawable.haokan_arcmenu_favorite_press,
+                    R.drawable.haokan_arcmenu_favorite_press, R.drawable.haokan_arcmenu_favorite
+            },
+            {
+                    R.drawable.haokan_arcmenu_lock, R.drawable.haokan_arcmenu_lock_click,
+                    R.drawable.haokan_arcmenu_locked, R.drawable.haokan_arcmenu_locked_click
+            },
+            {
+                    R.drawable.haokan_arcmenu_subscribe, R.drawable.haokan_arcmenu_subscribe_press,
+                    R.drawable.haokan_arcmenu_subscribe, R.drawable.haokan_arcmenu_subscribe_press
+            },
+            {
+                    R.drawable.haokan_arcmenu_setting, R.drawable.haokan_arcmenu_setting_press,
+                    R.drawable.haokan_arcmenu_setting, R.drawable.haokan_arcmenu_setting_press
+            }
+
     };
+    
+    
     
     private ArcHomeButton mArcHomeButton;
     
@@ -131,7 +148,6 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
         controller.setmArcLayout(this);
         
     }
-    
 
     public Wallpaper getmWallpaper() {
         return mWallpaper;
@@ -154,6 +170,12 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
          
         ArcItemButton itemLocked = mArcItems.get(1);
         itemLocked.setItemSelected(mWallpaper.isLocked());
+        
+        ArcItemButton itemSubscribe = mArcItems.get(2);
+        itemSubscribe.setItemSelected(false);
+        
+        ArcItemButton itemSetting = mArcItems.get(3);
+        itemSetting.setItemSelected(false);
         
     }
 
@@ -197,9 +219,10 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
         final int itemCount = mMenuItemNameIds.length;
         for (int i = 0; i < itemCount; i++) {
             ArcItemButton item = new ArcItemButton(this.getContext());
+            item.setImageBackgroundResIds(MENU_ITEM_DRAWABLES[i]);
             item.setTitle(mMenuItemNameIds[i][0]);
             item.setTitleResIds(mMenuItemNameIds[i]);
-            item.setBackgroundResource(MENU_ITEM_DRAWABLES[i]);
+//            item.setBackgroundResource(0);
             item.getmImageView().setId(i);
             item.getmImageView().setOnClickListener(this);
             item.setScaleX(0f);
@@ -599,7 +622,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
             @Override
             public void onAnimationStart(Animator arg0) {
                 arcItemButton.getmTextView().setVisibility(GONE);
-                arcItemButton.getmImageView().setSelected(!arcItemButton.isItemSelected());
+                arcItemButton.setBackgroundResource(arcItemButton.isItemSelected() ? 3 : 1);
             }
             
             @Override
@@ -653,7 +676,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                 mArcHomeButton.setAlpha(1f);
 
                 
-                arcItemButton.getmImageView().setSelected(false);
+//                arcItemButton.getmImageView().setSelected(false);
 
                 if (arcItemButton.isItemSelected()) {
                     arcItemButton.setItemSelected(false);
@@ -713,36 +736,46 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
             
             @Override
             public void run() {
-                 
-                Bitmap currentWallpaper = controller.getCurrentWallpaperBitmap(mWallpaper);
-                
-          
-                boolean isLocalImage = mWallpaper.getImgId() == Wallpaper.WALLPAPER_FROM_PHOTO_ID;
-                
-                String imageFileName = new StringBuffer(FileUtil.getDirectoryFavorite()).append("/").append(Common.currentTimeDate()).append("_")
-                        .append(isLocalImage ? mWallpaper.getImgName() : mWallpaper.getImgId()).append(".jpg").toString();
-                
-                final boolean success = FileUtil.saveWallpaper(currentWallpaper, imageFileName);
-                
-                if (success) {
-                    mWallpaper.setFavoriteLocalPath(imageFileName);
-                    mWallpaper.setFavorite(true);
-                    WallpaperDB.getInstance(getContext().getApplicationContext()).updateFavorite(mWallpaper);
-                    Common.insertMediaStore(getContext().getApplicationContext(),currentWallpaper.getWidth(), currentWallpaper.getHeight(), imageFileName);
+                boolean success = false;
+                int stringResId = R.string.haokan_tip_favorite_error;
+                if (Common.SDfree()) {
+                    
+                    Bitmap currentWallpaper = controller.getCurrentWallpaperBitmap(mWallpaper);
+                    
+                    boolean isLocalImage = mWallpaper.getImgId() == Wallpaper.WALLPAPER_FROM_PHOTO_ID;
+                    
+                    String imageFileName = new StringBuffer(FileUtil.getDirectoryFavorite()).append("/").append(Common.currentTimeDate()).append("_")
+                            .append(isLocalImage ? mWallpaper.getImgName() : mWallpaper.getImgId()).append(".jpg").toString();
+                    
+                    if (currentWallpaper != null) {
+                        success = FileUtil.saveWallpaper(currentWallpaper, imageFileName);
+                    }
+                    
+                    if (success) {
+                        mWallpaper.setFavoriteLocalPath(imageFileName);
+                        mWallpaper.setFavorite(true);
+                        WallpaperDB.getInstance(getContext().getApplicationContext()).updateFavorite(mWallpaper);
+                        Common.insertMediaStore(getContext().getApplicationContext(),currentWallpaper.getWidth(), currentWallpaper.getHeight(), imageFileName);
+                        stringResId = R.string.haokan_tip_save_gallery;
+                    }
+                } else {
+                    stringResId = R.string.insufficient_memory;
                 }
                 
-                postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        controller.showToast(success ? R.string.haokan_tip_save_gallery
-                                : R.string.haokan_tip_favorite_error);
-                    }
-                }, 300);
+                postShowToast(stringResId, 300);
                 
             }
         }).start();
     }
     
+    private void postShowToast(final int stringResId, int delay) {
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                controller.showToast(stringResId);
+            }
+        }, delay);
+    }
     
     private void onClickLocked(final ArcItemButton arcItemButton) {
 
@@ -757,26 +790,26 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                     success = controller.clearLock(getContext(),mWallpaper);
                 }else{
                     success = controller.lockWallpaper(getContext(), mWallpaper);
-                    boolean isLocalImage = mWallpaper.getImgId() == Wallpaper.WALLPAPER_FROM_PHOTO_ID;
-                    String imageFileName = new StringBuffer(FileUtil.getDirectoryFavorite()).append("/").append(Common.currentTimeDate()).append("_")
-                            .append(isLocalImage ? mWallpaper.getImgName() : mWallpaper.getImgId()).append(".jpg").toString();
-                    Bitmap currentWallpaper = controller.getCurrentWallpaperBitmap(mWallpaper);
-                    success = FileUtil.saveWallpaper(currentWallpaper, imageFileName);
-                    if (success) {
-                        Common.insertMediaStore(getContext().getApplicationContext(),currentWallpaper.getWidth(), currentWallpaper.getHeight(), imageFileName);
+                    
+                    if (Common.SDfree()) {
+                        boolean isLocalImage = mWallpaper.getImgId() == Wallpaper.WALLPAPER_FROM_PHOTO_ID;
+                        String imageFileName = new StringBuffer(FileUtil.getDirectoryFavorite()).append("/").append(Common.currentTimeDate()).append("_")
+                                .append(isLocalImage ? mWallpaper.getImgName() : mWallpaper.getImgId()).append(".jpg").toString();
+                        Bitmap currentWallpaper = controller.getCurrentWallpaperBitmap(mWallpaper);
+                        if (currentWallpaper != null) {
+                            success = FileUtil.saveWallpaper(currentWallpaper, imageFileName);
+                        }
+                        if (success) {
+                            Common.insertMediaStore(getContext().getApplicationContext(),currentWallpaper.getWidth(), currentWallpaper.getHeight(), imageFileName);
+                        }
                     }
                 }
                 if (success) {
                     
                     HKAgent.onEventWallpaperLock(getContext().getApplicationContext(), mWallpaper);
-                    postDelayed(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            boolean isLocked = mWallpaper.isLocked();
-                            controller.showToast(isLocked ? R.string.haokan_tip_screen_on_show : R.string.haokan_tip_no_lock_show);
-                        }
-                    }, 500);
+                    int stringResId = mWallpaper.isLocked() ? R.string.haokan_tip_screen_on_show : R.string.haokan_tip_no_lock_show;
+                    postShowToast(stringResId, 500);
+                     
                 }  
             }
         }).start();

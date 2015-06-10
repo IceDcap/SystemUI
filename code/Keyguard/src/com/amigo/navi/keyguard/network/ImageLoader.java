@@ -1,23 +1,21 @@
 package com.amigo.navi.keyguard.network;
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.Map.Entry;
 
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.KWDataCache;
-import com.amigo.navi.keyguard.haokan.BitmapUtil;
-import com.amigo.navi.keyguard.haokan.db.WallpaperDB;
 import com.amigo.navi.keyguard.network.FailReason.FailType;
 import com.amigo.navi.keyguard.network.local.DealWithFromLocalInterface;
-import com.amigo.navi.keyguard.network.local.LocalBitmapOperation;
-import com.amigo.navi.keyguard.network.local.LocalFileOperationInterface;
-import com.amigo.navi.keyguard.network.local.ReadAndWriteFileFromSD;
 import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
-import com.amigo.navi.keyguard.network.manager.DownLoadBitmapManager;
+import com.amigo.navi.keyguard.picturepage.widget.ImageViewWithLoadBitmap;
 
-import android.app.ActionBar.Tab;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.text.TextUtils;
@@ -25,80 +23,36 @@ import android.util.LruCache;
 
 public class ImageLoader implements ImageLoaderInterface{
     private static final String LOG_TAG = "ImageLoader";
-    private int mSecondMaxCapacity = 15;
     private Context mContext;
     int maxMemory = (int) Runtime.getRuntime().maxMemory() / 1024;
     int mCacheSize = maxMemory / 4;
-	private static final boolean PRINT_LOG = false;
+	private static final boolean PRINT_LOG = true;
+	
+	private ArrayList<WeakReference<ImageViewWithLoadBitmap>> mImageViewWithLoadBitmapList = new ArrayList<WeakReference<ImageViewWithLoadBitmap>>();
+	private static final String THUMBNAIL_POSTFIX = "_thumbnail";
     public ImageLoader(Context context) {
     	mContext = context.getApplicationContext();
     }
     
-
-    private LruCache<String, Bitmap> mFirstLevelCache = new LruCache<String, Bitmap>(mCacheSize) {
-
-        @Override
-        protected int sizeOf(String key, Bitmap bitmap) { 
-            // 重写此方法来衡量每张图片的大小，默认返回图片数量。 
-            return bitmap.getByteCount() / 1024; 
-        } 
-        
-        @Override
-        protected void entryRemoved(boolean evicted, String key,
-                        Bitmap oldValue, Bitmap newValue) {
-                    // TODO Auto-generated method stub
-            super.entryRemoved(evicted, key, oldValue, newValue);
-            if(PRINT_LOG){
-            	DebugLog.d(LOG_TAG,"entryRemoved oldValue:" + oldValue);
-            }
-            if (oldValue != null) { 
-                mSecondLevelCache.put(key,new SoftReference<Bitmap>(oldValue));
-              }
-        }
-        
-        
-        
-    };
-    
-    
-//    private HashMap<String, Bitmap> mFirstLevelCache = new LinkedHashMap<String, Bitmap>(
-//            5, 0.75f, true) {
-//        private static final long serialVersionUID = 1L;
-//
-//        protected boolean removeEldestEntry(Entry<String, Bitmap> eldest) {
-//        	DebugLog.d(LOG_TAG,"mFirstLevelCache  removeEldestEntry");
-//            if (size() > 5) {// 当超过一级缓存阈值的时候，将老的值从一级缓存搬到二级缓存
-//            	DebugLog.d(LOG_TAG,"mFirstLevelCache  removeEldestEntry1");
-//                mSecondLevelCache.put(eldest.getKey(),
-//                        new SoftReference<Bitmap>(eldest.getValue()));
-//                return true;
-//            }
-//            return false;
-//        };
-//        
-//    };
-    
-    // 二级缓存，采用的是软应用，只有在内存吃紧的时候软应用才会被回收，有效的避免了oom
-    private WeakHashMap<String, SoftReference<Bitmap>> mSecondLevelCache = new WeakHashMap<String, SoftReference<Bitmap>>(
-            mSecondMaxCapacity / 2){
-
-            
-    };
-
-    public void setSecondMaxCapacity(int maxCapacity) {
-        this.mSecondMaxCapacity = maxCapacity;
-    }
+   
+    private HashMap<String, Bitmap> mFirstLevelCache = new HashMap<String, Bitmap>(); 
     
     /**
      * 清理缓存
      */
     public void clearCache() {
-        mFirstLevelCache.evictAll();
+		mFirstLevelCache.clear();
+		synchronized (ThumbRemoved) {
+			ThumbRemoved.clear();
+		}
+		synchronized (ImageRemoved) {
+			ImageRemoved.clear();
+		}
+    	
     }
 
     public void removeItem(String url){
         mFirstLevelCache.remove(url);
-        mSecondLevelCache.remove(url);
     }
     
     /**
@@ -111,79 +65,90 @@ public class ImageLoader implements ImageLoaderInterface{
         if (value == null || url == null) {
             return;
         }
+        DebugLog.d(LOG_TAG,"addImage2Cache url:" + url);
         synchronized (mFirstLevelCache) {
-            mFirstLevelCache.put(url, value);
+/*        	String thumbUrl = url+THUMBNAIL_POSTFIX;
+        	if (!url.endsWith(THUMBNAIL_POSTFIX) && mFirstLevelCache.containsKey(thumbUrl)){
+        		Bitmap bmp = mFirstLevelCache.get(thumbUrl);
+        		mFirstLevelCache.remove(thumbUrl);
+        		ThumbRemoved.add(bmp);
+        	}*/
+        	mFirstLevelCache.put(url, value);
         }
     }
 
     
-    @Override
-    public void loadImage(String url,
-            ImageLoadingListener loadingListener,
-            DealWithFromLocalInterface dealWithFromLocalInterface,boolean isNeedCache) {
-        if(loadingListener != null){
-            loadingListener.onLoadingStarted(url);
-        }
+    public boolean existInImageCache(String url){
+        DebugLog.d(LOG_TAG,"existInImageCache url:" + url);
+    	return mFirstLevelCache.containsKey(url);
+    }
+    
+
+    public void loadImageToView(ImageViewWithLoadBitmap imageViewWithLoadBitmap){
+    	String url = imageViewWithLoadBitmap.getUrl();
+
         if (TextUtils.isEmpty(url)) {
-            if(loadingListener != null){
+            if(imageViewWithLoadBitmap != null){
                 FailReason failReason = new FailReason(FailType.UNKNOWN, null);
-                loadingListener.onLoadingFailed(url, failReason);
+                imageViewWithLoadBitmap.onLoadingFailed(url, failReason);
             }
             return;
         }
-        Bitmap bitmap = loadImageStepByStep(url, loadingListener,
-                dealWithFromLocalInterface); 
-        if(PRINT_LOG){
-            DebugLog.d(LOG_TAG,"makeAndAddView loadImage url:" + url + " bitmap:" + bitmap);
-        }
-//        if(bitmap != null){
-//            DebugLog.d(LOG_TAG,"loadImage bitmap width:" + bitmap.getWidth());
-//            DebugLog.d(LOG_TAG,"loadImage bitmap height:" + bitmap.getHeight());
-//        }
-        dealWithImage(url, loadingListener, isNeedCache, bitmap,dealWithFromLocalInterface);
-    }
+		synchronized (mImageViewWithLoadBitmapList) {
+			WeakReference<ImageViewWithLoadBitmap> softView = new WeakReference<ImageViewWithLoadBitmap>(imageViewWithLoadBitmap);
+			mImageViewWithLoadBitmapList.add(softView);
+		}
 
-    private void dealWithImage(String url,
-            ImageLoadingListener loadingListener, boolean isNeedCache,
-            Bitmap bitmap,DealWithFromLocalInterface dealWithFromLocalInterface) {
-        if(PRINT_LOG){
-        	DebugLog.d(LOG_TAG,"dealWithImage loadImage url:" + url + " bitmap:" + bitmap);
-            DebugLog.d(LOG_TAG,"dealWithImage loadImage isNeedCache:" + isNeedCache);
-        }
-        if(bitmap != null){
-            if(isNeedCache){
-                addImage2Cache(url, bitmap);
-            }
-            if(loadingListener != null){
-                loadingListener.onLoadingComplete(url, bitmap);
-            }
-        }else{
-            FailReason failReason = new FailReason(FailType.UNKNOWN, null);
-            if(loadingListener != null){
-                loadingListener.onLoadingFailed(url,failReason);
-            }
-        }
     }
+    
+	public void LoadingComplete(String url, Bitmap bitmap) {
 
-    private Bitmap loadImageStepByStep(String url,
-            ImageLoadingListener loadingListener,
-            DealWithFromLocalInterface dealWithFromLocalInterface) {
-        if(PRINT_LOG){
-            DebugLog.d("HorizontalListView","makeAndAddView loadImageStepByStep url:" + url);
-        }
-        Bitmap bitmap = getBitmapFromCache(url);
-        if(PRINT_LOG){
-            DebugLog.d("HorizontalListView","makeAndAddView loadImageStepByStep1 bitmap:" + bitmap);
-        }
-        if (bitmap == null) {
-            bitmap = loadImageFromLocal(dealWithFromLocalInterface, url);
-            if(PRINT_LOG){
-                DebugLog.d("HorizontalListView","makeAndAddView loadImageStepByStep bitmap:" + bitmap);
-            }
-        }
-        return bitmap;
-    }
+		synchronized (mImageViewWithLoadBitmapList) {
+			if (PRINT_LOG) {
+				DebugLog.d(LOG_TAG,
+						"LoadingComplete mImageViewWithLoadBitmapList size:"
+								+ mImageViewWithLoadBitmapList.size());
+			}
 
+			int size = mImageViewWithLoadBitmapList.size();
+			for (int i = size - 1; i >= 0; i--) {
+				WeakReference<ImageViewWithLoadBitmap> softView = mImageViewWithLoadBitmapList
+						.get(i);
+				ImageViewWithLoadBitmap view = softView.get();
+				if (view != null) {
+					if (url.equals(view.getUrl())
+							|| url.equals(view.getUrl() + THUMBNAIL_POSTFIX)) {
+						if (bitmap == null) {
+							FailReason failReason = new FailReason(
+									FailType.UNKNOWN, null);
+							view.onLoadingFailed(url, failReason);
+						} else {
+							view.onLoadingComplete(url, bitmap);
+						}
+						mImageViewWithLoadBitmapList.remove(i);
+					}
+				} else {
+					mImageViewWithLoadBitmapList.remove(i);
+				}
+			}
+
+		}
+	}
+
+	public void loadImageToCache(String url,
+			DealWithFromLocalInterface dealWithFromLocalInterface) {
+		Bitmap bitmap = loadImageFromLocal(dealWithFromLocalInterface, url);
+        if(PRINT_LOG){
+            DebugLog.d(LOG_TAG,"loadImageToCache:" + url);
+        }
+        if (null != bitmap) {
+        	addImage2Cache(url, bitmap);
+        }
+		LoadingComplete(url, bitmap);
+		
+
+	}
+    
     public Bitmap loadImageFromLocal(DealWithFromLocalInterface dealWithFromLocalInterface
             ,String url){
         Bitmap bitmap = null;
@@ -205,38 +170,9 @@ public class ImageLoader implements ImageLoaderInterface{
         if (bitmap != null) {
             return bitmap;
         }
-        bitmap = getFromSecondLevelCache(url);// 从二级缓存中拿
         return bitmap;
     }
 
-    public Bitmap getBitmap(String url,DealWithFromLocalInterface dealWithFromLocalInterface){
-
-        Bitmap bitmap = getBitmapFromCache(url);
-        DebugLog.d("HorizontalListView","makeAndAddView loadImageStepByStep1 bitmap:" + bitmap);
-        if (bitmap == null) {
-            bitmap = loadImageFromLocal(dealWithFromLocalInterface, url);
-            DebugLog.d("HorizontalListView","makeAndAddView loadImageStepByStep bitmap:" + bitmap);
-        }
-        return bitmap;
-    }
-    
-    /**
-     * 从二级缓存中拿
-     * 
-     * @param url
-     * @return
-     */
-    private Bitmap getFromSecondLevelCache(String url) {
-        Bitmap bitmap = null;
-        SoftReference<Bitmap> softReference = mSecondLevelCache.get(url);
-        if (softReference != null) {
-            bitmap = softReference.get();
-            if (bitmap == null) {// 由于内存吃紧，软引用已经被gc回收了
-                mSecondLevelCache.remove(url);
-            }
-        }
-        return bitmap;
-    }
 
     /**
      * 从一级缓存中拿
@@ -248,18 +184,76 @@ public class ImageLoader implements ImageLoaderInterface{
         Bitmap bitmap = null;
         synchronized (mFirstLevelCache) {
             bitmap = mFirstLevelCache.get(url);
-            if (bitmap != null) {// 将最近访问的元素放到链的头部，提高下一次访问该元素的检索速度（LRU算法）
-                mFirstLevelCache.remove(url);
-                mFirstLevelCache.put(url, bitmap);
-            }
         }
         return bitmap;
     }
     
     public void printFirstCacheSize(){
-    	DebugLog.d(LOG_TAG,"printFirstCacheSize mCacheSize:" + mCacheSize);
-    	int maxSize = mFirstLevelCache.maxSize();
-    	DebugLog.d(LOG_TAG,"printFirstCacheSize maxSize:" + maxSize);
+//    	DebugLog.d(LOG_TAG,"printFirstCacheSize mCacheSize:" + mCacheSize);
+//    	int maxSize = mFirstLevelCache.maxSize();
+//    	DebugLog.d(LOG_TAG,"printFirstCacheSize maxSize:" + maxSize);
     }
-    
+
+	public void removeImagefromCache(ArrayList<String> urlToBeReserved) {
+		int screenWid = KWDataCache.getScreenWidth(mContext.getResources());
+		synchronized (mFirstLevelCache) {
+			Iterator<Entry<String, Bitmap>> iter = mFirstLevelCache.entrySet()
+					.iterator();
+
+			ArrayList<String> urlToBeRemove = new ArrayList<String>();
+			while (iter.hasNext()) {
+				Entry<String, Bitmap> entry = (Entry<String, Bitmap>) iter
+						.next();
+				String url = (String) entry.getKey();
+				if (PRINT_LOG) {
+					DebugLog.d(LOG_TAG, "removeImagefromCache url in mFirstLevelCache" + url);
+				}
+				if (!urlToBeReserved.contains(url)) {
+					if (PRINT_LOG) {
+						DebugLog.d(LOG_TAG, "removeImagefromCache url" + url);
+					}
+					urlToBeRemove.add(url);
+					
+					Bitmap bitmap = entry.getValue();
+					if (bitmap.getWidth() == screenWid/2){
+						ThumbRemoved.add(bitmap);
+					} else if(bitmap.getWidth() == screenWid) {
+						ImageRemoved.add(bitmap);
+					}
+				}
+			}
+
+			for (int i = 0; i < urlToBeRemove.size(); i++) {
+				mFirstLevelCache.remove(urlToBeRemove.get(i));
+			}
+
+			urlToBeRemove.clear();
+		}
+	}
+	
+	private ArrayList<Bitmap> ImageRemoved = new ArrayList<Bitmap>();
+	private ArrayList<Bitmap> ThumbRemoved = new ArrayList<Bitmap>();
+
+	public Bitmap getBmpFromImageRemoved() {
+		Bitmap bmp = null;
+		synchronized (ImageRemoved) {
+			if (!ImageRemoved.isEmpty()) {
+				bmp = ImageRemoved.get(0);
+				ImageRemoved.remove(0);
+			}
+		}
+		return bmp;
+	}
+
+	public Bitmap getBmpFromThumbRemoved() {
+		Bitmap bmp = null;
+		synchronized (ThumbRemoved) {
+			if (!ThumbRemoved.isEmpty()) {
+				bmp = ThumbRemoved.get(0);
+				ThumbRemoved.remove(0);
+			}
+		}
+		return bmp;
+	}
+
 }

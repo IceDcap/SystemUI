@@ -491,8 +491,6 @@ public class NetworkControllerImpl extends BroadcastReceiver
             mSignalClusters.get(i).setSubs(subscriptions);
         }
         mCurrentSubscriptions = subscriptions;
-        mHasMobileDataFeature =
-                mConnectivityManager.isNetworkSupported(ConnectivityManager.TYPE_MOBILE);
 
         HashMap<Integer, MobileSignalController> cachedControllers =
                 new HashMap<Integer, MobileSignalController>(mMobileSignalControllers);
@@ -1280,7 +1278,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
 				mSignalClusters.get(i).GnsetNetworkType(mNetworkType,
 	                        mSubscriptionInfo.getSimSlotIndex());
                 mSignalClusters.get(i).setMobileDataIndicators(
-                        mCurrentState.enabled && !mCurrentState.airplaneMode,
+                        /*mCurrentState.enabled*/hasService() && !mCurrentState.airplaneMode,
                         getCurrentIconId(),
                         typeIcon,
                         contentDescription,
@@ -1383,7 +1381,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
         }
 
         private boolean isRoaming() {
-            if (isCdma()) {
+            if (isCdma() && mServiceState != null) {
                 final int iconMode = mServiceState.getCdmaEriIconMode();
                 return mServiceState.getCdmaEriIconIndex() != EriInfo.ROAMING_INDICATOR_OFF
                         && (iconMode == EriInfo.ROAMING_ICON_MODE_NORMAL

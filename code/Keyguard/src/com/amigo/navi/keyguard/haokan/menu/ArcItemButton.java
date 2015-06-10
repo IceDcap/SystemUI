@@ -24,13 +24,13 @@ public class ArcItemButton extends RelativeLayout{
      
     private boolean itemSelected = false;
     
+    private int[] imageBackgroundResIds;
     
     public void setItemSelected(boolean itemSelected) {
         this.itemSelected = itemSelected;
-        mImageView.setSelected(itemSelected);
+        setBackgroundResource(itemSelected ? 2 : 0);
         setTitle(titleResIds[itemSelected ? 1 : 0]);
     }
-    
 
 	public ArcItemButton(Context context) {
 		super(context);
@@ -57,9 +57,7 @@ public class ArcItemButton extends RelativeLayout{
         
 	}
 	
-	public void setBackgroundResource(int resid) {
-	    mImageView.setBackgroundResource(resid);
-    }
+ 
 	
 	public void setTitle(String str) {
 	    mTextView.setText(str);
@@ -135,7 +133,18 @@ public class ArcItemButton extends RelativeLayout{
     }
 	
      
-    
+    public void setBackgroundResource(int index) {
+        mImageView.setBackgroundResource(imageBackgroundResIds[index]);
+    }
+
+   
+    public void setImageBackgroundResIds(int[] imageBackgroundResIds) {
+        this.imageBackgroundResIds = imageBackgroundResIds;
+    }
+
+  
+
+ 
 	
 	
 }

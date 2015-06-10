@@ -21,11 +21,13 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.android.systemui.R;
 import com.android.systemui.gionee.GnBlurHelper;
 import com.android.systemui.gionee.GnUtil;
+import com.android.systemui.gionee.cc.GnControlCenter.Callback;
 import com.android.systemui.gionee.cc.GnControlCenterPanel.OnDrawerOpenListener;
 import com.android.systemui.gionee.cc.qs.GnQSPanel;
 import com.android.systemui.gionee.cc.qs.GnQSTile;
@@ -40,7 +42,7 @@ import com.android.systemui.gionee.cc.qs.policy.GnWifiControllerImpl;
 import com.android.systemui.statusbar.phone.PhoneStatusBar;
 
 
-public class GnControlCenterView extends GnControlCenter {
+public class GnControlCenterView extends FrameLayout {
 
     public static final boolean DEBUG = GnControlCenter.DEBUG;
     private static final String TAG = "GnControlCenterView";
@@ -72,7 +74,7 @@ public class GnControlCenterView extends GnControlCenter {
                     mGnMoreView.pushUpIn();
                     break;
                 case ACTION_HIDE_MORE:
-                    mGnMoreView.pushDownOut();
+                    mGnMoreView.pushDownOut(true);
                 default:
                     break;
             }
@@ -122,7 +124,7 @@ public class GnControlCenterView extends GnControlCenter {
         super(context, attrs);
         mContext = context;
         
-        addCallback(mCallback);
+        GnControlCenter.addCallback(mCallback);
     }
 
     @Override
@@ -176,7 +178,7 @@ public class GnControlCenterView extends GnControlCenter {
                 GnUtil.setLockState(GnUtil.STATE_LOCK_UNLOCK);
             }
             
-            go(STATE_CLOSED);
+            GnControlCenter.go(GnControlCenter.STATE_CLOSED);
         }
     }
 
@@ -199,9 +201,9 @@ public class GnControlCenterView extends GnControlCenter {
             Log.d(TAG, "onConfigurationChanged createBlurBg");
             mOldOrientation = newConfig.orientation;
             
-            createBlurBg(mContext);
+            GnControlCenter.createBlurBg(mContext);
             // Gionee <huangwt> <2015-3-31> add for CR01458422 begin
-            dismiss();
+            GnControlCenter.dismiss();
             // Gionee <huangwt> <2015-3-31> add for CR01458422 end
         }
     }
@@ -210,7 +212,7 @@ public class GnControlCenterView extends GnControlCenter {
     public boolean dispatchKeyEvent(KeyEvent event) {
         switch (event.getKeyCode()) {
             case KeyEvent.KEYCODE_BACK:
-                dismiss();
+                GnControlCenter.dismiss();
                 break;
             default:
                 break;
@@ -247,11 +249,7 @@ public class GnControlCenterView extends GnControlCenter {
     public void setBar(PhoneStatusBar statusBar) {
         mStatusBar = statusBar;
     }
-    
-    public void createBlurBg() {
-        mGnControlCenterPanel.createBlurBg(mContext);
-    }
-    
+        
     public boolean isOpened() {
         return mGnControlCenterPanel.isOpened();
     }
@@ -286,7 +284,7 @@ public class GnControlCenterView extends GnControlCenter {
 
     public void openMoreView() {
         GnControlCenterMoreView.setOpen(true);
-        dismiss();
+        GnControlCenter.dismiss();
         mHandler.sendEmptyMessageDelayed(ACTION_SHOW_MORE, 300);
     }
 }

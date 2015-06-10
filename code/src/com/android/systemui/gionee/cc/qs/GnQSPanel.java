@@ -192,24 +192,20 @@ public class GnQSPanel extends ViewGroup {
                 r.tile.click();
             }
         };
+        r.tileView.setClickListener(click);
+                
+        if (r.tile.supportsLongClick()) {
+            final View.OnLongClickListener longClick = new View.OnLongClickListener() {
+
+                @Override
+                public boolean onLongClick(View v) {
+                    r.tile.handleLongClick();
+                    return true;
+                }
+            };
+            r.tileView.setLongClickListener(longClick);
+        }
         
-        final View.OnClickListener clickSecondary = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                r.tile.secondaryClick();
-            }
-        };
-        
-        final View.OnLongClickListener longClick = new View.OnLongClickListener() {
-            
-            @Override
-            public boolean onLongClick(View v) {
-                r.tile.handleLongClick();
-                return true;
-            }
-        };
-        
-        r.tileView.init(click, clickSecondary, longClick);
         r.tile.setListening(mListening);
         callback.onStateChanged(r.tile.getState());
         r.tile.refreshState();

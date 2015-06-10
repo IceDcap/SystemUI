@@ -106,11 +106,11 @@ public class StatusBarWindowManager {
 
     private void adjustScreenOrientation(State state) {
         if (state.isKeyguardShowingAndNotOccluded()) {
-            if (mKeyguardScreenRotation) {
+          /*  if (mKeyguardScreenRotation) {
                 mLpChanged.screenOrientation = ActivityInfo.SCREEN_ORIENTATION_USER;
-            } else {
+            } else {*/
                 mLpChanged.screenOrientation = ActivityInfo.SCREEN_ORIENTATION_NOSENSOR;
-            }
+//            }
         } else {
             mLpChanged.screenOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
         }
