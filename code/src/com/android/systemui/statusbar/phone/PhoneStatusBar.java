@@ -917,6 +917,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         //GIONEE <wujj> <2015-04-29> modify for CR01468270 begin
         filter.addAction(PanelBar.ACTION_NOTIFY_PANEL_STATE);
         //GIONEE <wujj> <2015-04-29> modify for CR01468270 end
+        //GIONEE <hanbj> <2015-06-11> add for CR01500131 begin
+        //add for CTS Verifier 
+        filter.addAction("amigo.intent.action.screenpin");
+        //GIONEE <hanbj> <2015-06-11> add for CR01500131 end
+
         context.registerReceiverAsUser(mBroadcastReceiver, UserHandle.ALL, filter, null, null);
 
         // listen for USER_SETUP_COMPLETE setting (per-user)
@@ -3704,7 +3709,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             		mStatusBarWindowManager.setStatusBarExpanded(true);
                     mStatusBarView.setFocusable(false);
             	}
+            //GIONEE <hanbj> <2015-06-11> add for CR01500131 begin
+            //add for CTS Verifier 
+            } else if ("amigo.intent.action.screenpin".equals(action)) {
+                hideNavBar();
             }
+            //GIONEE <hanbj> <2015-06-11> add for CR01500131 end
             //GIONEE <wujj> <2015-04-29> modify for CR01468270 end
         }
     };

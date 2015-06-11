@@ -680,6 +680,14 @@ public class GnDragGridView extends ViewGroup {
     }
 
     public void recovery() {
+        if (mRecords == null) {
+            return;
+        }
+        
+        if (mBackUpRecords == null) {
+            return;
+        }
+        
         mRecords.clear();
         mRecords = (ArrayList<TileRecord>) mBackUpRecords.clone();
         requestLayout();
