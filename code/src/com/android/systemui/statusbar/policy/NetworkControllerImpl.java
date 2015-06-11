@@ -668,6 +668,9 @@ public class NetworkControllerImpl extends BroadcastReceiver
         }
 
         if (mAirplaneMode && !isEmergencyOnly()) {
+        	// GIONEE <wujj> modify for CR01498895 begin
+        	label = "";
+        	/*
             // combined values from connected wifi take precedence over airplane mode
             if (wifiState.connected && mHasMobileDataFeature) {
                 // Suppress "No internet connection." from mobile if wifi connected.
@@ -678,6 +681,8 @@ public class NetworkControllerImpl extends BroadcastReceiver
                               R.string.status_bar_settings_signal_meter_disconnected);
                  }
             }
+            */
+        	// GIONEE <wujj> modify for CR01498895 end
         } else if (!isMobileDataConnected() && !wifiState.connected && !mBluetoothTethered &&
                  !mEthernetConnected && !mHasMobileDataFeature) {
             // Pretty much no connection.
