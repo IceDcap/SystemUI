@@ -1092,4 +1092,8 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
 			mLockToAppEnabled = Settings.System.getInt(getContext().getContentResolver(), Settings.System.LOCK_TO_APP_ENABLED, 0) != 0;
 		}
 	};
+	
+	public void unRegisterScreenLockObserver(Context context) {
+		context.getContentResolver().unregisterContentObserver(mScreenLockObserver);
+	}
 }

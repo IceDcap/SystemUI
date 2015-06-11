@@ -166,9 +166,9 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
             DebugLog.d(LOG_TAG,"loadImageBitmap mUrl" + mUrl);
         }
         this.setmShowState(ShowState.SHOW_NOIMAGE);
+	mConfig.mImageLoader.loadImageToView(this/*, posOfListener*/);
         boolean isLoadFromCache = loadFromCache();
         if (!isLoadFromCache){ 
-            mConfig.mImageLoader.loadImageToView(this/*, posOfListener*/);
         	boolean isLoadThumbnailFromCache = loadThumbnailFromCache();
         	if (!isLoadThumbnailFromCache){
         		this.setImageResource(mConfig.startBitmapID);
@@ -441,7 +441,36 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
             return false;
         }
     }
-    
+
+	public void loadloadThumbnailFromCacheIfNeeded() {
+		if (ShowState.SHOW_IMAGE == getmShowState()) {
+			boolean isRefresh = loadThumbnailFromCache();
+			if (isPrintLog) {
+				DebugLog.d(LOG_TAG, "loadThumbnailToRefresh isRefresh:"
+						+ isRefresh);
+			}
+			if (isRefresh) {
+				setmShowState(ShowState.SHOW_THUMBNAIL);
+			}
+		}
+	}
+
+	public void loadImageFromCacheIfNeeded() {
+		if (ShowState.SHOW_IMAGE != getmShowState()) {
+			boolean isRefresh = loadFromCache();
+			if (isPrintLog) {
+				DebugLog.d(LOG_TAG, "loadImageToRefresh isRefresh:" + isRefresh);
+			}
+			if (isRefresh) {
+				setmShowState(ShowState.SHOW_IMAGE);
+			}
+		}
+	}
+
+/*	public boolean isStateShowImage() {
+		return ShowState.SHOW_IMAGE == mShowState;
+	}*/
+	
     private boolean loadThumbnailFromCache(){
         DebugLog.d(LOG_TAG,"loadThumbnailFromCache loadFromCache mUrl:" + mUrl + " mConfig:" + mConfig);
         DebugLog.d(LOG_TAG,"loadThumbnailFromCache loadFromCache mUrl:" + mUrl + " mConfig.mImageLoader:" + mConfig.mImageLoader);

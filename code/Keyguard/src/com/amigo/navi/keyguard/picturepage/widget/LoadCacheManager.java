@@ -73,16 +73,16 @@ public class LoadCacheManager {
 		if (isScreenOff) {
 			return;
 		}
-		getLoadImageToList(currentPos + 1, true);
-		getLoadImageToList(currentPos - 1, true);
+		//getLoadImageToList(currentPos + 1, true);
+		//getLoadImageToList(currentPos - 1, true);
 		if (mWallpaperList.size() > 3) {
 			getLoadImageToList(currentPos, false);
 			getLoadImageToList(currentPos + 1, false);
 			getLoadImageToList(currentPos - 1, false);
 			getLoadImageToList(currentPos + 2, false);
 			getLoadImageToList(currentPos - 2, false);
-			getLoadImageToList(currentPos + 3, false);
-			getLoadImageToList(currentPos - 3, false);
+			//getLoadImageToList(currentPos + 3, false);
+			//getLoadImageToList(currentPos - 3, false);
 		}
 	}
 
@@ -168,6 +168,8 @@ public class LoadCacheManager {
 			}
 
 			if (mImageLoader.existInImageCache(loadUrl)) {
+				
+				mImageLoader.getImageView(wallpaper.getImgUrl());
 				return;
 			}
 			final String needLoadingUrl = loadUrl;
@@ -194,8 +196,12 @@ public class LoadCacheManager {
 					}
 					if (wallpaper.getType() == Wallpaper.WALLPAPER_FROM_FIXED_FOLDER
 							&& (!needLoadingUrl.endsWith(THUMBNAIL_POSTFIX))) {
-						readImageFromLocal = new ReadFileFromAssets(
+						ReadFileFromAssets readFileFromAssets =  new ReadFileFromAssets(
 								mContext.getApplicationContext(), PATH);
+						
+						readImageFromLocal = readFileFromAssets;
+						Bitmap bmp = mImageLoader.getBmpFromImageRemoved();
+						readFileFromAssets.setmReuseBitmap(bmp);
 					} else {
 						ReadAndWriteFileFromSD dealWithFromLocalInterface = null;
 						LocalFileOperationInterface localFileOperationInterface = new LocalBitmapOperation(

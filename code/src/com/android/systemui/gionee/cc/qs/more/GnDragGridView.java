@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import com.android.systemui.R;
+import com.android.systemui.gionee.GnFontHelper;
 import com.android.systemui.gionee.cc.qs.GnQSTile;
 import com.android.systemui.gionee.cc.qs.GnQSTile.Callback;
 import com.android.systemui.gionee.cc.qs.GnQSTileView;
@@ -150,6 +151,12 @@ public class GnDragGridView extends ViewGroup {
         
         mHideLabel.setText(R.string.gn_qs_more_hide_title);
         mShowLabel.setText(R.string.gn_qs_more_show_title);
+        
+        updateFontTypeFace(newConfig);
+    }
+    
+    private void updateFontTypeFace(Configuration newConfig) {
+        GnFontHelper.resetAmigoFont(newConfig, mHideLabel, mShowLabel);
     }
 
     @Override

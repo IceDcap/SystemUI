@@ -27,6 +27,7 @@ import android.widget.FrameLayout.LayoutParams;
 
 import com.android.systemui.R;
 import com.android.systemui.gionee.GnBlurHelper;
+import com.android.systemui.gionee.GnFontHelper;
 import com.android.systemui.gionee.GnUtil;
 import com.android.systemui.gionee.cc.qs.GnQSTile;
 
@@ -96,6 +97,12 @@ public class GnControlCenterMoreView extends FrameLayout implements View.OnClick
         mHeader.setLayoutParams(lp);
         mSave.setText(R.string.gn_qs_more_save);
         mCancel.setText(R.string.gn_qs_more_cancel);
+        
+        updateFontTypeFace(newConfig);
+    }
+    
+    private void updateFontTypeFace(Configuration newConfig) {
+        GnFontHelper.resetAmigoFont(newConfig, mSave, mCancel);
     }
 
     private void updateHeaderTextSize(Resources res, int size) {

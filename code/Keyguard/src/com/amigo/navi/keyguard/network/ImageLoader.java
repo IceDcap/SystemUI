@@ -27,8 +27,7 @@ public class ImageLoader implements ImageLoaderInterface{
     int maxMemory = (int) Runtime.getRuntime().maxMemory() / 1024;
     int mCacheSize = maxMemory / 4;
 	private static final boolean PRINT_LOG = true;
-	
-	private ArrayList<WeakReference<ImageViewWithLoadBitmap>> mImageViewWithLoadBitmapList = new ArrayList<WeakReference<ImageViewWithLoadBitmap>>();
+	private ArrayList<ImageViewWithLoadBitmap> mImageViewWithLoadBitmapList = new ArrayList<ImageViewWithLoadBitmap>();
 	private static final String THUMBNAIL_POSTFIX = "_thumbnail";
     public ImageLoader(Context context) {
     	mContext = context.getApplicationContext();
@@ -47,9 +46,9 @@ public class ImageLoader implements ImageLoaderInterface{
 		}
 		synchronized (ImageRemoved) {
 			ImageRemoved.clear();
-		}
-    	
-    }
+		}		
+		System.gc();
+	}
 
     public void removeItem(String url){
         mFirstLevelCache.remove(url);
@@ -94,27 +93,40 @@ public class ImageLoader implements ImageLoaderInterface{
             }
             return;
         }
-		synchronized (mImageViewWithLoadBitmapList) {
-			WeakReference<ImageViewWithLoadBitmap> softView = new WeakReference<ImageViewWithLoadBitmap>(imageViewWithLoadBitmap);
-			mImageViewWithLoadBitmapList.add(softView);
+		if (!mImageViewWithLoadBitmapList.contains(imageViewWithLoadBitmap)) {
+			mImageViewWithLoadBitmapList.add(imageViewWithLoadBitmap);
 		}
 
     }
-    
-	public void LoadingComplete(String url, Bitmap bitmap) {
 
-		synchronized (mImageViewWithLoadBitmapList) {
-			if (PRINT_LOG) {
-				DebugLog.d(LOG_TAG,
-						"LoadingComplete mImageViewWithLoadBitmapList size:"
-								+ mImageViewWithLoadBitmapList.size());
+	public ImageViewWithLoadBitmap findView(String url) {
+		if (url == null) {
+			return null;
 			}
-
+			int size = mImageViewWithLoadBitmapList.size();
+			
+			for (int i = size - 1; i >= 0; i--) {
+				ImageViewWithLoadBitmap view = mImageViewWithLoadBitmapList.get(i);
+				if (view != null ) {
+					if (url.equals ( view.getUrl() ) ){
+						return view;
+					}
+				}
+			}
+		return null;
+	}
+	
+	public void getImageView(String url) {
+		ImageViewWithLoadBitmap view =  findView(url);
+		if (view != null) {
+			view.loadImageFromCacheIfNeeded();
+		}
+	}
+	
+	public void LoadingComplete(String url, Bitmap bitmap) {
 			int size = mImageViewWithLoadBitmapList.size();
 			for (int i = size - 1; i >= 0; i--) {
-				WeakReference<ImageViewWithLoadBitmap> softView = mImageViewWithLoadBitmapList
-						.get(i);
-				ImageViewWithLoadBitmap view = softView.get();
+				ImageViewWithLoadBitmap view = mImageViewWithLoadBitmapList.get(i);
 				if (view != null) {
 					if (url.equals(view.getUrl())
 							|| url.equals(view.getUrl() + THUMBNAIL_POSTFIX)) {
@@ -125,14 +137,9 @@ public class ImageLoader implements ImageLoaderInterface{
 						} else {
 							view.onLoadingComplete(url, bitmap);
 						}
-						mImageViewWithLoadBitmapList.remove(i);
 					}
-				} else {
-					mImageViewWithLoadBitmapList.remove(i);
 				}
 			}
-
-		}
 	}
 
 	public void loadImageToCache(String url,
@@ -214,17 +221,22 @@ public class ImageLoader implements ImageLoaderInterface{
 					}
 					urlToBeRemove.add(url);
 					
-					Bitmap bitmap = entry.getValue();
-					if (bitmap.getWidth() == screenWid/2){
-						ThumbRemoved.add(bitmap);
-					} else if(bitmap.getWidth() == screenWid) {
-						ImageRemoved.add(bitmap);
-					}
 				}
 			}
 
 			for (int i = 0; i < urlToBeRemove.size(); i++) {
-				mFirstLevelCache.remove(urlToBeRemove.get(i));
+				String url = urlToBeRemove.get(i);
+				Bitmap bitmap = mFirstLevelCache.get(url);
+				if(bitmap.getWidth() == screenWid) {
+					ImageViewWithLoadBitmap view =  findView(url);
+					if (view != null){
+						view.loadloadThumbnailFromCacheIfNeeded();
+					}
+					ImageRemoved.add(bitmap);
+				} else {
+					ThumbRemoved.add(bitmap);
+				} 
+				mFirstLevelCache.remove(url);
 			}
 
 			urlToBeRemove.clear();

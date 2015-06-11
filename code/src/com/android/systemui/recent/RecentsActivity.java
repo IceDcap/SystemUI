@@ -165,6 +165,7 @@ public class RecentsActivity extends Activity implements OnClickListener , OnLon
         if (mRecentsPanel != null) {
         	mRecentsPanel.show(false);
             mRecentsPanel.onUiHidden();
+            mRecentsPanel.unRegisterScreenLockObserver(mContext);
             mRecentsPanel.setVisibility(View.GONE);
         }
         super.onStop();

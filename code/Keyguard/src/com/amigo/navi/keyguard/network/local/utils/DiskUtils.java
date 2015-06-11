@@ -395,7 +395,7 @@ public class DiskUtils {
 		    }   
 		}  
 
-	    public static Bitmap getImageFromSystem(Context context,String path)  
+	    public static Bitmap getImageFromSystem(Context context,String path, Bitmap reuseBitmap)  
 	    {  
 	        Bitmap image = null;  
 	        try  
@@ -415,6 +415,16 @@ public class DiskUtils {
 	            options.inJustDecodeBounds = false;
 	            options.inSampleSize = scale;
 	            options.inPreferredConfig = Config.ARGB_8888;
+				
+				if (null != reuseBitmap) {
+				   if (options.outWidth == reuseBitmap.getWidth() 
+						   && options.outHeight == reuseBitmap.getHeight()){
+					options.inMutable = true;
+					options.inBitmap = reuseBitmap; 
+				   }else{
+					   reuseBitmap = null;
+				   }
+				}
 	            DebugLog.d(TAG,"getImageFromSystem path:" + path);
 	            image = BitmapFactory.decodeFile(path, options);
 	            DebugLog.d(TAG,"getImageFromSystem image:" + image);
