@@ -362,11 +362,13 @@ public class UIController implements OnTouchlListener{
     
     
     @Override
-    public void OnTouchUp() {
+    public void OnTouchUp(boolean change) {
         if (Common.isPowerSaverMode()) {
             return;
         }
-        
+        if (change) {
+            getmCaptionsView().setContentVisibilityAnimation(false);
+        }
         mInfozoneTranslationX = 0f;
         refreshWallpaperInfo();
         mCaptionsView.OnTouchUpAnimator();
@@ -713,6 +715,11 @@ public class UIController implements OnTouchlListener{
 //    	infozoneAlpha = 1.0f - top / (float)maxBoundY;
 //        mInfozone.setAlpha(infozoneAlpha);
     	mKeyguardWallpaperContainer.onKeyguardModelChanged(top, maxBoundY,SECURITY_SUCCESS_UNLOCK);
+    }
+    
+    public void securityViewAlphaAnimationUpdating(float alpha){
+    	mKeyguardWallpaperContainer.setAlpha(alpha);
+    	mInfozone.setAlpha(alpha);
     }
     
     public void hideKeyguardNotification() {

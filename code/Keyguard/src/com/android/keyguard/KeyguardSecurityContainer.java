@@ -455,7 +455,71 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
     private boolean animationIsRunning = false;
 	private ValueAnimator mSecurityViewRemoveValueAnimator= null;
 
-	@SuppressLint("NewApi")
+//	@SuppressLint("NewApi")
+//	public void runRemovewSecurityViewAnimation() {
+//		if(DEBUG){
+//			DebugLog.d(TAG, "removeSecurityView");
+//		}
+//		if(mSecurityViewRemoveValueAnimator != null && mSecurityViewRemoveValueAnimator.isRunning()){
+//			if(DebugLog.DEBUG){
+//				DebugLog.d(TAG, "removeSecurityView mSecurityViewRemoveValueAnimator is running");
+//			}
+//			return;
+//		}
+//		if(mSecurityViewFlipper == null){
+//			return;
+//		}
+//		final View currentSecurityView = mSecurityViewFlipper.getCurrentView();
+//		
+//		if(currentSecurityView == null){
+//			return;
+//		}
+//
+//		final int h = currentSecurityView.getMeasuredHeight();
+//		if(DebugLog.DEBUG){
+//			DebugLog.d(TAG, "removeSecurityView mSecurityViewRemoveValueAnimatorh="+h);
+//		}
+//		
+//		mSecurityViewRemoveValueAnimator = ValueAnimator.ofFloat(0,1);
+//		mSecurityViewRemoveValueAnimator.setDuration(300);
+//		mSecurityViewRemoveValueAnimator.addUpdateListener(new AnimatorUpdateListener() {
+//			@Override
+//			public void onAnimationUpdate(ValueAnimator animation) {
+//				float f = animation.getAnimatedFraction();
+//				currentSecurityView.setTranslationY(-h*f);
+//				currentSecurityView.setAlpha(1-f);
+//				mSecurityViewRemoveCallback.securityViewRemoveAnimationUpdating((int) (h*f),h);
+//			}
+//		});
+//		mSecurityViewRemoveValueAnimator.addListener(new AnimatorListener() {
+//			@Override
+//			public void onAnimationStart(Animator animation) {
+//			}
+//			
+//			@Override
+//			public void onAnimationRepeat(Animator animation) {
+//			}
+//			
+//			@Override
+//			public void onAnimationEnd(Animator animation) {
+//				//remove view before keyguardDone instead of postDelay
+//				mSecurityCallback.finish();
+//				resetSecurityView(currentSecurityView, h);
+//				currentSecurityView.setVisibility(View.INVISIBLE);
+//				mSecurityViewRemoveValueAnimator = null;
+//			}
+//			
+//			@Override
+//			public void onAnimationCancel(Animator animation) {
+//				mSecurityCallback.finish();
+//				resetSecurityView(currentSecurityView, h);
+//				currentSecurityView.setVisibility(View.INVISIBLE);
+//				mSecurityViewRemoveValueAnimator = null;
+//			}
+//		});
+//		mSecurityViewRemoveValueAnimator.start();
+//	}
+	
 	public void runRemovewSecurityViewAnimation() {
 		if(DEBUG){
 			DebugLog.d(TAG, "removeSecurityView");
@@ -480,20 +544,20 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
 			DebugLog.d(TAG, "removeSecurityView mSecurityViewRemoveValueAnimatorh="+h);
 		}
 		
-		mSecurityViewRemoveValueAnimator = ValueAnimator.ofFloat(0,1);
-		mSecurityViewRemoveValueAnimator.setDuration(300);
+		mSecurityViewRemoveValueAnimator = ValueAnimator.ofFloat(1f,0f);
+		mSecurityViewRemoveValueAnimator.setDuration(500);
 		mSecurityViewRemoveValueAnimator.addUpdateListener(new AnimatorUpdateListener() {
 			@Override
 			public void onAnimationUpdate(ValueAnimator animation) {
-				float f = animation.getAnimatedFraction();
-				currentSecurityView.setTranslationY(-h*f);
-				currentSecurityView.setAlpha(1-f);
-				mSecurityViewRemoveCallback.securityViewRemoveAnimationUpdating((int) (h*f),h);
+				float value = (Float) animation.getAnimatedValue();
+				currentSecurityView.setAlpha(value);
+				mSecurityViewRemoveCallback.securityViewAlphaAnimationUpdating(value);
 			}
 		});
 		mSecurityViewRemoveValueAnimator.addListener(new AnimatorListener() {
 			@Override
 			public void onAnimationStart(Animator animation) {
+				mSecurityViewRemoveCallback.securityViewAlphaAnimationUpdating(1f);
 			}
 			
 			@Override
@@ -507,6 +571,7 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
 				resetSecurityView(currentSecurityView, h);
 				currentSecurityView.setVisibility(View.INVISIBLE);
 				mSecurityViewRemoveValueAnimator = null;
+				mSecurityViewRemoveCallback.securityViewAlphaAnimationUpdating(0f);
 			}
 			
 			@Override
@@ -515,6 +580,7 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
 				resetSecurityView(currentSecurityView, h);
 				currentSecurityView.setVisibility(View.INVISIBLE);
 				mSecurityViewRemoveValueAnimator = null;
+				mSecurityViewRemoveCallback.securityViewAlphaAnimationUpdating(0f);
 			}
 		});
 		mSecurityViewRemoveValueAnimator.start();
@@ -797,7 +863,7 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
     public interface SecurityViewRemoveAnimationUpdateCallback {
 
         public void securityViewRemoveAnimationUpdating(int top,int maxBoundY);
-        
+        public void securityViewAlphaAnimationUpdating(float alpha);
     }
     
     public void setSecurityViewRemoveAnimationUpdateCallback(SecurityViewRemoveAnimationUpdateCallback  callback){

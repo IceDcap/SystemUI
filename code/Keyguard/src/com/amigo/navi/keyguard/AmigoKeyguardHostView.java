@@ -1458,6 +1458,11 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 		
 	}
 	
+	@Override
+	public void securityViewAlphaAnimationUpdating(float alpha) {
+		mUIController.securityViewAlphaAnimationUpdating(alpha);
+	}
+	
 	public  boolean isTriggerMove(){
 		if(mScrollDirection==DIRECTION_NONE){
 			return false;

@@ -41,7 +41,7 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
     public enum State { LOADING, LOADED, CANCELLED, FAILED};
     public enum ShowState { SHOW_NOIMAGE, SHOW_THUMBNAIL, SHOW_IMAGE};
     
-    private Bitmap mImageBitmap;
+//    private Bitmap mImageBitmap;
     private static final String LOG_TAG = "ImageViewWithLoadBitmap";
     // private int mWid = 0;
     // private int mHei = 0;
@@ -166,7 +166,7 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
             DebugLog.d(LOG_TAG,"loadImageBitmap mUrl" + mUrl);
         }
         this.setmShowState(ShowState.SHOW_NOIMAGE);
-	mConfig.mImageLoader.loadImageToView(this/*, posOfListener*/);
+	    mConfig.mImageLoader.loadImageToView(this/*, posOfListener*/);
         boolean isLoadFromCache = loadFromCache();
         if (!isLoadFromCache){ 
         	boolean isLoadThumbnailFromCache = loadThumbnailFromCache();
@@ -211,19 +211,19 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
 //        }
     	
     	if(mConfig.failBitmapID != 0){
-            recyleImageBitmap();
+//            recyleImageBitmap();
     		setImageResource(mConfig.failBitmapID);
         } else {
         	
         }
     }
 
-    private void recyleImageBitmap() {
-        mImageBitmap = null;
-    }
+//    private void recyleImageBitmap() {
+//        mImageBitmap = null;
+//    }
 
     public void recyleBitmap() {
-        mImageBitmap = null;
+//        mImageBitmap = null;
         mConfig.setStartBitmap(null);
         mConfig.setFailBitmap(null);
     }
@@ -232,6 +232,17 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
         if(isPrintLog){
             DebugLog.d(LOG_TAG,"loadBitmapCompleteDealWith url:" + url);
         }
+        
+        String currentUrl = mConfig.mImageLoader.getmCurrentUrl();
+        if (url.equals(mUrl)) {
+        	if (!currentUrl.equals(mUrl)) {
+        		//mConfig.mImageLoader.addBmpToImageRemoved(loadedImage);
+        		return;
+        	}
+        	//mConfig.mImageLoader.addImage2Cache(url, loadedImage);
+        }
+        
+        
 		if (this.getmShowState() == ShowState.SHOW_IMAGE) {
 	        if(isPrintLog){
 	            DebugLog.d(LOG_TAG,"loadBitmapCompleteDealWith url SHOW_IMAGE");
@@ -246,57 +257,40 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
 //			}
 			return;
 		}
-		if (this.getmShowState() == ShowState.SHOW_THUMBNAIL) {
-	        if(isPrintLog){
-	            DebugLog.d(LOG_TAG,"loadBitmapCompleteDealWith url SHOW_THUMBNAIL");
-	        }
-			if (loadBitmapCompleted(url, loadedImage)) {
-				return;
-			}
-		}
-		if (this.getmShowState() == ShowState.SHOW_NOIMAGE) {
-	        if(isPrintLog){
-	            DebugLog.d(LOG_TAG,"loadBitmapCompleteDealWith url SHOW_NOIMAGE");
-	        }
-			if (loadBitmapCompleted(url, loadedImage)) {
-				return;
-			}
-		}
 
+		loadBitmapCompleted(url, loadedImage);
+		
 	}
 
-    private boolean loadBitmapCompleted(String url, Bitmap loadedImage){
-        if(isPrintLog){
-            DebugLog.d(LOG_TAG,"loadBitmapCompleted url "+ url);
-        }
-    	boolean loadingSuccess = false;
-    	if (url.equals(this.getUrl())){
-            if (loadedImage != null) {
-                recyleImageBitmap();
-                mImageBitmap = loadedImage;
-                setBitmap(mImageBitmap);
-                setmShowState(ShowState.SHOW_IMAGE);
-    	        if(isPrintLog){
-    	            DebugLog.d(LOG_TAG,"loadBitmapCompleted url SHOW_IMAGE");
-    	        }
-                loadingSuccess = true;
-            }
-    	}else if (url.equals(this.getUrl() + THUMBNAIL_POSTFIX)){
-            if (loadedImage != null) {
-                recyleImageBitmap();
-                mImageBitmap = loadedImage;
-                setBitmap(mImageBitmap);
-                setmShowState(ShowState.SHOW_THUMBNAIL);
-    	        if(isPrintLog){
-    	            DebugLog.d(LOG_TAG,"loadBitmapCompleted url SHOW_THUMBNAIL");
-    	        }
-                loadingSuccess = true;
-            }
-    	}else{
+	private void loadBitmapCompleted(String url, Bitmap loadedImage) {
+		if (isPrintLog) {
+			DebugLog.d(LOG_TAG, "loadBitmapCompleted url " + url);
+		}
+		if (url.equals(this.getUrl())) {
+			if (loadedImage != null) {
+				boolean isSuccess = loadFromCache();
+				if (isSuccess) {
+					setmShowState(ShowState.SHOW_IMAGE);
+				}
+				if (isPrintLog) {
+					DebugLog.d(LOG_TAG, "loadBitmapCompleted url SHOW_IMAGE");
+				}
+			}
+		} else if (url.equals(this.getUrl() + THUMBNAIL_POSTFIX)) {
+			if (loadedImage != null) {
+				boolean isSuccess = loadThumbnailFromCache();
+				if (isSuccess) {
+					setmShowState(ShowState.SHOW_THUMBNAIL);
+				}
+				if (isPrintLog) {
+					DebugLog.d(LOG_TAG,
+							"loadBitmapCompleted url SHOW_THUMBNAIL");
+				}
+			}
+		} else {
 
-    	}
-    	return loadingSuccess;
-    }
+		}
+	}
     
     class HandlerObj {
 
@@ -466,7 +460,6 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
 			}
 		}
 	}
-
 /*	public boolean isStateShowImage() {
 		return ShowState.SHOW_IMAGE == mShowState;
 	}*/

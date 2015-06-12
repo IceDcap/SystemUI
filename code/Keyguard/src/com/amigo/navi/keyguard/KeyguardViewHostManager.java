@@ -229,6 +229,7 @@ public class KeyguardViewHostManager {
         updateNotifiOnkeyguard(false);
         releaseCache();
         mContainer.reset();
+        UIController.getInstance().securityViewAlphaAnimationUpdating(1f);
     }
 
 	public void releaseCache() {

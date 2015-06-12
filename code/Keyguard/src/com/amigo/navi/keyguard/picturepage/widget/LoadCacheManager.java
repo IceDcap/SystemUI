@@ -61,7 +61,7 @@ public class LoadCacheManager {
 			DebugLog.d(LOG_TAG, "refreshCache url:" + wallpaper.getImgUrl()
 					+ " name:" + wallpaper.getImgName() + currentPos);
 		}
-
+		mImageLoader.setmCurrentUrl(wallpaper.getImgUrl());
 		getLoadImageList(currentPos, isScreenOff);
 		startRemoveFromCache();
 		startLoadToCache();
@@ -69,13 +69,14 @@ public class LoadCacheManager {
 	}
 
 	private void getLoadImageList(int currentPos, boolean isScreenOff) {
-		getLoadImageToList(currentPos, true);
 		if (isScreenOff) {
+			getLoadImageToList(currentPos, false);
 			return;
 		}
 		//getLoadImageToList(currentPos + 1, true);
 		//getLoadImageToList(currentPos - 1, true);
-		if (mWallpaperList.size() > 3) {
+		getLoadImageToList(currentPos, true);
+		if (mWallpaperList.size() > 1) {
 			getLoadImageToList(currentPos, false);
 			getLoadImageToList(currentPos + 1, false);
 			getLoadImageToList(currentPos - 1, false);
@@ -106,17 +107,6 @@ public class LoadCacheManager {
 
 	private void startLoadToCache() {
 		LoadImagePool.getInstance(mContext.getApplicationContext()).cancelAllThread();
-		for (int i = 0; i < mWallpaperListToImageCache.size(); i++) {
-			Wallpaper wallpaper = mWallpaperListToImageCache.get(i);
-			if (isPrintLog) {
-				DebugLog.d(
-						LOG_TAG,
-						"startLoadToCache mWallpaperListToImageCache url:"
-								+ wallpaper.getImgUrl() + " name:"
-								+ wallpaper.getImgName());
-			}
-			loadPageToCache(wallpaper, true);
-		}
 		for (int i = 0; i < mWallpaperListToThumbCache.size(); i++) {
 			Wallpaper wallpaper = mWallpaperListToThumbCache.get(i);
 			if (isPrintLog) {
@@ -127,6 +117,17 @@ public class LoadCacheManager {
 								+ wallpaper.getImgName());
 			}
 			loadPageToCache(wallpaper, false);
+		}
+		for (int i = 0; i < mWallpaperListToImageCache.size(); i++) {
+			Wallpaper wallpaper = mWallpaperListToImageCache.get(i);
+			if (isPrintLog) {
+				DebugLog.d(
+						LOG_TAG,
+						"startLoadToCache mWallpaperListToImageCache url:"
+								+ wallpaper.getImgUrl() + " name:"
+								+ wallpaper.getImgName());
+			}
+			loadPageToCache(wallpaper, true);
 		}
 	}
 
@@ -178,6 +179,7 @@ public class LoadCacheManager {
 				@Override
 				public void runTask() {
 					DealWithFromLocalInterface readImageFromLocal = null;
+					Bitmap bmp = null;
 					if (isStop){
 						if (isPrintLog) {
 							DebugLog.d(LOG_TAG, "cancel load image thread url:"
@@ -200,7 +202,7 @@ public class LoadCacheManager {
 								mContext.getApplicationContext(), PATH);
 						
 						readImageFromLocal = readFileFromAssets;
-						Bitmap bmp = mImageLoader.getBmpFromImageRemoved();
+						bmp = mImageLoader.getBmpFromImageRemoved();
 						readFileFromAssets.setmReuseBitmap(bmp);
 					} else {
 						ReadAndWriteFileFromSD dealWithFromLocalInterface = null;
@@ -213,7 +215,7 @@ public class LoadCacheManager {
 								localFileOperationInterface);
 						readImageFromLocal = dealWithFromLocalInterface;
 						if(needLoadingUrl.endsWith(THUMBNAIL_POSTFIX)){
-							Bitmap bmp = mImageLoader.getBmpFromThumbRemoved();
+							bmp = mImageLoader.getBmpFromThumbRemoved();
 							if (isPrintLog) {
 								DebugLog.d(
 										LOG_TAG,
@@ -222,7 +224,7 @@ public class LoadCacheManager {
 							dealWithFromLocalInterface.setmReuseBitmap(bmp);
 							
 						}else{
-							Bitmap bmp = mImageLoader.getBmpFromImageRemoved();
+							bmp = mImageLoader.getBmpFromImageRemoved();
 							if (isPrintLog) {
 								DebugLog.d(
 										LOG_TAG,
@@ -232,8 +234,11 @@ public class LoadCacheManager {
 						}
 					}
 
-					mImageLoader.loadImageToCache(needLoadingUrl,
-							readImageFromLocal);
+					boolean isNullReturned = mImageLoader.loadImageToCache(needLoadingUrl,
+							readImageFromLocal, isStop);
+					if (isNullReturned) {
+						mImageLoader.addBmpToImageRemoved(bmp);
+					}
 					if (isPrintLog) {
 						DebugLog.d(
 								LOG_TAG,

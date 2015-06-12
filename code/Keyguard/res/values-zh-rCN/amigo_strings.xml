@@ -151,6 +151,8 @@
     <string name="keyguard_sim2_name">"SIM卡2"</string>
     <string name="keyguard_password_enter_pin_code_message">"<xliff:g id="card">%s</xliff:g>,输入 PIN码,剩余<xliff:g id="number">%d</xliff:g>次"</string>
     <string name="keyguard_password_enter_puk_code_message">"<xliff:g id="card">%s</xliff:g>,请输入 PUK码,剩余<xliff:g id="number">%d</xliff:g>次"</string>
+    <string name="keyguard_password_enter_pin_code_message_minus">"<xliff:g id="card">%s</xliff:g>,输入 PIN码</string>
+    <string name="keyguard_password_enter_puk_code_message_minus">"<xliff:g id="card">%s</xliff:g>,输入 PUN码</string>
 
    	<string name="lvyou">旅游</string>
    	<string name="shijue">视觉</string>

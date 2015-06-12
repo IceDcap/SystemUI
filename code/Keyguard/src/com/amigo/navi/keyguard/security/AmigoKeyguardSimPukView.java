@@ -144,12 +144,19 @@ public class AmigoKeyguardSimPukView extends AmigoKeyguardSimPinPukBaseView {
             if (SubscriptionManager.isValidSubscriptionId(mSubId)) {
                 int count = TelephonyManager.getDefault().getSimCount();
                 Resources rez = getResources();
-                final String msg;
+                String msg;
                 int color = Color.WHITE;
-                int strId = R.string.keyguard_password_enter_puk_code_message;
                 String simName=getOptrNameUsingSubId(mSubId);
                 int degree=getRetryPukCount(mSubId);
-                msg = getContext().getString(strId,simName,degree);
+                if (DEBUG) Log.v(TAG, "Resetting state..degree="+degree);
+               
+                if (degree > 0) {
+                	int strId = R.string.keyguard_password_enter_puk_code_message;
+                	 msg = getContext().getString(strId,simName,degree);
+                } else {
+                	int strId = R.string.keyguard_password_enter_puk_code_message_minus;
+                	msg = getContext().getString(strId,simName);
+                }
 //                if (count < 2) {
 //                    msg = rez.getString(R.string.kg_puk_enter_puk_hint);
 //                } else {
@@ -490,6 +497,7 @@ public class AmigoKeyguardSimPukView extends AmigoKeyguardSimPinPukBaseView {
 
     @Override
     protected void verifyPasswordAndUnlock() {
+    	mKeyguardUpdateMonitor.setIgnoreSimState(mSubId,false);
         mStateMachine.next();
     }
 
@@ -516,6 +524,7 @@ public class AmigoKeyguardSimPukView extends AmigoKeyguardSimPinPukBaseView {
 				// Gionee <jiangxiao> <2014-06-12> modify for CR01288136 begin
 				// Gionee <jingyn> <2014-08-19> add for CR01358258 begin
 				if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "ignoreButton  simId:"+mSubId+"---");
+				mKeyguardUpdateMonitor.setIgnoreSimState(mSubId,true);
 				mKeyguardUpdateMonitor.dismissSimLockState(mSubId);
 				if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "ignoreButton after dismissSimLockState simId:"+mSubId+"---");
 				mCallback.dismiss(true);

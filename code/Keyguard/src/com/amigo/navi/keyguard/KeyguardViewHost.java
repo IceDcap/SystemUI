@@ -358,10 +358,11 @@ public class KeyguardViewHost extends FrameLayout {
         if (mScaleHostAnimator == null) {
             ObjectAnimator animator1 = ObjectAnimator.ofFloat(this, "scaleX", 1f, 0.6f);
             ObjectAnimator animator2 = ObjectAnimator.ofFloat(this, "scaleY", 1f, 0.6f);
-            ObjectAnimator animator3 = ObjectAnimator.ofFloat(this, "alpha", 1f, 0.4f);
+            ObjectAnimator animator3 = ObjectAnimator.ofFloat(this, "alpha", 1f, 0.0f);
             mScaleHostAnimator = new AnimatorSet();
-            mScaleHostAnimator.setDuration(300);
-            mScaleHostAnimator.playTogether(animator1, animator2, animator3);
+            mScaleHostAnimator.setDuration(500);
+//            mScaleHostAnimator.playTogether(animator1, animator2, animator3);
+            mScaleHostAnimator.play(animator3);
             mScaleHostAnimator.addListener(new Animator.AnimatorListener() {
 
                 @Override

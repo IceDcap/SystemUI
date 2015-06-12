@@ -308,7 +308,7 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
                 final int pwdLength = mPasswordEntry.getText().length();
                 refreshImageStat(pwdLength);
                 resetPinDelete(pwdLength);
-                Log.d(LOG_TAG, "afterTextChanged--> password length is " + pwdLength);
+                Log.d(LOG_TAG, "afterTextChanged--> password length is " + pwdLength+"getPasswordText()="+getPasswordText());
                 if (pwdLength == MIN_PASSWORD_LENGTH_BEFORE_CHECKING) {
                     // mPasswordEntry.setEnabled(false);
                     setKeyButtonClickEnable(false);

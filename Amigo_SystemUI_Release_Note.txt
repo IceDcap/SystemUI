@@ -2,28 +2,42 @@
 Build Notes
 ==================
 1.版本目的:
-- 修改为锁屏不需要判断是否需要横屏显示，不需要获取系统配置的属性来决定是否可以横屏，直接就竖屏显示
-- 壁纸加载优化
+Bug fix
 2.功能变更:
--
+No
 3.重点测试的问题:
--
+SystemUI:
+CR01459185【工厂】故事点击锁屏设置，点击选择锁屏壁纸进入最近界面，点击左上角图标进入图库，选择任意照片，不能选择照片为锁屏壁纸【必现】
+CR01498297【工厂】：进入视频,播放视频,上拉控制中心,多次开关音量图标,当音量图标亮时,视频播放无声 2/10
+CR01487558【5.1MP】状态栏：3G或4G网络时，状态栏信号柱和数字重叠（必现 附图）
+CR01490949【5.1MP】搜狗输入法：弹出输入法后-状态栏搜狗图标显示太大显示不全（必现附图）
+CR01493908【品质专项】下拉状态栏，卡住只弹出1/6，按电源键灭屏后解锁恢复【3/50】【附视频】
+CR01498004【5.1MP】系统界面：下拉状态栏-点击APP键-再次下拉状态栏-弹出系统界面停止运行（3/10）
+CR01499033【5.1MP】控制中心：切换系统字体进入控制中心更多界面查看，舍弃、保存等字体未及时更新(必现)
+CR01499946时钟：必现，设置一个闹钟》关机》闹钟响铃后，报“com.android.systemui停止运行”
+CR01500131 GMS ScreenPin 功能虚拟按键临时处理
+CR01498895【工厂】卡1电信，开启飞行模式，拉状态栏一直显示中国电信【必现】
+Keyguard:
+-修改锁屏指纹解锁和密码锁的解锁动画
+-壁纸加载优化，当前壁纸清晰图，含当前壁纸5张缩略图
+-内置资源读取时，bitmap重用
+-解决由于加了忽略功能引起的sim卡频繁上报同一个状态时，sim卡密码锁界面重置view状态导致的正在输入SIM内容被冲掉的问题
 4.应用数据库是否改变:
 No
 
 ==================
 Release Location
 ==================
-/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ae.zip
+/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.af.zip
 
 ==================
 CR List
 ==================
 [Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
-svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.ar' non-existent in revision 5865
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.al' non-existent in revision 5934
 
 svn: E200009: Could not display info for all targets because some targets don't exist
-svn: E205000: Syntax error in revision argument '5865:'
+svn: E205000: Syntax error in revision argument '5934:'
 File does not exist:  at getAppChangeSet.pl line 48
 
 ==================

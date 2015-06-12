@@ -340,7 +340,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
             }
         }
         //<Amigo_Keyguard> jingyn <2015-05-25> remove for simcard ignore function begin
-       /* for (int i = 0; i < changedSubscriptions.size(); i++) {
+        for (int i = 0; i < changedSubscriptions.size(); i++) {
             SimData data = mSimDatas.get(changedSubscriptions.get(i).getSubscriptionId());
             for (int j = 0; j < mCallbacks.size(); j++) {
                 KeyguardUpdateMonitorCallback cb = mCallbacks.get(j).get();
@@ -349,7 +349,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
                     cb.onSimStateChanged(data.subId, data.slotId, data.simState);
                 }
             }
-        }*/
+        }
         //<Amigo_Keyguard> jingyn <2015-05-25> remove for simcard ignore function end
         for (int j = 0; j < mCallbacks.size(); j++) {
             KeyguardUpdateMonitorCallback cb = mCallbacks.get(j).get();
@@ -596,11 +596,13 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         public State simState;
         public int slotId;
         public int subId;
+        public boolean isIgnoreReady;// add for sim ignore function
 
         SimData(State state, int slot, int id) {
             simState = state;
             slotId = slot;
             subId = id;
+            isIgnoreReady=false;
         }
 
         static SimData fromIntent(Intent intent) {
@@ -655,7 +657,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
 
         public String toString() {
-            return "SimData{state=" + simState + ",slotId=" + slotId + ",subId=" + subId + "}";
+            return "SimData{state=" + simState + ",slotId=" + slotId + ",subId=" + subId + "isIgnoreReady="+isIgnoreReady+"}";
         }
     }
 
@@ -1112,10 +1114,10 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
             data.simState = state;
             data.subId = subId;
             data.slotId = slotId;
-            DebugLog.d(TAG, "handleSimStateChange  data is not null");
+            DebugLog.d(TAG, "handleSimStateChange  data is not null..changed="+changed);
         }
         //remove by jingyn for subscription change sim state earlier than receiver
-        if (/*changed &&*/ state != State.UNKNOWN) {
+        if (changed && state != State.UNKNOWN) {
             for (int i = 0; i < mCallbacks.size(); i++) {
                 KeyguardUpdateMonitorCallback cb = mCallbacks.get(i).get();
                 if (cb != null) {
@@ -1428,7 +1430,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
             mSimDatas.put(subId, data);
             changed = true; // no data yet; force update
         } else {
-            changed = data.simState != state;
+            changed = data.simState != state && !data.isIgnoreReady;
             data.simState = state;
         }
         return changed;
@@ -1525,6 +1527,24 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
     public void dismissSimLockState(int simId) {
     	reportSimUnlocked(simId);
     }
+    
+    public void setIgnoreSimState(int subId , boolean isIgnore){
+    	if (DEBUG_SIM_STATES) Log.v(TAG, "setIgnoreSimState(subId=" + subId + ")");
+        int slotId = SubscriptionManager.getSlotId(subId);
+        setIsIgnoreOrNot(subId, slotId, isIgnore);
+    }
+    
+    public void setIsIgnoreOrNot(int subId,int slotId, boolean isIgnore ){
+    	SimData data = mSimDatas.get(subId);
+        final boolean changed;
+        if (data != null) {  
+            DebugLog.d(TAG, "setIsIgnoreOrNot  data is not null");
+            if( data.slotId == slotId){
+            	data.isIgnoreReady=isIgnore;
+            } 
+        } 
+    }
+    
     
     
     public void clearFailedUnlockAttempts(boolean isDone) {

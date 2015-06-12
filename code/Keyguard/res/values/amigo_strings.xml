@@ -156,6 +156,8 @@
     <string name="keyguard_sim2_name">"Card 2"</string>
     <string name="keyguard_password_enter_pin_code_message">"<xliff:g id="card">%s</xliff:g>,Input PIN,remain <xliff:g id="number">%d</xliff:g> times"</string>
     <string name="keyguard_password_enter_puk_code_message">"<xliff:g id="card">%s</xliff:g>,Input PUK,remain <xliff:g id="number">%d</xliff:g> times"</string>
+    <string name="keyguard_password_enter_pin_code_message_minus">"<xliff:g id="card">%s</xliff:g>,Input PIN</string>
+    <string name="keyguard_password_enter_puk_code_message_minus">"<xliff:g id="card">%s</xliff:g>,Input PUK</string>
       
     <string name="lvyou">Travel</string>
    	<string name="shijue">Charm</string>

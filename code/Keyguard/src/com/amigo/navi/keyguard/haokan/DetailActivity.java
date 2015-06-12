@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
@@ -49,7 +50,7 @@ public class DetailActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-        setContentView(R.layout.haokan_web_layout);
+//        setContentView(R.layout.haokan_web_layout);
 
         if (Build.VERSION.SDK_INT >= 21) {
             this.getWindow().getAttributes().systemUiVisibility |= (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -78,6 +79,10 @@ public class DetailActivity extends Activity {
     
     private void initUI() {
 
+        LayoutInflater inflater=LayoutInflater.from(getApplicationContext());
+        RelativeLayout layout = (RelativeLayout)inflater.inflate(R.layout.haokan_web_layout, null);
+        setContentView(layout);
+        
         mWebLayout = (RelativeLayout) findViewById(R.id.WebLayout);
 
         mFrameLayout = (FrameLayout) findViewById(R.id.haokan_layout_webview_container);
@@ -258,9 +263,18 @@ public class DetailActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        
+        if (mFrameLayout != null) {
+            mFrameLayout.removeAllViews();
+        }
+
         if (mWebView != null) {
+            mWebView.removeAllViews();
+            mWebView.stopLoading();
             mWebView.destroy();
             mWebView = null;
         }
+        
+       System.gc();
     }
 }

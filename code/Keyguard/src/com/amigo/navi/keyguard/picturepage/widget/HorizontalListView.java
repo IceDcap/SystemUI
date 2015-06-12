@@ -186,7 +186,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         // TODO Auto-generated method stub
         // super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        mMinDistance = (int) (mChildWidth * 0.3);
+        mMinDistance = (int) (mChildWidth * 0.15);
         final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         final int widthSize = MeasureSpec.getSize(widthMeasureSpec);
         final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
@@ -669,7 +669,8 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         int scrollToX = page * mChildWidth; 
         if (mTouchlListener != null && getScrollX() != scrollToX) {
 //            if (Math.abs(motionX - mDownMotionX) > 2 * mTouchSlop) {
-            mTouchlListener.OnTouchUp();
+            boolean change = mCurrentPage != mNextPage;
+            mTouchlListener.OnTouchUp(change);
 //            }
         }
         smoothScrollTo(scrollToX, 0);
@@ -952,7 +953,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     
     public interface OnTouchlListener {
         void OnTouchMove(int x,int dx);
-        void OnTouchUp();
+        void OnTouchUp(boolean change);
     }
     
     OnTouchlListener mTouchlListener;

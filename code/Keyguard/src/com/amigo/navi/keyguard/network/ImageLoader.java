@@ -29,7 +29,17 @@ public class ImageLoader implements ImageLoaderInterface{
 	private static final boolean PRINT_LOG = true;
 	private ArrayList<ImageViewWithLoadBitmap> mImageViewWithLoadBitmapList = new ArrayList<ImageViewWithLoadBitmap>();
 	private static final String THUMBNAIL_POSTFIX = "_thumbnail";
-    public ImageLoader(Context context) {
+	private boolean mNeedInit = true;
+	private String mCurrentUrl = null;
+    public String getmCurrentUrl() {
+		return mCurrentUrl;
+	}
+
+	public void setmCurrentUrl(String mCurrentUrl) {
+		this.mCurrentUrl = mCurrentUrl;
+	}
+
+	public ImageLoader(Context context) {
     	mContext = context.getApplicationContext();
     }
     
@@ -46,6 +56,7 @@ public class ImageLoader implements ImageLoaderInterface{
 		}
 		synchronized (ImageRemoved) {
 			ImageRemoved.clear();
+			mNeedInit = true;
 		}		
 		System.gc();
 	}
@@ -125,35 +136,56 @@ public class ImageLoader implements ImageLoaderInterface{
 	
 	public void LoadingComplete(String url, Bitmap bitmap) {
 			int size = mImageViewWithLoadBitmapList.size();
+			/*if (bitmap == null) {
+				//FailReason failReason = new FailReason(
+				//		FailType.UNKNOWN, null);
+				//view.onLoadingFailed(url, failReason);
+				//ImageRemoved.add(mImageReuseBmp);
+				addBmpToImageRemoved(mImageReuseBmp);
+				mImageReuseBmp = null;
+				return;
+			}  */
+			if (url.endsWith(THUMBNAIL_POSTFIX)){
+				addImage2Cache(url, bitmap);
+			} else {
+				if (url.equals(mCurrentUrl)) {
+					addImage2Cache(url, bitmap);
+				} else {
+					addBmpToImageRemoved(bitmap);
+					return;
+				}
+			}
 			for (int i = size - 1; i >= 0; i--) {
 				ImageViewWithLoadBitmap view = mImageViewWithLoadBitmapList.get(i);
 				if (view != null) {
 					if (url.equals(view.getUrl())
 							|| url.equals(view.getUrl() + THUMBNAIL_POSTFIX)) {
-						if (bitmap == null) {
-							FailReason failReason = new FailReason(
-									FailType.UNKNOWN, null);
-							view.onLoadingFailed(url, failReason);
-						} else {
+						{
 							view.onLoadingComplete(url, bitmap);
 						}
+						
 					}
 				}
 			}
 	}
 
-	public void loadImageToCache(String url,
-			DealWithFromLocalInterface dealWithFromLocalInterface) {
-		Bitmap bitmap = loadImageFromLocal(dealWithFromLocalInterface, url);
-        if(PRINT_LOG){
-            DebugLog.d(LOG_TAG,"loadImageToCache:" + url);
-        }
-        if (null != bitmap) {
-        	addImage2Cache(url, bitmap);
-        }
-		LoadingComplete(url, bitmap);
-		
-
+	public boolean loadImageToCache(String url,
+			DealWithFromLocalInterface dealWithFromLocalInterface, boolean isStoped) {
+		boolean isNullReturned = true;
+		if (!isStoped) {
+			Bitmap bitmap = loadImageFromLocal(dealWithFromLocalInterface, url);
+	        if(PRINT_LOG){
+	            DebugLog.d(LOG_TAG,"loadImageToCache:" + url);
+	        }
+	/*        if (null != bitmap) {
+	        	addImage2Cache(url, bitmap);
+	        }*/
+	        if (null != bitmap) {
+	        	LoadingComplete(url, bitmap);
+	        	isNullReturned = false;
+	        }
+		} 
+		return isNullReturned;
 	}
     
     public Bitmap loadImageFromLocal(DealWithFromLocalInterface dealWithFromLocalInterface
@@ -220,7 +252,7 @@ public class ImageLoader implements ImageLoaderInterface{
 						DebugLog.d(LOG_TAG, "removeImagefromCache url" + url);
 					}
 					urlToBeRemove.add(url);
-					
+
 				}
 			}
 
@@ -232,11 +264,9 @@ public class ImageLoader implements ImageLoaderInterface{
 					if (view != null){
 						view.loadloadThumbnailFromCacheIfNeeded();
 					}
-					ImageRemoved.add(bitmap);
-				} else {
-					ThumbRemoved.add(bitmap);
-				} 
-				mFirstLevelCache.remove(url);
+				}  
+				addBmpToImageRemoved(bitmap);
+				mFirstLevelCache.remove(urlToBeRemove.get(i));
 			}
 
 			urlToBeRemove.clear();
@@ -245,13 +275,26 @@ public class ImageLoader implements ImageLoaderInterface{
 	
 	private ArrayList<Bitmap> ImageRemoved = new ArrayList<Bitmap>();
 	private ArrayList<Bitmap> ThumbRemoved = new ArrayList<Bitmap>();
+	private Bitmap mImageReuseBmp = null;
 
 	public Bitmap getBmpFromImageRemoved() {
 		Bitmap bmp = null;
 		synchronized (ImageRemoved) {
-			if (!ImageRemoved.isEmpty()) {
+			if (!mNeedInit) {
+				while (ImageRemoved.isEmpty()) {
+					try {
+						DebugLog.d(LOG_TAG, "getBmpFromImageRemoved wait before");
+						ImageRemoved.wait();
+						DebugLog.d(LOG_TAG, "getBmpFromImageRemoved wait after");
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 				bmp = ImageRemoved.get(0);
 				ImageRemoved.remove(0);
+			}else{
+				mNeedInit = false;
 			}
 		}
 		return bmp;
@@ -266,6 +309,19 @@ public class ImageLoader implements ImageLoaderInterface{
 			}
 		}
 		return bmp;
+	}
+	
+	public void addBmpToImageRemoved(Bitmap bmp) {
+		int screenWid = KWDataCache.getScreenWidth(mContext.getResources());
+		if (bmp.getWidth() == screenWid) {
+			synchronized (ImageRemoved) {
+				ImageRemoved.add(bmp);
+				ImageRemoved.notify();
+				DebugLog.d(LOG_TAG, "getBmpFromImageRemoved notify");
+			}
+		} else {
+			ThumbRemoved.add(bmp);
+		}
 	}
 
 }
