@@ -1607,6 +1607,7 @@ public class NotificationPanelView extends PanelView implements
 	    			canvas.drawBitmap(GnBlurHelper.mBlur, src, dst, paint);
 	    			canvas.drawColor(0xCC181818);
 	    		} else {
+	    			Log.v(TAG,"NotificationPanelView: blur bitmap is null");
 	    			canvas.drawColor(0xF2181818);
 	    		}
 			}
