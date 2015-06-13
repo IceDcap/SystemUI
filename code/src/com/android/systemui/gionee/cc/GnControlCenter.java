@@ -44,6 +44,9 @@ public class GnControlCenter {
     // database
     private static final String AMIGO_SETTING_CC_SWITCH = "control_center_switch";
     
+    // Intent lilter
+    private final static String ACTION_HALL_STATUS = "android.intent.action.HALL_STATUS";
+    
     // Context
     private Context mContext;
     
@@ -128,6 +131,8 @@ public class GnControlCenter {
                         naviBar.setVisibility(View.VISIBLE);
                     }
                 }
+            } else if (ACTION_HALL_STATUS.equals(actions)) {
+                dismiss();
             }
         }
     };
@@ -148,6 +153,7 @@ public class GnControlCenter {
         filter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
         filter.addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
         filter.addAction(Intent.ACTION_USER_PRESENT);
+        filter.addAction(ACTION_HALL_STATUS);
         mContext.registerReceiver(mReceiver, filter);
         
         ContentResolver res = mContext.getContentResolver();

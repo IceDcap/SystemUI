@@ -312,15 +312,23 @@ public class ImageLoader implements ImageLoaderInterface{
 	}
 	
 	public void addBmpToImageRemoved(Bitmap bmp) {
+	    if (bmp == null) {
+            return;
+        }
 		int screenWid = KWDataCache.getScreenWidth(mContext.getResources());
 		if (bmp.getWidth() == screenWid) {
 			synchronized (ImageRemoved) {
-				ImageRemoved.add(bmp);
+			    if (ImageRemoved.size() <= 1) {
+			        ImageRemoved.add(bmp);
+			    }
 				ImageRemoved.notify();
 				DebugLog.d(LOG_TAG, "getBmpFromImageRemoved notify");
 			}
 		} else {
-			ThumbRemoved.add(bmp);
+		 
+		    if (ThumbRemoved.size() <= 2) {
+		        ThumbRemoved.add(bmp);
+            }
 		}
 	}
 

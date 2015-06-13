@@ -532,7 +532,7 @@ public class DiskUtils {
             final BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
             options.inJustDecodeBounds = false;
-            options.inSampleSize = 2;
+            options.inSampleSize = 1;
             Bitmap bitmap = BitmapFactory.decodeFileDescriptor(fd, null, options);
             saveThumbnail(bitmap, key, path);
         } catch (Exception e) {
