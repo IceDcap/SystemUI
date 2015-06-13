@@ -1606,6 +1606,8 @@ public class NotificationPanelView extends PanelView implements
 	    			paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OVER));
 	    			canvas.drawBitmap(GnBlurHelper.mBlur, src, dst, paint);
 	    			canvas.drawColor(0xCC181818);
+	    		} else {
+	    			canvas.drawColor(0xF2181818);
 	    		}
 			}
     	} else {
