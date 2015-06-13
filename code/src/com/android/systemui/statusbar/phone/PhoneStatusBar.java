@@ -3382,6 +3382,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         @Override
         public void tickerStarting() {
             if (!mTickerEnabled) return;
+            Log.v(TAG, "tickerStarting");
             mTicking = true;
             mStatusBarContents.setVisibility(View.GONE);
             mTickerView.setVisibility(View.VISIBLE);
@@ -3392,6 +3393,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         @Override
         public void tickerDone() {
             if (!mTickerEnabled) return;
+            Log.v(TAG, "tickerDone");
             mStatusBarContents.setVisibility(View.VISIBLE);
             mTickerView.setVisibility(View.GONE);
             mStatusBarContents.startAnimation(loadAnim(com.android.internal.R.anim.push_down_in, null));
@@ -3401,10 +3403,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         public void tickerHalting() {
             if (!mTickerEnabled) return;
+            Log.v(TAG, "tickerHalting");
             if (mStatusBarContents.getVisibility() != View.VISIBLE) {
                 mStatusBarContents.setVisibility(View.VISIBLE);
+                // GIONEE <wujj> <2015-06-13> modify for CR01494522 begin
+                /*
                 mStatusBarContents
                         .startAnimation(loadAnim(com.android.internal.R.anim.fade_in, null));
+                        */
+                // GIONEE <wujj> <2015-06-13> modify for CR01494522 end
             }
             mTickerView.setVisibility(View.GONE);
             // we do not animate the ticker away at this point, just get rid of it (b/6992707)
