@@ -83,7 +83,6 @@ public class AmigoKeyguardPage extends RelativeLayout {
         mNotificationHeight = getResources().getDimensionPixelSize(R.dimen.kg_maincell_layout_notification_height);
         
 //        setPadding(0, KWDataCache.getStatusBarHeight(), 0, 0);
-        
 		showWallpaper();
 		UIController.getInstance().setAmigoKeyguardPage(this);
 	}
@@ -710,31 +709,9 @@ public class AmigoKeyguardPage extends RelativeLayout {
     public void stopGuideSlideAround() {
         DebugLog.d("guide", "stopGuideSlideAround ");
         final RelativeLayout view = (RelativeLayout) findViewById(R.id.guide_slide_around);
-        
-        AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0f);
-        alphaAnimation.setDuration(500);
-        alphaAnimation.setAnimationListener(new AnimationListener() {
-            
-            @Override
-            public void onAnimationStart(Animation arg0) {
-                
-            }
-            
-            @Override
-            public void onAnimationRepeat(Animation arg0) {
-                
-            }
-            
-            @Override
-            public void onAnimationEnd(Animation arg0) {
-                DebugLog.d("guide", "stopGuideSlideAround removeView");
-                removeView(view);
-            }
-        });
-        
-        view.startAnimation(alphaAnimation);
-        
- 
+        if (view != null) {
+            removeView(view);
+        }
         Guide.resetIdle();
         Guide.setNeedGuideSlideAround(false);
         Guide.setBooleanSharedConfig(getContext(), Guide.GUIDE_SLIDE_AROUND, false);
@@ -832,22 +809,6 @@ public class AmigoKeyguardPage extends RelativeLayout {
     
     public void setGuideSlideFeedBackVisibility(int visibility) {
         mGuideSlideFeedBackView.setVisibility(visibility);
-    }
-    
-    public boolean isTouchInvalidArea(float x, float y) {
-
-//        if (mCaptionsView.isContentVisible()) {
-//            if (y < mCaptionsView.getBottom() && y > mCaptionsView.getTop()) {
-//                return false;
-//            }
-//        }else {
-//            
-//        }
-//        
-//        Log.v("zhaowei", "mCaptionsView.isContentVisible()" + mCaptionsView.isContentVisible());
-//        Log.v("zhaowei", "mCaptionsView.getLeft() = " + mCaptionsView.getTop() + "  " + mCaptionsView.getBottom());
-        return false;
-        
     }
    
 }

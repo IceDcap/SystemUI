@@ -41,6 +41,7 @@ public class HorizontalAdapter extends BaseAdapter {
        this.mInflater = LayoutInflater.from(context);
        updateDataList(wallpaperList);
        this.mImageLoader = imageLoader;
+       mImageLoader.setmHorizontalAdapter(this);
        LocalFileOperationInterface localFileOperationInterface = new LocalBitmapOperation(context);
        mDealWithFromLocalInterface = new ReadAndWriteFileFromSD(context.getApplicationContext(), 
                  DiskUtils.WALLPAPER_BITMAP_FOLDER, DiskUtils.getCachePath(context.getApplicationContext()),

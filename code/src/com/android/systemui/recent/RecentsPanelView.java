@@ -853,6 +853,8 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
         		if(!successful) {
         			startActivityFromRecent(ad, context, opts);
         		}
+        	} catch (NoSuchMethodException e) {
+        		am.moveTaskToFront(ad.taskId, ActivityManager.MOVE_TASK_WITH_HOME, opts);
 			} catch (Exception e) {
 				e.printStackTrace();
 				Log.e(TAG, "invoke moveTaskToFrontWithResult failed: " + e);

@@ -32,6 +32,8 @@ public class LoadCacheManager {
 	ArrayList<String> mUrlToBeReserved = new ArrayList<String>();
 	private static final String THUMBNAIL_POSTFIX = "_thumbnail";
 
+	private Wallpaper mCurrentWallpaper;
+	
 	public void refreshCache(Context context, ImageLoader imageLoader,
 			WallpaperList wallpaperList, Wallpaper wallpaper,
 			boolean isScreenOff) {
@@ -39,6 +41,7 @@ public class LoadCacheManager {
 		mWallpaperListToThumbCache.clear();
 		mContext = context;
 		mImageLoader = imageLoader;
+		mCurrentWallpaper = wallpaper;
 
 		mWallpaperList = wallpaperList;
 		if (isPrintLog) {
@@ -105,7 +108,7 @@ public class LoadCacheManager {
 		}
 	}
 
-	private void startLoadToCache() {
+	public void startLoadToCache() {
 		LoadImagePool.getInstance(mContext.getApplicationContext()).cancelAllThread();
 		for (int i = 0; i < mWallpaperListToThumbCache.size(); i++) {
 			Wallpaper wallpaper = mWallpaperListToThumbCache.get(i);
@@ -152,25 +155,31 @@ public class LoadCacheManager {
 		mImageLoader.removeImagefromCache(mUrlToBeReserved);
 	}
 
-	private void loadPageToCache(final Wallpaper wallpaper,
+	public void loadPageToCache(final Wallpaper wallpaper,
 			final boolean isImage) {
 		if (mImageLoader != null) {
 			String loadUrl = wallpaper.getImgUrl();
-			if (isPrintLog) {
-				DebugLog.d(LOG_TAG, "loadPageToCache load image thread url:"
-						+ wallpaper.getImgUrl());
-				DebugLog.d(LOG_TAG,
-						"loadPageToCache load image thread getImageName():"
-								+ wallpaper.getImgName());
-			}
+
 
 			if (!isImage) {
 				loadUrl = loadUrl + THUMBNAIL_POSTFIX;
 			}
 
+			if (isPrintLog) {
+				DebugLog.d(LOG_TAG, "loadPageToCache load image thread url:"
+						+ loadUrl);
+				DebugLog.d(LOG_TAG,
+						"loadPageToCache load image thread getImageName():"
+								+ wallpaper.getImgName());
+			}
 			if (mImageLoader.existInImageCache(loadUrl)) {
-				
-				mImageLoader.getImageView(wallpaper.getImgUrl());
+				if (isPrintLog) {
+					DebugLog.d(LOG_TAG, "load image thread url existInImageCache:"
+							+ loadUrl);
+					}
+				if (isImage) {
+					mImageLoader.getImageView(wallpaper.getImgUrl());
+				}
 				return;
 			}
 			final String needLoadingUrl = loadUrl;
@@ -262,9 +271,9 @@ public class LoadCacheManager {
 			threadList = LoadImagePool.getInstance(mContext)
 					.getDownLoadThreadList();
 			LoadImageThread loadImageThread = new LoadImageThread(
-					wallpaper.getImgUrl(), job, threadList);
+					needLoadingUrl, job, threadList);
 			LoadImagePool.getInstance(mContext.getApplicationContext())
-					.loadImage(loadImageThread, wallpaper.getImgUrl());
+					.loadImage(loadImageThread, needLoadingUrl);
 		}
 
 	}

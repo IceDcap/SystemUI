@@ -308,6 +308,7 @@ public class GnDragGridView extends ViewGroup {
             case MotionEvent.ACTION_DOWN:
                 int x = (int) ev.getX();
                 int y = (int) ev.getY();
+                isAnimating = false;
                 mDragPosition = -1;
                 mDragPosition = pointToPosition(x, y);
                 Log.d(TAG, "position = " + mDragPosition);
@@ -452,7 +453,8 @@ public class GnDragGridView extends ViewGroup {
                     child.layout(x - tileW / 2, y - tileH / 2, x + tileW / 2, y + tileH / 2);
                     
                     int newPosition = getToPosition(x, y);
-                    Log.d(TAG, " newPosition = " + newPosition + "  mCurPosition = " + mCurPosition);
+                    Log.d(TAG, " newPosition = " + newPosition + "  mCurPosition = " + mCurPosition 
+                            + " isAnimating = " + isAnimating);
                     if (newPosition != -1 && newPosition != 7 && !isAnimating) {
                         isAnimating = true;
                         int invisibleCount = 0;

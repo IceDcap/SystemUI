@@ -72,7 +72,7 @@ public class KeyguardViewHostManager {
     private static final int MSG_HIDE_SKYLIGHT=0;
     private static final int MSG_SHOW_SKYLIGHT=1;
     private static final int MSG_CONFIGURATION_CHANGED = 2;
-    private static final int MSG_UPDATE_HAOKAN_LIST = 3;
+    public static final int MSG_UPDATE_HAOKAN_LIST = 3;
     private static final int MSG_UPDATE_HAOKAN_LIST_SCREEN_ON = 4;
     
     private static KeyguardViewHostManager sInstance=null;
@@ -96,7 +96,7 @@ public class KeyguardViewHostManager {
     private long timeOnKeyguardStart = -1;
 //  private boolean IsClearLock = false;
     private static boolean isSuppotFinger=false;
-    private static final int MSG_UPDATE_HAOKAN_LIST_SCREEN_OFF = 4;
+    public static final int MSG_UPDATE_HAOKAN_LIST_SCREEN_OFF = 4;
     public static final String KEYGUARD_LOCK_BY_OTHERAPP="lockByOtherApp";
     
     private LoadCacheManager mCacheManger;
@@ -137,6 +137,7 @@ public class KeyguardViewHostManager {
 		public void onConfigChange() {
 	        initHorizontalListView();
 	        addKeyguardArcMenu();
+	        UIController.getInstance().onConfigChange();
 		}
 	};
     
@@ -496,7 +497,30 @@ public class KeyguardViewHostManager {
             case MSG_UPDATE_HAOKAN_LIST:
                 DebugLog.d(TAG,"update listview mHandler");
                 WallpaperList wallpaperList = (WallpaperList) msg.obj;
-                refreshHorizontalListView(wallpaperList); 
+                if(wallpaperList.size() == 0){
+                    mKeyguardListView.setVisibility(View.GONE);
+                    mContainer.setVisibility(View.GONE);
+                    UIController.getInstance().getHaoKanLayout().setVisibility(View.GONE);
+                    mViewMediatorCallback.setKeyguardWallpaperShow(true);
+                }else{
+                    
+                    int index = msg.arg1;
+                    if (index >= 0 && index < wallpaperList.size()) {
+                        refreshPage(index);
+                    }
+                    if (mShowPage >= wallpaperList.size()) {
+                        refreshPage(wallpaperList.size() - 1);
+                    }
+                    refreshHorizontalListView(wallpaperList); 
+                    
+                    UIController.getInstance().refreshWallpaperInfo();
+                    mCacheManger
+                    .refreshCache(mContext, mImageLoader,
+                            mWallpaperAdapter.getWallpaperList(),
+                            UIController.getInstance()
+                            .getmCurrentWallpaper(), true);
+                    
+                }
                 break;
             case MSG_UPDATE_HAOKAN_LIST_SCREEN_OFF:
                 WallpaperList wallpapers = (WallpaperList) msg.obj;
@@ -506,6 +530,7 @@ public class KeyguardViewHostManager {
                     UIController.getInstance().getHaoKanLayout().setVisibility(View.GONE);
                     mViewMediatorCallback.setKeyguardWallpaperShow(true);
                 }else{
+                    
                     refreshHorizontalListView(wallpapers); 
                     UIController.getInstance().refreshWallpaperInfo();
                     // load the image to cache, which is to be shown after ScreenTurnedOn
@@ -630,6 +655,8 @@ public class KeyguardViewHostManager {
       mContainer  = new KeyguardWallpaperContainer(mContext.getApplicationContext());
       mKeyguardListView = new KeyguardListView(mContext.getApplicationContext());
       mImageLoader = new ImageLoader(mContext.getApplicationContext());
+      mImageLoader.setCacheManger(mCacheManger);
+      mImageLoader.setHandler(mHandler);
       WallpaperList wallpaperList = new WallpaperList();
       mWallpaperAdapter = new HorizontalAdapter(mContext.getApplicationContext(), wallpaperList,mImageLoader);
       UIController.getInstance().setmKeyguardListView(mKeyguardListView);
@@ -997,11 +1024,14 @@ public class KeyguardViewHostManager {
                     @Override
                     public void run() {
                         FileUtil.copyDefaultWallpaperToGallery(mContext);
-                        
+                        FileUtil.saveDefaultWallpaperThumbnail(mContext);
                         KeyguardSettings.setBooleanSharedConfig(mContext, KeyguardSettings.PF_NEED_COPY_WALLPAPER, false);
                     }
                 }).start();
             }
         }
+	    
+	    
+	    
 	    
 }

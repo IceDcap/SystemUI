@@ -118,7 +118,9 @@ public class DiskUtils {
              bitmap = BitmapFactory.decodeByteArray(ss, 0, ss.length, options);
          } catch (OutOfMemoryError e) {
             Log.e("haokan", "", e);
-         }
+         } catch (Exception e) {
+             Log.e("haokan", "", e);
+          }
          return bitmap;
     }
     
@@ -513,7 +515,7 @@ public class DiskUtils {
         newOpts.inJustDecodeBounds = false;
         Bitmap thumbnailBitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length,
                 newOpts);
-        Log.v("zhaowei",
+        Log.v("haokan",
                 "saveThumbnail byteArray getWidth = " + thumbnailBitmap.getWidth()
                         + "  getHeight =" + thumbnailBitmap.getHeight());
         byte[] thumbByteArray = convertBitmap(thumbnailBitmap);
@@ -535,7 +537,9 @@ public class DiskUtils {
             options.inSampleSize = 1;
             Bitmap bitmap = BitmapFactory.decodeFileDescriptor(fd, null, options);
             saveThumbnail(bitmap, key, path);
+            bitmap.recycle();
         } catch (Exception e) {
+            Log.v("haokan", "", e);
             e.printStackTrace();
         } catch (OutOfMemoryError e) {
             Log.v("haokan", "", e);

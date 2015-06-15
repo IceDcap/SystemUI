@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.amigo.navi.keyguard.haokan.Common;
+
 public class Guide {
 
     private static boolean TEST = false;
@@ -109,6 +111,15 @@ public class Guide {
                 + " needGuideLongPress=" + needGuideLongPress() + " needGuideNewWallpaper="
                 + needGuideNewWallpaper() + " needGuideSlideAround=" + needGuideSlideAround()
                 + " needGuideSlideFeedBack=" + needGuideSlideFeedBack());
+        
+        if (Common.isPowerSaverMode()) {
+            NEED_GUIDE_LONG_PRESS = false;
+            NEED_GUIDE_CLICK_TITLE = false;
+            NEED_GUIDE_SLIDE_AROUND = false;
+            NEED_NEW_WALLPAPER = false;
+            NEED_SLIDE_FEEDBACK = false;
+        }
+        
 
         if (TEST) {
             NEED_GUIDE_LONG_PRESS = false;

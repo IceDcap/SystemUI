@@ -215,6 +215,8 @@
                 android:layout_height="@dimen/settings_body_firstline_height"
                 android:gravity="bottom"
                 android:text="@string/preference_double_desktop_lock"
+                android:ellipsize="end"
+                android:singleLine="true"
                 android:textColor="@color/keyguard_setting_firstline_color"
                 android:textSize="@dimen/settings_body_firstline_textsize"
                 android:visibility="invisible" />

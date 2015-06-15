@@ -1168,6 +1168,8 @@ public class UIController implements OnTouchlListener{
                 }else{
                 	wallpaperDB.updateWallpaper(wallpaper);
                 }
+                // 保存缩略图
+//                DiskUtils.saveThumbnail(bitmap, key, savePath);
         	}
         }      
     }
@@ -1486,5 +1488,10 @@ public class UIController implements OnTouchlListener{
         this.mKeyguardBouncer = mKeyguardBouncer;
     }
     
+    public void onConfigChange() {
+        if (getmCaptionsView() != null && getmCurrentWallpaper() != null) {
+            getmCaptionsView().setContentText(getmCurrentWallpaper().getCaption());
+        }
+    }
     
 }
