@@ -159,6 +159,7 @@ public class GnControlCenterMoreView extends FrameLayout implements View.OnClick
     }
 
     public void pushUpIn() {
+        isAnimating = false;
         updateBackground();
         mDragGridView.hideMoreView();
 //        mMoreLayout.setSystemUiVisibility(SYSTEM_UI_FLAG_IMMERSIVE | SYSTEM_UI_FLAG_HIDE_NAVIGATION);

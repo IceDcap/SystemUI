@@ -797,10 +797,9 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                                 .append(isLocalImage ? mWallpaper.getImgName() : mWallpaper.getImgId()).append(".jpg").toString();
                         Bitmap currentWallpaper = controller.getCurrentWallpaperBitmap(mWallpaper);
                         if (currentWallpaper != null) {
-                            success = FileUtil.saveWallpaper(currentWallpaper, imageFileName);
-                        }
-                        if (success) {
-                            Common.insertMediaStore(getContext().getApplicationContext(),currentWallpaper.getWidth(), currentWallpaper.getHeight(), imageFileName);
+                            if (FileUtil.saveWallpaper(currentWallpaper, imageFileName)) {
+                                Common.insertMediaStore(getContext().getApplicationContext(),currentWallpaper.getWidth(), currentWallpaper.getHeight(), imageFileName);
+                            }
                         }
                     }
                 }

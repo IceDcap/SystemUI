@@ -209,7 +209,7 @@ public class KeyguardViewHostManager {
         updateNotifiOnkeyguard(true);
         beginStatics();
 		UIController.getInstance().onKeyguardLocked();
-        mFingerIdentifyManager.readFingerprintSwitchValue();
+        mFingerIdentifyManager.readFingerprintSwitchEnableState();
         
     }
     
@@ -393,7 +393,8 @@ public class KeyguardViewHostManager {
             return;
         }
         mViewMediatorCallback.userActivity();
-        destroyAcivityIfNeed();
+		// xfge add forceHide condition for CR01501015
+        if (forceHide) destroyAcivityIfNeed();
         if (mSkylightHost != null) {
             mSkylightHost.hideSkylight();
             boolean isLockScreenDisabled=mLockPatternUtils.isLockScreenDisabled();
@@ -505,6 +506,9 @@ public class KeyguardViewHostManager {
                 }else{
                     
                     int index = msg.arg1;
+                    if (index >= 0 && index < wallpaperList.size()) {
+                        wallpaperList.remove(index);
+                    }
                     if (index >= 0 && index < wallpaperList.size()) {
                         refreshPage(index);
                     }

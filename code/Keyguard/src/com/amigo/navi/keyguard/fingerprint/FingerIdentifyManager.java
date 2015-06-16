@@ -9,6 +9,7 @@ import com.amigo.navi.keyguard.util.VibatorUtil;
 import com.gionee.fingerprint.IGnIdentifyCallback;
 
 import android.content.Context;
+import android.database.ContentObserver;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
@@ -33,10 +34,12 @@ public class FingerIdentifyManager {
     
     private int mIdentifyFailedTimes=0;
     private boolean mFingerprintSwitchOpen=false;
+    private int[] mFingerInts = null;
     
     public FingerIdentifyManager(Context  context){
         mContext=context;
         sInstance=this  ;
+        registerFingerSwitchObserver();
     }
             
     public static FingerIdentifyManager  getInstance(){
@@ -63,11 +66,8 @@ public class FingerIdentifyManager {
     public void startIdentifyIfNeed(){
         boolean isStartFingerPrint=isActiveFingerPrint();
         DebugLog.d(LOG_TAG, "startIdentifyIfNeed  isStartFingerPrint:"+isStartFingerPrint);
-        if(isStartFingerPrint){
-            int[] ids=getIds();
-            if(ids!=null&&ids.length>0){
-                startIdentifyTimeout(ids, 25*1000);
-            }
+        if(isStartFingerPrint && isHaveFinger()){
+        	startIdentifyTimeout(mFingerInts, 25*1000);
         }
     }
 
@@ -120,14 +120,8 @@ public class FingerIdentifyManager {
         if(unlockValue==0){
             mFingerprintSwitchOpen=false;
         }else{
-        	int[] ids=getIds();
-        	if(ids==null || ids.length<1){
-                mFingerprintSwitchOpen=false;
-            }else{
-            	mFingerprintSwitchOpen=true;
-            }
+        	mFingerprintSwitchOpen=true;
         }
-        	
         	
         DebugLog.d(LOG_TAG, "readFingerprintSwitchValue: unlockValue"+unlockValue+"mFingerprintSwitchOpen="+mFingerprintSwitchOpen);
         
@@ -135,7 +129,7 @@ public class FingerIdentifyManager {
     }
     
     public boolean getFingerprintSwitchOpen(){
-    	return mFingerprintSwitchOpen;
+    	return mFingerprintSwitchOpen && isHaveFinger();
     }
     
 
@@ -302,4 +296,59 @@ public class FingerIdentifyManager {
 
     }
 
+    // <Gionee> feihm CR01165190 begin
+ 	private Handler mFingerHandler = new Handler(){
+
+ 		@Override
+ 		public void handleMessage(Message msg) {
+ 			super.handleMessage(msg);
+ 			readFingerprintSwitchValue();
+ 		}
+ 	};
+ 	
+ 	private void registerFingerSwitchObserver() {
+ 		readFingerprintSwitchValue();
+
+ 		mContext.getContentResolver().registerContentObserver(
+ 				Settings.Secure.getUriFor(FINGERPRINT_FOR_UNLOCK_SWITCH_KEY),
+ 				false,
+ 				new FingerSwitchContentObserver(mFingerHandler));
+ 	}
+ 	
+	public void readFingerprintSwitchEnableState() {
+		mFingerInts = getIds();
+	}
+	
+    private boolean isHaveFinger(){
+    	if(mFingerInts != null && mFingerInts.length > 0){
+    		DebugLog.d(LOG_TAG, "isHaveFinger  return true");
+    		return true;
+    	}
+    	
+    	DebugLog.d(LOG_TAG, "isHaveFinger  return false");
+    	return false;
+    }
+ 	
+ 	class FingerSwitchContentObserver extends ContentObserver{
+
+ 		private Handler mHandler;
+ 		public FingerSwitchContentObserver(Handler handler) {
+ 			super(handler);
+ 			mHandler = handler;
+ 		}
+
+ 		@Override
+ 		public boolean deliverSelfNotifications() {
+ 			// TODO Auto-generated method stub
+ 			return super.deliverSelfNotifications();
+ 		}
+
+ 		@Override
+ 		public void onChange(boolean selfChange) {
+ 			// TODO Auto-generated method stub
+ 			super.onChange(selfChange);
+ 			mHandler.sendEmptyMessage(0);
+ 		}
+ 	}
+ 	// <Gionee> feihm CR01165190 end
 }

@@ -4,36 +4,39 @@ Build Notes
 1.版本目的:
 bug fix
 2.功能变更:
-No
+-
 3.重点测试的问题:
-systemui:
-CR01493359
-【5.1MP】天窗：控制中心更多界面合盖不显示天窗(必现)
-CR01500095
-【5.1MP】系统界面：在桌面打开SCR屏幕录像，弹出系统界面已停止运行（必现）
-keyguard:
-CR01459185
-报null
-CR01459185
-保存内置小图
-CR01459185
-壁纸切换，文案收起
+systemUI 
+CR01498125【5.1MP】设置：进入设置任意页面-横屏下拉状态栏-设置界面背景会闪
+CR01491086【5.1MP】工厂：当状态栏的程序可以拉动时,进入视频播放一视频,播放过程中拉下通知栏,会闪屏 2/10
+CR01493375【5.1MP】系统界面：拖动是来闹钟后选择关闭,再次进入更多编辑界面,无法实现插入和替换.（随机一次）
+CR01494522【5.1MP】状态栏：在闹钟界面插拔USB，状态栏显示重叠，出现后必现，重启恢复（1/10）
+CR01499407多任务管理：无法通过多任务打开应用【必现】
+CR01498359【5.1MP】控制中心：上拉控制中心-进入编辑页面-按app、back、home键均无作用，无法退出，强制重启恢复（1/10）
+Keyguard:
+CR01500434锁屏：成功切换字体后，灭屏再亮屏，故事锁屏不显示图片标题
+CR01500772【品质压力】设图案锁,待机5min后手动亮屏,亮屏后直接进待机界面,2s后自动黑屏.定屏有小白点,滑动屏幕弹锁屏界面,解锁后恢复【1次】
+添加删除图片资源重新下载逻辑
 4.应用数据库是否改变:
 No
 
 ==================
 Release Location
 ==================
-/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ag.zip
+/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ah.zip
 
 ==================
 CR List
 ==================
 [Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
-CR01459185      Opened     zhaowei    {Navi锁屏}提交Navi锁屏代码
-CR01493359      Coded      huangwt    【5.1MP】天窗：控制中心更多界面合盖不显示天窗(必现)
-CR01500095      Resolved   huangwt    【5.1MP】系统界面：在桌面打开SCR屏幕录像，弹出系统界面已停止运行（必现）
-Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ag
-Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.af
-Code difference: svn diff -r 5945:5936 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.an' non-existent in revision 6021
 
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6019:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+Make sonar target URL:
+http://ss.alm.gionee.com/sonar
+http://ss.alm.gionee.com/sonar/dashboard/index/gionee.app:Amigo_SystemUI
+==================

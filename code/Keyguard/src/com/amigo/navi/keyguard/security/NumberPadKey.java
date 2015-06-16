@@ -39,6 +39,7 @@ public class NumberPadKey extends Button {
                     }
                 }
             }
+            VibatorUtil.amigoVibrate(mContext, VibatorUtil.LOCKSCREEN_UNLOCK_CODE_TAP, VibatorUtil.TOUCH_TAP_VIBRATE_TIME);
             // check for time-based lockouts
             if (mTextView != null && mTextView.isEnabled()) {
                 mTextView.append(Character.forDigit(mDigit, 10));
@@ -48,7 +49,7 @@ public class NumberPadKey extends Button {
             userActivity();
 //            doHapticKeyClick();
             
-            VibatorUtil.amigoVibrate(mContext, VibatorUtil.LOCKSCREEN_UNLOCK_CODE_TAP, VibatorUtil.TOUCH_TAP_VIBRATE_TIME);
+          
             
         }
     };

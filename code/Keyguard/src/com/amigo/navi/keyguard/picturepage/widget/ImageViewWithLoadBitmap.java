@@ -196,11 +196,13 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
 
     private void loadFailDealWith(String url, FailReason failReason) {
         Log.v(LOG_TAG, "loadFailDealWith url:" + url);
-//        if (this.getTag() != null && url.equals(this.getTag())) {
-//            loadFail();
-//        } else if (this.getTag() == null) {
-//            loadFail();
-//        }
+        
+        String currentUrl = mConfig.mImageLoader.getmCurrentUrl();
+        if (url.equals(mUrl)) {
+            if (!currentUrl.equals(mUrl)) {
+                return;
+            }
+        }
         boolean isImage = !url.endsWith(THUMBNAIL_POSTFIX);
         mConfig.mImageLoader.loadPageToCache(getWallPaper(), isImage);
         

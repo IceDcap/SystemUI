@@ -387,18 +387,17 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
 
 	public void onUnlockFail(int failReason) {
 		if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "onUnlockFail failReason :"+failReason);
-		
+		failShake(failReason);
 		if(failReason == UNLOCK_FAIL_REASON_TIMEOUT) {
 			if(KeyguardViewHostManager.isSuppotFinger()){
 				mForgetButton.setVisibility(View.VISIBLE);
 			}
-			 failShake(UNLOCK_FAIL_REASON_TIMEOUT);
+			 
 			long deadline = mKeyguardUpdateMonitor.getDeadline();
 			if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "onUnlockFail deadline :"+deadline);
         	handleAttemptLockout(deadline);	
         	
 		} else if(failReason == UNLOCK_FAIL_REASON_INCORRECT) {
-			failShake(UNLOCK_FAIL_REASON_INCORRECT);
             setKeyButtonClickEnable(true);
 			 int stringId = getWrongPasswordStringId(getUnlokcRetryCount());
 			 if(mCallback.getFingerPrintResult()==KeyguardSecurityContainer.FINGERPRINT_FAILED){
@@ -489,13 +488,14 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
     
     private void failShake(final int unLockFailReason) {
 //        VibatorUtil.vibator(mContext, 100);
-    	VibatorUtil.amigoVibrate(mContext, VibatorUtil.LOCKSCREEN_UNLOCK_CODE_ERROR, VibatorUtil.UNLOCK_ERROR_VIBRATE_TIME);
+    	//VibatorUtil.amigoVibrate(mContext, VibatorUtil.LOCKSCREEN_UNLOCK_CODE_ERROR, VibatorUtil.UNLOCK_ERROR_VIBRATE_TIME);
     	
         ObjectAnimator oan = ObjectAnimator.ofFloat(ll_images, "translationX", new float[] { 0.0F, 25.0F, -25.0F, 25.0F, -25.0F, 15.0F, -15.0F, 6.0F, -6.0F, 0.0F }).setDuration(1000);
         oan.addListener(new AnimatorListener() {
             
             @Override
             public void onAnimationStart(Animator animation) {
+            	 VibatorUtil.amigoVibrate(mContext, VibatorUtil.LOCKSCREEN_UNLOCK_CODE_ERROR, VibatorUtil.UNLOCK_ERROR_VIBRATE_TIME);
             }
             
             @Override

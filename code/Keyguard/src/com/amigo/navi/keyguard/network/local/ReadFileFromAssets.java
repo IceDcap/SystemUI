@@ -10,12 +10,20 @@ public class ReadFileFromAssets implements DealWithFromLocalInterface{
     private static final String TAG = "DealWithBitmapFromLocal";
     private Context mContext;
     private String mPath;
-
-	    private Bitmap mReuseBitmap = null;
+//	private Bitmap mReuseBitmap = null;
+//    
+//	@Override
+//    public void setReuseBitmap(Bitmap bitmap) {
+//        this.mReuseBitmap = bitmap;
+//    }
+	
+   private ReuseImage mReuseImage;
     
-	public void setmReuseBitmap(Bitmap mReuseBitmap) {
-		this.mReuseBitmap = mReuseBitmap;
-	}
+    @Override
+    public void setReuseBitmap(ReuseImage reuseImage) {
+        this.mReuseImage = reuseImage;
+    }
+    
     public ReadFileFromAssets(Context context,String path){
     	mContext = context;
     	mPath = path;
@@ -25,7 +33,7 @@ public class ReadFileFromAssets implements DealWithFromLocalInterface{
     @Override
     public Bitmap readFromLocal(String key) {
      	String path = SYSTEM_FILE_PATH + key;
-    	Bitmap bitmap = DiskUtils.getImageFromSystem(mContext.getApplicationContext(),path, mReuseBitmap);
+    	Bitmap bitmap = DiskUtils.getImageFromSystem(mContext.getApplicationContext(),path, mReuseImage);
     	return bitmap;
     }
 

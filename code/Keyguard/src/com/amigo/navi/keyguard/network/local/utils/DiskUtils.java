@@ -16,6 +16,7 @@ import java.io.OutputStream;
 
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.KWDataCache;
+import com.amigo.navi.keyguard.network.local.ReuseImage;
 
 
 import android.content.Context;
@@ -82,7 +83,7 @@ public class DiskUtils {
     	return decodeBitmap(is, screenWid, null);
     }
     
-    public static Bitmap decodeBitmap(InputStream is,int screenWid,Bitmap reuseBitmap){
+    public static Bitmap decodeBitmap(InputStream is,int screenWid, ReuseImage reuseImage){
         //解密图片
          byte[] ss = getBitmapFromSdkard(is);
          DebugLog.d("HorizontalListView","makeAndAddView decodeBitmap ss:" + ss);
@@ -101,21 +102,32 @@ public class DiskUtils {
          if(scale == 0){
         	 scale = 1;
          }
+         
+          
          options.inJustDecodeBounds = false;
          options.inSampleSize = scale;
          options.inPreferredConfig = Config.ARGB_8888;
-         if (null != reuseBitmap) {
-        	if (options.outWidth == reuseBitmap.getWidth() 
-        			&& options.outHeight == reuseBitmap.getHeight()){
-	         options.inMutable = true;
-	         options.inBitmap = reuseBitmap; 
-        	}else{
-        		reuseBitmap = null;
-        	}
-         }
+         
+        if (reuseImage != null) {
+            Bitmap reuseBitmap = reuseImage.getBitmap();
+
+            if (null != reuseBitmap) {
+                Log.v("zhaowei", "scale = " + scale + " options.outWidth = " + options.outWidth + " ; reuseBitmap.getWidth() = " + reuseBitmap.getWidth());
+                if (options.outWidth == reuseBitmap.getWidth()
+                        && options.outHeight == reuseBitmap.getHeight()) {
+                    reuseImage.setUsed(true);
+                    options.inMutable = true;
+                    options.inBitmap = reuseBitmap;
+                } else {
+                    reuseBitmap = null;
+                    reuseImage.setUsed(false);
+                }
+            }
+        }
          Bitmap bitmap = null;
          try {
              bitmap = BitmapFactory.decodeByteArray(ss, 0, ss.length, options);
+             
          } catch (OutOfMemoryError e) {
             Log.e("haokan", "", e);
          } catch (Exception e) {
@@ -307,12 +319,12 @@ public class DiskUtils {
 		return bitmap;
     }
     
-    public static Bitmap readFile(String path,int screenWid,Bitmap reuseBitmap){
+    public static Bitmap readFile(String path,int screenWid,ReuseImage reuseImage){
 		FileInputStream fis;
 		Bitmap bitmap = null;
 		try {
 			fis = new FileInputStream(path);
-			bitmap = decodeBitmap(fis, screenWid,reuseBitmap);
+			bitmap = decodeBitmap(fis, screenWid,reuseImage);
 			return bitmap;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -397,7 +409,7 @@ public class DiskUtils {
 		    }   
 		}  
 
-	    public static Bitmap getImageFromSystem(Context context,String path, Bitmap reuseBitmap)  
+	    public static Bitmap getImageFromSystem(Context context,String path, ReuseImage reuseImage)  
 	    {  
 	        Bitmap image = null;  
 	        try  
@@ -417,16 +429,21 @@ public class DiskUtils {
 	            options.inJustDecodeBounds = false;
 	            options.inSampleSize = scale;
 	            options.inPreferredConfig = Config.ARGB_8888;
-				
-				if (null != reuseBitmap) {
-				   if (options.outWidth == reuseBitmap.getWidth() 
-						   && options.outHeight == reuseBitmap.getHeight()){
-					options.inMutable = true;
-					options.inBitmap = reuseBitmap; 
-				   }else{
-					   reuseBitmap = null;
-				   }
-				}
+	            if (reuseImage != null) {
+                    
+	                Bitmap reuseBitmap = reuseImage.getBitmap();
+	                if (null != reuseBitmap) {
+	                    if (options.outWidth == reuseBitmap.getWidth() 
+	                            && options.outHeight == reuseBitmap.getHeight()){
+	                        options.inMutable = true;
+	                        reuseImage.setUsed(true);
+	                        options.inBitmap = reuseBitmap; 
+	                    }else{
+	                        reuseImage.setUsed(false);
+	                        reuseBitmap = null;
+	                    }
+	                }
+                }
 	            DebugLog.d(TAG,"getImageFromSystem path:" + path);
 	            image = BitmapFactory.decodeFile(path, options);
 	            DebugLog.d(TAG,"getImageFromSystem image:" + image);

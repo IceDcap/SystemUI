@@ -195,6 +195,7 @@ public class UIController implements OnTouchlListener{
 
             Intent intent = new Intent(context, KeyguardSettingsActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+            KeyguardViewHostManager.getInstance().showBouncerOrKeyguardDone();
             context.startActivity(intent);
             
         }
@@ -1168,8 +1169,6 @@ public class UIController implements OnTouchlListener{
                 }else{
                 	wallpaperDB.updateWallpaper(wallpaper);
                 }
-                // 保存缩略图
-//                DiskUtils.saveThumbnail(bitmap, key, savePath);
         	}
         }      
     }

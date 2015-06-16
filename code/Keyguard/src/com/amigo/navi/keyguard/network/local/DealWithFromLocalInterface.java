@@ -8,4 +8,6 @@ public interface DealWithFromLocalInterface {
     public boolean deleteAllFile();
     public boolean deleteFile(String key);
     public void closeCache();
+    
+    public void setReuseBitmap(ReuseImage reuseImage);
 }

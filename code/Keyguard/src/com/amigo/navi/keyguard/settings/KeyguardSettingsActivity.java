@@ -98,7 +98,7 @@ public class KeyguardSettingsActivity extends Activity {
 		super.onCreate(arg0); 
 		
 		setSecure(UIController.getInstance().isSecure());
-		getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+//		getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
 		initView();
 		
 		UIController.getInstance().setKeyguardSettingsActivity(this);

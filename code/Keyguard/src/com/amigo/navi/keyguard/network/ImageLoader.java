@@ -153,6 +153,7 @@ public class ImageLoader implements ImageLoaderInterface{
         if(PRINT_LOG){
             DebugLog.d(LOG_TAG,"LoadingFailed url:" + url);
         }
+ 
 		int size = mImageViewWithLoadBitmapList.size();
 		ImageViewWithLoadBitmap imageViewWithLoadBitmap = null;
 		for (int i = size - 1; i >= 0; i--) {
@@ -210,7 +211,7 @@ public class ImageLoader implements ImageLoaderInterface{
 	}
 
 	public boolean loadImageToCache(String url,
-			DealWithFromLocalInterface dealWithFromLocalInterface, boolean isStoped) {
+			DealWithFromLocalInterface dealWithFromLocalInterface, boolean isStoped, boolean reload) {
 		boolean isNullReturned = true;
         if(PRINT_LOG){
             DebugLog.d(LOG_TAG,"loadImageToCache isStoped:" + isStoped);
@@ -227,9 +228,12 @@ public class ImageLoader implements ImageLoaderInterface{
 	        	LoadingComplete(url, bitmap);
 	        	isNullReturned = false;
 	        }else {
-				FailReason failReason = new FailReason(
-						FailType.UNKNOWN, null);
-	        	LoadingFailed(url, failReason);
+	            
+	            if (!reload) {
+	                FailReason failReason = new FailReason(
+	                        FailType.UNKNOWN, null);
+	                LoadingFailed(url, failReason);
+                }
 	        }
 		} 
 		return isNullReturned;
@@ -334,6 +338,7 @@ public class ImageLoader implements ImageLoaderInterface{
 	private Bitmap mImageReuseBmp = null;
 
 	public Bitmap getBmpFromImageRemoved() {
+	     
 		Bitmap bmp = null;
 		synchronized (ImageRemoved) {
 			if (!mNeedInit) {
@@ -350,9 +355,17 @@ public class ImageLoader implements ImageLoaderInterface{
 				bmp = ImageRemoved.get(0);
 				ImageRemoved.remove(0);
 			}else{
-				mNeedInit = false;
+                bmp = Bitmap.createBitmap(KWDataCache.getScreenWidth(mContext.getResources()),
+                        KWDataCache.getScreenHeight(mContext.getResources()),
+                        android.graphics.Bitmap.Config.ARGB_8888);
+                if (bmp != null) {
+                    mNeedInit = false;
+                }else {
+                    DebugLog.v(LOG_TAG, "getBmpFromImageRemoved   else bmp == null" );
+                }
 			}
 		}
+		 
 		return bmp;
 	}
 
@@ -369,9 +382,11 @@ public class ImageLoader implements ImageLoaderInterface{
 	
 	public void addBmpToImageRemoved(Bitmap bmp) {
 	    if (bmp == null) {
+	        
             return;
         }
 		int screenWid = KWDataCache.getScreenWidth(mContext.getResources());
+		 
 		if (bmp.getWidth() == screenWid) {
 			synchronized (ImageRemoved) {
 			    if (ImageRemoved.size() <= 1) {
@@ -401,10 +416,9 @@ public class ImageLoader implements ImageLoaderInterface{
 
         final Wallpaper wallpaper = view.getWallPaper();
         if (wallpaper != null) {
-            
-            Log.v("haokan", "onLoadingFailed url = " + url);
+             
             boolean isThumbnail = url.endsWith(THUMBNAIL_POSTFIX);
-            
+      
             int type = wallpaper.getType();
             
             if (type == Wallpaper.WALLPAPER_FROM_WEB) {
@@ -412,8 +426,7 @@ public class ImageLoader implements ImageLoaderInterface{
                 if (isThumbnail) {
                     isExistOriginal = getThumbWhenLoadingFailed(wallpaper);
                     if (!isExistOriginal) {
-                        boolean success = downWallPaperWhenLoadingFailed(wallpaper.getImgUrl());
-                        return success;
+                        return false;
                     }
                 }else {
                     boolean success = downWallPaperWhenLoadingFailed(wallpaper.getImgUrl());
@@ -426,13 +439,9 @@ public class ImageLoader implements ImageLoaderInterface{
                 if (isThumbnail) {
                     boolean isExistOriginal = getThumbWhenLoadingFailed(wallpaper);
                     if (!isExistOriginal) {
-                        remove = true;
+                        return false;
                     }
                 }else {
-                    remove = true;
-                }
-                
-                if (remove) {
                     WallpaperDB.getInstance(mContext).deleteWallpaperByID(
                             Wallpaper.WALLPAPER_FROM_PHOTO_ID);
                     WallpaperList wallpaperList = mHorizontalAdapter.getWallpaperList();
@@ -443,8 +452,7 @@ public class ImageLoader implements ImageLoaderInterface{
                             break;
                         }
                     }
-                    
-                    wallpaperList.remove(index);
+ 
                     Message msg = mHandler.obtainMessage(KeyguardViewHostManager.MSG_UPDATE_HAOKAN_LIST);
                     msg.obj = wallpaperList;
                     msg.arg1 = index;
@@ -452,6 +460,8 @@ public class ImageLoader implements ImageLoaderInterface{
 
                     return false;
                 }
+                
+                
                 
                 
             }else if (type == Wallpaper.WALLPAPER_FROM_FIXED_FOLDER) {
@@ -571,7 +581,7 @@ public class ImageLoader implements ImageLoaderInterface{
 	
     @Override
     public void loadPageToCache(Wallpaper wallpaper, boolean isImage) {
-        getCacheManger().loadPageToCache(wallpaper, isImage);
+        getCacheManger().loadPageToCache(wallpaper, isImage, true);
     }
 	
 

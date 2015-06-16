@@ -5,16 +5,21 @@ import java.util.Vector;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
+
 
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.haokan.entity.Wallpaper;
 import com.amigo.navi.keyguard.haokan.entity.WallpaperList;
+import com.amigo.navi.keyguard.network.FailReason;
 import com.amigo.navi.keyguard.network.ImageLoader;
+import com.amigo.navi.keyguard.network.FailReason.FailType;
 import com.amigo.navi.keyguard.network.local.DealWithFromLocalInterface;
 import com.amigo.navi.keyguard.network.local.LocalBitmapOperation;
 import com.amigo.navi.keyguard.network.local.LocalFileOperationInterface;
 import com.amigo.navi.keyguard.network.local.ReadAndWriteFileFromSD;
 import com.amigo.navi.keyguard.network.local.ReadFileFromAssets;
+import com.amigo.navi.keyguard.network.local.ReuseImage;
 import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
 import com.amigo.navi.keyguard.network.theardpool.Job;
 import com.amigo.navi.keyguard.network.theardpool.LoadImagePool;
@@ -119,7 +124,7 @@ public class LoadCacheManager {
 								+ wallpaper.getImgUrl() + " name:"
 								+ wallpaper.getImgName());
 			}
-			loadPageToCache(wallpaper, false);
+			loadPageToCache(wallpaper, false, false);
 		}
 		for (int i = 0; i < mWallpaperListToImageCache.size(); i++) {
 			Wallpaper wallpaper = mWallpaperListToImageCache.get(i);
@@ -130,7 +135,7 @@ public class LoadCacheManager {
 								+ wallpaper.getImgUrl() + " name:"
 								+ wallpaper.getImgName());
 			}
-			loadPageToCache(wallpaper, true);
+			loadPageToCache(wallpaper, true, false);
 		}
 	}
 
@@ -156,7 +161,7 @@ public class LoadCacheManager {
 	}
 
 	public void loadPageToCache(final Wallpaper wallpaper,
-			final boolean isImage) {
+			final boolean isImage, final boolean reload) {
 		if (mImageLoader != null) {
 			String loadUrl = wallpaper.getImgUrl();
 
@@ -196,6 +201,7 @@ public class LoadCacheManager {
 						}
 						return;
 					}
+ 
 					if (isPrintLog) {
 						DebugLog.d(LOG_TAG, "load image thread url:"
 								+ needLoadingUrl + " time begin:"
@@ -211,8 +217,7 @@ public class LoadCacheManager {
 								mContext.getApplicationContext(), PATH);
 						
 						readImageFromLocal = readFileFromAssets;
-						bmp = mImageLoader.getBmpFromImageRemoved();
-						readFileFromAssets.setmReuseBitmap(bmp);
+						 
 					} else {
 						ReadAndWriteFileFromSD dealWithFromLocalInterface = null;
 						LocalFileOperationInterface localFileOperationInterface = new LocalBitmapOperation(
@@ -223,31 +228,45 @@ public class LoadCacheManager {
 								DiskUtils.getCachePath(mContext.getApplicationContext()),
 								localFileOperationInterface);
 						readImageFromLocal = dealWithFromLocalInterface;
-						if(needLoadingUrl.endsWith(THUMBNAIL_POSTFIX)){
-							bmp = mImageLoader.getBmpFromThumbRemoved();
-							if (isPrintLog) {
-								DebugLog.d(
-										LOG_TAG,
-										"mImageLoader.getBmpFromThumbRemoved():"+ bmp);
-							}
-							dealWithFromLocalInterface.setmReuseBitmap(bmp);
-							
-						}else{
-							bmp = mImageLoader.getBmpFromImageRemoved();
-							if (isPrintLog) {
-								DebugLog.d(
-										LOG_TAG,
-										"mImageLoader.getBmpFromImageRemoved():"+ bmp);
-							}
-							dealWithFromLocalInterface.setmReuseBitmap(bmp);
-						}
+						 
 					}
+					
+					if (isImage) {
+					    bmp = mImageLoader.getBmpFromImageRemoved();
+                    }else {
+                        bmp = mImageLoader.getBmpFromThumbRemoved();
+                    }
+			        
+					
+			        if (isStop){
+			            mImageLoader.addBmpToImageRemoved(bmp);
+			            return;
+                    } 
+			        ReuseImage reuseImage = new ReuseImage(bmp);
+                    readImageFromLocal.setReuseBitmap(reuseImage);
 
-					boolean isNullReturned = mImageLoader.loadImageToCache(needLoadingUrl,
-							readImageFromLocal, isStop);
-					if (isNullReturned) {
-						mImageLoader.addBmpToImageRemoved(bmp);
-					}
+                    Bitmap bitmap = mImageLoader.loadImageFromLocal(readImageFromLocal,
+                            needLoadingUrl);
+                    boolean isUsed = reuseImage.isUsed();
+                    DebugLog.d(LOG_TAG, "zhaowei isUsed:" + isUsed + " Url = " + needLoadingUrl);
+                    if (!isUsed) {
+                        mImageLoader.addBmpToImageRemoved(reuseImage.getBitmap());
+                    }
+
+                    if (null != bitmap) {
+                        mImageLoader.LoadingComplete(needLoadingUrl, bitmap);
+                        
+                    } else {
+                        
+                        if (!reload) {
+                            FailReason failReason = new FailReason(
+                                    FailType.UNKNOWN, null);
+                            mImageLoader.LoadingFailed(needLoadingUrl, failReason);
+                        }
+                    }
+					
+					
+
 					if (isPrintLog) {
 						DebugLog.d(
 								LOG_TAG,

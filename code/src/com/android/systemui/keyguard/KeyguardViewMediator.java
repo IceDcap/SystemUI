@@ -955,7 +955,10 @@ public class KeyguardViewMediator extends SystemUI {
      */
     public void setOccluded(boolean isOccluded) {
         if (DEBUG) Log.d(TAG, "setOccluded " + isOccluded);
-        mHandler.removeMessages(SET_OCCLUDED);
+		if (mHandler.hasMessages(SET_OCCLUDED)) {
+			if (DEBUG) Log.w(TAG, "ignore this setOccluded.");
+			return;
+		}
         Message msg = mHandler.obtainMessage(SET_OCCLUDED, (isOccluded ? 1 : 0), 0);
         mHandler.sendMessage(msg);
     }
@@ -966,7 +969,7 @@ public class KeyguardViewMediator extends SystemUI {
     private void handleSetOccluded(boolean isOccluded) {
         synchronized (KeyguardViewMediator.this) {
             if (DEBUG) {
-                Log.d(TAG, "mOccluded: "+mOccluded+" isOccluded: "+isOccluded+"isKeyguardGoingAwayRunning="+isKeyguardGoingAwayRunning);
+                Log.d(TAG, "mOccluded: "+mOccluded+" isOccluded: "+isOccluded+"  isKeyguardGoingAwayRunning="+isKeyguardGoingAwayRunning);
             }
             if (mOccluded != isOccluded) {
             	if(!isOccluded && isKeyguardGoingAwayRunning){
@@ -974,14 +977,12 @@ public class KeyguardViewMediator extends SystemUI {
                             mHideAnimation.getDuration());
             	}
                 mOccluded = isOccluded;
+                setSkylightOccluded();
                 mStatusBarKeyguardViewManager.setOccluded(isOccluded);
                 updateActivityLockScreenState();
                 adjustStatusBarLocked();
-                setSkylightOccluded();
             }
-            if (isOccluded) {
-                releaseCache();
-            }
+ 
         }
     }
 
@@ -1084,7 +1085,7 @@ public class KeyguardViewMediator extends SystemUI {
         	KeyguardSensorModule.getInstance(mContext).registerListener();
         }
 
-        if (DEBUG) Log.d(TAG, "doKeyguard: showing the lock screen");
+        if (DEBUG) Log.d(TAG, "doKeyguard: showing the lock screen, mOccluded->"+mOccluded);
         showLocked(options);
     }
 
@@ -1161,6 +1162,8 @@ public class KeyguardViewMediator extends SystemUI {
      */
     private void showLocked(Bundle options) {
         if (DEBUG) Log.d(TAG, "showLocked");
+        mHandler.removeMessages(SHOW);
+
         // ensure we stay awake until we are finished displaying the keyguard
         mShowKeyguardWakeLock.acquire();
         Message msg = mHandler.obtainMessage(SHOW, options);
@@ -1379,7 +1382,7 @@ public class KeyguardViewMediator extends SystemUI {
             mSuppressNextLockSound = false;
             return;
         }
-
+        if (DEBUG) Log.d(TAG, "playSounds。。。。。locked。。="+locked);
         playSound(locked ? mLockSoundId : mUnlockSoundId);
     }
 
@@ -1512,12 +1515,13 @@ public class KeyguardViewMediator extends SystemUI {
             }
             mHiding = false;
 
+            //GIONEE <Amigo_Keyguard>  jiating <2015-06-15> modify for CR01501770 begin
             // only play "unlock" noises if not on a call (since the incall UI
             // disables the keyguard)
-            if (TelephonyManager.EXTRA_STATE_IDLE.equals(mPhoneState)) {
+            if (mShowing && TelephonyManager.EXTRA_STATE_IDLE.equals(mPhoneState)) {
                 playSounds(false);
             }
-
+ 			//GIONEE <Amigo_Keyguard>  jiating <2015-06-15> modify for CR01501770 end
             setShowingLocked(false);
             mStatusBarKeyguardViewManager.hide(startTime, fadeoutDuration);
             resetKeyguardDonePendingLocked();
@@ -1710,31 +1714,29 @@ public class KeyguardViewMediator extends SystemUI {
     
     private void showSkylightIfNeed() {
         if(!SkylightHost.isSkylightSizeExist()){return;}
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                if(mHallState==HallState.UNKNOW){
-                    boolean isHallOpen = SkylightUtil.getIsHallOpen(mContext);
-                    mHallState=isHallOpen?HallState.OPEN:HallState.CLOSE;
-                }
-                if (mHallState==HallState.CLOSE) {
-                    showSkylight();
-                }
-            }
-        });
+		if(mHallState==HallState.UNKNOW){
+			boolean isHallOpen = SkylightUtil.getIsHallOpen(mContext);
+			mHallState=isHallOpen?HallState.OPEN:HallState.CLOSE;
+		}
+		if (DEBUG) Log.i(TAG, "showSkylightIfNeed  mHallState: "+mHallState);
 
+		if (mHallState==HallState.CLOSE) {
+			showSkylight();
+		}
     }
     
     private void showSkylight() {
         if(!SkylightHost.isSkylightSizeExist()){return;}
         synchronized (this) {
             boolean isLockDisabled = mLockPatternUtils.isLockScreenDisabled();
+			Log.i(TAG, "showSkylight isLockDisabled="+isLockDisabled+" !isShowing()"+(!isShowing()));
             if (isLockDisabled || !isShowing()) {
                 Bundle options = new Bundle();
                 options.putBoolean(AmigoKeyguardHostView.KEY_LOCK_BY_SKYLIGHT, true);
                     doKeyguardLocked(options);
             }
         }
+		
         if(!mOccluded){
             mStatusBarKeyguardViewManager.showSkylight();
         }
@@ -1778,7 +1780,7 @@ public class KeyguardViewMediator extends SystemUI {
         
     }
     
-    private HallState mHallState;
+    private HallState mHallState = HallState.UNKNOW; 
      enum HallState{
         UNKNOW,
         OPEN,

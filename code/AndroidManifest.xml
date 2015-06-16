@@ -20,7 +20,7 @@
         xmlns:androidprv="http://schemas.android.com/apk/prv/res/android"
         package="com.android.systemui"
         android:sharedUserId="android.uid.systemui"
-		android:versionName="6.1.0.ag"
+		android:versionName="6.1.0.ah"
         coreApp="true">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -427,6 +427,7 @@
         </activity>
         <activity
             android:name="com.amigo.navi.keyguard.skylight.SkylightActivity"
+            android:launchMode="singleTop"
             android:excludeFromRecents="true"
             android:theme="@style/skylightTheme" >
         </activity>
