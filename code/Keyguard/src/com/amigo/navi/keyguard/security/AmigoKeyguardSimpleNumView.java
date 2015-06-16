@@ -30,6 +30,7 @@ import com.android.keyguard.AppearAnimationUtils;
 import com.android.keyguard.DisappearAnimationUtils;
 import com.android.keyguard.KeyguardPinBasedInputView;
 import com.android.keyguard.KeyguardSecurityContainer;
+import com.android.keyguard.KeyguardSecurityView;
 import com.android.keyguard.KeyguardUpdateMonitor;
 
 import android.animation.Animator;
@@ -435,6 +436,7 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
 		                displayDefaultSecurityMessage();
 		                mSimpleNumViewCountdownTimer=null;
 		                isFrozen=false;
+		                KeyguardViewHostManager.getInstance().UnFrozenSecurityLock();
 		            }
 		
 		        }.start();
@@ -645,7 +647,7 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
     @Override
     public void onPause(int reason) {
     	setVisibility(View.INVISIBLE);
-    	if (mSimpleNumViewCountdownTimer != null) {
+    	if (reason == KeyguardSecurityView.SCREEN_OFF && mSimpleNumViewCountdownTimer != null) {
     		mSimpleNumViewCountdownTimer.cancel();
     		mSimpleNumViewCountdownTimer = null;
         }

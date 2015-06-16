@@ -319,6 +319,7 @@ public class KeyguardViewHostManager {
     }
     
     public void startFingerIdentify(){
+    	DebugLog.d(TAG, "startFingerIdentify");
         mHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -328,6 +329,7 @@ public class KeyguardViewHostManager {
     }
     
     public void cancelFingerIdentify() {
+    	DebugLog.d(TAG, "cancelFingerIdentify");
         mHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -1035,7 +1037,11 @@ public class KeyguardViewHostManager {
             }
         }
 	    
-	    
-	    
+	/**
+	 * 通知密码锁已经解冻
+	 */
+	public void UnFrozenSecurityLock(){
+		startFingerIdentify();
+	}
 	    
 }

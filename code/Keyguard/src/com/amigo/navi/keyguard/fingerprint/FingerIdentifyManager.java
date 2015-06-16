@@ -32,9 +32,9 @@ public class FingerIdentifyManager {
     private Object mObj;
     private static FingerIdentifyManager sInstance=null;
     
-    private int mIdentifyFailedTimes=0;
-    private boolean mFingerprintSwitchOpen=false;
-    private int[] mFingerInts = null;
+	private int mIdentifyFailedTimes = 0;
+	private boolean mFingerprintSwitchOpen = false;
+	private int[] mFingerInts = null;
     
     public FingerIdentifyManager(Context  context){
         mContext=context;
@@ -161,27 +161,27 @@ public class FingerIdentifyManager {
         } catch (Exception e) {
             e.toString();
         }finally{
-//            mObj=null;
+        	resetIdentifyFailedTimes();
         }
     }
     
-    public void startIdentify(int[] ids) {
-        try {
-            DebugLog.d(LOG_TAG, "startIdentify() start");
-            Class<?> GnFingerPrintManager = (Class<?>) Class.forName(CLASS_GNFPMANAGER);
-            Object obj = GnFingerPrintManager.newInstance();
-            mGnFingerPrintManagerClass = GnFingerPrintManager;
-            mObj = obj;
-            
-            Method startIdentify = GnFingerPrintManager.getMethod("startIdentify", IGnIdentifyCallback.class,
-                    int[].class);
-            startIdentify.invoke(obj, mIdentifyCb, ids);
-            DebugLog.d(LOG_TAG, "startIdentify() end");
-
-        } catch (Exception e) {
-            DebugLog.d(LOG_TAG, Log.getStackTraceString(e));
-        }
-    }
+//    public void startIdentify(int[] ids) {
+//        try {
+//            DebugLog.d(LOG_TAG, "startIdentify() start");
+//            Class<?> GnFingerPrintManager = (Class<?>) Class.forName(CLASS_GNFPMANAGER);
+//            Object obj = GnFingerPrintManager.newInstance();
+//            mGnFingerPrintManagerClass = GnFingerPrintManager;
+//            mObj = obj;
+//            
+//            Method startIdentify = GnFingerPrintManager.getMethod("startIdentify", IGnIdentifyCallback.class,
+//                    int[].class);
+//            startIdentify.invoke(obj, mIdentifyCb, ids);
+//            DebugLog.d(LOG_TAG, "startIdentify() end");
+//
+//        } catch (Exception e) {
+//            DebugLog.d(LOG_TAG, Log.getStackTraceString(e));
+//        }
+//    }
     
     private void startIdentifyTimeout(int[] ids, long timeout) {
         try {
@@ -234,7 +234,6 @@ public class FingerIdentifyManager {
             Message msg=mHandler.obtainMessage(MSG_FINGER_NO_MATCH);
             msg.arg1=reason;
             mHandler.sendMessage(msg);
-//            testStartIdentifyTimeout(getIds(), 25*1000);
         }
 
         public void onExtIdentifyMsg(Message msg, String description) {
@@ -242,34 +241,51 @@ public class FingerIdentifyManager {
         }
     };
 
-    private void onFingerNoMatch(int reason) {
-        if (reason == 2) {// cancel&exception
-            return;
-        } else if (reason == 1) {// timeout
-            startIdentifyIfNeed();
-        } else if (reason == 0) {
-            DebugLog.d(LOG_TAG, "onFingerNoMatch mIdentifyFailedTimes: " + mIdentifyFailedTimes);
-            fingerMatchFail();
-        }
-    }
+	private void onFingerNoMatch(int reason) {
+		if (reason == 2) {// cancel&exception
+			return;
+			
+		} else if (reason == 1) {// timeout
+			startIdentifyIfNeed();
+			
+		} else if (reason == 0) {
+			DebugLog.d(LOG_TAG, "onFingerNoMatch mIdentifyFailedTimes: " + mIdentifyFailedTimes);
+			fingerMatchFail();
+		}
+	}
 
     private void fingerMatchFail() {
-        boolean isSecureFrozen = KeyguardViewHostManager.getInstance().passwordViewIsForzen();
-        if (mIdentifyFailedTimes < 2 && !isSecureFrozen) {
-            boolean isAtHomePosition = KeyguardViewHostManager.getInstance().isAmigoHostYAtHomePostion();
-            if (isAtHomePosition) {
-                mIdentifyFailedTimes++;
-                KeyguardViewHostManager.getInstance().shakeFingerIdentifyTip();
-            } else {
-                KeyguardViewHostManager.getInstance().fingerPrintFailed();
-            }
-        } else {
-            mIdentifyFailedTimes = 0;
-            KeyguardViewHostManager.getInstance().scrollToUnlockHeightByOther(true);
-        }
-        VibatorUtil.amigoVibrate(mContext, VibatorUtil.LOCKSCREEN_UNLOCK_CODE_ERROR,
-                VibatorUtil.UNLOCK_ERROR_VIBRATE_TIME);
-        startIdentifyIfNeed();
+    	if(isSecureFrozen()){
+    		DebugLog.d(LOG_TAG, "fingerMatchFail  isSecureFrozen true");
+    		return;
+    	}
+    	
+    	if(isAtHomePosition()){
+    		DebugLog.d(LOG_TAG, "fingerMatchFail  isAtHomePosition : true");
+    		
+    		if (mIdentifyFailedTimes < 2) {
+    			 mIdentifyFailedTimes++;
+                 KeyguardViewHostManager.getInstance().shakeFingerIdentifyTip();
+                 VibatorUtil.amigoVibrate(mContext, VibatorUtil.LOCKSCREEN_UNLOCK_CODE_ERROR,
+                       VibatorUtil.UNLOCK_ERROR_VIBRATE_TIME);
+                 startIdentifyIfNeed();
+                 
+    		} else if(mIdentifyFailedTimes == 2){
+    			mIdentifyFailedTimes = 0;
+    			KeyguardViewHostManager.getInstance().shakeFingerIdentifyTip();
+    			VibatorUtil.amigoVibrate(mContext, VibatorUtil.LOCKSCREEN_UNLOCK_CODE_ERROR,
+                        VibatorUtil.UNLOCK_ERROR_VIBRATE_TIME);
+    			startIdentifyIfNeed();
+    			KeyguardViewHostManager.getInstance().scrollToUnlockHeightByOther(true);
+    		}
+    		
+    	}else{
+    		DebugLog.d(LOG_TAG, "fingerMatchFail  isAtHomePosition : false");
+    		
+    		mIdentifyFailedTimes = 0;
+    		KeyguardViewHostManager.getInstance().fingerPrintFailed();
+    		startIdentifyIfNeed();
+    	}
     }
     
     private void onFingerIdentify() {
@@ -277,23 +293,10 @@ public class FingerIdentifyManager {
             DebugLog.d(LOG_TAG, "onFingerIdentify  isActiveFingerPrint flase");
             return;
         }
-        KeyguardViewHostManager hostManager = KeyguardViewHostManager.getInstance();
-        boolean isSecureFrozen = hostManager.passwordViewIsForzen();
-        boolean isAtHomePosition = hostManager.isAmigoHostYAtHomePostion();
-        DebugLog.d(LOG_TAG, "onFingerIdentify  isSecureFrozen: "+isSecureFrozen+"  isScreenOn:"+hostManager.isScreenOn());
-        if (isSecureFrozen) {
-            if (isAtHomePosition) {
-                hostManager.scrollToUnlockHeightByOther(true);
-            } else {
-                startIdentifyIfNeed();
-            }
-        } else {
-            if (hostManager.isScreenOn()) {
-                KeyguardViewHostManager.getInstance().fingerPrintSuccess();
-                KeyguardViewHostManager.getInstance().unlockByFingerIdentify();
-            }
+        if (KeyguardViewHostManager.getInstance().isScreenOn()) {
+            KeyguardViewHostManager.getInstance().fingerPrintSuccess();
+            KeyguardViewHostManager.getInstance().unlockByFingerIdentify();
         }
-
     }
 
     // <Gionee> feihm CR01165190 begin
@@ -349,6 +352,18 @@ public class FingerIdentifyManager {
  			super.onChange(selfChange);
  			mHandler.sendEmptyMessage(0);
  		}
+ 	}
+ 	
+ 	private boolean isSecureFrozen(){
+ 		return KeyguardViewHostManager.getInstance().passwordViewIsForzen();
+ 	}
+ 	
+ 	private boolean isAtHomePosition(){
+ 		return KeyguardViewHostManager.getInstance().isAmigoHostYAtHomePostion();
+ 	}
+ 	
+ 	private void resetIdentifyFailedTimes(){
+ 		mIdentifyFailedTimes = 0;
  	}
  	// <Gionee> feihm CR01165190 end
 }

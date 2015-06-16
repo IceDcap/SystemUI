@@ -18,6 +18,7 @@ package com.android.keyguard;
 import com.android.internal.widget.LockPatternUtils;
 
 public interface KeyguardSecurityView {
+	static public final int SCREEN_OFF = 0;
     static public final int SCREEN_ON = 1;
     static public final int VIEW_REVEALED = 2;
     static public final int NONE = 3;

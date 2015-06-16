@@ -75,7 +75,8 @@ public abstract class KeyguardPinBasedInputView extends KeyguardAbsKeyInputView
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (KeyEvent.isConfirmKey(keyCode)) {
+//    	Log.i("KeyguardPinBasedInputView", "onKeyDown...keyCode="+keyCode);
+     /*   if (KeyEvent.isConfirmKey(keyCode)) {
             performClick(mOkButton);
             return true;
         } else if (keyCode == KeyEvent.KEYCODE_DEL) {
@@ -86,7 +87,7 @@ public abstract class KeyguardPinBasedInputView extends KeyguardAbsKeyInputView
             int number = keyCode - KeyEvent.KEYCODE_0 ;
             performNumberClick(number);
             return true;
-        }
+        }*/
         return super.onKeyDown(keyCode, event);
     }
 
@@ -209,10 +210,10 @@ public abstract class KeyguardPinBasedInputView extends KeyguardAbsKeyInputView
 
     @Override
     public boolean onKey(View v, int keyCode, KeyEvent event) {
-        if (event.getAction() == KeyEvent.ACTION_DOWN) {
+       /* if (event.getAction() == KeyEvent.ACTION_DOWN) {
             onKeyDown(keyCode, event);
             return true;
-        }
+        }*/
         return false;
     }
 }

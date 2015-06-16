@@ -166,7 +166,7 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
     public void onPause(int reason) {
         super.onPause(reason);
         hiddenInput();
-        if (mPasswordViewCountdownTimer != null) {
+        if (reason == KeyguardSecurityView.SCREEN_OFF && mPasswordViewCountdownTimer != null) {
         	mPasswordViewCountdownTimer.cancel();
         	mPasswordViewCountdownTimer = null;
         }
@@ -573,6 +573,7 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
 	                mPasswordViewCountdownTimer=null;
 	                mPasswordEntry.setEnabled(true);
 	                isFrozen=false;
+	                KeyguardViewHostManager.getInstance().UnFrozenSecurityLock();
 	            }
 	
 	        }.start();
