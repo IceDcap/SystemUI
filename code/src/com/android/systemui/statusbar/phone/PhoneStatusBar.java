@@ -959,7 +959,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     	otherClearButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				clearNotifications(NotificationType.OTHER);
+				if (mShowOther) {
+					clearNotifications(NotificationType.OTHER);
+				} else {
+					gnClearOtherNotification();
+				}
 			}
 		});
     	final ImageView hideButton = (ImageView)mOtherHeader.findViewById(R.id.hide);
@@ -1927,12 +1931,38 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 		}
 	}
 	
+	/**
+	 * GIONEE add. Update notification count in other header.
+	 * @param count
+	 */
 	private void gnUpdateOtherCountText(int count) {
     	final TextView view = (TextView)mOtherHeader.findViewById(R.id.notification_count);
 		String countStr = mContext.getResources().getQuantityString(R.plurals.gn_notification_count, count,count);
 		view.setText(countStr);
 		view.setVisibility(View.VISIBLE);
     }
+	
+	/**
+	 * GIONEE add. Clear notification when other notification is collapsed
+	 */
+	private void gnClearOtherNotification() {
+		ArrayList<ExpandableNotificationRow> targetList = mGnNotificationService
+				.getNotificationRow(NotificationType.OTHER);
+
+        for (int i = 0; i < targetList.size(); i++) {
+        	ExpandableNotificationRow child = targetList.get(i);
+        	StatusBarNotification n = ((ExpandableNotificationRow)child).getStatusBarNotification();
+        	if (n.isClearable()) {
+        		targetList.remove(child);
+        		clearNotification(n);
+        		i = 0;
+        	}
+        }
+        
+        if (targetList.size() == 0) {
+        	mShowOther = false;
+        }
+	}
 	
     private void updateNotificationShade() {
         if (mStackScroller == null) return;
