@@ -3729,6 +3729,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             }
             else if (Intent.ACTION_SCREEN_OFF.equals(action)) {
                 mScreenOn = false;
+                //GIONEE <wujj> add for CR01496354 begin
+                mStatusBarView.collapseAllPanels(false);
+                //GIONEE <wujj> add for CR01496354 end
                 notifyNavigationBarScreenOn(false);
                 notifyHeadsUpScreenOn(false);
                 finishBarAnimations();
