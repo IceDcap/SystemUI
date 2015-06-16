@@ -1382,7 +1382,7 @@ public class KeyguardViewMediator extends SystemUI {
             mSuppressNextLockSound = false;
             return;
         }
-        if (DEBUG) Log.d(TAG, "playSounds。。。。。locked。。="+locked);
+        if (DEBUG) Log.d(TAG, "playSounds>>>locked="+locked);
         playSound(locked ? mLockSoundId : mUnlockSoundId);
     }
 
