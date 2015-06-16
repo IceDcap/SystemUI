@@ -234,6 +234,9 @@ public class KeyguardViewHostManager {
     }
 
 	public void releaseCache() {
+	    if (mKeyguardListView != null) {
+	        mKeyguardListView.releaseAllChildView();
+        }
 		if(mImageLoader != null){
         	mImageLoader.clearCache();
         }

@@ -1,9 +1,11 @@
 package com.amigo.navi.keyguard.picturepage.widget;
 
 import java.util.ArrayList;
+import com.android.keyguard.R;
 
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.KWDataCache;
+import com.amigo.navi.keyguard.haokan.Common;
 import com.amigo.navi.keyguard.haokan.UIController;
 
 
@@ -275,6 +277,31 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         // TODO Auto-generated method stub
         return null;
     }
+    
+ 
+
+    
+    public void releaseAllChildView() {
+        int childCount = getChildCount();
+        for (int index = 0; index < childCount; index++) {
+            View view = getChildAt(0);
+            releaseImageBitmap(view);
+            mRecyclerViews.add(view);
+            detachViewFromParent(view);
+        }
+    }
+    
+    private void releaseImageBitmap(View view) {
+        ImageViewWithLoadBitmap imageViewWithLoadBitmap = null;
+        if (view != null) {
+            imageViewWithLoadBitmap = (ImageViewWithLoadBitmap)view.findViewById(R.id.image);
+        }
+        if (imageViewWithLoadBitmap != null) {
+            imageViewWithLoadBitmap.release();
+        }
+    }
+    
+    
 
     @Override
     public void setSelection(int position) {
@@ -286,6 +313,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     	}
         for (int index = 0; index < childCount; index++) {
             View view = getChildAt(0);
+            releaseImageBitmap(view);
             mRecyclerViews.add(view);
             detachViewFromParent(view);
         }
@@ -864,7 +892,13 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 		//        DebugLog.d(TAG, "recycleOrAddView mFirstPosition1:" + mFirstPosition);
         if (firstViewRightOffsetX < -RECYCLE_OR_ADD_VIEW_THRESHOLD) {
             DebugLog.d(TAG, "recycleOrAddView firstView");
+            
+            releaseImageBitmap(firstView);
+            
             detachViewFromParent(firstView);
+            
+            
+            
             mRecyclerViews.add(firstView);
             mFirstPosition++;
             // mOffsetX = mOffsetX + firstView.getWidth();
@@ -873,6 +907,8 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 //        DebugLog.d(TAG, "recycleOrAddView lastViewLeftOffsetX:" + lastViewLeftOffsetX);
         if (lastViewLeftOffsetX > getWidth() + RECYCLE_OR_ADD_VIEW_THRESHOLD) {
             DebugLog.d(TAG, "recycleOrAddView lastView");
+            releaseImageBitmap(lastView);
+            
             detachViewFromParent(lastView);
             mRecyclerViews.add(lastView);
         }

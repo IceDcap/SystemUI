@@ -536,7 +536,11 @@ public class DiskUtils {
                 "saveThumbnail byteArray getWidth = " + thumbnailBitmap.getWidth()
                         + "  getHeight =" + thumbnailBitmap.getHeight());
         byte[] thumbByteArray = convertBitmap(thumbnailBitmap);
-        saveBitmap(thumbByteArray, key + THUMBNAIL, path);
+        boolean isSuccess = saveBitmap(thumbByteArray, key + THUMBNAIL, path);
+		if (!isSuccess) {
+			String imgPath = path + "/" + key + THUMBNAIL;
+			DiskUtils.deleteFile(imgPath);
+		}
         thumbnailBitmap.recycle();
     }
     

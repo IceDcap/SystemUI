@@ -12,8 +12,8 @@ public class VibatorUtil {
 	// unlock error，Compatible with general motors
 	public static final long UNLOCK_ERROR_VIBRATE_TIME = 100;
 	
-	// touch button vibrate time
-	public static final long TOUCH_TAP_VIBRATE_TIME = 20;
+	// temporary: touch button vibrate time
+	public static final long TOUCH_TAP_VIBRATE_TIME = 40;
 	
 	public static final long LOCKSCREEN_MENU_LONG_PRESS_VIBRATE_TIME = 100;
 	
@@ -44,6 +44,7 @@ public class VibatorUtil {
 			method.invoke(mVibrator, effectName, milliseconds);
 		} catch (Exception e) {
 			Log.e("feng", "failed caurse : " + e.toString());
+			vibator(context, milliseconds);
 		}
 	}
 	

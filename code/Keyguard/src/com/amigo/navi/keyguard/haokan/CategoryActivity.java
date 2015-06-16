@@ -36,9 +36,15 @@ import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.everydayphoto.NavilSettings;
 import com.amigo.navi.keyguard.haokan.db.CategoryDB;
 import com.amigo.navi.keyguard.haokan.entity.Category;
+import com.amigo.navi.keyguard.network.local.DealWithByteFile;
 import com.amigo.navi.keyguard.network.local.ReadAndWriteFileFromSD;
 import com.amigo.navi.keyguard.network.local.LocalBitmapOperation;
 import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
+import com.amigo.navi.keyguard.network.manager.DownLoadBitmapManager;
+import com.amigo.navi.keyguard.network.theardpool.DownLoadJsonThreadPool;
+import com.amigo.navi.keyguard.network.theardpool.DownLoadThreadPool;
+import com.amigo.navi.keyguard.network.theardpool.DownLoadWorker;
+import com.amigo.navi.keyguard.network.theardpool.Job;
 import com.amigo.navi.keyguard.settings.KeyguardWallpaper;
 
 import java.io.File;
@@ -286,6 +292,7 @@ public class CategoryActivity extends Activity{
                 holder.image.setImageBitmap(category.getIcon());
             }else{
             	holder.image.setImageResource(R.drawable.category_loading);
+            	downloadCategory(category.getTypeIconUrl());
             }
 //            holder.image.setImageDrawable(getDrawable(R.drawable.haokan_life));
             
@@ -320,6 +327,50 @@ public class CategoryActivity extends Activity{
         }
        
     }
+    
+	private void downloadCategory(final String picUrl) {
+		Job job = new Job() {
+			@Override
+			public void runTask() {
+				if (!TextUtils.isEmpty(picUrl)) {
+					String path = DiskUtils
+							.getCachePath(getApplicationContext());
+
+					DealWithByteFile dealWithBitmap = new DealWithByteFile(
+							getApplicationContext(),
+							DiskUtils.CATEGORY_BITMAP_FOLDER, path);
+					byte[] bitmapByte = DownLoadBitmapManager.getInstance()
+							.downLoadBitmapByByte(getApplicationContext(),
+									picUrl);
+					if (DebugLog.DEBUG) {
+						DebugLog.d(TAG,
+								"getView downloadCategoryPicturesFromNet path:"
+										+ path + "picUrl:" + picUrl);
+						DebugLog.d(TAG,
+								"getView downloadCategoryPicturesFromNet bitmapByte:"
+										+ bitmapByte);
+					}
+					String key = DiskUtils.constructFileNameByUrl(picUrl);
+					dealWithBitmap.writeToLocal(key, bitmapByte);
+				}
+			}
+
+			@Override
+			public int getProgress() {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+
+			@Override
+			public void cancelTask() {
+				// TODO Auto-generated method stub
+
+			}
+		};
+		DownLoadWorker worker = new DownLoadWorker(job);
+		DownLoadThreadPool threadPool = DownLoadJsonThreadPool.getInstance();
+		threadPool.submit(worker);
+	}
     
     private void startAlphaAnim(final View view, final boolean visibility) {
         

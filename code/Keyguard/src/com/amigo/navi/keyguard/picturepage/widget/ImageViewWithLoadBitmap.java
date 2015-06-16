@@ -149,6 +149,12 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
 		this.mShowState = mShowState;
 	}
 
+    public void release() {
+        setImageBitmap(null);
+        mUrl = null;
+        setTag(null);
+        setmShowState(ShowState.SHOW_NOIMAGE);
+    }
 	
     public void loadImageBitmap() {
         if(mWallPaper != null){

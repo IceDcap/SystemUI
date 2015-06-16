@@ -186,6 +186,7 @@ public class DownLoadJsonManager {
     private String connectMethod(Context context, List<NameValuePair> params,
             String method,String requestHead,String requestBody,boolean isNeedCompress) {
         DebugLog.d(TAG,"connectMethod");
+        boolean isUploadLogs = false;
         String result;
         String ua = GetUaUtils.getUA(context);
         int timeOut = ConnectionParameters.NET_TIMEOUT;
@@ -197,7 +198,10 @@ public class DownLoadJsonManager {
         String queryString = URLEncodedUtils.format(params, "utf-8");
         URL jsonUrl = NetWorkUtils.constructRequestURL(url, queryString);
         JsonHttpConnect httpConnect = new JsonHttpConnect(timeOut, method, ua, requestBody);
-        result = httpConnect.loadJsonFromInternet(jsonUrl,isNeedCompress);
+        if (requestHead.equals(REQUEST_UPLOAD_LOG)){
+        	isUploadLogs = true;
+        }
+        result = httpConnect.loadJsonFromInternet(jsonUrl,isNeedCompress,isUploadLogs);
         if(JsonHttpConnect.JSON_ERROR.equals(result) || JsonHttpConnect.CONNECT_ERROR.endsWith(result)){
         	return ERROR;
         }

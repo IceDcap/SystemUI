@@ -32,7 +32,7 @@ public class JsonHttpConnect {
         mRequestBody = requestBody;
     }
 
-    public String loadJsonFromInternet(URL conUrl,boolean isNeedCompress) {
+    public String loadJsonFromInternet(URL conUrl,boolean isNeedCompress, boolean isUploadLogs) {
         DebugLog.d(TAG,"loadJsonFromInternet begin");
         String result = CONNECT_ERROR;
         int reqCode = ConnectionStatus.NETWORK_EXCEPTION;
@@ -66,18 +66,23 @@ public class JsonHttpConnect {
             reqCode = urlConn.getResponseCode();
             DebugLog.d(TAG,"loadJsonFromInternet reqCode:" + reqCode);
             if (reqCode == HttpStatus.SC_OK) {
-                DebugLog.d(TAG,"loadJsonFromInternet ok");
-                inputStream = urlConn.getInputStream();
-                result = switchResult(isNeedCompress,byteOutputStream,inputStream);
+				DebugLog.d(TAG, "loadJsonFromInternet ok -- isUploadLogs" + isUploadLogs);
+				if (!isUploadLogs) {
+					inputStream = urlConn.getInputStream();
+					result = switchResult(isNeedCompress, byteOutputStream,
+							inputStream);
+				} else {
+					result = "" + HttpStatus.SC_OK;
+				}
                 DebugLog.d(TAG,"loadJsonFromInternet result:" + result);
                 retOK = true;
             }
         } catch (SocketTimeoutException e) {
-            DebugLog.d(TAG,"loadJsonFromInternet error1:" + e.getMessage());
+            DebugLog.e(TAG,"loadJsonFromInternet error1:" + e.getMessage());
             e.printStackTrace();
             reqCode = ConnectionStatus.NETWORK_TIMEOUT;
         } catch (Exception e) {
-            DebugLog.d(TAG,"loadJsonFromInternet error2:" + e.getMessage());
+            DebugLog.e(TAG,"loadJsonFromInternet error2:" + e.getMessage());
             e.printStackTrace();
             reqCode = ConnectionStatus.NETWORK_EXCEPTION;
         } finally {
