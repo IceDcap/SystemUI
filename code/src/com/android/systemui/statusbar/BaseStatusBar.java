@@ -1879,7 +1879,7 @@ public abstract class BaseStatusBar extends SystemUI implements
             if ((isLockscreenPublicMode() && !mShowLockscreenNotifications) ||
                     (onKeyguard && (visibleNotifications >= maxKeyguardNotifications
                             || !showOnKeyguard))) {
-                entry.row.setVisibility(View.GONE);
+               // entry.row.setVisibility(View.GONE);
                 if (onKeyguard && showOnKeyguard) {
                     mKeyguardIconOverflowContainer.getIconsView().addNotification(entry);
                 }
