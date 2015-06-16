@@ -1890,8 +1890,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 			final ImageView hideButton = (ImageView) mOtherHeader.findViewById(R.id.hide);
 			hideButton.setImageDrawable(mContext.getDrawable(R.drawable.gn_arrow_down));
 			
-			gnUpdateOtherCountText(OTHER);
 		}
+		gnUpdateOtherCountText(OTHER);
 		// Step 6
 		updateRowStates();
 		updateEmptyShadeView();
@@ -1939,7 +1939,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     	final TextView view = (TextView)mOtherHeader.findViewById(R.id.notification_count);
 		String countStr = mContext.getResources().getQuantityString(R.plurals.gn_notification_count, count,count);
 		view.setText(countStr);
-		view.setVisibility(View.VISIBLE);
+		view.setVisibility(mShowOther?View.GONE:View.VISIBLE);
     }
 	
 	/**
