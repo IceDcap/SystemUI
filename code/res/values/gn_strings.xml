@@ -221,4 +221,9 @@
         <item>com.mediatek.fmradio</item>
     </string-array>
     <!-- Gionee <AmigoSystemUI_NotificationSort> <wujj> <2015-04-25> add for notification sorting end -->
+    <plurals name="gn_notification_count">
+        <item quantity="one">%1d notification</item>
+        <item quantity="other">%1d notifications</item>
+    </plurals>
+
 </resources>

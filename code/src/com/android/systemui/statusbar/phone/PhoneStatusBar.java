@@ -964,21 +964,28 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 		});
     	final ImageView hideButton = (ImageView)mOtherHeader.findViewById(R.id.hide);
     	hideButton.setVisibility(View.VISIBLE);
-    	hideButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				mShowOther = !mShowOther;
-				if (mShowOther == true) {
-					hideButton.setImageDrawable(mContext.getDrawable(R.drawable.gn_arrow_up));
-				} else {
-					hideButton.setImageDrawable(mContext.getDrawable(R.drawable.gn_arrow_down));
-				}
-				updateNotifications();
-			}
-		});
+    	hideButton.setOnClickListener(mShowOtherListener);
+    	
+    	View notificationExpander = mOtherHeader.findViewById(R.id.notification_expander);
+    	notificationExpander.setOnClickListener(mShowOtherListener);
     	
     }
     
+    View.OnClickListener mShowOtherListener = new View.OnClickListener() {
+		
+		@Override
+		public void onClick(View arg0) {
+			mShowOther = !mShowOther;
+			ImageView hideButton = (ImageView)mOtherHeader.findViewById(R.id.hide);
+			if (mShowOther == true) {
+				hideButton.setImageDrawable(mContext.getDrawable(R.drawable.gn_arrow_up));
+			} else {
+				hideButton.setImageDrawable(mContext.getDrawable(R.drawable.gn_arrow_down));
+			}
+			updateNotifications();
+		}
+	};
+	
     /**
      * Call when font type or language changed
      * see {@code BaseStatusBar.onConfigurationChanged}
@@ -1671,13 +1678,16 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 			Log.v(TAG, "has clearable important notification? "+important);
 		}
 		
-		if (otherlist.size() == 0) {
+		final int otherSize = otherlist.size();
+		if (otherSize == 0) {
 			mOtherHeader.setVisibility(View.GONE);
 		} else {
 			mOtherHeader.setVisibility(View.VISIBLE);
 			ImageView button = (ImageView)mOtherHeader.findViewById(R.id.clear);
 			// TMP Bugs:let's clear button show always in other header. 
 			//button.setVisibility(other ? View.VISIBLE : View.GONE);
+			
+			gnUpdateOtherCountText(otherSize);
 			Log.v(TAG, "has clearable other notification? "+other);
 		}
     }
@@ -1875,6 +1885,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 			mStackScroller.changeViewPosition(mOtherHeader, mStackScroller.getChildCount() - 1);
 			final ImageView hideButton = (ImageView) mOtherHeader.findViewById(R.id.hide);
 			hideButton.setImageDrawable(mContext.getDrawable(R.drawable.gn_arrow_down));
+			
+			gnUpdateOtherCountText(OTHER);
 		}
 		// Step 6
 		updateRowStates();
@@ -1914,6 +1926,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 			}
 		}
 	}
+	
+	private void gnUpdateOtherCountText(int count) {
+    	final TextView view = (TextView)mOtherHeader.findViewById(R.id.notification_count);
+		String countStr = mContext.getResources().getQuantityString(R.plurals.gn_notification_count, count,count);
+		view.setText(countStr);
+		view.setVisibility(View.VISIBLE);
+    }
 	
     private void updateNotificationShade() {
         if (mStackScroller == null) return;

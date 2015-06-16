@@ -162,4 +162,7 @@
     
     <string name="no_service">无服务</string>
     <string name="no_card">未插卡</string>
+    <plurals name="gn_notification_count">
+        <item quantity="other">%1d条通知</item>
+    </plurals>
 </resources>

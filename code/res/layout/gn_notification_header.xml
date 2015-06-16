@@ -15,24 +15,41 @@
     limitations under the License.
 -->
 
-<com.android.systemui.gionee.nc.ui.GnNotificationLevelHeader
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.android.systemui.gionee.nc.ui.GnNotificationLevelHeader xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/gn_notification_header_height"
-    android:focusable="true"
     android:clickable="true"
-    >
-    
-    <TextView
-        android:id="@+id/header_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/gn_notifcation_text_padding"
-        android:fontFamily="sans-serif-medium"
-        android:textSize="@dimen/gn_notificaiton_text_size"
+    android:focusable="true" >
+
+    <RelativeLayout
+        android:id="@+id/notification_expander"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_gravity="start|center_vertical"
-        />
-    
+        android:background="@drawable/ripple_drawable" >
+
+        <TextView
+            android:id="@+id/header_text"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/gn_notifcation_text_padding"
+            android:textSize="@dimen/gn_notificaiton_text_size" />
+
+        <TextView
+            android:id="@+id/notification_count"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@id/header_text"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center_vertical"
+            android:visibility="gone" />
+    </RelativeLayout>
+
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
