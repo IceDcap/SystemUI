@@ -43,10 +43,12 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="10dp"
             android:layout_toRightOf="@id/header_text"
-            android:fontFamily="sans-serif-medium"
+            android:fontFamily="sans-serif"
             android:gravity="center_vertical"
+            android:textColor="#99FFFFFF"
+            android:textSize="@dimen/gn_status_bar_recents_app_label_text_size"
             android:visibility="gone" />
     </RelativeLayout>
 
