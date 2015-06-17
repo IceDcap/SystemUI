@@ -177,7 +177,11 @@ public class GnNotificationService {
 				if (showingPublic) {
 					ent.row.setShowingLegacyBackground(false);
 				} else {
-					ent.row.setShowingLegacyBackground(true);
+					//GIONEE <wujj> modify for CR01500838 begin
+					Log.v(TAG, "showingPublic = "+showingPublic);
+					ent.row.setShowingLegacyBackground(false);
+					//ent.row.setShowingLegacyBackground(true);
+					//GIONEE <wujj> modify for CR01500838 end
 				}
 			}
 
