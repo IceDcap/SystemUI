@@ -175,13 +175,10 @@ import com.android.systemui.statusbar.stack.NotificationStackScrollLayout.OnChil
 import com.android.systemui.statusbar.stack.StackScrollAlgorithm;
 import com.android.systemui.statusbar.stack.StackScrollState.ViewState;
 import com.android.systemui.volume.VolumeComponent;
-
 import com.amigo.navi.keyguard.KeyguardViewHost;
 import com.amigo.navi.keyguard.skylight.SkylightHost;
-
 import com.amigo.navi.keyguard.KeyguardViewHostManager;
 import com.android.systemui.gionee.GnFontHelper;
-
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -226,6 +223,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     //Don't close notification panel when there is no notification
     private static final boolean CLOSE_PANEL_WHEN_EMPTIED = false;
     //GIONEE <wujj> <2015-02-03> end
+    
+    //GIONEE <wujj> <2015-06-17> add for CR01503404 begin
+    private final static String ACTION_HALL_STATUS = "android.intent.action.HALL_STATUS";
+    //GIONEE <wujj> <2015-06-17> adb for CR01503404 end
 
     private static final int NOTIFICATION_PRIORITY_MULTIPLIER = 10; // see NotificationManagerService
     private static final int HIDE_ICONS_BELOW_SCORE = Notification.PRIORITY_LOW * NOTIFICATION_PRIORITY_MULTIPLIER;
@@ -921,6 +922,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         //add for CTS Verifier 
         filter.addAction("amigo.intent.action.screenpin");
         //GIONEE <hanbj> <2015-06-11> add for CR01500131 end
+        
+      //GIONEE <wujj> <2015-06-17> add for CR01503404 begin
+        filter.addAction(ACTION_HALL_STATUS);
+      //GIONEE <wujj> <2015-06-17> add for CR01503404 end
 
         context.registerReceiverAsUser(mBroadcastReceiver, UserHandle.ALL, filter, null, null);
 
@@ -3772,9 +3777,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             //add for CTS Verifier 
             } else if ("amigo.intent.action.screenpin".equals(action)) {
                 hideNavBar();
-            }
             //GIONEE <hanbj> <2015-06-11> add for CR01500131 end
             //GIONEE <wujj> <2015-04-29> modify for CR01468270 end
+              //GIONEE <wujj> <2015-06-17> add for CR01503404 begin
+            } else if (ACTION_HALL_STATUS.equals(action)) {
+            	mStatusBarView.collapseAllPanels(false);
+            }
+            //GIONEE <wujj> <2015-06-17> add for CR01503404 end
         }
     };
 

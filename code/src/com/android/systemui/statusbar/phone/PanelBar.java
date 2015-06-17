@@ -253,6 +253,9 @@ public class PanelBar extends FrameLayout {
                 pv.setExpandedFraction(0); // just in case
                 pv.setVisibility(View.GONE);
                 pv.cancelPeek();
+              //GIONEE <wujj> <2015-06-17> add for CR01503404 begin
+                pv.cancelHeightAnimator();
+              //GIONEE <wujj> <2015-06-17> add for CR01503404 end
             }
         }
         if (DEBUG) LOG("collapseAllPanels: animate=%s waiting=%s", animate, waiting);
