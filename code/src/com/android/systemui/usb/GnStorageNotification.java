@@ -16,6 +16,8 @@
 
 package com.android.systemui.usb;
 
+import java.io.File;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -55,7 +57,10 @@ public class GnStorageNotification extends SystemUI {
      * This is lazily created, so use {@link #setUsbStorageNotification()}.
      */
     private Notification mUsbStorageNotification;
+    private Notification mMediaStorageNotification;
 	private UsbManager mUsbManager;
+	private StorageManager mStorageManager;
+	private boolean flag = true;
 	
 	//otg notification
     private Handler mAsyncEventHandler;
@@ -112,7 +117,7 @@ public class GnStorageNotification extends SystemUI {
         HandlerThread thr = new HandlerThread("SystemUI StorageNotification");
         thr.start();
         StorageNotificationEventListener mStorageEventlistener = new StorageNotificationEventListener();
-        StorageManager mStorageManager = (StorageManager) mContext.getSystemService(Context.STORAGE_SERVICE);
+        mStorageManager = (StorageManager) mContext.getSystemService(Context.STORAGE_SERVICE);
         mStorageManager.registerListener(mStorageEventlistener);
          
         mAsyncEventHandler = new Handler(thr.getLooper()) {
@@ -120,6 +125,39 @@ public class GnStorageNotification extends SystemUI {
 				cancelOtgNotification(OTG_UNMOUNTED_NOTIFICATION_ID);
             }
 		};
+		//CR01476963 fj begin
+		/*String ICS_STORAGE_PATH_SD1 = "/mnt/sdcard";
+	    String ICS_STORAGE_PATH_SD2 = "/mnt/sdcard2";
+	    String STORAGE_PATH_SD1 = "/storage/sdcard0";
+	    String STORAGE_PATH_SD2 = "/storage/sdcard1";
+		onStorageStateChangedAsync(ICS_STORAGE_PATH_SD1, null, Environment.getStorageState(new File(ICS_STORAGE_PATH_SD1)));
+		onStorageStateChangedAsync(ICS_STORAGE_PATH_SD2, null, Environment.getStorageState(new File(ICS_STORAGE_PATH_SD2)));
+		onStorageStateChangedAsync(STORAGE_PATH_SD1, null, Environment.getStorageState(new File(STORAGE_PATH_SD1)));
+		onStorageStateChangedAsync(STORAGE_PATH_SD2, null, Environment.getStorageState(new File(STORAGE_PATH_SD2)));*/
+		String st = "";
+        String path = "";
+        StorageVolume[] volumes = mStorageManager.getVolumeList();
+
+        if (volumes != null) {
+            for (int i = 0; i < volumes.length; i++) {
+                if (volumes[i].allowMassStorage() && !volumes[i].isEmulated()) {
+                    path = volumes[i].getPath();
+                    st = mStorageManager.getVolumeState(path);
+                }
+            }
+        }
+		for (int i=0; i<volumes.length; i++) {
+            String sharePath = volumes[i].getPath();
+            String shareState = mStorageManager.getVolumeState(sharePath);
+            if (shareState != null) {
+                Log.d(TAG, "onStorageStateChanged - sharePath: " + sharePath + " shareState: " + shareState);
+                if (shareState.equals(Environment.MEDIA_UNMOUNTABLE) ||
+                    shareState.equals(Environment.MEDIA_NOFS)) {
+                	mStorageEventlistener.onStorageStateChanged(sharePath, shareState, shareState);
+                }
+            }
+        }
+		//CR01476963 fj end
     }
 
 	private boolean isFirstBoot() {
@@ -235,44 +273,175 @@ public class GnStorageNotification extends SystemUI {
         }
     }
 
-    /**
-     * Sets the OTG storage notification.
-     */
     private void onStorageStateChangedAsync(String path, String oldState, String newState) {
         boolean isOtgDevice = path.contains(OTG_PATH);
-        if(!isOtgDevice) {
-       	    return;
+        /*//test
+        if (flag) {
+        	newState = Environment.MEDIA_UNMOUNTABLE;
+        	flag = !flag;
+        } else {
+        	newState = Environment.MEDIA_MOUNTED;
+        	flag = !flag;
         }
-         
-        if(newState.equals(Environment.MEDIA_CHECKING)) {
-            showOtgNotification(
-            	R.string.gn_usb_storage_checking_title,
-            	R.string.gn_usb_storage_checking_mesage,
-            	R.drawable.gn_stat_sys_data_usb,
-                OTG_PREPARE_NOTIFICATION_ID
-            );
+        path = OTG_VOLUME_PATH;
+        isOtgDevice = true;*/
+        if(isOtgDevice) {
+        	if(newState.equals(Environment.MEDIA_CHECKING)) {
+                showOtgNotification(
+                	R.string.gn_usb_storage_checking_title,
+                	R.string.gn_usb_storage_checking_mesage,
+                	R.drawable.gn_stat_sys_data_usb,
+                    OTG_PREPARE_NOTIFICATION_ID
+                );
+            }
+            else if(newState.equals(Environment.MEDIA_MOUNTED) && oldState.equals(Environment.MEDIA_CHECKING)) {
+            	setMediaStorageNotification(0, 0, 0, false, false, null);
+                cancelOtgNotification(OTG_PREPARE_NOTIFICATION_ID);
+                showOtgOngoingNotification();
+            } else if(newState.equals(Environment.MEDIA_UNMOUNTED) && oldState.equals(Environment.MEDIA_MOUNTED)) {
+                cancelOtgNotification(OTG_MOUNTED_NOTIFICATION_ID);
+                showOtgNotification(
+                    R.string.gn_remove_otg,
+                    R.string.gn_usb_storage_unmounted,
+                    R.drawable.gn_stat_sys_data_usb_remove,
+                    OTG_UNMOUNTED_NOTIFICATION_ID
+               	);
+                mAsyncEventHandler.sendMessageDelayed(new Message(),NOTIFICATION_KEEP_TIME);
+            } else if(newState.equals(Environment.MEDIA_REMOVED)){
+                cancelOtgNotification(OTG_PREPARE_NOTIFICATION_ID);
+                cancelOtgNotification(OTG_MOUNTED_NOTIFICATION_ID);
+                mAsyncEventHandler.sendMessageDelayed(new Message(),NOTIFICATION_KEEP_TIME);            
+    	    } else if(newState.equals(Environment.MEDIA_BAD_REMOVAL) ){
+    	        cancelOtgNotification(OTG_PREPARE_NOTIFICATION_ID);
+    	        cancelOtgNotification(OTG_MOUNTED_NOTIFICATION_ID);
+    	        cancelOtgNotification(OTG_UNMOUNTED_NOTIFICATION_ID);	        	        
+    	    }
+        	//CR01492451 fj begin
+    	    else if(newState.equals(Environment.MEDIA_NOFS)){
+    	    	Intent intent = new Intent();
+                intent.setClass(mContext, com.android.internal.app.ExternalMediaFormatActivity.class);
+                //the parameter path is received at ExternalMediaFormatActivity.java "String path = getIntent().getStringExtra("PATH");"
+                intent.putExtra("PATH",path);
+                PendingIntent pi = PendingIntent.getActivity(mContext, 0, intent, 0);
+
+                setMediaStorageNotification(
+                        R.string.ext_otg_nofs_notification_title,
+                        R.string.ext_otg_nofs_notification_message,
+                        R.drawable.gn_stat_sys_data_usb, 
+                        true, false, pi);
+    	    } else if(newState.equals(Environment.MEDIA_UNMOUNTABLE)){
+    	    	Intent intent = new Intent();
+                intent.setClass(mContext, com.android.internal.app.ExternalMediaFormatActivity.class);
+                intent.putExtra("PATH",path);
+                PendingIntent pi = PendingIntent.getActivity(mContext, 0, intent, 0);
+
+                setMediaStorageNotification(
+                        R.string.ext_otg_unmountable_notification_title,
+                        R.string.ext_otg_unmountable_notification_message,
+                        R.drawable.gn_stat_sys_data_usb, 
+                        true, false, pi);
+    	    }
+        	//CR01492451 fj end
+        	//CR01476963 fj begin
+        } else {
+        	if (newState.equals(Environment.MEDIA_MOUNTED)) {
+                setMediaStorageNotification(0, 0, 0, false, false, null);
+            } else if (newState.equals(Environment.MEDIA_NOFS)) {
+                Intent intent = new Intent();
+                intent.setClass(mContext, com.android.internal.app.ExternalMediaFormatActivity.class);
+                intent.putExtra("PATH",path);
+                PendingIntent pi = PendingIntent.getActivity(mContext, 0, intent, 0);
+
+                setMediaStorageNotification(
+                        R.string.ext_media_nofs_notification_title,
+                        R.string.ext_media_nofs_notification_message,
+                        com.android.internal.R.drawable.stat_notify_sdcard_usb, 
+                        true, false, pi);
+            } else if (newState.equals(Environment.MEDIA_UNMOUNTABLE)) {
+                Intent intent = new Intent();
+                intent.setClass(mContext, com.android.internal.app.ExternalMediaFormatActivity.class);
+                intent.putExtra("PATH",path);
+                PendingIntent pi = PendingIntent.getActivity(mContext, 0, intent, 0);
+
+                setMediaStorageNotification(
+                        R.string.ext_media_unmountable_notification_title,
+                        R.string.ext_media_unmountable_notification_message,
+                        com.android.internal.R.drawable.stat_notify_sdcard_usb, 
+                        true, false, pi);
+            } else {
+            	Log.w(TAG, String.format("Ignoring unknown state {%s}", newState));
+            }
         }
-        else if(newState.equals(Environment.MEDIA_MOUNTED) && oldState.equals(Environment.MEDIA_CHECKING)) {
-            cancelOtgNotification(OTG_PREPARE_NOTIFICATION_ID);
-            showOtgOngoingNotification();
-        } else if(newState.equals(Environment.MEDIA_UNMOUNTED) && oldState.equals(Environment.MEDIA_MOUNTED)) {
-            cancelOtgNotification(OTG_MOUNTED_NOTIFICATION_ID);
-            showOtgNotification(
-                R.string.gn_remove_otg,
-                R.string.gn_usb_storage_unmounted,
-                R.drawable.gn_stat_sys_data_usb_remove,
-                OTG_UNMOUNTED_NOTIFICATION_ID
-           	);
-            mAsyncEventHandler.sendMessageDelayed(new Message(),NOTIFICATION_KEEP_TIME);
-        } else if(newState.equals(Environment.MEDIA_REMOVED)){
-            cancelOtgNotification(OTG_PREPARE_NOTIFICATION_ID);
-            cancelOtgNotification(OTG_MOUNTED_NOTIFICATION_ID);
-            mAsyncEventHandler.sendMessageDelayed(new Message(),NOTIFICATION_KEEP_TIME);            
-	    } else if(newState.equals(Environment.MEDIA_BAD_REMOVAL) ){
-	        cancelOtgNotification(OTG_PREPARE_NOTIFICATION_ID);
-	        cancelOtgNotification(OTG_MOUNTED_NOTIFICATION_ID);
-	        cancelOtgNotification(OTG_UNMOUNTED_NOTIFICATION_ID);	        	        
-	    }
+         //CR01476963 fj end
+        
+    }
+    
+    /**
+     * Sets the media storage notification.
+     */
+    private synchronized void setMediaStorageNotification(int titleId, int messageId, int icon, boolean visible,
+                                                          boolean dismissable, PendingIntent pi) {
+
+        if (!visible && mMediaStorageNotification == null) {
+            return;
+        }
+
+        NotificationManager notificationManager = (NotificationManager) mContext
+                .getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (notificationManager == null) {
+            return;
+        }
+
+        if (mMediaStorageNotification != null && visible) {
+            /*
+             * Dismiss the previous notification - we're about to
+             * re-use it.
+             */
+            final int notificationId = mMediaStorageNotification.icon;
+            notificationManager.cancel(notificationId);
+        }
+
+        if (visible) {
+            Resources r = mContext.getResources();
+            CharSequence title = r.getText(titleId);
+            CharSequence message = r.getText(messageId);
+
+            if (mMediaStorageNotification == null) {
+                mMediaStorageNotification = new Notification();
+                mMediaStorageNotification.when = 0;
+            }
+
+            mMediaStorageNotification.defaults &= ~Notification.DEFAULT_SOUND;
+
+            if (dismissable) {
+                mMediaStorageNotification.flags = Notification.FLAG_AUTO_CANCEL;
+            } else {
+                mMediaStorageNotification.flags = Notification.FLAG_ONGOING_EVENT;
+            }
+
+            mMediaStorageNotification.tickerText = title;
+            if (pi == null) {
+                Intent intent = new Intent();
+                pi = PendingIntent.getBroadcastAsUser(mContext, 0, intent, 0,
+                        UserHandle.CURRENT);
+            }
+
+            mMediaStorageNotification.icon = icon;
+            mMediaStorageNotification.color = mContext.getResources().getColor(
+                    com.android.internal.R.color.system_notification_accent_color);
+            mMediaStorageNotification.setLatestEventInfo(mContext, title, message, pi);
+            mMediaStorageNotification.visibility = Notification.VISIBILITY_PUBLIC;
+            mMediaStorageNotification.category = Notification.CATEGORY_SYSTEM;
+        }
+
+        final int notificationId = mMediaStorageNotification.icon;
+        if (visible) {
+            notificationManager.notifyAsUser(null, notificationId,
+                    mMediaStorageNotification, UserHandle.ALL);
+        } else {
+            notificationManager.cancelAsUser(null, notificationId, UserHandle.ALL);
+        }
     }
 
     public void showOtgNotification(int titleId, int messageId, int icon, int notificationid) {

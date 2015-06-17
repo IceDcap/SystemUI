@@ -123,7 +123,7 @@ public class FingerIdentifyManager {
         	mFingerprintSwitchOpen=true;
         }
         	
-        DebugLog.d(LOG_TAG, "readFingerprintSwitchValue: unlockValue"+unlockValue+"mFingerprintSwitchOpen="+mFingerprintSwitchOpen);
+        DebugLog.d(LOG_TAG, "readFingerprintSwitchValue: unlockValue="+unlockValue+",mFingerprintSwitchOpen="+mFingerprintSwitchOpen);
         
         return mFingerprintSwitchOpen;
     }
@@ -138,11 +138,9 @@ public class FingerIdentifyManager {
         try {
             Class<?> GnFingerPrintManager = (Class<?>) Class.forName(CLASS_GNFPMANAGER);
             Method getIds = GnFingerPrintManager.getMethod("getIds");
-                Object obj = GnFingerPrintManager.newInstance();
-                mGnFingerPrintManagerClass=GnFingerPrintManager;
-                mObj=obj;
+            Object obj = GnFingerPrintManager.newInstance();
 
-            int[] ids = (int[]) getIds.invoke(mObj);
+            int[] ids = (int[]) getIds.invoke(obj);
             
             DebugLog.d(LOG_TAG, "getIds() end ids=" + Arrays.toString(ids)+"  time: "+SystemClock.uptimeMillis());
             return ids;

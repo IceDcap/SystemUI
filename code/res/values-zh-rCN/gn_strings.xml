@@ -165,4 +165,14 @@
     <plurals name="gn_notification_count">
         <item quantity="other">%1d条通知</item>
     </plurals>
+    
+    <string name="ext_media_nofs_notification_title">"空SD卡"</string>
+    <string name="ext_media_nofs_notification_message">"SD卡中没有任何文件或使用了不支持的文件系统,请尝试格式化。"</string>
+    <string name="ext_media_unmountable_notification_title">"SD卡受损"</string>
+    <string name="ext_media_unmountable_notification_message">"SD卡已损坏，请尝试重新格式化。"</string>
+    
+    <string name="ext_otg_nofs_notification_title">"空OTG设备"</string>
+    <string name="ext_otg_nofs_notification_message">"OTG设备中没有任何文件或使用了不支持的文件系统,请尝试格式化。"</string>
+    <string name="ext_otg_unmountable_notification_title">"OTG设备受损"</string>
+    <string name="ext_otg_unmountable_notification_message">"OTG设备已损坏，请尝试重新格式化。"</string>
 </resources>

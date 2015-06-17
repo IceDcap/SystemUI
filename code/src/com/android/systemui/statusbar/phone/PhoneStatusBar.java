@@ -3819,7 +3819,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         updateDisplaySize(); // populates mDisplayMetrics
 
         updateResources();
-        updateClockSize();
+        //updateClockSize();
         repositionNavigationBar();
         updateExpandedViewPos(EXPANDED_LEAVE_ALONE);
         updateShowSearchHoldoff();

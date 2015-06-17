@@ -29,6 +29,7 @@ import android.util.Log;
 import com.android.internal.telephony.TelephonyIntents;
 
 import android.os.Handler;
+import android.os.SystemProperties;
 
 public class GnMobileDataControllerImpl extends BroadcastReceiver implements GnMobileDataController {
     
@@ -45,6 +46,8 @@ public class GnMobileDataControllerImpl extends BroadcastReceiver implements GnM
     private Handler mHandler = new Handler();
 
     private boolean mHasMobileDataFeature;
+    
+    private boolean isMtkPlatform;
     
     private int mSubId = 0;
     
@@ -75,6 +78,8 @@ public class GnMobileDataControllerImpl extends BroadcastReceiver implements GnM
         filter.addAction(ConnectivityManager.INET_CONDITION_ACTION);
         filter.addAction(Intent.ACTION_AIRPLANE_MODE_CHANGED);
         context.registerReceiver(this, filter);
+        
+        isMtkPlatform = !SystemProperties.get("ro.mediatek.platform", "").isEmpty();
     }
     
     private void notifyMobileDataEnabled(boolean enabled) {
@@ -90,13 +95,21 @@ public class GnMobileDataControllerImpl extends BroadcastReceiver implements GnM
     @Override
     public void addMobileDataChangedCallback(MobileDataChangedCallback cb) {
         mCallbacks.add(cb);
-        int subId = mSubscriptionManager.getDefaultDataSubId();
+        int subId = SubscriptionManager.getDefaultDataSubId();
         if (mSubscriptionManager.isValidSubscriptionId(subId)) {
             mSubId = subId;
-            mContext.getContentResolver().registerContentObserver(
-                    Settings.Global.getUriFor(Settings.Global.MOBILE_DATA + mSubId), true,
-                    mMobileDataChangeObserver);
-            Log.d(TAG, "add callback  name = " + (Settings.Global.MOBILE_DATA + mSubId));
+            if (isMtkPlatform) {
+                String name = Settings.Global.MOBILE_DATA + mSubId;
+                mContext.getContentResolver().registerContentObserver(
+                        Settings.Global.getUriFor(name), true, mMobileDataChangeObserver);
+                Log.d(TAG, "mtk add callback  name = " + name);
+            } else {
+                int phoneId = SubscriptionManager.getPhoneId(mSubId);
+                String name = Settings.Global.MOBILE_DATA + phoneId;
+                mContext.getContentResolver().registerContentObserver(
+                        Settings.Global.getUriFor(name), true, mMobileDataChangeObserver);
+                Log.d(TAG, "qcom add callback  name = " + name);
+            }
         }
     }
 
@@ -164,15 +177,25 @@ public class GnMobileDataControllerImpl extends BroadcastReceiver implements GnM
         @Override
         public void onSubscriptionsChanged() {
             Log.d(TAG, "onSubscriptionsChanged");
-            int subId = mSubscriptionManager.getDefaultDataSubId();
+            int subId = SubscriptionManager.getDefaultDataSubId();
             Log.d(TAG, "mSubscriptionListener  subId = " + subId);
-            if (mSubscriptionManager.isValidSubscriptionId(subId) && mSubId != subId) {
+            if (SubscriptionManager.isValidSubscriptionId(subId) && mSubId != subId) {
                 mSubId = subId;
                 mContext.getContentResolver().unregisterContentObserver(mMobileDataChangeObserver);
-                mContext.getContentResolver().registerContentObserver(
-                        Settings.Global.getUriFor(Settings.Global.MOBILE_DATA + mSubId), true,
-                        mMobileDataChangeObserver);
-                Log.d(TAG, "name = " + (Settings.Global.MOBILE_DATA + mSubId));
+
+                if (isMtkPlatform) {
+                    String name = Settings.Global.MOBILE_DATA + mSubId;
+                    mContext.getContentResolver().registerContentObserver(
+                            Settings.Global.getUriFor(name), true, mMobileDataChangeObserver);
+                    Log.d(TAG, "mtk name = " + name);
+                } else {
+                    int phoneId = SubscriptionManager.getPhoneId(mSubId);
+                    String name = Settings.Global.MOBILE_DATA + phoneId;
+                    mContext.getContentResolver().registerContentObserver(
+                            Settings.Global.getUriFor(name), true, mMobileDataChangeObserver);
+                    Log.d(TAG, "qcom name = " + name);
+                }
+
                 notifyMobileDataChange();
             }
         };

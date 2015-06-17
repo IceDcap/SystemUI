@@ -116,6 +116,7 @@ public class Guide {
             NEED_GUIDE_LONG_PRESS = false;
             NEED_GUIDE_CLICK_TITLE = false;
             NEED_GUIDE_SLIDE_AROUND = false;
+            NEED_GUIDE_SCROLL_UP = false;
             NEED_NEW_WALLPAPER = false;
             NEED_SLIDE_FEEDBACK = false;
         }
@@ -126,20 +127,39 @@ public class Guide {
             NEED_GUIDE_CLICK_TITLE = false;
             NEED_GUIDE_SLIDE_AROUND = false;
             NEED_GUIDE_SCROLL_UP = false;
-            
             NEED_NEW_WALLPAPER = false;
             NEED_SLIDE_FEEDBACK = false;
-            
-            
-//            NEED_GUIDE_LONG_PRESS = true;
-//            NEED_GUIDE_CLICK_TITLE = true;
-//            NEED_GUIDE_SLIDE_AROUND = true;
-//            NEED_GUIDE_SCROLL_UP = true;
-//            NEED_NEW_WALLPAPER = true;
-//            NEED_SLIDE_FEEDBACK = true;
+ 
         }
 
     }
+    
+    
+ 
+    public static void setGuideEnable(Context context, boolean enable) {
+        
+        if (enable) {
+            SharedPreferences preferences = context.getSharedPreferences(
+                    PREFERENCE_NAME, Context.MODE_PRIVATE);
+
+            setNeedGuideLongPress(preferences.getBoolean(GUIDE_LONG_PRESS, true));
+            setNeedGuideClickTitle(preferences.getBoolean(GUIDE_CLICK_TITLE, true));
+            setNeedGuideSlideAround(preferences.getBoolean(GUIDE_SLIDE_AROUND, true));
+            setNeedGuideScrollUp(preferences.getBoolean(GUIDE_SCROLL_UP, true));
+            NEED_NEW_WALLPAPER = true;
+            NEED_SLIDE_FEEDBACK = true;
+            
+        }else {
+            NEED_GUIDE_LONG_PRESS = false;
+            NEED_GUIDE_CLICK_TITLE = false;
+            NEED_GUIDE_SLIDE_AROUND = false;
+            NEED_GUIDE_SCROLL_UP = false;
+            NEED_NEW_WALLPAPER = false;
+            NEED_SLIDE_FEEDBACK = false;
+        }
+        
+    }
+    
 
     public static GuideState getGuideState() {
         return Guide.guideState;

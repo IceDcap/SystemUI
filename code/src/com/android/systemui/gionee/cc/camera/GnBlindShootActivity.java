@@ -267,7 +267,7 @@ public class GnBlindShootActivity extends Activity {
             GnBlindShootActivity.this.finish();
             unregisterOrientationEventListener();
             storeImage(data);
-            // GnVibrateUtil.vibrate(GnBlindShootActivity.this);
+            GnVibrateUtil.vibrate(GnBlindShootActivity.this);
             releaseCamera();
         }
     };

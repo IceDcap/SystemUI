@@ -226,4 +226,8 @@
         <item quantity="other">%1d notifications</item>
     </plurals>
 
+    <string name="ext_media_nofs_notification_title">Blank USB storage</string>
+    <string name="ext_media_nofs_notification_message">SD card is blank or has unsupported filesystem.</string>
+    <string name="ext_media_unmountable_notification_title" product="default">Damaged SD card</string>
+    <string name="ext_media_unmountable_notification_message" product="default">SD card is damaged. Try reformatting it.</string>
 </resources>

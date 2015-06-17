@@ -1003,6 +1003,7 @@ public class KeyguardViewHostManager {
 				    Common.setPowerSaverMode(saverMode);
 				    UIController.getInstance().onChangePowerSaverMode(saverMode);
 				    mViewMediatorCallback.setKeyguardWallpaperShow(saverMode);
+				    Guide.setGuideEnable(mContext, !saverMode);
 				}
 			};
 			final ContentResolver resolver = mContext.getContentResolver();

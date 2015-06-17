@@ -1115,6 +1115,15 @@ public class UIController implements OnTouchlListener{
         getmKeyguardListView().setVisibility(visibility);
         getmKeyguardWallpaperContainer().setVisibility(visibility);
         
+        if (saverMode && !Guide.isIdle()) {
+            if (Guide.getGuideState() == GuideState.NEW_WALLPAPER) {
+                getAmigoKeyguardPage().stopGuideNewWallpaper();
+            }else if (Guide.getGuideState() == GuideState.SLIDE_AROUND) {
+                getAmigoKeyguardPage().stopGuideSlideAround();
+            }else if (Guide.getGuideState() == GuideState.CLICK_TITLE) {
+                getmCaptionsView().stopGuide();
+            }
+        }
     }
     
     
