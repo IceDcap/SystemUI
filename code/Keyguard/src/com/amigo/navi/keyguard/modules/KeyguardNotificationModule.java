@@ -121,8 +121,11 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
 		@Override
 		public void onNotificationPosted(StatusBarNotification sbn,
 				RankingMap rankingMap) {
-			if(isKeyguardShowing()){
-			    handlNotificationPosted(sbn,rankingMap);
+		    
+			if(isKeyguardShowing() ){
+			    if (!UIController.getInstance().isArcExpanded()) {
+			        handlNotificationPosted(sbn,rankingMap);
+                }
 			}
 		}
 
@@ -414,6 +417,7 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
 	private void addNotification(StatusBarNotification notification,
 			RankingMap ranking) {
 		if(DebugLog.DEBUG) DebugLog.d(TAG, "addNotification:"+notification);
+		
 		Entry shadeEntry = createNotificationViews(notification);
 		if (shadeEntry == null) {
 			return;
@@ -836,6 +840,7 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
 		if (entry == null) {
 			return;
 		}
+		
 		// Add the expanded view and icon.
 		mNotificationData.add(entry, ranking);
 		updateNotifications();

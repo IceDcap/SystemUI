@@ -164,7 +164,8 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         }
        
 
-        int shouldVisibleViewCount = getWidth() / mChildWidth + 1;
+//        int shouldVisibleViewCount = getWidth() / mChildWidth + 1;
+        int shouldVisibleViewCount = getWidth() / mChildWidth;
     	if(PRINT_LOG){
     		DebugLog.d(TAG, "onLayout shouldVisibleViewCount:"
     				+ shouldVisibleViewCount);

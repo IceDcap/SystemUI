@@ -367,9 +367,9 @@ public class UIController implements OnTouchlListener{
         if (Common.isPowerSaverMode()) {
             return;
         }
-        if (change) {
-            getmCaptionsView().setContentVisibilityAnimation(false);
-        }
+//        if (change) {
+//            getmCaptionsView().setContentVisibilityAnimation(false);
+//        }
         mInfozoneTranslationX = 0f;
         refreshWallpaperInfo();
         mCaptionsView.OnTouchUpAnimator();
