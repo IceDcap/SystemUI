@@ -97,6 +97,7 @@ public class GnQSTileView extends ViewGroup {
     public void setDual(boolean dual) {
         setOnClickListener(mClickPrimary);
         setOnLongClickListener(mLongClickPrimary);
+        setHapticFeedbackEnabled(false);
         setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
 
         setFocusable(!dual);

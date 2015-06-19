@@ -145,7 +145,7 @@ public class CategoryActivity extends Activity{
     
     private void setBlurBackground() {
         this.getWindow().setBackgroundDrawable(null);
-        Bitmap bitmap = UIController.getInstance().getCurrentWallpaperBitmap(this);
+        Bitmap bitmap = UIController.getInstance().getCurrentWallpaperBitmap(this, true);
         mWindowBackgroud = KeyguardWallpaper.getBlurBitmap(bitmap.copy(Bitmap.Config.ARGB_8888, true), 5.0f);
         if (mWindowBackgroud == null) {
             return;
@@ -165,9 +165,11 @@ public class CategoryActivity extends Activity{
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        
         RequestNicePicturesFromInternet.getInstance(this.getApplicationContext()).registerData(false);
         if (mWindowBackgroud != null && !mWindowBackgroud.isRecycled()) {
             mWindowBackgroud.recycle();
+            mWindowBackgroud = null;
         }
         for (Category category : list) {
         	Bitmap bitmap = category.getIcon();

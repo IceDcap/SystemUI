@@ -132,6 +132,7 @@ public class KeyguardSettingsActivity extends Activity {
         
         if (mWindowBackgroud != null && !mWindowBackgroud.isRecycled()) {
             mWindowBackgroud.recycle();
+            mWindowBackgroud = null;
         }
 	}
 	
@@ -279,7 +280,7 @@ public class KeyguardSettingsActivity extends Activity {
 	private void setBlurBackground() {
         this.getWindow().setBackgroundDrawable(null);
 
-        Bitmap bitmap = UIController.getInstance().getCurrentWallpaperBitmap(this);
+        Bitmap bitmap = UIController.getInstance().getCurrentWallpaperBitmap(this, true);
         mWindowBackgroud = KeyguardWallpaper.getBlurBitmap(bitmap.copy(Bitmap.Config.ARGB_8888, true), 5.0f);
         if (mWindowBackgroud == null) {
             return;

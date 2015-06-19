@@ -272,6 +272,10 @@ public class GuideLondPressLayout extends RelativeLayout {
         controller.getmKeyguardNotification().setAlpha(1.0f);
         Guide.setNeedGuideLongPress(false);
         Guide.setBooleanSharedConfig(getContext(), Guide.GUIDE_LONG_PRESS, false);
+        if (blurBackground != null && !blurBackground.isRecycled()) {
+            blurBackground.recycle();
+            blurBackground = null;
+        }
     }
     
 

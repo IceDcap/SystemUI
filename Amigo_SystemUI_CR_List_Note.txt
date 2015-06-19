@@ -895,3 +895,42 @@ Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ah
 Code difference: svn diff -r 6024:6023 http://192.168.110.97/svn/Amigo_SystemUI/trunk
 
 ==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01408122      Opened     jiating    【NAVI锁屏2.0.0.y】打开小米锁屏后 ，从 navi桌面不能下拉上锁
+CR01459185      Opened     zhaowei    {Navi锁屏}提交Navi锁屏代码
+CR01466272      Opened     wujj       上传Android5.1 SystemUI原生代码
+CR01476963      Coded      fangjian   【5.1MP】插入exFAT格式的T卡，通知栏没有提示
+CR01495082      Resolved   jiating    【5.1MP】品质压力：按power键灭屏，双击亮屏按音量键不显示音量小窗口，多次操作恢复【80/100】
+CR01497997      Coded      feihm      【5.1MP】锁屏：输入5次错误密码，冷冻倒计时过程中输入错误指纹，会有振动效果反馈(必现)
+CR01502964      Opened     hanjuan    好看壁纸bug修复
+CR01503404      Coded      wujj       【5.1MP】操作手机后出现触屏无反应（出现1次）
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.aj
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ai
+Code difference: svn diff -r 6078:6026 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.ax' non-existent in revision 6088
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6088:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01408122      Opened     jiating    【NAVI锁屏2.0.0.y】打开小米锁屏后 ，从 navi桌面不能下拉上锁
+CR01459185      Opened     zhaowei    {Navi锁屏}提交Navi锁屏代码
+CR01485997      Resolved   huangwt    【5.1MP】工厂:进入相机拉出控制中心,长按拍照图标会震动,但没有拍照 100%
+CR01487133      Coded      gexiufeng  【5.1MP】系统管家：开启极致省电，锁屏解锁，屏幕会闪两下(必现)
+CR01496657      Resolved   guozj      【5.1MP】品质压力:待机,状态栏SIM卡信号棒消失,待机5分钟后恢复正常（3/10）
+CR01497717      Opened     huangwt    【5.1MP】控制中心：上滑打开控制中心-进入更多设置-界面是透明的而不是毛玻璃效果（2/20附图log）
+CR01499577      Coded      feihm      【5.1MP工厂】设置中开启动作手势所有项》开启指纹》便捷解锁屏幕锁方式说及安全密码》待机界面隔空下滑锁屏》用指纹无法解锁100%
+CR01502964      Opened     hanjuan    好看壁纸bug修复
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.al
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ak
+Code difference: svn diff -r 6123:6090 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================

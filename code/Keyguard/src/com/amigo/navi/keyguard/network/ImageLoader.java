@@ -24,6 +24,7 @@ import com.amigo.navi.keyguard.network.FailReason.FailType;
 import com.amigo.navi.keyguard.network.local.DealWithFromLocalInterface;
 import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
 import com.amigo.navi.keyguard.network.manager.DownLoadBitmapManager;
+import com.amigo.navi.keyguard.network.theardpool.LoadImagePool;
 import com.amigo.navi.keyguard.picturepage.adapter.HorizontalAdapter;
 import com.amigo.navi.keyguard.picturepage.widget.ImageViewWithLoadBitmap;
 import com.amigo.navi.keyguard.picturepage.widget.LoadCacheManager;
@@ -44,7 +45,7 @@ public class ImageLoader implements ImageLoaderInterface{
     int mCacheSize = maxMemory / 4;
 	private static final boolean PRINT_LOG = true;
 	private ArrayList<ImageViewWithLoadBitmap> mImageViewWithLoadBitmapList = new ArrayList<ImageViewWithLoadBitmap>();
-	private static final String THUMBNAIL_POSTFIX = "_thumbnail";
+	public static final String THUMBNAIL_POSTFIX = "_thumbnail";
 	private boolean mNeedInit = true;
 	private String mCurrentUrl = null;
 	
@@ -64,7 +65,7 @@ public class ImageLoader implements ImageLoaderInterface{
    
     private HashMap<String, Bitmap> mFirstLevelCache = new HashMap<String, Bitmap>(); 
     
-    private boolean mRelease = false;
+    public boolean mRelease = false;
     
     
     /**
@@ -73,16 +74,27 @@ public class ImageLoader implements ImageLoaderInterface{
     public void clearCache() {
          
         mRelease = true;
+        LoadImagePool.getInstance(mContext.getApplicationContext()).cancelAllThread();
         
 		synchronized (mFirstLevelCache) {
 
+		    Bitmap currentBitmap = null;
+		    String currentKey = mCurrentUrl + THUMBNAIL_POSTFIX;
+		    DebugLog.d(LOG_TAG, "currentKey = " + currentKey);
 		    Iterator<Entry<String, Bitmap>> iterator = mFirstLevelCache.entrySet().iterator();
 		    while (iterator.hasNext()) {
 		        Entry<String, Bitmap> entry =  iterator.next();
-		        Bitmap bmp = entry.getValue();
-		        BitmapUtil.recycleBitmap(bmp);
+		        if (entry.getKey().equals(currentKey)) {
+		            currentBitmap = entry.getValue();
+                }else {
+                    Bitmap bmp = entry.getValue();
+                    BitmapUtil.recycleBitmap(bmp);
+                }
             }
 		    mFirstLevelCache.clear();
+		    if (currentBitmap != null) {
+		        mFirstLevelCache.put(currentKey, currentBitmap);
+            }
 		}
 		
 		synchronized (ThumbRemoved) {
@@ -101,9 +113,15 @@ public class ImageLoader implements ImageLoaderInterface{
 			mNeedInit = true;
 		}	
 		synchronized (mImageViewWithLoadBitmapList) {
-		    
-			mImageViewWithLoadBitmapList.clear();
-			DebugLog.d(LOG_TAG,"mImageViewWithLoadBitmapList size :" + mImageViewWithLoadBitmapList.size());
+		    DebugLog.d(LOG_TAG,"mImageViewWithLoadBitmapList size :" + mImageViewWithLoadBitmapList.size());
+		    int size = mImageViewWithLoadBitmapList.size();
+            for (int j = size - 1; j >= 0; j--) {
+                ImageViewWithLoadBitmap view = mImageViewWithLoadBitmapList.get(j);
+                if (view != null) {
+                    view.loadloadThumbnailFromCache();
+                }
+            }
+//			mImageViewWithLoadBitmapList.clear();
 		}
 		System.gc();
 	}
@@ -207,7 +225,7 @@ public class ImageLoader implements ImageLoaderInterface{
         if(PRINT_LOG){
             DebugLog.d(LOG_TAG,"LoadingComplete url:" + url);
         }
-        
+        DebugLog.d(LOG_TAG,"LoadingComplete url: mRelease = " + mRelease);
         if (mRelease) {
             BitmapUtil.recycleBitmap(bitmap);
             return;
@@ -224,7 +242,7 @@ public class ImageLoader implements ImageLoaderInterface{
 					return;
 				}
 			}
-			
+			DebugLog.d(LOG_TAG,"LoadingComplete url: mImageViewWithLoadBitmapList = " + mImageViewWithLoadBitmapList.size());
 			synchronized (mImageViewWithLoadBitmapList) {
 				int size = mImageViewWithLoadBitmapList.size();
 				for (int i = size - 1; i >= 0; i--) {

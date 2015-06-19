@@ -109,12 +109,7 @@ public class GnControlCenter {
             String actions = intent.getAction();
             Log.d(TAG, "onReceive actions " + actions);
             if (Intent.ACTION_SCREEN_OFF.equals(actions)) {
-                if (mControlCenterView != null) {
-                    mControlCenterView.setVisibility(View.GONE);
-                }
-                if (mImmerseView != null) {
-                    mImmerseView.setVisibility(View.GONE);
-                }
+                dismiss();
                 GnUtil.setLockState(GnUtil.STATE_LOCK_UNLOCK);
             } else if (TelephonyManager.ACTION_PHONE_STATE_CHANGED.equals(actions)) {
                 TelephonyManager tm = (TelephonyManager) mContext.getSystemService(Service.TELEPHONY_SERVICE);

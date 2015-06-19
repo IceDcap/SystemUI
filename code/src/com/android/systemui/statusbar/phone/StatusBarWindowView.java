@@ -223,7 +223,7 @@ public class StatusBarWindowView extends FrameLayout {
                         mTransparentSrcPaint);
             }
         }
-        if (DEBUG) {
+        if (false) {
             Paint pt = new Paint();
             pt.setColor(0x80FFFF00);
             pt.setStrokeWidth(12.0f);

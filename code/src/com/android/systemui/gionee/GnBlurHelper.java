@@ -71,7 +71,7 @@ public class GnBlurHelper {
                     
                             @Override
                             public void onComplete(final Bitmap completeBmp) {
-                                Log.d(TAG, "completeDrawable = " + (completeBmp == null) + ",this = " + this);
+                                Log.d(TAG, "completeDrawable = " + (completeBmp != null));
                                 
                                 synchronized (LOCK) {
                                     if (null != mBlur && !mBlur.isRecycled()) {

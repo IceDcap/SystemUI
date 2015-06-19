@@ -740,7 +740,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                 int stringResId = R.string.haokan_tip_favorite_error;
                 if (Common.SDfree()) {
                     
-                    Bitmap currentWallpaper = controller.getCurrentWallpaperBitmap(mWallpaper);
+                    Bitmap currentWallpaper = controller.getCurrentWallpaperBitmap(mWallpaper , false);
                     
                     boolean isLocalImage = mWallpaper.getImgId() == Wallpaper.WALLPAPER_FROM_PHOTO_ID;
                     
@@ -795,7 +795,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                         boolean isLocalImage = mWallpaper.getImgId() == Wallpaper.WALLPAPER_FROM_PHOTO_ID;
                         String imageFileName = new StringBuffer(FileUtil.getDirectoryFavorite()).append("/").append(Common.currentTimeDate()).append("_")
                                 .append(isLocalImage ? mWallpaper.getImgName() : mWallpaper.getImgId()).append(".jpg").toString();
-                        Bitmap currentWallpaper = controller.getCurrentWallpaperBitmap(mWallpaper);
+                        Bitmap currentWallpaper = controller.getCurrentWallpaperBitmap(mWallpaper, false);
                         if (currentWallpaper != null) {
                             if (FileUtil.saveWallpaper(currentWallpaper, imageFileName)) {
                                 Common.insertMediaStore(getContext().getApplicationContext(),currentWallpaper.getWidth(), currentWallpaper.getHeight(), imageFileName);

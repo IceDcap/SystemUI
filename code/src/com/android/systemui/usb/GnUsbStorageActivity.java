@@ -413,9 +413,11 @@ public class GnUsbStorageActivity extends AmigoActivity implements View.OnClickL
                             }
                         }).setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                Settings.Secure.putInt(getContentResolver(), Settings.Secure.ADB_ENABLED, 1);
-                                mDebugState = true;
-                                mDebugCheck.setChecked(true);
+                            	if(!ActivityManager.isUserAMonkey()) {
+                            		Settings.Secure.putInt(getContentResolver(), Settings.Secure.ADB_ENABLED, 1);
+                            		mDebugState = true;
+                            		mDebugCheck.setChecked(true);
+                            	}
                             }
                         }).create();
                 adbWarnAlertDialog.setCancelable(true);
@@ -565,6 +567,9 @@ public class GnUsbStorageActivity extends AmigoActivity implements View.OnClickL
     }
     
     private void switchToChargeOnlyMode() {
+    	if(ActivityManager.isUserAMonkey()) {
+    		return;
+    	}
     	if (!mIsChargeOpened) {
             // mUsbManager.setCurrentFunction(UsbManager.USB_FUNCTION_MASS_STORAGE, true);
             if (mStorageManager.isUsbMassStorageEnabled()) {
@@ -710,8 +715,9 @@ public class GnUsbStorageActivity extends AmigoActivity implements View.OnClickL
     
     public void onCheckedChanged(CompoundButton v, boolean isChecked) {
         // Show toast message if Bluetooth is not allowed in airplane mode
-        Log.d(TAG, "onCheckChanged");
-        if (v == mDebugCheck) {
+    	boolean isUserAMonkey = ActivityManager.isUserAMonkey();
+        Log.d(TAG, "onCheckChanged" + " ActivityManager.isUserAMonkey() = " + isUserAMonkey);
+        if (v == mDebugCheck && !isUserAMonkey) {
             if (!isChecked) {
                 Settings.Secure.putInt(getContentResolver(), Settings.Secure.ADB_ENABLED, 0);
                 mDebugState = false;

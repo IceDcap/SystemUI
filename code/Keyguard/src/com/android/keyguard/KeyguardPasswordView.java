@@ -47,6 +47,7 @@ import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.KeyguardViewHostManager;
 import com.amigo.navi.keyguard.fingerprint.FingerIdentifyManager;
 import com.amigo.navi.keyguard.security.AmigoAccount;
+import com.amigo.navi.keyguard.security.AmigoSecurityPasswordUtil;
 import com.amigo.navi.keyguard.security.AmigoUnBindAcountActivity;
 import com.amigo.navi.keyguard.skylight.SkylightActivity;
 import com.amigo.navi.keyguard.util.TimeUtils;
@@ -276,7 +277,7 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
     private void setForgetPasswordButton() {
    	    forgetButton = (TextView) this.findViewById(R.id.forget_password);
         if(forgetButton == null) return;
-        if(KeyguardViewHostManager.isSuppotFinger() && getTimeOutSize()>=5){
+        if(getTimeOutSize()>=5 && AmigoSecurityPasswordUtil.getInstance().getSecurityPasswordSupport()){
        	 	forgetButton.setVisibility(View.VISIBLE);
         }
         forgetButton.setOnClickListener(new View.OnClickListener() {
@@ -521,7 +522,7 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
 		}
         hiddenInput();
 		mCallback.reset();
-		if(KeyguardViewHostManager.isSuppotFinger()){			
+		if(AmigoSecurityPasswordUtil.getInstance().getSecurityPasswordSupport()){			
 			forgetButton.setVisibility(View.INVISIBLE);
 		}
 	}
@@ -530,7 +531,7 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
 		if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "onUnlockFail failReason :"+failReason);
 		
 		if(failReason == UNLOCK_FAIL_REASON_TIMEOUT) {
-			if(KeyguardViewHostManager.isSuppotFinger()){
+			if(AmigoSecurityPasswordUtil.getInstance().getSecurityPasswordSupport()){
 				forgetButton.setVisibility(View.VISIBLE);
 			}
 			long deadline = mKeyguardUpdateMonitor.getDeadline();

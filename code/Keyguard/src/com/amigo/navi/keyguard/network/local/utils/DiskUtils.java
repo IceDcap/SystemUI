@@ -16,6 +16,7 @@ import java.io.OutputStream;
 
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.KWDataCache;
+import com.amigo.navi.keyguard.network.ImageLoader;
 import com.amigo.navi.keyguard.network.local.ReuseImage;
 
 
@@ -38,6 +39,9 @@ public class DiskUtils {
     public static final String WALLPAPER_OBJ_KEY = "fixedwallpaper";
     public static final String WALLPAPER_Image_KEY = "wallpaper";
     private static final String TAG = "DiskUtils";
+    
+    public static String THUMBNAIL = ImageLoader.THUMBNAIL_POSTFIX;
+    
     //加密存储
     public static boolean saveBitmap(byte[] bs,OutputStream outputStream){
         BufferedOutputStream os = null;
@@ -484,13 +488,6 @@ public class DiskUtils {
         	DiskUtils.deleteFile(filePath + DiskUtils.THUMBNAIL);
 		}
 		
-		
-	      
-        
-
-        
-        
-    public static String THUMBNAIL = "_thumbnail";
 
     public static Bitmap Bytes2Bimap(byte[] b) {
         if (b.length != 0) {

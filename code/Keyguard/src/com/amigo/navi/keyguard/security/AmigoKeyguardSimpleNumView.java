@@ -222,7 +222,7 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
     private void setForgetPasswordButton() {
 	   	 mForgetButton = (TextView) this.findViewById(R.id.forget_password);
 	     if(mForgetButton == null) return;
-	     if(KeyguardViewHostManager.isSuppotFinger() && getTimeOutSize()>=5){
+	     if(getTimeOutSize()>=5 && AmigoSecurityPasswordUtil.getInstance().getSecurityPasswordSupport()){
 	    	 mForgetButton.setVisibility(View.VISIBLE);
 	     }
          mForgetButton.setOnClickListener(new View.OnClickListener() {
@@ -374,7 +374,7 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
     }
 
 	private void unLockDone() {
-		if(KeyguardViewHostManager.isSuppotFinger()){
+		if(AmigoSecurityPasswordUtil.getInstance().getSecurityPasswordSupport()){
 			mForgetButton.setVisibility(View.INVISIBLE);
 		}
 		mCallback.reportUnlockAttempt(true);
@@ -390,7 +390,7 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
 		if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "onUnlockFail failReason :"+failReason);
 		failShake(failReason);
 		if(failReason == UNLOCK_FAIL_REASON_TIMEOUT) {
-			if(KeyguardViewHostManager.isSuppotFinger()){
+			if(AmigoSecurityPasswordUtil.getInstance().getSecurityPasswordSupport()){
 				mForgetButton.setVisibility(View.VISIBLE);
 			}
 			 

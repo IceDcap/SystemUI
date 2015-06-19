@@ -34,7 +34,7 @@ public class GnMoreTile extends GnQSTile<GnQSTile.BooleanState> {
     @Override
     protected void handleClick() {
         GnYouJu.onEvent(mContext, "Amigo_SystemUI_CC", "GnMoreTile");
-//        mHost.collapsePanels();
+        Log.d(TAG, "handleClick");
         mHost.openMoreView();
     }
 

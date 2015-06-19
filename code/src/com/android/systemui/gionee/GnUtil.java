@@ -25,7 +25,6 @@ public class GnUtil {
     }
     
     public static boolean isHighRamDevice() {
-        long size = getTotalMemory();
         long sizeM = getTotalMemory() / 1024 / 1024;
         if (sizeM > 1024) {
             return true;

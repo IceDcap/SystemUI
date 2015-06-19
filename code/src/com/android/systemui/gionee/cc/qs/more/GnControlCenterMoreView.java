@@ -50,29 +50,12 @@ public class GnControlCenterMoreView extends FrameLayout implements View.OnClick
     private boolean isHighDevice = false;
     private boolean isAnimating = false;
     
-    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (Intent.ACTION_SCREEN_OFF.equals(action) 
-                    || Intent.ACTION_CLOSE_SYSTEM_DIALOGS.equals(action)){
-                pushDownOut(true);
-            }
-        }
-    };
-
     public GnControlCenterMoreView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         mContext = context;
         
         isHighDevice = GnUtil.isHighDevice(mContext);
-        
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(Intent.ACTION_SCREEN_OFF);
-        filter.addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
-        mContext.registerReceiver(mReceiver, filter);
     }
 
     public void setTiles(Collection<GnQSTile<?>> collection) {
@@ -153,6 +136,7 @@ public class GnControlCenterMoreView extends FrameLayout implements View.OnClick
         
         synchronized (GnBlurHelper.LOCK) {
             if (GnBlurHelper.mBlur != null && !GnBlurHelper.mBlur.isRecycled()) {
+                Log.d(TAG, "setbg blur");
                 mMoreLayout.setBackground(new BitmapDrawable(GnBlurHelper.mBlur));
             }
         }
@@ -192,7 +176,7 @@ public class GnControlCenterMoreView extends FrameLayout implements View.OnClick
         public void onAnimationEnd(Animation animation) {
             setVisibility(View.GONE);
             mDragGridView.showMoreView();
-            mMoreLayout.setBackgroundColor(0x00000000);
+            mMoreLayout.setBackgroundColor(0xFA222222);
             GnBlurHelper.releaseBitmap(GnBlurHelper.mBlur);
             setOpen(false);
             isAnimating = false;

@@ -47,7 +47,7 @@ public class LoadCacheManager {
 		mContext = context;
 		mImageLoader = imageLoader;
 		mCurrentWallpaper = wallpaper;
-
+		mImageLoader.mRelease = false;
 		mWallpaperList = wallpaperList;
 		if (isPrintLog) {
 			for (int i = 0; i < wallpaperList.size(); i++) {

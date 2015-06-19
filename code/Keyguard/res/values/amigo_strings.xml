@@ -86,8 +86,8 @@
     <string name="notification_tap_again">Touch again to open</string>
     <!-- notification add end -->
 
-    <string name="keyguard_simple_number_cancel">cancel</string>
-    <string name="keyguard_simple_number_delete">delete</string>
+    <string name="keyguard_simple_number_cancel">Cancel</string>
+    <string name="keyguard_simple_number_delete">Delete</string>
     <string name="save_password_label">Ok</string>
     <string name="ignore_password_label">Skip</string>
     <string name="kg_wrong_password_onetime">Wrong password, you can try <xliff:g id="number">%d</xliff:g> time</string>

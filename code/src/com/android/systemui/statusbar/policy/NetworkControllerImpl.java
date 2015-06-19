@@ -1283,7 +1283,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
 				mSignalClusters.get(i).GnsetNetworkType(mNetworkType,
 	                        mSubscriptionInfo.getSimSlotIndex());
                 mSignalClusters.get(i).setMobileDataIndicators(
-                        /*mCurrentState.enabled*/hasService() && !mCurrentState.airplaneMode,
+                        mCurrentState.enabled && !mCurrentState.airplaneMode,
                         getCurrentIconId(),
                         typeIcon,
                         contentDescription,

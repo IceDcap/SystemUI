@@ -43,6 +43,7 @@ import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.KeyguardViewHostManager;
 import com.amigo.navi.keyguard.fingerprint.FingerIdentifyManager;
 import com.amigo.navi.keyguard.security.AmigoAccount;
+import com.amigo.navi.keyguard.security.AmigoSecurityPasswordUtil;
 import com.amigo.navi.keyguard.security.AmigoUnBindAcountActivity;
 import com.amigo.navi.keyguard.util.TimeUtils;
 import com.amigo.navi.keyguard.util.VibatorUtil;
@@ -187,7 +188,7 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
     private void setForgetPasswordButton() {
     	 forgetButton = (TextView) this.findViewById(R.id.forget_password);
          if(forgetButton == null) return;
-         if(KeyguardViewHostManager.isSuppotFinger() && getTimeOutSize()>=5){
+         if(getTimeOutSize()>=5 && AmigoSecurityPasswordUtil.getInstance().getSecurityPasswordSupport()){
         	 forgetButton.setVisibility(View.VISIBLE);
          }
         forgetButton.setOnClickListener(new View.OnClickListener() {
@@ -402,7 +403,7 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
 			mCallback.dismiss(true);
 		}
 		mCallback.reset();
-		if(KeyguardViewHostManager.isSuppotFinger()){			
+		if(AmigoSecurityPasswordUtil.getInstance().getSecurityPasswordSupport()){			
 			forgetButton.setVisibility(View.INVISIBLE);
 		}
 	}
@@ -413,7 +414,7 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
 		mLockPatternView.setDisplayMode(LockPatternView.DisplayMode.Wrong);	
 		if(DebugLog.DEBUG) DebugLog.d(TAG, "onUnlockFail failReason :"+failReason);
 		if(failReason == UNLOCK_FAIL_REASON_TIMEOUT) {
-			if(KeyguardViewHostManager.isSuppotFinger()){				
+			if(AmigoSecurityPasswordUtil.getInstance().getSecurityPasswordSupport()){				
 				forgetButton.setVisibility(View.VISIBLE);
 			}
 		    VibatorUtil.amigoVibrate(mContext, VibatorUtil.LOCKSCREEN_UNLOCK_CODE_ERROR, VibatorUtil.UNLOCK_ERROR_VIBRATE_TIME);
