@@ -181,17 +181,19 @@ public class FileUtil {
     public static void saveDefaultWallpaperThumbnail(Context context) {
 
         File fileScreenLock = new File(SCREENLOCK_WALLPAPER_LOCATION);
-        File[] files = fileScreenLock.listFiles();
-        Log.v(TAG, "files.length = " + files.length);
-        for (final File file : files) {
-            if (file.isFile() && file.getAbsolutePath().endsWith(".jpg")) {
-                try {
-                    FileInputStream fis = new FileInputStream(file);
-                    DiskUtils.saveDefaultThumbnail(context, fis, file.getName());
-                    fis.close();
-                } catch (Exception e) {
-                    Log.v(TAG, "", e);
-                } 
+        if (fileScreenLock.exists() && fileScreenLock.isDirectory()) {
+            File[] files = fileScreenLock.listFiles();
+            Log.v(TAG, "files.length = " + files.length);
+            for (final File file : files) {
+                if (file.isFile() && file.getAbsolutePath().endsWith(".jpg")) {
+                    try {
+                        FileInputStream fis = new FileInputStream(file);
+                        DiskUtils.saveDefaultThumbnail(context, fis, file.getName());
+                        fis.close();
+                    } catch (Exception e) {
+                        Log.v(TAG, "", e);
+                    } 
+                }
             }
         }
     }

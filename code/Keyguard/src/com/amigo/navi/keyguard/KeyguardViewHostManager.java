@@ -116,14 +116,21 @@ public class KeyguardViewHostManager {
         sInstance=this;
         setViewMediatorCallback(callback);
         initKeyguard(callback);
-        Common.setPowerSaverMode(getPowerSaverMode() == 2);
+		//GIONEE <Amigo_Keyguard> gexiufeng <2015-06-18> modify [1/2] begin: show haokan in power saver mode.
+        //Common.setPowerSaverMode(getPowerSaverMode() == 2);
+        Common.setPowerSaverMode(false);
+		//GIONEE <Amigo_Keyguard> gexiufeng <2015-06-18> modify [1/2] end: show haokan in power saver mode.
         initHorizontalListView();
         addKeyguardArcMenu();
         mFingerIdentifyManager=new FingerIdentifyManager(context);
         ShutdownBroadcastReceiver.setUpdatePage(mUpdatePage);
         mKeyguardViewHost.setConfigChangeCallback(mConfigChangeCallback);
         isSuppotFinger=SystemProperties.get("ro.gn.fingerprint.support").equals("FPC");
-		initPowerSaverObserver();
+
+		//GIONEE <Amigo_Keyguard> gexiufeng <2015-06-18> modify [2/2] begin: show haokan in power saver mode.
+		//initPowerSaverObserver();
+		//GIONEE <Amigo_Keyguard> gexiufeng <2015-06-18> modify [2/2] end: show haokan in power saver mode.
+
         Log.i(TAG,"isSuppotFinger....isSuppotFinger="+isSuppotFinger);
         
         Guide.init(context);
@@ -187,7 +194,13 @@ public class KeyguardViewHostManager {
     
 
 	private void beginStatics() {
+	    
 		if (mViewMediatorCallback.isScreenOn() && !mIsSkylightShown && mViewMediatorCallback.isShowing()){
+		    Wallpaper wallpaper= UIController.getInstance().getmCurrentWallpaper();
+		    if (wallpaper != null) {
+		        mCacheManger.refreshCache(mContext, mImageLoader, mWallpaperAdapter.getWallpaperList(), wallpaper, false);
+            }
+		    
      	   timeOnKeyguardStart = SystemClock.elapsedRealtime() ;
      	}
 	}
@@ -206,10 +219,17 @@ public class KeyguardViewHostManager {
     public void show(Bundle options){
 //        initSkylightHost();
         mKeyguardViewHost.show(options);
+        
         updateNotifiOnkeyguard(true);
         beginStatics();
 		UIController.getInstance().onKeyguardLocked();
         mFingerIdentifyManager.readFingerprintSwitchEnableState();
+        
+        if(isScreenOn()){
+        	DebugLog.d(LOG_TAG, "show(Bundle options)--screen on");
+        	startFingerIdentify();
+        }
+        
         
     }
     
@@ -220,7 +240,7 @@ public class KeyguardViewHostManager {
     
     
     public void hide() {
-         
+        DebugLog.d(TAG,"hide");
         DataStatistics.getInstance().unlockScreenWhenHasNotification(mContext);
         destroyAcivityIfNeed();
         mKeyguardViewHost.hide();
@@ -234,9 +254,7 @@ public class KeyguardViewHostManager {
     }
 
 	public void releaseCache() {
-	    if (mKeyguardListView != null) {
-	        mKeyguardListView.releaseAllChildView();
-        }
+	     
 		if(mImageLoader != null){
         	mImageLoader.clearCache();
         }
@@ -248,15 +266,16 @@ public class KeyguardViewHostManager {
         savePage(false);
 //        mImageLoader.printFirstCacheSize();
         updateHorizontalListViewWhenScreenChanged();
-        releaseCache();
+//        releaseCache();
         cancelFingerIdentify();
     }
     
     public void onScreenTurnedOn(){
+        
         mKeyguardViewHost.onScreenTurnedOn();
         Wallpaper wallpaper= UIController.getInstance().getmCurrentWallpaper();
         if (wallpaper != null){
-        	mCacheManger.refreshCache(mContext, mImageLoader, mWallpaperAdapter.getWallpaperList(),wallpaper, false);
+//        	mCacheManger.refreshCache(mContext, mImageLoader, mWallpaperAdapter.getWallpaperList(),wallpaper, false);
         	HKAgent.onEventScreenOn(mContext, UIController.getInstance().getmCurrentWallpaper());
         	HKAgent.onEventIMGShow(mContext, UIController.getInstance().getmCurrentWallpaper());
         }
@@ -386,6 +405,7 @@ public class KeyguardViewHostManager {
         }
         
         finishStatistics();
+        releaseCache();
     }
     public void hideSkylight(boolean isGotoUnlock) {
         Message msg=mHandler.obtainMessage(MSG_HIDE_SKYLIGHT, isGotoUnlock);
@@ -548,6 +568,7 @@ public class KeyguardViewHostManager {
 									mWallpaperAdapter.getWallpaperList(),
 									UIController.getInstance()
 											.getmCurrentWallpaper(), true);
+					releaseCache();
                 }
                 break;
             default:

@@ -47,6 +47,7 @@ import com.amigo.navi.keyguard.haokan.entity.Wallpaper;
 import com.amigo.navi.keyguard.haokan.entity.WallpaperList;
 import com.amigo.navi.keyguard.haokan.menu.ArcLayout;
 import com.amigo.navi.keyguard.infozone.AmigoKeyguardInfoZone;
+import com.amigo.navi.keyguard.network.ImageLoader;
 import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
 import com.amigo.navi.keyguard.picturepage.adapter.HorizontalAdapter;
 import com.amigo.navi.keyguard.picturepage.widget.KeyguardListView;
@@ -624,18 +625,19 @@ public class UIController implements OnTouchlListener{
         
     }
     
-    public Bitmap getCurrentWallpaperBitmap(Wallpaper wallpaper) {
+    public Bitmap getCurrentWallpaperBitmap(Wallpaper wallpaper, boolean thumb) {
     	if(wallpaper == null){
     		return null;
     	}
         HorizontalAdapter mWallpaperAdapter = (HorizontalAdapter) getmKeyguardListView().getAdapter(); 
-        Bitmap bitmap = mWallpaperAdapter.getWallpaperByUrl(wallpaper.getImgUrl());
+        String imgUrl = thumb ? wallpaper.getImgUrl() + ImageLoader.THUMBNAIL_POSTFIX : wallpaper.getImgUrl();
+        Bitmap bitmap = mWallpaperAdapter.getWallpaperByUrl(imgUrl);
         return bitmap;
         
     }
     
-    public Bitmap getCurrentWallpaperBitmap(Context context) {
-    	Bitmap bitmap = getCurrentWallpaperBitmap(mCurrentWallpaper);
+    public Bitmap getCurrentWallpaperBitmap(Context context, boolean thumb) {
+    	Bitmap bitmap = getCurrentWallpaperBitmap(mCurrentWallpaper, thumb);
     	if(bitmap == null){
     		bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.loading);
     	}

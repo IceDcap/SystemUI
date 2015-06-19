@@ -24,6 +24,7 @@ import com.amigo.navi.keyguard.haokan.entity.Client;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -231,18 +232,19 @@ public class Common {
     
     
     
-    public static Bitmap compBitmap(Bitmap image) {
 
+    public static Bitmap compBitmap(Bitmap image) {
+        Bitmap bitmap = null;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         image.compress(Bitmap.CompressFormat.JPEG, 100, baos);
 
         ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());
         BitmapFactory.Options newOpts = new BitmapFactory.Options();
-        newOpts.inJustDecodeBounds = true;
-        Bitmap bitmap = BitmapFactory.decodeStream(isBm, null, newOpts);
+//        newOpts.inJustDecodeBounds = true;
+//        BitmapFactory.decodeStream(isBm, null, newOpts);
         newOpts.inJustDecodeBounds = false;
-        int w = newOpts.outWidth;
-        int h = newOpts.outHeight;
+        int w = image.getWidth();
+        int h = image.getHeight();
         float hh = 400f;
         float ww = 400f;
         int be = 1;
@@ -255,8 +257,22 @@ public class Common {
             be = 1;
         }
         newOpts.inSampleSize = be;
-        isBm = new ByteArrayInputStream(baos.toByteArray());
-        bitmap = BitmapFactory.decodeStream(isBm, null, newOpts);
+//        isBm = new ByteArrayInputStream(baos.toByteArray());
+        
+        try {
+            bitmap = BitmapFactory.decodeStream(isBm, null, newOpts);
+        } catch (OutOfMemoryError e) {
+            Log.e(TAG, "OutOfMemoryError", e);
+        } finally{
+            
+            try {
+                baos.close();
+                isBm.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        
         return bitmap;
     }
     

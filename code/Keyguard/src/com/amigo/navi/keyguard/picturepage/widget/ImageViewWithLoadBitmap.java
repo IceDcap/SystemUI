@@ -455,19 +455,25 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
 
 	public void loadloadThumbnailFromCacheIfNeeded() {
 		if (ShowState.SHOW_IMAGE == getmShowState()) {
-			boolean isRefresh = loadThumbnailFromCache();
-			if (isPrintLog) {
-				DebugLog.d(LOG_TAG, "loadThumbnailToRefresh isRefresh:"
-						+ isRefresh);
-			}
-			if (isRefresh) {
-				setmShowState(ShowState.SHOW_THUMBNAIL);
-			}else{
-        		this.setImageResource(mConfig.startBitmapID);
-				setmShowState(ShowState.SHOW_NOIMAGE);
-			}
+		    loadloadThumbnailFromCache();
 		}
 	}
+	
+	
+	public void loadloadThumbnailFromCache() {
+        // TODO Auto-generated method stub
+	    boolean isRefresh = loadThumbnailFromCache();
+        if (isPrintLog) {
+            DebugLog.d(LOG_TAG, "loadThumbnailToRefresh isRefresh:"
+                    + isRefresh);
+        }
+        if (isRefresh) {
+            setmShowState(ShowState.SHOW_THUMBNAIL);
+        }else{
+            this.setImageResource(mConfig.startBitmapID);
+            setmShowState(ShowState.SHOW_NOIMAGE);
+        }
+    }
 
 	public void loadImageFromCacheIfNeeded() {
 		if (ShowState.SHOW_IMAGE != getmShowState()) {

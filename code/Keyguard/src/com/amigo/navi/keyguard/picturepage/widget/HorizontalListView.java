@@ -281,16 +281,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     
  
 
-    
-    public void releaseAllChildView() {
-        int childCount = getChildCount();
-        for (int index = 0; index < childCount; index++) {
-            View view = getChildAt(0);
-            releaseImageBitmap(view);
-            mRecyclerViews.add(view);
-            detachViewFromParent(view);
-        }
-    }
+
     
     private void releaseImageBitmap(View view) {
         ImageViewWithLoadBitmap imageViewWithLoadBitmap = null;

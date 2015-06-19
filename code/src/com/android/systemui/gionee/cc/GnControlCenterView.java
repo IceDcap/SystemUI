@@ -170,14 +170,13 @@ public class GnControlCenterView extends FrameLayout {
         super.onVisibilityChanged(changedView, visibility);
         Log.d(TAG, "visibility = " + visibility);
         if (visibility != View.VISIBLE) {
-            Log.d(TAG, "releaseBitmap mBlur");
             if (!GnControlCenterMoreView.isOpen()) {
-                GnBlurHelper.releaseBitmap(GnBlurHelper.mBlur);
-                
-                Log.d(TAG, "cc unlock");
-                GnUtil.setLockState(GnUtil.STATE_LOCK_UNLOCK);
+                Log.d(TAG, "releaseBitmap mBlur");
+                GnBlurHelper.releaseBitmap(GnBlurHelper.mBlur);                
             }
             
+            Log.d(TAG, "cc unlock");
+            GnUtil.setLockState(GnUtil.STATE_LOCK_UNLOCK);
             GnControlCenter.go(GnControlCenter.STATE_CLOSED);
         }
     }

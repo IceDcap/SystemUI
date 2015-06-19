@@ -12,6 +12,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
@@ -190,7 +191,7 @@ public class PlayerManager {
         }
     }
     
-    
+    private Bitmap thumbBitmap = null;
     private void createNotification() {
         
         if (mCurrentMusic == null) {
@@ -218,9 +219,10 @@ public class PlayerManager {
         
         remoteViews.setTextViewText(R.id.haokan_main_layout_music, mCurrentMusic.getmMusicName());
         remoteViews.setTextViewText(R.id.haokan_main_layout_Artist, mCurrentMusic.getmArtist());
-        remoteViews.setImageViewBitmap(R.id.haokan_notification_image,
-                Common.compBitmap(UIController.getInstance().getCurrentWallpaperBitmap(mApplicationContext)));
-        
+        thumbBitmap = Common.compBitmap(UIController.getInstance().getCurrentWallpaperBitmap(mApplicationContext, true));
+        if (thumbBitmap != null) {
+            remoteViews.setImageViewBitmap(R.id.haokan_notification_image, thumbBitmap);
+        }
         mNotification = builder.build();
         
     }
@@ -238,9 +240,8 @@ public class PlayerManager {
     
     private void cancelNotification() {
         DebugLog.d(TAG, "cancelNotification");
-
         mNotificationManager.cancel(NOTIFICATION_ID);
-
+        BitmapUtil.recycleBitmap(thumbBitmap);
     }
     
     
