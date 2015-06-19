@@ -1603,9 +1603,11 @@ public class NotificationPanelView extends PanelView implements
 					Rect dst = new Rect(0, 0, panelWidth, panelHeight);
 	
 	    			Paint paint = new Paint();
-	    			paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OVER));
+	    			//GIONEE <wujj> <2015-06-19> modify for CR01489937 begin
+	    			paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
 	    			canvas.drawBitmap(GnBlurHelper.mBlur, src, dst, paint);
-	    			canvas.drawColor(0xCC181818);
+	    			canvas.drawColor(0xEE181818);
+	    			//GIONEE <wujj> <2015-06-19> modify for CR01489937 end
 	    		} else {
 	    			Log.v(TAG,"NotificationPanelView: blur bitmap is null");
 	    			canvas.drawColor(0xF2181818);
