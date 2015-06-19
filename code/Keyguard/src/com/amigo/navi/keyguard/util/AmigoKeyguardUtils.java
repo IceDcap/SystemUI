@@ -355,7 +355,8 @@ public class AmigoKeyguardUtils {
         return true;
     }
     
-    
+	//gexiufeng add ALARM_BROADCAST_ACTIVITY_NAME for CR01501555
+	private static final String ALARM_BROADCAST_ACTIVITY_NAME="com.android.deskclock.alarmclock.broadcast.AlarmBroadCastActivity";
     private static final String ALARM_ACTIVITY_NAME="com.android.deskclock.alarmclock.AlarmAlert";
     private static final String IN_CALL_ACTIVITY_NAME="com.android.incallui.InCallActivity";
 
@@ -366,7 +367,7 @@ public class AmigoKeyguardUtils {
         if(taskInfos!=null&&taskInfos.size()>0){
             RunningTaskInfo topTaskInfo=taskInfos.get(0);
             String topActivityName=topTaskInfo.topActivity.getClassName();
-            isTop=ALARM_ACTIVITY_NAME.equals(topActivityName)||IN_CALL_ACTIVITY_NAME.equals(topActivityName);
+            isTop = ALARM_ACTIVITY_NAME.equals(topActivityName)||IN_CALL_ACTIVITY_NAME.equals(topActivityName) || ALARM_BROADCAST_ACTIVITY_NAME.equals(topActivityName);
             DebugLog.d(LOG_TAG, "topActivityName: "+topActivityName+"  isTop: "+isTop);
         }
         return isTop;

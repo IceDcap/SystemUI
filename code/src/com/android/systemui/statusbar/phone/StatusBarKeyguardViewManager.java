@@ -294,11 +294,11 @@ public class StatusBarKeyguardViewManager implements KeyguardBouncerCallback ,Ke
         }
         mStatusBarWindowManager.setKeyguardOccluded(occluded);
         //<Amigo_Keyguard>  jingyn <2015-05-12> modify for fingerIdentify begin
-        if(occluded){
-            cancelFingerIdentify();
-        }else{
-            startFingerIdentify();
-        }
+//        if(occluded){
+//            cancelFingerIdentify();
+//        }else{
+//            startFingerIdentify();
+//        }
         //<Amigo_Keyguard>  jingyn <2015-05-12> modify for fingerIdentify end
     }
 

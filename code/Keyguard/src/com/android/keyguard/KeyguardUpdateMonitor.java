@@ -1423,6 +1423,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
             Log.w(TAG, "Unknown sim state: " + simState);
             state = State.UNKNOWN;
         }
+        
         SimData data = mSimDatas.get(subId);
         final boolean changed;
         if (data == null) {
@@ -1430,8 +1431,14 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
             mSimDatas.put(subId, data);
             changed = true; // no data yet; force update
         } else {
-            changed = data.simState != state && !data.isIgnoreReady;
-            data.simState = state;
+        	Log.v(TAG, "refreshSimState: state="+state+"data.simState="+data.simState);
+        	if(data.simState != State.READY){
+	            changed = data.simState != state && !data.isIgnoreReady;
+	            data.simState = state;
+        	}else{
+        		changed=false;
+        	}
+        	
         }
         return changed;
     }

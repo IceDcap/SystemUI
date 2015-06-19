@@ -76,6 +76,10 @@ public class FingerIdentifyManager {
         if (manager == null) {
             return false;
         }
+        DebugLog.d(LOG_TAG, "isActiveFingerPrint  isSecureFrozen: "+isSecureFrozen());
+        if(isSecureFrozen()){
+        	return false;
+        }
         boolean isSupportFinger=KeyguardViewHostManager.isSuppotFinger();
         if(!isSupportFinger){
             return false;
@@ -253,8 +257,8 @@ public class FingerIdentifyManager {
 	}
 
     private void fingerMatchFail() {
+    	DebugLog.e(LOG_TAG, "fingerMatchFail  isSecureFrozen---"+isSecureFrozen());
     	if(isSecureFrozen()){
-    		DebugLog.d(LOG_TAG, "fingerMatchFail  isSecureFrozen true");
     		return;
     	}
     	
@@ -316,7 +320,7 @@ public class FingerIdentifyManager {
  				new FingerSwitchContentObserver(mFingerHandler));
  	}
  	
-	public void readFingerprintSwitchEnableState() {
+	public void getFingerIds() {
 		mFingerInts = getIds();
 	}
 	

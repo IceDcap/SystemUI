@@ -287,6 +287,15 @@ public class NetworkControllerImpl extends BroadcastReceiver
 
     public boolean isEmergencyOnly() {
         int voiceSubId = SubscriptionManager.getDefaultVoiceSubId();
+        /// M: Use the existing Sub Id if only one SIM card @{
+        if (mMobileSignalControllers.size() == 1 &&
+            SubscriptionManager.getSlotId(voiceSubId) < 0) {
+            if (DEBUG) {
+                Log.e(TAG, "The VoiceSubId " + voiceSubId + " doesn't exist");
+            }
+            voiceSubId = SubscriptionManager.INVALID_SUBSCRIPTION_ID;
+        }
+        /// M: Use the existing Sub Id if only one SIM card @}
         if (!SubscriptionManager.isValidSubscriptionId(voiceSubId)) {
             for (MobileSignalController mobileSignalController :
                                             mMobileSignalControllers.values()) {

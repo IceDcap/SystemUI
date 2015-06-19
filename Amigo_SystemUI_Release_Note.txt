@@ -2,40 +2,55 @@
 Build Notes
 ==================
 1.版本目的:
-Bugfix
-2.功能变更:
-无
-3.重点测试的问题:
-CR01504243             
-Monkey测试时禁止关闭adb
-CR01497717
-【5.1MP】控制中心：上滑打开控制中心-进入更多设置-界面是透明的而不是毛玻璃效果（2/20附图log）
-CR01496657
-【5.1MP】品质压力:待机,状态栏SIM卡信号棒消失,待机5分钟后恢复正常（3/10）
-CR01485997
-【5.1MP】工厂:进入相机拉出控制中心,长按拍照图标会震动,但没有拍照 100%
+r6149
+CR01165190 修改注释
+---------------------
+r6148
+CR01165190 解决在手机安全密码界面，灭屏亮屏，锁屏不提示“指纹识别”
+---------------------
+r6147
+CR01501555 don't start skylight activity when AlarmBroadCastActivity in background. 
+---------------------
+r6142
+CR01408122 修改Sim卡锁在解完之后，底层又发广播handleSimSubscriptionInfoChanged里Sim卡为pin_request,导致解完之后有瞬间闪出SIM卡锁有消失的问题 修改一张卡的时候，忽略Sim卡之后上锁在解锁出现上滑解不了锁的问题
+---------------------
+r6141
+CR01484839 【5.1MP】系统界面:插入两张SIM卡后，直接拔掉卡2，状态栏仍显示两张卡信号【2/10】 
+---------------------
+r6139
+CR01408122 壁纸音乐播放回退为和M5一直的交互逻辑
+---------------------
+r6138
+CR01500838 回退代码。 设置AndroidManeifest配置有问题，导致通知发送显示异常。 
+---------------------
+r6134
+CR01471815 android 5.1 SystemUI适配 
+---------------------
 
+2.功能变更:
+--
+3.重点测试的问题:
+--
 4.应用数据库是否改变:
 No
 
 ==================
 Release Location
 ==================
-/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.al.zip
+/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.am.zip
 
 ==================
 CR List
 ==================
-[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
-CR01408122      Opened     jiating    【NAVI锁屏2.0.0.y】打开小米锁屏后 ，从 navi桌面不能下拉上锁
-CR01459185      Opened     zhaowei    {Navi锁屏}提交Navi锁屏代码
-CR01485997      Resolved   huangwt    【5.1MP】工厂:进入相机拉出控制中心,长按拍照图标会震动,但没有拍照 100%
-CR01487133      Coded      gexiufeng  【5.1MP】系统管家：开启极致省电，锁屏解锁，屏幕会闪两下(必现)
-CR01496657      Resolved   guozj      【5.1MP】品质压力:待机,状态栏SIM卡信号棒消失,待机5分钟后恢复正常（3/10）
-CR01497717      Opened     huangwt    【5.1MP】控制中心：上滑打开控制中心-进入更多设置-界面是透明的而不是毛玻璃效果（2/20附图log）
-CR01499577      Coded      feihm      【5.1MP工厂】设置中开启动作手势所有项》开启指纹》便捷解锁屏幕锁方式说及安全密码》待机界面隔空下滑锁屏》用指纹无法解锁100%
-CR01502964      Opened     hanjuan    好看壁纸bug修复
-Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.al
-Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ak
-Code difference: svn diff -r 6123:6090 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.bc' non-existen[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+t in revision 6149
 
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6149:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+Make sonar target URL:
+http://ss.alm.gionee.com/sonar
+http://ss.alm.gionee.com/sonar/dashboard/index/gionee.app:Amigo_SystemUI
+==================

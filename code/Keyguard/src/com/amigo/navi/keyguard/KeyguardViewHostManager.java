@@ -223,7 +223,6 @@ public class KeyguardViewHostManager {
         updateNotifiOnkeyguard(true);
         beginStatics();
 		UIController.getInstance().onKeyguardLocked();
-        mFingerIdentifyManager.readFingerprintSwitchEnableState();
         
         if(isScreenOn()){
         	DebugLog.d(LOG_TAG, "show(Bundle options)--screen on");
@@ -251,6 +250,8 @@ public class KeyguardViewHostManager {
         releaseCache();
         mContainer.reset();
         UIController.getInstance().securityViewAlphaAnimationUpdating(1f);
+        
+        cancelFingerIdentify();
     }
 
 	public void releaseCache() {
@@ -280,6 +281,8 @@ public class KeyguardViewHostManager {
         	HKAgent.onEventIMGShow(mContext, UIController.getInstance().getmCurrentWallpaper());
         }
         beginStatics();
+        
+        DebugLog.i("onScreenTurnedOn", "--onScreenTurnedOn--");
         startFingerIdentify();
     }
     
@@ -341,10 +344,11 @@ public class KeyguardViewHostManager {
     }
     
     public void startFingerIdentify(){
-    	DebugLog.d(TAG, "startFingerIdentify");
+    	DebugLog.e(TAG, "startFingerIdentify");
         mHandler.post(new Runnable() {
             @Override
             public void run() {
+            	mFingerIdentifyManager.getFingerIds();
                 mFingerIdentifyManager.startIdentifyIfNeed();
             }
         });
@@ -969,8 +973,10 @@ public class KeyguardViewHostManager {
 	public void setOccluded(boolean occluded){
     	 if (occluded) {   		 
   	        mKeyguardViewHost.setVisibility(View.GONE);      
+  	        cancelFingerIdentify();
          } else {
          	mKeyguardViewHost.setVisibility(View.VISIBLE);
+         	startFingerIdentify();
          }    	
     }
     

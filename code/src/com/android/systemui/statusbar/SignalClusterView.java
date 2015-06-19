@@ -161,7 +161,14 @@ public class SignalClusterView
     public void setMobileDataIndicators(boolean visible, int strengthIcon, int typeIcon,
             String contentDescription, String typeContentDescription, boolean isTypeIconWide,
             int subId) {
-        PhoneState state = getOrInflateState(subId);
+        /// M: "Add getState". @{
+        PhoneState state = getState(subId);
+        if (state == null) {
+            Log.d(TAG, "setMobileDataIndicators(" + subId + "), subId = " +
+            subId + " is not exist");
+            return;
+        }
+        /// M: "Add getState". @} 
         state.mMobileVisible = visible;
         state.mMobileStrengthId = strengthIcon;
         state.mMobileTypeId = typeIcon;
@@ -189,6 +196,17 @@ public class SignalClusterView
         	inflatePhoneState(subs.get(i).getSimSlotIndex());
         }
     }
+    
+    /// M: "Add getState". @{
+    private PhoneState getState(int subId) {
+        for (PhoneState state : mPhoneStates) {
+            if (state.mSubId == subId) {
+                return state;
+            }
+        }
+        return null;
+    }
+    /// M: "Add getState". @}
 
     private PhoneState getOrInflateState(int subId) {
         for (PhoneState state : mPhoneStates) {
@@ -408,7 +426,11 @@ public class SignalClusterView
 
 	@Override
 	public void setNetworkType(int networkType, int subId) {
-		PhoneState state = getOrInflateState(subId);
+		PhoneState state = getState(subId);
+        if (state == null) {
+            Log.d(TAG, "setNetworkType(" + subId + "), subId = " + subId + " is not exist");
+            return;
+        }
 		state.mNetworkTypeId = networkType;
 		apply();
 	}

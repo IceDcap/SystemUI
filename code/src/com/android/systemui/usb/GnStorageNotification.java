@@ -36,6 +36,7 @@ import android.os.storage.StorageEventListener;
 import android.os.storage.StorageManager;
 import android.os.storage.StorageVolume;
 import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.util.Slog;
 import android.widget.RemoteViews;
@@ -168,6 +169,15 @@ public class GnStorageNotification extends SystemUI {
 			Editor editor = preferences.edit();
 			editor.putBoolean("boot_flag", false);
 			editor.commit();
+		}
+		
+		TelephonyManager tm = (TelephonyManager) mContext
+				.getSystemService(Context.TELEPHONY_SERVICE);
+		if (tm != null) {
+			String id = tm.getDeviceId();
+			if (id == null || (id.matches("9{14}.") || id.equals("0"))) {
+				isFirstBoot = false;
+			}
 		}
 		return isFirstBoot;
 	}
