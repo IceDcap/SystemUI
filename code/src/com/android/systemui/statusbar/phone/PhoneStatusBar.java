@@ -985,6 +985,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 		@Override
 		public void onClick(View arg0) {
 			mShowOther = !mShowOther;
+			// GIONEE <wujj> <2015-06-24> modify for CR01505021 begin
+			Log.v(TAG, "OnClicked View: "+(arg0.getId() == R.id.hide?"HideButton":"OtherLevelHeaderView")
+					+ ". mShowOther = "+mShowOther);
+			// GIONEE <wujj> <2015-06-24> modify for CR01505021 end
 			ImageView hideButton = (ImageView)mOtherHeader.findViewById(R.id.hide);
 			if (mShowOther == true) {
 				hideButton.setImageDrawable(mContext.getDrawable(R.drawable.gn_arrow_up));

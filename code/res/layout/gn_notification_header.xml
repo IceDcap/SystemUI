@@ -45,7 +45,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="10dp"
             android:layout_toRightOf="@id/header_text"
-            android:fontFamily="sans-serif"
+            android:fontFamily="sans-serif-medium"
             android:gravity="center_vertical"
             android:textColor="#99FFFFFF"
             android:textSize="@dimen/gn_status_bar_recents_app_label_text_size"
