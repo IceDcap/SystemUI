@@ -39,6 +39,7 @@ import android.widget.Toast;
 import android.widget.ImageView.ScaleType;
 
 import com.amigo.navi.keyguard.DebugLog;
+import com.amigo.navi.keyguard.KWDataCache;
  
 import com.amigo.navi.keyguard.haokan.CropImageView;
 import com.amigo.navi.keyguard.haokan.CutImageView;
@@ -302,12 +303,23 @@ public class WallpaperCutActivity extends Activity {
 
         Bitmap source = ((BitmapDrawable) mImageView.getDrawable()).getBitmap();
         Bitmap newBitmap = null;
+        Bitmap singleScreen = null;
         try {
             newBitmap = Bitmap.createBitmap(source, xLeft, yTop, width, height);
+            if (newBitmap != null) {
+                singleScreen = BitmapUtil.getResizedBitmapForSingleScreen(newBitmap,
+                        KWDataCache.getScreenHeight(getResources()),
+                        KWDataCache.getScreenWidth(getResources()));
+            }
+            BitmapUtil.recycleBitmap(newBitmap);
+            BitmapUtil.recycleBitmap(source);
         } catch (OutOfMemoryError e) {
             Log.d(TAG, "", e);
+        } catch (Exception e) {
+            Log.d(TAG, "", e);
         }
-        return newBitmap;
+        
+        return singleScreen;
     }
 
     private View.OnClickListener mApplyOnClickListener = new View.OnClickListener() {

@@ -799,6 +799,7 @@ public class ImageWallpaper extends WallpaperService {
 											+ ",this = " + this);
 									releaseBitmap(background);
 									saveBlurBitmap(completeBmp);
+									releaseBitmap(completeBmp);
 								}
 							});
 				}
@@ -873,7 +874,7 @@ public class ImageWallpaper extends WallpaperService {
 						fos.close();
 						fos = null;
 					}
-					releaseBitmap(blur);
+					//releaseBitmap(blur);
 				}
 			} catch (Exception e) {
 				Log.e(TAG, " ------ saveWallPaperBlur file close fail! ------");

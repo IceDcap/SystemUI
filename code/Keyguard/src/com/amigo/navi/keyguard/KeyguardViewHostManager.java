@@ -282,7 +282,6 @@ public class KeyguardViewHostManager {
         }
         beginStatics();
         
-        DebugLog.i("onScreenTurnedOn", "--onScreenTurnedOn--");
         startFingerIdentify();
     }
     
@@ -348,8 +347,7 @@ public class KeyguardViewHostManager {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-            	mFingerIdentifyManager.getFingerIds();
-                mFingerIdentifyManager.startIdentifyIfNeed();
+                mFingerIdentifyManager.startIdentify();
             }
         });
     }

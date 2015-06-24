@@ -35,6 +35,7 @@ public class FingerIdentifyManager {
 	private int mIdentifyFailedTimes = 0;
 	private boolean mFingerprintSwitchOpen = false;
 	private int[] mFingerInts = null;
+	private boolean mIsStartIdentifyState = false;
     
     public FingerIdentifyManager(Context  context){
         mContext=context;
@@ -63,7 +64,7 @@ public class FingerIdentifyManager {
         };
     };
     
-    public void startIdentifyIfNeed(){
+    private void startIdentifyIfNeed(){
         boolean isStartFingerPrint=isActiveFingerPrint();
         DebugLog.d(LOG_TAG, "startIdentifyIfNeed  isStartFingerPrint:"+isStartFingerPrint);
         if(isStartFingerPrint && isHaveFinger()){
@@ -117,7 +118,7 @@ public class FingerIdentifyManager {
         return true;
     }
     
-    public boolean readFingerprintSwitchValue(){
+    private boolean readFingerprintSwitchValue(){
         //0 is close;1 is open
         int unlockValue = Settings.Secure.getInt(mContext.getContentResolver(),
                 FINGERPRINT_FOR_UNLOCK_SWITCH_KEY, 0);
@@ -160,6 +161,7 @@ public class FingerIdentifyManager {
         try {
             Method cancel = mGnFingerPrintManagerClass.getMethod("cancel");
             cancel.invoke(mObj);
+            mIsStartIdentifyState = false;
         } catch (Exception e) {
             e.toString();
         }finally{
@@ -188,6 +190,7 @@ public class FingerIdentifyManager {
     private void startIdentifyTimeout(int[] ids, long timeout) {
         try {
             DebugLog.d(LOG_TAG, "startIdentifyTimeout() start");
+            mIsStartIdentifyState = true;
             
             Class<?> GnFingerPrintManager = (Class<?>) Class.forName(CLASS_GNFPMANAGER);
             Object obj = GnFingerPrintManager.newInstance();
@@ -308,6 +311,7 @@ public class FingerIdentifyManager {
  		public void handleMessage(Message msg) {
  			super.handleMessage(msg);
  			readFingerprintSwitchValue();
+ 			resetFingerIds();
  		}
  	};
  	
@@ -320,7 +324,7 @@ public class FingerIdentifyManager {
  				new FingerSwitchContentObserver(mFingerHandler));
  	}
  	
-	public void getFingerIds() {
+	private void resetFingerIds() {
 		mFingerInts = getIds();
 	}
 	
@@ -367,5 +371,15 @@ public class FingerIdentifyManager {
  	private void resetIdentifyFailedTimes(){
  		mIdentifyFailedTimes = 0;
  	}
+
+    public void startIdentify(){
+    	DebugLog.d(LOG_TAG, "startIdentify  mIsStartIdentifyState:"+mIsStartIdentifyState);
+    	if(mIsStartIdentifyState){
+    		return;
+    	}
+    	resetFingerIds();
+    	startIdentifyIfNeed();
+    }
+    
  	// <Gionee> feihm CR01165190 end
 }

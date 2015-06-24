@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.Bitmap.CompressFormat;
 
+
 public final class BitmapUtil {
 	
 	  public static Bitmap getResizedBitmap(Bitmap bm, int newHeight, int newWidth) {
@@ -75,7 +76,10 @@ public final class BitmapUtil {
 		}
 	   
 	   public static void recycleBitmap(Bitmap bitmap){
-	       if(bitmap!=null&&!bitmap.isRecycled()){
+	       if(bitmap != null && !bitmap.isRecycled()){
+	           if(DebugLog.DEBUG){
+	                DebugLog.d("BitmapUtil", "recycleBitmap hashCode = " + bitmap.hashCode());
+	           }
 	           bitmap.recycle();
 	           bitmap=null;
 	       }
