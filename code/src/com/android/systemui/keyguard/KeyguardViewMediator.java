@@ -414,12 +414,14 @@ public class KeyguardViewMediator extends SystemUI {
                                 doKeyguardLocked(null);
                             } else {
                                 resetStateLocked();
+                                adjustStatusBarLocked();
                             }
                         }
                     }
                     break;
                 case ABSENT:
                     resetStateLocked();
+                    adjustStatusBarLocked();
                     mStatusBarKeyguardViewManager.finishIfNoSecure();
                     break;
                 case PIN_REQUIRED:
@@ -432,6 +434,7 @@ public class KeyguardViewMediator extends SystemUI {
                             doKeyguardLocked(null);
                         } else {
                             resetStateLocked();
+                            adjustStatusBarLocked();
                         }
                     }
                     break;
@@ -445,6 +448,7 @@ public class KeyguardViewMediator extends SystemUI {
                             if (DEBUG_SIM_STATES) Log.d(TAG, "PERM_DISABLED, resetStateLocked to"
                                   + "show permanently disabled message in lockscreen.");
                             resetStateLocked();
+                            adjustStatusBarLocked();
                         }
                     }
                     break;
@@ -452,6 +456,7 @@ public class KeyguardViewMediator extends SystemUI {
                     synchronized (this) {
                         if (mShowing) {
                             resetStateLocked();
+                            adjustStatusBarLocked();
                         }
                     }
                     break;

@@ -20,7 +20,7 @@
         xmlns:androidprv="http://schemas.android.com/apk/prv/res/android"
         package="com.android.systemui"
         android:sharedUserId="android.uid.systemui"
-		android:versionName="6.1.0.am"
+		android:versionName="6.1.0.an"
         coreApp="true">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -551,6 +551,13 @@
             android:name="AmigoAlarmAlignPermissioin"
             android:value="522B46260F2AC82415E734D617BC63497F3A73AC25C17C8AA788805A22188624" >
         </meta-data>
+        
+       <service android:name="com.amigo.navi.keyguard.fingerprint.AmigoFingerService"
+           android:exported="true" > 
+			 <intent-filter> 
+			<action android:name="com.amigo.navi.keyguard.fingerprint.IAmigoFingerService" /> 
+			</intent-filter> 
+</service> 
         
     </application>
 </manifest>

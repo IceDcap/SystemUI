@@ -202,5 +202,7 @@
       
       <string name="set_screenlock_wallpaper_fail">set screenlock wallpaper fail</string>
       <string name="insufficient_memory">Insufficient memory, please free up some space</string>
+      <string name="lockscreen_emergency_call">Emergency call</string>
+     <string name="lockscreen_return_to_call">Return to call</string>
       
 </resources>

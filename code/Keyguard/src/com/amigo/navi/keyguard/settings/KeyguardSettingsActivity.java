@@ -43,6 +43,7 @@ import android.widget.CompoundButton;
 
 
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
@@ -79,6 +80,7 @@ public class KeyguardSettingsActivity extends Activity {
     private Switch mKeyguardWallpaperUpdate;
     private Switch mOnlyWlanSwitch;
     private TextView mSettingTitle;
+    private ImageView mSettingBack;
     private TextView mWallpaperUpdateTitle;
     private TextView mWallpaperUpdateFirstline;
     private TextView mWallpaperUpdateSecondline;
@@ -150,12 +152,22 @@ public class KeyguardSettingsActivity extends Activity {
 	    mDoubleDesktopLockSecondline = (TextView)findViewById(R.id.double_desktop_lock_secondline);
 	    mDoubleDesktopLock = (Switch) findViewById(R.id.settings_switch_double_desktop_lock);
 	    mGuideView = (TextView)findViewById(R.id.wallpaper_update_guide);
+		mSettingBack = (ImageView)findViewById(R.id.haokan_setting_back);
+		
+		mSettingBack.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				finish();				
+			}
+		});
 
 	}
 	
 	private ArrayList<View> getViewGroup(){
 		
 		ArrayList<View> viewGroup = new ArrayList<View>();
+		//viewGroup.add(mSettingBack);
 		viewGroup.add(mSettingTitle);
 		viewGroup.add(mWallpaperUpdateTitle);
 		viewGroup.add(mWallpaperUpdateFirstline);

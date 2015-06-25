@@ -4,32 +4,22 @@
     android:layout_height="match_parent"
     android:clipChildren="false"
     android:orientation="vertical"
-    android:paddingLeft="@dimen/settings_paddingleft"
-    android:paddingRight="@dimen/settings_paddingright" >
+    android:paddingRight="@dimen/settings_paddingright" >    
+    
+    <ImageView
+        android:id="@+id/haokan_setting_back"
+        android:layout_width="@dimen/settings_titlebar_height"
+        android:layout_height="@dimen/settings_titlebar_height"
+        android:clickable="true"
+        android:scaleType="centerInside"
+        android:src="@drawable/amigo_ic_ab_back_light" 
+        android:layout_alignParentLeft="true"/>
 
     <TextView
-        android:id="@+id/wallpaper_update_guide"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="@dimen/settings_guide_marginright"
-        android:layout_marginTop="@dimen/settings_guide_margintop"
-        android:background="@drawable/haokan_wallpaper_update_guide_bg"
-        android:paddingLeft="@dimen/settings_guide_text_padding_h"
-        android:paddingRight="@dimen/settings_guide_text_padding_h"
-        android:paddingTop="@dimen/settings_guide_text_padding_top"
-        android:shadowColor="#000000"
-        android:shadowDx="2"
-        android:shadowDy="2"
-        android:shadowRadius="2"
-        android:text="@string/haokan_wallpaper_update_guide_text"
-        android:textColor="@color/keyguard_setting_guide_textcolor"
-        android:textSize="@dimen/settings_guide_textsize"
-        android:visibility="invisible" />
-
-    <TextView
+        android:paddingLeft="@dimen/settings_paddingleft"
+        android:layout_toRightOf="@id/haokan_setting_back"
         android:id="@+id/setting_title"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="@dimen/settings_titlebar_height"
         android:gravity="center_vertical"
         android:text="@string/settings"
@@ -38,6 +28,8 @@
         android:visibility="invisible" />
 
     <TextView
+        
+        android:paddingLeft="@dimen/settings_paddingleft"
         android:id="@+id/wallpaper_update_title"
         android:layout_width="match_parent"
         android:layout_height="@dimen/settings_title_height"
@@ -49,6 +41,7 @@
         android:visibility="invisible" />
 
     <LinearLayout
+        android:paddingLeft="@dimen/settings_paddingleft"
         android:id="@+id/wallpaper_update_layout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/settings_body_height"
@@ -95,6 +88,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:paddingLeft="@dimen/settings_paddingleft"
         android:id="@+id/only_wlan_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -125,6 +119,7 @@
     </LinearLayout>
     
     <View
+        android:paddingLeft="@dimen/settings_paddingleft"
         android:layout_below="@id/only_wlan_layout"
         android:id="@+id/settings_divider_second"
         android:layout_width="match_parent"
@@ -134,6 +129,7 @@
         android:visibility="invisible" />
 
     <TextView
+        android:paddingLeft="@dimen/settings_paddingleft"
         android:layout_below="@id/settings_divider_second"
         android:id="@+id/set_keyguard_wallpaper_title"
         android:layout_width="match_parent"
@@ -145,6 +141,7 @@
         android:visibility="invisible" />
 
     <LinearLayout
+        android:paddingLeft="@dimen/settings_paddingleft"
         android:layout_below="@id/set_keyguard_wallpaper_title"
         android:id="@+id/set_keyguard_wallpaper_layout"
         android:layout_width="match_parent"
@@ -174,6 +171,7 @@
     </LinearLayout>
 
     <View
+        android:paddingLeft="@dimen/settings_paddingleft"
         android:id="@+id/settings_divider"
         android:layout_width="match_parent"
         android:layout_height="@dimen/settings_line_height"
@@ -185,6 +183,7 @@
     
     
     <TextView
+        android:paddingLeft="@dimen/settings_paddingleft"
         android:id="@+id/double_desktop_lock_title"
         android:layout_width="match_parent"
         android:layout_height="@dimen/settings_title_height"
@@ -196,6 +195,7 @@
         android:visibility="invisible" />
 
     <LinearLayout
+        android:paddingLeft="@dimen/settings_paddingleft"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/double_desktop_lock_title"
@@ -240,5 +240,27 @@
             android:layout_weight="4"
             android:visibility="invisible" />
     </LinearLayout>
+
+    <TextView
+        
+        android:id="@+id/wallpaper_update_guide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/settings_guide_marginright"
+        android:layout_marginTop="@dimen/settings_guide_margintop"
+        android:background="@drawable/haokan_wallpaper_update_guide_bg"
+        android:paddingLeft="@dimen/settings_guide_text_padding_h"
+        android:paddingRight="@dimen/settings_guide_text_padding_h"
+        android:paddingTop="@dimen/settings_guide_text_padding_top"
+        android:shadowColor="#000000"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="2"
+        android:text="@string/haokan_wallpaper_update_guide_text"
+        android:textColor="@color/keyguard_setting_guide_textcolor"
+        android:textSize="@dimen/settings_guide_textsize"
+        android:visibility="invisible" />
+
 
 </RelativeLayout>

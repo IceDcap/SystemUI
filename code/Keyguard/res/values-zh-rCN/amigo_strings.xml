@@ -165,4 +165,6 @@
 
    	<string name="set_screenlock_wallpaper_fail">设置锁屏壁纸失败</string>
    	<string name="insufficient_memory">存储空间不足，请释放空间</string>
+   	<string name="lockscreen_emergency_call">紧急呼叫</string>
+   	<string name="lockscreen_return_to_call">返回通话</string>
 </resources>

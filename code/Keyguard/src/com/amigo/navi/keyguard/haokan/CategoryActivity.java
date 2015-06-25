@@ -69,6 +69,7 @@ public class CategoryActivity extends Activity{
     private Bitmap mWindowBackgroud;
     
     private TextView mTextView;
+    private ImageView mImageView;
     private static final String PATH = "category_pics";
     private Handler mHandler = new Handler(){
 
@@ -136,6 +137,16 @@ public class CategoryActivity extends Activity{
         mCategoryAdapter = new CategoryAdapter(this);
         mTextView = (TextView)findViewById(R.id.TextView);
         mTextView.setVisibility(View.GONE);
+        
+        mImageView = (ImageView)findViewById(R.id.haokan_category_back);
+        mImageView.setVisibility(View.GONE);
+        mImageView.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+		        finish();				
+			}
+		});
         
         mGridView = (GridView) findViewById(R.id.haokan_gridview);
         mGridView.setSelector(new ColorDrawable(Color.TRANSPARENT));
@@ -238,6 +249,8 @@ public class CategoryActivity extends Activity{
         textViewSet.setInterpolator(new DecelerateInterpolator());
         mTextView.setVisibility(View.VISIBLE);
         mTextView.startAnimation(textViewSet);
+        mImageView.setVisibility(View.VISIBLE);
+        mImageView.startAnimation(textViewSet);
     }
     
 

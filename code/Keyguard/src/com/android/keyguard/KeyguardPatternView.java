@@ -301,6 +301,7 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
     	}else{ 		
     		mSecurityMessageDisplay.setMessage(R.string.keyguard_pattern_enter_code, true);
     	}
+    	mSecurityMessageDisplay.setMessageInitColor();
     }
     
     private boolean getFingerSwitchState(){

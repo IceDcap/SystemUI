@@ -118,10 +118,12 @@ public class CategoryDB extends BaseDB{
     
     public List<Category> queryCategorys(){
         final SQLiteDatabase db = mWritableDatabase;
+//        String sql = "select * from " + TABLE_NAME
+//                + " where download_picture = 1 and " + DataConstant.CategoryColumns.TODAY_IMAGE + "=" + 
+//                DataConstant.TODAY_IMAGE + " order by " + DataConstant.CategoryColumns.SORT + " asc";
         String sql = "select * from " + TABLE_NAME
-                + " where download_picture = 1 and " + DataConstant.CategoryColumns.TODAY_IMAGE + "=" + 
+                + " where  " + DataConstant.CategoryColumns.TODAY_IMAGE + "=" + 
                 DataConstant.TODAY_IMAGE + " order by " + DataConstant.CategoryColumns.SORT + " asc";
-        
         
         Cursor cursor = db.rawQuery(sql, null);
         List<Category> list = new ArrayList<Category>();

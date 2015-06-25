@@ -2,55 +2,26 @@
 Build Notes
 ==================
 1.版本目的:
-r6149
-CR01165190 修改注释
----------------------
-r6148
-CR01165190 解决在手机安全密码界面，灭屏亮屏，锁屏不提示“指纹识别”
----------------------
-r6147
-CR01501555 don't start skylight activity when AlarmBroadCastActivity in background. 
----------------------
-r6142
-CR01408122 修改Sim卡锁在解完之后，底层又发广播handleSimSubscriptionInfoChanged里Sim卡为pin_request,导致解完之后有瞬间闪出SIM卡锁有消失的问题 修改一张卡的时候，忽略Sim卡之后上锁在解锁出现上滑解不了锁的问题
----------------------
-r6141
-CR01484839 【5.1MP】系统界面:插入两张SIM卡后，直接拔掉卡2，状态栏仍显示两张卡信号【2/10】 
----------------------
-r6139
-CR01408122 壁纸音乐播放回退为和M5一直的交互逻辑
----------------------
-r6138
-CR01500838 回退代码。 设置AndroidManeifest配置有问题，导致通知发送显示异常。 
----------------------
-r6134
-CR01471815 android 5.1 SystemUI适配 
----------------------
-
+bugfix
 2.功能变更:
---
+无
 3.重点测试的问题:
---
+CR01504583 、CR01504166 
 4.应用数据库是否改变:
 No
 
 ==================
 Release Location
 ==================
-/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.am.zip
+/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.an.zip
 
 ==================
 CR List
 ==================
-svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.bc' non-existen[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
-t in revision 6149
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.aq' non-existent in revision 6198
 
 svn: E200009: Could not display info for all targets because some targets don't exist
-svn: E205000: Syntax error in revision argument '6149:'
+svn: E205000: Syntax error in revision argument '6193:'
 File does not exist:  at getAppChangeSet.pl line 48
 
-==================
-Make sonar target URL:
-http://ss.alm.gionee.com/sonar
-http://ss.alm.gionee.com/sonar/dashboard/index/gionee.app:Amigo_SystemUI
-==================

@@ -93,6 +93,7 @@ class KeyguardMessageArea extends TextView {
 
         public void setMessage(CharSequence msg, boolean important) {
             if (msg!=null && important) {
+    			mMessageArea.setTextColor(mMessageArea.getResources().getColor(R.color.keyguard_number_hint_red));
                 mMessageArea.mMessage = msg;
                 mMessageArea.securityMessageChanged();
             }
@@ -100,6 +101,7 @@ class KeyguardMessageArea extends TextView {
 
         public void setMessage(int resId, boolean important) {
             if (resId != 0 && important) {
+    			mMessageArea.setTextColor(mMessageArea.getResources().getColor(R.color.keyguard_number_hint_red));
                 mMessageArea.mMessage = mMessageArea.getContext().getResources().getText(resId);
                 mMessageArea.securityMessageChanged();
             }
@@ -107,6 +109,7 @@ class KeyguardMessageArea extends TextView {
 
         public void setMessage(int resId, boolean important, Object... formatArgs) {
             if (resId != 0 && important) {
+    			mMessageArea.setTextColor(mMessageArea.getResources().getColor(R.color.keyguard_number_hint_red));
                 mMessageArea.mMessage = mMessageArea.getContext().getString(resId, formatArgs);
                 mMessageArea.securityMessageChanged();
             }
@@ -114,6 +117,7 @@ class KeyguardMessageArea extends TextView {
 
         public void setMessage(int resId, int index,boolean important ,Object formatArgs ) {
         	if (resId != 0 && important) {
+    			mMessageArea.setTextColor(mMessageArea.getResources().getColor(R.color.keyguard_number_hint_red));
                 mMessageArea.mMessage = mMessageArea.getContext().getString(resId, index,formatArgs);
                 if(DebugLog.DEBUG) DebugLog.d(TAG, "onUnlockFail mMessageArea.mMessage  :"+mMessageArea.mMessage +"");
                 mMessageArea.securityMessageChanged();
@@ -136,6 +140,12 @@ class KeyguardMessageArea extends TextView {
         public void setTimeout(int timeoutMs) {
             mMessageArea.mTimeout = timeoutMs;
         }
+
+		@Override
+		public void setMessageInitColor() {
+			mMessageArea.setTextColor(mMessageArea.getResources().getColor(R.color.keyguard_number_hint_white));
+			
+		}
     }
 
     private KeyguardUpdateMonitorCallback mInfoCallback = new KeyguardUpdateMonitorCallback() {

@@ -49,7 +49,6 @@ import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.util.SparseArray;
-
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.internal.telephony.IccCardConstants;
 import com.android.internal.telephony.PhoneConstants;
@@ -70,6 +69,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+
 import com.android.systemui.gionee.statusbar.GnNetworkType;
 
 /** Platform implementation of the network controller. **/
@@ -419,6 +419,11 @@ public class NetworkControllerImpl extends BroadcastReceiver
             }
           //GIONEE <wujj> <2015-05-19> modify for CR01479335 end
         } else if (action.equals(TelephonyIntents.ACTION_SIM_STATE_CHANGED)) {
+        	String stateExtra = intent.getStringExtra(IccCardConstants.INTENT_KEY_ICC_STATE);
+        	int subId = intent.getIntExtra(PhoneConstants.SUBSCRIPTION_KEY, SubscriptionManager.INVALID_SUBSCRIPTION_ID);
+        	if (mMobileSignalControllers.get(subId) != null && IccCardConstants.INTENT_VALUE_ICC_ABSENT.equals(stateExtra)) {
+                mMobileSignalControllers.get(subId).resetPhoneState();
+            }
             // Might have different subscriptions now.
             updateMobileControllers();
         } else if (action.equals(TelephonyIntents.ACTION_SUBINFO_RECORD_UPDATED)) { 
@@ -1289,7 +1294,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
 
             int signalClustersLength = mSignalClusters.size();
             for (int i = 0; i < signalClustersLength; i++) {
-				mSignalClusters.get(i).GnsetNetworkType(mNetworkType,
+				mSignalClusters.get(i).GnsetNetworkType(mNetworkType, isRoaming(),
 	                        mSubscriptionInfo.getSimSlotIndex());
                 mSignalClusters.get(i).setMobileDataIndicators(
                         mCurrentState.enabled && !mCurrentState.airplaneMode,
@@ -1416,7 +1421,11 @@ public class NetworkControllerImpl extends BroadcastReceiver
             } else if (action.equals(TelephonyIntents.ACTION_DEFAULT_DATA_SUBSCRIPTION_CHANGED)) {
                 updateDataSim();
             }else if(action.equals(TelephonyIntents.ACTION_SUBINFO_RECORD_UPDATED)) { 
-            	resetPhoneState(); 
+                boolean isAirPlaneMode = (Settings.Global.getInt(mContext.getContentResolver(),
+                        Settings.Global.AIRPLANE_MODE_ON, 0) == 1);
+                if(isAirPlaneMode) {
+                	resetPhoneState(); 
+                }
             	updateNetworkType(); 
             	updateTelephony(); 
             } 
@@ -1621,13 +1630,13 @@ public class NetworkControllerImpl extends BroadcastReceiver
         }
 
         private void resetPhoneState() {
-            // onSignalStrengthsChanged
-            mSignalStrength = null;
-            // onServiceStateChanged
-            mServiceState = null;
-            // onDataConnectionStateChanged
-            mDataNetType = TelephonyManager.NETWORK_TYPE_UNKNOWN;
-            mDataState = TelephonyManager.DATA_DISCONNECTED;
+        	// onSignalStrengthsChanged
+        	mSignalStrength = null;
+        	// onServiceStateChanged
+        	mServiceState = null;
+        	// onDataConnectionStateChanged
+        	mDataNetType = TelephonyManager.NETWORK_TYPE_UNKNOWN;
+        	mDataState = TelephonyManager.DATA_DISCONNECTED;
             // onDataActivity
             //mDataActivity = TelephonyManager.DATA_ACTIVITY_NONE;
         }
@@ -2126,7 +2135,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
         void setIsAirplaneMode(boolean is, int airplaneIcon, int contentDescription);
         void setNetworkType(int networkType, int subId);
         void setMobileInout(boolean visible, int mobileInOut, int subId);
-        void GnsetNetworkType(GnNetworkType networkType, int subId);
+        void GnsetNetworkType(GnNetworkType networkType, boolean isRoaming, int subId);
     }
 
     public interface EmergencyListener {

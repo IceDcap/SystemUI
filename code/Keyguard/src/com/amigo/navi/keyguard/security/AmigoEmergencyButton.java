@@ -28,11 +28,12 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.amigo.navi.keyguard.util.VibatorUtil;
-import com.android.internal.R;
+//import com.android.internal.R;
 import com.android.internal.telephony.IccCardConstants.State;
 import com.android.internal.widget.LockPatternUtils;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.keyguard.KeyguardUpdateMonitorCallback;
+import com.android.keyguard.R;
 
 /**
  * This class implements a smart emergency button that updates itself based
@@ -157,12 +158,12 @@ public class AmigoEmergencyButton extends TextView {
         if (isInCall()) {
             // show "return to call" text and show phone icon
             textId = R.string.lockscreen_return_to_call;
-            int phoneCallIcon = showIcon ? R.drawable.stat_sys_phone_call : 0;
-            text.setCompoundDrawablesWithIntrinsicBounds(phoneCallIcon, 0, 0, 0);
+//            int phoneCallIcon = showIcon ? R.drawable.stat_sys_phone_call : 0;
+//            text.setCompoundDrawablesWithIntrinsicBounds(phoneCallIcon, 0, 0, 0);
         } else {
             textId = R.string.lockscreen_emergency_call;
-            int emergencyIcon = showIcon ? R.drawable.ic_emergency : 0;
-            text.setCompoundDrawablesWithIntrinsicBounds(emergencyIcon, 0, 0, 0);
+//            int emergencyIcon = showIcon ? R.drawable.ic_emergency : 0;
+//            text.setCompoundDrawablesWithIntrinsicBounds(emergencyIcon, 0, 0, 0);
         }
         text.setText(textId);
     }

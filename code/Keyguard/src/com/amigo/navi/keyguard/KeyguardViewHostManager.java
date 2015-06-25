@@ -740,7 +740,20 @@ public class KeyguardViewHostManager {
         mKeyguardViewHost.shakeFingerIdentifyTip();
     }
     public void unlockByFingerIdentify(){
-        mKeyguardViewHost.unlockByFingerIdentify();
+           mKeyguardViewHost.unlockByFingerIdentify();
+    }
+    
+    
+    public void unlockByBlackScreenFingerIdentify(){
+    	mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+            	long deadline =  KeyguardUpdateMonitor.getInstance(mContext).getCurDeadLine();
+            	if(deadline<=0){
+            		mKeyguardViewHost.unlockByFingerIdentify();
+            	}
+            }
+        });
     }
     private void updateHorizontalListView(){
         boolean isLock = WallpaperDB.getInstance(mContext).queryHasLockPaper();

@@ -458,6 +458,7 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
         } else {
             mSecurityMessageDisplay.setMessage(R.string.keyguard_password_enter_code, true);
         }
+    	mSecurityMessageDisplay.setMessageInitColor();
     }
 
     private boolean getFingerSwitchState(){

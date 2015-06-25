@@ -4,16 +4,30 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-
-    <TextView
-        android:id="@+id/TextView"
+    
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/haokan_category_title_height"
-        android:layout_marginLeft="@dimen/haokan_category_title_margin_left"
-        android:gravity="center_vertical"
-        android:text="@string/haokan_wallpaper_subscription"
-        android:textColor="#ffffff"
-        android:textSize="@dimen/haokan_category_title_textsize" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:id="@+id/haokan_category_back"
+            android:layout_width="@dimen/haokan_category_title_height"
+            android:layout_height="@dimen/haokan_category_title_height"
+            android:scaleType="centerInside"
+            android:src="@drawable/amigo_ic_ab_back_light"
+            android:clickable="true" />
+
+        <TextView
+            android:id="@+id/TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/haokan_category_title_height"
+            android:layout_marginLeft="@dimen/haokan_category_title_margin_left"
+            android:gravity="center_vertical"
+            android:text="@string/haokan_wallpaper_subscription"
+            android:textColor="#ffffff"
+            android:textSize="@dimen/haokan_category_title_textsize" />
+    </LinearLayout>
 
     <GridView
         android:id="@+id/haokan_gridview"

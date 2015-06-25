@@ -58,7 +58,7 @@ public class SignalClusterView
     private ArrayList<PhoneState> mPhoneStates = new ArrayList<PhoneState>();
 
     ViewGroup mWifiGroup;
-    ImageView mWifi, mAirplane;//mNoSims,mVpn;
+    ImageView mWifi, mAirplane,mVpn;//mNoSims;
     View mWifiAirplaneSpacer;
     View mWifiSignalSpacer;
     LinearLayout mMobileSignalGroup;
@@ -109,7 +109,7 @@ public class SignalClusterView
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
 
-        //mVpn            = (ImageView) findViewById(R.id.vpn);
+        mVpn            = (ImageView) findViewById(R.id.vpn);
         mWifiGroup      = (ViewGroup) findViewById(R.id.wifi_combo);
         mWifi           = (ImageView) findViewById(R.id.wifi_signal);
         mAirplane       = (ImageView) findViewById(R.id.airplane);
@@ -126,7 +126,7 @@ public class SignalClusterView
 
     @Override
     protected void onDetachedFromWindow() {
-        //mVpn            = null;
+        mVpn            = null;
         mWifiGroup      = null;
         mWifi           = null;
         mAirplane       = null;
@@ -280,7 +280,7 @@ public class SignalClusterView
     private void apply() {
         if (mWifiGroup == null) return;
 
-        //mVpn.setVisibility(mVpnVisible ? View.VISIBLE : View.GONE);
+        mVpn.setVisibility(mVpnVisible ? View.VISIBLE : View.GONE);
         if (DEBUG) Log.d(TAG, String.format("vpn: %s", mVpnVisible ? "VISIBLE" : "GONE"));
         if (mWifiVisible) {
             mWifi.setImageResource(mWifiStrengthId);
@@ -360,6 +360,7 @@ public class SignalClusterView
         private ImageView mNetworkType, mMobileInOut, mSlotIndicator;
         
         private GnNetworkType mGnNetworkType;
+        private boolean mIsRoaming;
 
         public PhoneState(int subId, Context context) {
             ViewGroup root = (ViewGroup) LayoutInflater.from(context)
@@ -381,7 +382,7 @@ public class SignalClusterView
         public boolean apply(boolean isSecondaryIcon) {
             if (mMobileVisible && !mIsAirplaneMode) {
                 mMobile.setImageResource(mMobileStrengthId);
-                mMobileType.setImageResource(getNetworkTypeIcon(mGnNetworkType));
+                mMobileType.setImageResource(getNetworkTypeIcon(mIsRoaming, mGnNetworkType));
                 mSlotIndicator.setImageResource(getSlotIndicator(mSubId));
                 mNetworkType.setImageResource(mNetworkTypeId);
                 mMobileInOut.setImageResource(mMobileInOutId);
@@ -448,13 +449,17 @@ public class SignalClusterView
 		apply();
 	}
 	@Override
-	public void GnsetNetworkType(GnNetworkType networkType, int subId) {
+	public void GnsetNetworkType(GnNetworkType networkType, boolean isRoaming, int subId) {
 		Log.d(TAG, "setNetworkType(" + subId + "), NetworkType= " + networkType);
         PhoneState state = getOrInflateState(subId);
         state.mGnNetworkType = networkType;
+        state.mIsRoaming = isRoaming;
 	}
 	
-	private int getNetworkTypeIcon(GnNetworkType networkType) {
+	private int getNetworkTypeIcon(boolean isRoaming, GnNetworkType networkType) {
+		if(isRoaming) {
+			return R.drawable.gn_stat_sys_mobile_roam;
+		}
         if (networkType == GnNetworkType.Type_G) {
             return R.drawable.gn_stat_sys_mobile_type_g;
         } else if (networkType == GnNetworkType.Type_E) {
