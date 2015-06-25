@@ -767,10 +767,9 @@ public abstract class BaseStatusBar extends SystemUI implements
         final float fontScale = newConfig.fontScale;
         
         //GIONEE <wujj> <2015-01-24> modify for CR01438299 Begin
-        Log.v(TAG, "newConfig: "+newConfig);
-        Log.v(TAG, "getCurrentFontName: "+getCurrentFontName(newConfig));
         String currentLang = newConfig.locale.getLanguage();
         String currentFont = getCurrentFontName(newConfig);
+        Log.v(TAG, "getCurrentFontName: "+currentFont);
         if (isLanguageChanged(currentLang) || isFontChanged(currentFont) || fontScale != mFontScale) {
         	mPrivLang = currentLang;
         	mPrivFont = currentFont;

@@ -1926,7 +1926,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 			// in this case other header will gone
 			//Log.v(TAG, "View's Parent:"+view.getParent());
 			if(view.getParent() instanceof NotificationStackScrollLayout) {
-				Log.v(TAG, "Child is instanceof NotificationStackScrollLayout");
+				//Log.v(TAG, "Child is instanceof NotificationStackScrollLayout");
 				// TODO: if v's parent is NotificationStackScrollLayout, do nothing
 			} else if (view.getParent() instanceof ViewGroup) {
 				try {

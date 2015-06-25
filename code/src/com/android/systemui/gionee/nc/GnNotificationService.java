@@ -181,11 +181,11 @@ public class GnNotificationService {
 				}
 			}
 
-			Log.v(TAG, "SortView:"+ent.notification.getNotification());
 			String pkg = ent.notification.getPackageName();
 			int uid = ent.notification.getUid();
 			int priority = Notification.PRIORITY_DEFAULT;
 			final boolean isSystemNotification = isUidSystem(uid) || ("android".equals(pkg));
+			Log.v(TAG, "SortView:"+pkg);
 			if (mChagedPackages.containsKey(pkg)) {
 				ent.notification.getNotification().priority = mChagedPackages.get(pkg);
 			}
