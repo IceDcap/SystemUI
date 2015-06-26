@@ -333,8 +333,12 @@ public class RecentsActivity extends Activity implements OnClickListener , OnLon
         }
         mRecentReleaseLayout.setLayoutParams(lp);
         
-        mRecentAppClearView.setOnClickListener(this);
-        mRecentAppClearView.setOnLongClickListener(this);
+        //CR01506153 fj <2015-6-26> begin
+        if (mRecentAppClearView != null) {
+        	mRecentAppClearView.setOnClickListener(this);
+            mRecentAppClearView.setOnLongClickListener(this);
+        }
+        //CR01506153 fj <2015-6-26> end
         
         mMemoryUsed = getMemoryAvailable();
         SwipeHelper.setRecentsAcitivtyContext(this);

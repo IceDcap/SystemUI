@@ -176,7 +176,7 @@ public class GnControlCenterMoreView extends FrameLayout implements View.OnClick
         public void onAnimationEnd(Animation animation) {
             setVisibility(View.GONE);
             mDragGridView.showMoreView();
-            mMoreLayout.setBackgroundColor(0xFA222222);
+//            mMoreLayout.setBackgroundColor(0xFA222222);
             GnBlurHelper.releaseBitmap(GnBlurHelper.mBlur);
             setOpen(false);
             isAnimating = false;
