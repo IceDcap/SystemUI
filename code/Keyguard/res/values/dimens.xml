@@ -382,6 +382,8 @@
 	<dimen name="guide_new_wallpaper_size">29dp</dimen>
 	<dimen name="guide_new_wallpaper_max_translationX">15dp</dimen>
 	<dimen name="guide_slide_margin_top">253dp</dimen>
+	<dimen name="guide_slide_up_view_marginbottom">117dp</dimen>
+	
 	
 	
 	<!-- infozone -->

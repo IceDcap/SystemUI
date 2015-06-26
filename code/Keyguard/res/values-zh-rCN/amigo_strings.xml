@@ -162,6 +162,7 @@
    	<string name="shenghuo">生活</string>
    	<string name="yule">娱乐</string>
    	<string name="jinxuan">amigo精选</string>
+   	<string name="nextday">NextDay</string>
 
    	<string name="set_screenlock_wallpaper_fail">设置锁屏壁纸失败</string>
    	<string name="insufficient_memory">存储空间不足，请释放空间</string>

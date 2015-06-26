@@ -118,6 +118,7 @@ public class RecentsActivity extends Activity implements OnClickListener , OnLon
     
     private PhoneStatusBar mStatusBar;
     private List<String> musicApps = null;
+    MemInfoReader mMemInfoReader;
 
     private BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
         @Override
@@ -288,6 +289,7 @@ public class RecentsActivity extends Activity implements OnClickListener , OnLon
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         mContext = this;
+        mMemInfoReader = new MemInfoReader();
         mAm = ( ActivityManager ) mContext.getApplicationContext().getSystemService(
                 Context.ACTIVITY_SERVICE);
         getWindow().addPrivateFlags(
@@ -554,8 +556,10 @@ public class RecentsActivity extends Activity implements OnClickListener , OnLon
     }
 	
 	private long getMemoryAvailable() {
-		mAm.getMemoryInfo(mMemInfo);
-        return mMemInfo.availMem;
+		mMemInfoReader.readMemInfo();
+		return mMemInfoReader.getFreeSize() + mMemInfoReader.getCachedSize();
+		//mAm.getMemoryInfo(mMemInfo);
+        //return mMemInfo.availMem;
 	}
 	
 	public String formatMemory(long size) {

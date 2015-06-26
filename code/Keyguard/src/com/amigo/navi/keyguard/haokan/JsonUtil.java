@@ -3,8 +3,6 @@ package com.amigo.navi.keyguard.haokan;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
-
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.haokan.db.DataConstant;
 import com.amigo.navi.keyguard.haokan.entity.Client;
@@ -15,17 +13,12 @@ import com.amigo.navi.keyguard.haokan.entity.Category;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
-
-import com.amigo.navi.keyguard.haokan.entity.Category;
-import com.amigo.navi.keyguard.haokan.entity.WallpaperList;
 import com.amigo.navi.keyguard.haokan.entity.Music;
 
 
@@ -74,6 +67,7 @@ public class JsonUtil {
     
     public static List<Category> parseJsonToCategory(String jsonString) {
 
+        DebugLog.d(TAG, "parseJsonToCategory jsonString = " + jsonString);
         List<Category> list = new ArrayList<Category>();
         try {
             JSONObject jsonObject = new JSONObject(jsonString);
@@ -89,6 +83,7 @@ public class JsonUtil {
                 wallpaperType.setTypeId(jsonObject2.optInt("i"));
                 wallpaperType.setTypeName(jsonObject2.optString("n"));
                 wallpaperType.setTypeIconUrl(jsonObject2.optString("u"));
+                wallpaperType.setTypeNameEn(jsonObject2.optString("en"));
                 wallpaperType.setSort(i);
                 list.add(wallpaperType);
             }
@@ -113,6 +108,7 @@ public class JsonUtil {
     
     public static WallpaperList parseJsonToWallpaperList(String jsonString) {
 
+        DebugLog.d(TAG, "parseJsonToWallpaperList jsonString = " + jsonString);
         WallpaperList list = new WallpaperList();
         
         try {
@@ -149,16 +145,29 @@ public class JsonUtil {
                         wallpaper.setIsAdvert(jsonObject5.optInt("ia"));
                         wallpaper.setBackgroundColor(jsonObject5.optString("bc"));
                         String showTime = jsonObject5.optString("t");
-                        if(!TextUtils.isEmpty(showTime)){
+                        
+//                        if(!TextUtils.isEmpty(showTime)){
+//                            String[] times = showTime.split("-");
+//                            if(times != null && times.length > 1){
+//                                wallpaper.setShowTimeBegin(times[0]);
+//                                wallpaper.setShowTimeEnd(times[1]);
+//                            }else{
+//                                wallpaper.setShowTimeBegin("");
+//                                wallpaper.setShowTimeEnd("");
+//                            }
+//                        }
+                        
+                        wallpaper.setShowTimeBegin("NA");
+                        wallpaper.setShowTimeEnd("NA");
+
+                        if (!TextUtils.isEmpty(showTime)) {
                             String[] times = showTime.split("-");
-                            if(times != null && times.length > 1){
+                            if (times != null && times.length > 1) {
                                 wallpaper.setShowTimeBegin(times[0]);
                                 wallpaper.setShowTimeEnd(times[1]);
-                            }else{
-                                wallpaper.setShowTimeBegin("");
-                                wallpaper.setShowTimeEnd("");
                             }
                         }
+                        
                         Music music = new Music();
  
                         music.setmMusicName(jsonObject5.optString("mn"));
@@ -353,9 +362,19 @@ public class JsonUtil {
                     wallpaper.setImgName(imageTitle);
                     wallpaper.setImgContent(imageContent);
                     wallpaper.setImgSource(imageSource);
+                    
                     wallpaper.setBackgroundColor(background);
-                    wallpaper.setShowTimeBegin(showTimeBegin);
-                    wallpaper.setShowTimeEnd(showTimeEnd);
+
+                    wallpaper.setShowTimeBegin("NA");
+                    wallpaper.setShowTimeEnd("NA");
+
+                    if (!TextUtils.isEmpty(showTimeBegin)) {
+                        wallpaper.setShowTimeBegin(showTimeBegin);
+                    }
+                    if (!TextUtils.isEmpty(showTimeEnd)) {
+                        wallpaper.setShowTimeEnd(showTimeEnd);
+                    }
+                    
                     wallpaper.setImgUrl(imageName);
                     wallpaper.setType(Wallpaper.WALLPAPER_FROM_FIXED_FOLDER);
                     wallpaper.setRealOrder(i);

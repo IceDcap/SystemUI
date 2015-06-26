@@ -74,6 +74,7 @@ public class KeyguardDataModelInit {
 	private void insertLocalDataToDB() {
 		WallpaperList WallpaperList = JsonUtil.getDefaultWallpaperList();
 		if (WallpaperList != null) {
+		    WallpaperList.quickSort();
 		    WallpaperDB.getInstance(mContext).replaceWallpapers(WallpaperList);
         }
 	}
@@ -119,7 +120,8 @@ public class KeyguardDataModelInit {
     
     private final static String DBNAME = "haokan.db";
     private final static String ADDSTR = "/data/data/com.android.systemui/databases/";
-    private final static String DB_VERSION = "20150525";
+//    private final static String DB_VERSION = "20150525";
+    private final static String DB_VERSION = "20150625";
     public boolean saveInitDataToClientDB(Context context) {
         File dbFile = new File(ADDSTR + DBNAME);
         if(dbFile.exists()){

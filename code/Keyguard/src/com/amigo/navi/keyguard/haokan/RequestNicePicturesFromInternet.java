@@ -324,6 +324,8 @@ public class RequestNicePicturesFromInternet {
                             deleteList = wallpaperDB.queryExcludeFixedWallpaper();
                             wallpaperDB.insertAfterDeleteAll(wallpaperList);
                             Common.setUpdateWallpaperDate(mContext,date);
+                            Common.displayHour = -1;
+                            Common.displayPostion = -1;
                             UIController.getInstance().setNewWallpaperToDisplay(true);
                             isFirst = false;
                             FileUtil.deleteMusic();
