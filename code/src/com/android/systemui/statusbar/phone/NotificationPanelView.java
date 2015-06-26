@@ -1606,7 +1606,7 @@ public class NotificationPanelView extends PanelView implements
 	    			//GIONEE <wujj> <2015-06-19> modify for CR01489937 begin
 	    			paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
 	    			canvas.drawBitmap(GnBlurHelper.mBlur, src, dst, paint);
-	    			canvas.drawColor(0xEE181818);
+	    			canvas.drawColor(0xF2181818);
 	    			//GIONEE <wujj> <2015-06-19> modify for CR01489937 end
 	    		} else {
 	    			Log.v(TAG,"NotificationPanelView: blur bitmap is null");
@@ -1614,7 +1614,7 @@ public class NotificationPanelView extends PanelView implements
 	    		}
 			}
     	} else {
-    		canvas.drawColor(0xF2181818);
+    		canvas.drawColor(0xF2131313);
     	}
         super.dispatchDraw(canvas);
         if (DEBUG) {

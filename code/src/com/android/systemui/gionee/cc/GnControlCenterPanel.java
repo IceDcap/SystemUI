@@ -961,7 +961,7 @@ public class GnControlCenterPanel extends ViewGroup implements GestureDetector.O
         if (isHighDevice) {
             scrimColor = 0xBF131313;
         } else {
-            scrimColor = 0xFA222222;            
+            scrimColor = 0xFC202020;            
         }
         return scrimColor;
     }

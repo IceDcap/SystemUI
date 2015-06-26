@@ -33,7 +33,7 @@
 	
 	<!-- Control center quick setting -->
 	<color name="gn_qs_tile_on">#fcfcfc</color>
-	<color name="gn_qs_tile_on_opacity">#4cffffff</color>
+	<color name="gn_qs_tile_on_opacity">#33ffffff</color>
 	<color name="gn_qs_tile_off">#4cffffff</color>
 	
 	<color name="gn_system_bar_background_transparent_5">#0d000000</color>

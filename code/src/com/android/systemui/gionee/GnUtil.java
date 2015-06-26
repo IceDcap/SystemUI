@@ -42,7 +42,8 @@ public class GnUtil {
     }
     
     public static boolean isHighDevice(Context context) {
-        return isHighRamDevice() && isHighResolution(context);
+//        return isHighRamDevice() && isHighResolution(context);
+    	return false;
     }
     
     public static final int STATE_LOCK_UNLOCK = 0;
