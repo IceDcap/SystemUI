@@ -133,7 +133,13 @@ public class PanelBar extends FrameLayout {
                         (int) event.getX(), (int) event.getY()));
                 Log.d(TAG, "onTouchEvent unlock by nc");
                 GnUtil.setLockState(GnUtil.STATE_LOCK_UNLOCK);
+          //GIONEE <wujj> <2015-06-26> add for CR01504165 begin
+            } else if (event.getAction() == MotionEvent.ACTION_UP 
+            		|| event.getAction() == MotionEvent.ACTION_CANCEL) {
+            	Log.v(TAG, "Panelbar was disabled during touch events");
+            	collapseAllPanels(false);
             }
+          //GIONEE <wujj> <2015-06-26> add for CR01504165 end
             return false;
         }
 
