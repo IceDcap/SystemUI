@@ -66,7 +66,7 @@ public class CategoryDB extends BaseDB{
             values.put(TYPE_ID, category.getTypeId());
             values.put(TYPE_NAME, category.getTypeName());
             values.put(TYPE_ICON_URL, category.getTypeIconUrl());
-            
+            values.put(CategoryColumns.EN_NAME, category.getTypeNameEn());
             values.put(FAVORITE, category.isFavorite());
             
             long id = db.insert(TABLE_NAME, null, values);
@@ -81,6 +81,8 @@ public class CategoryDB extends BaseDB{
             values.put(TYPE_ID, category.getTypeId());
             values.put(TYPE_NAME, category.getTypeName());
             values.put(TYPE_ICON_URL, category.getTypeIconUrl());
+            values.put(CategoryColumns.EN_NAME, category.getTypeNameEn());
+            
         	DebugLog.d(TAG,"updateCategorysNoTransaction category.getTypeId():" + category.getTypeId());
             Category categoryInDB = queryCategoryByTypeID(category.getTypeId());
         	DebugLog.d(TAG,"updateCategorysNoTransaction categoryInDB:" + categoryInDB);
@@ -118,10 +120,12 @@ public class CategoryDB extends BaseDB{
     
     public List<Category> queryCategorys(){
         final SQLiteDatabase db = mWritableDatabase;
+//        String sql = "select * from " + TABLE_NAME
+//                + " where download_picture = 1 and " + DataConstant.CategoryColumns.TODAY_IMAGE + "=" + 
+//                DataConstant.TODAY_IMAGE + " order by " + DataConstant.CategoryColumns.SORT + " asc";
         String sql = "select * from " + TABLE_NAME
-                + " where download_picture = 1 and " + DataConstant.CategoryColumns.TODAY_IMAGE + "=" + 
+                + " where  " + DataConstant.CategoryColumns.TODAY_IMAGE + "=" + 
                 DataConstant.TODAY_IMAGE + " order by " + DataConstant.CategoryColumns.SORT + " asc";
-        
         
         Cursor cursor = db.rawQuery(sql, null);
         List<Category> list = new ArrayList<Category>();
@@ -154,9 +158,9 @@ public class CategoryDB extends BaseDB{
 		category.setTypeName(typeName);
 		category.setTypeIconUrl(typeIconUrl);
 		category.setFavorite(favorite);
-//		category.setTypeIconResId(cursor.getInt(4));
-//		category.setTypeNameResId(cursor.getInt(5));
-		category.setNameID(cursor.getString(cursor.getColumnIndex(DataConstant.CategoryColumns.EN_NAME)));
+ 
+//		category.setNameID(cursor.getString(cursor.getColumnIndex(DataConstant.CategoryColumns.EN_NAME)));
+		category.setTypeNameEn(cursor.getString(cursor.getColumnIndex(DataConstant.CategoryColumns.EN_NAME)));
 		category.setType(cursor.getInt(cursor.getColumnIndex(DataConstant.CategoryColumns.SAVE_TYPE)));
 		return category;
 	}

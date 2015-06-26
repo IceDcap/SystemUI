@@ -447,9 +447,9 @@ public class UIController implements OnTouchlListener{
                             "hasLocked = " + hasLocked + " Guide.isIdle() = " + Guide.isIdle());
                     if (hasLocked && Guide.isIdle()) {
                         getAmigoKeyguardPage().startGuideNewWallpaper();
-                        setNewWallpaperToDisplay(false);
                     }
                 }
+                setNewWallpaperToDisplay(false);
 
             }
             

@@ -1,6 +1,7 @@
 package com.amigo.navi.keyguard;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import android.app.ActivityOptions;
@@ -286,11 +287,6 @@ public class KeyguardViewHostManager {
     }
     
     
-	private void refreshKeyguardListView() {
-		if(mWallpaperAdapter != null){
-    		mWallpaperAdapter.notifyDataSetChanged();
-    	}
-	}
     public boolean isShowing(){
         if(mViewMediatorCallback != null){
             return mViewMediatorCallback.isShowing();
@@ -693,7 +689,8 @@ public class KeyguardViewHostManager {
       mWallpaperAdapter = new HorizontalAdapter(mContext.getApplicationContext(), wallpaperList,mImageLoader);
       UIController.getInstance().setmKeyguardListView(mKeyguardListView);
       mKeyguardListView.setAdapter(mWallpaperAdapter);
-      updateDataAndRefreshKeyguardListView(true);
+//      updateDataAndRefreshKeyguardListView(true);
+      refreshKeyguardListView();
       mKeyguardListView.setOnScrollListener(mKeyguardListViewScrollListener);
       mContainer.addView(mKeyguardListView, 0);
       mKeyguardViewHost.addView(mContainer, 0);
@@ -740,7 +737,20 @@ public class KeyguardViewHostManager {
         mKeyguardViewHost.shakeFingerIdentifyTip();
     }
     public void unlockByFingerIdentify(){
-        mKeyguardViewHost.unlockByFingerIdentify();
+           mKeyguardViewHost.unlockByFingerIdentify();
+    }
+    
+    
+    public void unlockByBlackScreenFingerIdentify(){
+    	mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+            	long deadline =  KeyguardUpdateMonitor.getInstance(mContext).getCurDeadLine();
+            	if(deadline<=0){
+            		mKeyguardViewHost.unlockByFingerIdentify();
+            	}
+            }
+        });
     }
     private void updateHorizontalListView(){
         boolean isLock = WallpaperDB.getInstance(mContext).queryHasLockPaper();
@@ -755,42 +765,86 @@ public class KeyguardViewHostManager {
 //        }
     }
     
-    private void updateDataAndRefreshKeyguardListView(final boolean isInit){
-        DebugLog.d(TAG,"update listview updateDataAndRefreshKeyguardListView");
-            new Thread(new Runnable() {
-                
-                @Override
-                public void run() {
-                    DebugLog.d(TAG,"updateDataAndRefreshKeyguardListView run");
-                    mShowPage = 0;
-                    WallpaperDB wallpaperDB = WallpaperDB.getInstance(mContext);
-                    WallpaperList wallpaperList = queryWallpaperList();
-                    DebugLog.d(TAG,"updateDataAndRefreshKeyguardListView1");
-                    DebugLog.d(TAG,"updateDataAndRefreshKeyguardListView size:" + wallpaperList.size());
-                    boolean isLock = wallpaperDB.queryHasLockPaper();
-                    refreshPageWhenLockOrNot(wallpaperDB, isLock, wallpaperList);
-                    Message msg = mHandler.obtainMessage(MSG_UPDATE_HAOKAN_LIST_SCREEN_OFF);
-                    msg.obj = wallpaperList;
-                    mHandler.sendMessage(msg);
+    private void refreshKeyguardListView() {
+
+        
+        new Thread(new Runnable() {
+            
+            @Override
+            public void run() {
+                WallpaperDB wallpaperDB = WallpaperDB.getInstance(mContext);
+                WallpaperList wallpaperList = queryWallpaperList();
+                int length = wallpaperList.size();
+                int indexOfLocked = wallpaperList.indexOfLocked();
+                DebugLog.d(LOG_TAG, "refreshKeyguardListView length = " + length + "; indexOfLocked = " + indexOfLocked);
+                if (indexOfLocked != -1) { 
+                    refreshPage(indexOfLocked);
+                }else { 
+                    Date date = new Date();
+                    int hour = date.getHours();
+                    int displayHour = Common.displayHour;
+                    int displayPostion = Common.displayPostion;
+                    DebugLog.d(LOG_TAG, "refreshKeyguardListView hour = " + hour);
+ 
+                    if (displayPostion == -1 && displayHour == -1) {
+                        displayPostion = 0;
+                    }else if (displayHour != hour) {
+                        displayPostion ++;
+                    }
+                    
+                    Common.displayHour = hour;
+                    Common.displayPostion = displayPostion % length;
+                    refreshPage(Common.displayPostion);
                 }
+                
+                Message msg = mHandler.obtainMessage(MSG_UPDATE_HAOKAN_LIST_SCREEN_OFF);
+                msg.obj = wallpaperList;
+                mHandler.sendMessage(msg);
+                
+            }
 
-				private void refreshPageWhenLockOrNot(WallpaperDB wallpaperDB,
-						boolean isLock, WallpaperList wallpaperList) {
-					if(isLock){
-					    int page = querySelectionPageWhenLock(wallpaperList);
-		                refreshPage(page);
-					}else{
-					    String currentTime = Common.formatCurrentTime();
-					    Wallpaper wallpaper = wallpaperDB.queryDynamicShowWallpaper(currentTime);
-					    DebugLog.d(TAG,"updateDataAndRefreshKeyguardListView wallpaper:" + wallpaper);
-					    if(wallpaper != null){
-					        querySelectionPageWhenNotLock(wallpaperList,wallpaper);
-					    }
-					}
-				}
-            }).start();
+            
+        }).start();
+        
+        
     }
-
+    
+//    private void updateDataAndRefreshKeyguardListView(final boolean isInit){
+//        DebugLog.d(TAG,"update listview updateDataAndRefreshKeyguardListView");
+//            new Thread(new Runnable() {
+//                
+//                @Override
+//                public void run() {
+//                    DebugLog.d(TAG,"updateDataAndRefreshKeyguardListView run");
+//                    mShowPage = 0;
+//                    WallpaperDB wallpaperDB = WallpaperDB.getInstance(mContext);
+//                    WallpaperList wallpaperList = queryWallpaperList();
+//                    DebugLog.d(TAG,"updateDataAndRefreshKeyguardListView1");
+//                    DebugLog.d(TAG,"updateDataAndRefreshKeyguardListView size:" + wallpaperList.size());
+//                    boolean isLock = wallpaperDB.queryHasLockPaper();
+//                    refreshPageWhenLockOrNot(wallpaperDB, isLock, wallpaperList);
+//                    Message msg = mHandler.obtainMessage(MSG_UPDATE_HAOKAN_LIST_SCREEN_OFF);
+//                    msg.obj = wallpaperList;
+//                    mHandler.sendMessage(msg);
+//                }
+//
+//				private void refreshPageWhenLockOrNot(WallpaperDB wallpaperDB,
+//						boolean isLock, WallpaperList wallpaperList) {
+//					if(isLock){
+//					    int page = querySelectionPageWhenLock(wallpaperList);
+//		                refreshPage(page);
+//					}else{
+//					    String currentTime = Common.formatCurrentTime();
+//					    Wallpaper wallpaper = wallpaperDB.queryDynamicShowWallpaper(currentTime);
+//					    DebugLog.d(TAG,"updateDataAndRefreshKeyguardListView wallpaper:" + wallpaper);
+//					    if(wallpaper != null){
+//					        querySelectionPageWhenNotLock(wallpaperList,wallpaper);
+//					    }
+//					}
+//				}
+//            }).start();
+//    }
+    
     private synchronized  void updateDynamicWallpaperOnLocalData(WallpaperList wallpaperList){
     	String time = Common.formatCurrentTime();
     	for(int index = 0;index < wallpaperList.size();index++){
@@ -835,7 +889,8 @@ public class KeyguardViewHostManager {
         if(mKeyguardListView == null){
             return;
         }
-        updateDataAndRefreshKeyguardListView(false);
+//        updateDataAndRefreshKeyguardListView(false);
+        refreshKeyguardListView();
     }
     
     /**

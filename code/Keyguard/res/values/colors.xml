@@ -62,7 +62,7 @@
 	<color name="system_secondary_color">#ff384248</color>
 	<drawable name="notification_number_text_color">#ffffffff</drawable>
 	
-	<color name="keyguard_number_hint_white">#50ffffff</color>
+	<color name="keyguard_number_hint_white">#ffffffff</color>
     <color name="keyguard_number_hint_red">#f20e0e</color>
     <!-- notification  color end-->
     <!-- navi keyguard end -->

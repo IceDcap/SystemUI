@@ -28,6 +28,7 @@ import com.amigo.navi.keyguard.network.theardpool.Job;
 import com.amigo.navi.keyguard.network.theardpool.LoadDataPool;
 import com.amigo.navi.keyguard.network.theardpool.LoadImageThread;
 import com.amigo.navi.keyguard.settings.KeyguardSettings;
+import com.android.internal.widget.LockPatternUtils;
 
 public class RequestNicePicturesFromInternet {
     private static final String TAG = "NicePicturesInit";
@@ -36,12 +37,14 @@ public class RequestNicePicturesFromInternet {
     private static String mPath = null;
     private DealWithByteFile  mDealWithCategory;
     private ReadAndWriteFileFromSD  mDealWithWallpaper;
+    private static LockPatternUtils mLockPatternUtils;
     public synchronized static RequestNicePicturesFromInternet getInstance(Context context) {
 
         if (sInitInstance == null) {
             sInitInstance = new RequestNicePicturesFromInternet();
             mContext = context.getApplicationContext();
-            mPath = DiskUtils.getCachePath(mContext.getApplicationContext());
+            mPath = DiskUtils.getCachePath(mContext.getApplicationContext());    		
+            mLockPatternUtils = new LockPatternUtils(mContext);
         }
         return sInitInstance;
     }
@@ -70,6 +73,11 @@ public class RequestNicePicturesFromInternet {
     			if(isCheckFromOnToOff){
     				HKAgent.uploadAllLog();
     			}
+    			return;
+    		}
+
+    		if (mLockPatternUtils.isLockScreenDisabled()){
+                DebugLog.d(TAG,"registerUserID isLockScreenDisabled, return");
     			return;
     		}
     		boolean isUpdateOnWifi = KeyguardSettings.getOnlyWlanState(mContext);
@@ -316,6 +324,8 @@ public class RequestNicePicturesFromInternet {
                             deleteList = wallpaperDB.queryExcludeFixedWallpaper();
                             wallpaperDB.insertAfterDeleteAll(wallpaperList);
                             Common.setUpdateWallpaperDate(mContext,date);
+                            Common.displayHour = -1;
+                            Common.displayPostion = -1;
                             UIController.getInstance().setNewWallpaperToDisplay(true);
                             isFirst = false;
                             FileUtil.deleteMusic();

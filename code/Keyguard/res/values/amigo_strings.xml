@@ -167,6 +167,8 @@
    	<string name="shenghuo">LOHAS</string>
    	<string name="yule">Entertainment</string>
    	<string name="jinxuan">amigo Selected</string>
+   	<string name="nextday">NextDay</string>
+   	
 	
 	       <string name="kg_wrong_password_time">Wrong password, you can try <xliff:g id="number">%d</xliff:g> more times</string>
      <string name="kg_wrong_pattern_time">Wrong password, you can try <xliff:g id="number">%d</xliff:g> more times</string>
@@ -202,5 +204,7 @@
       
       <string name="set_screenlock_wallpaper_fail">set screenlock wallpaper fail</string>
       <string name="insufficient_memory">Insufficient memory, please free up some space</string>
+      <string name="lockscreen_emergency_call">Emergency call</string>
+     <string name="lockscreen_return_to_call">Return to call</string>
       
 </resources>

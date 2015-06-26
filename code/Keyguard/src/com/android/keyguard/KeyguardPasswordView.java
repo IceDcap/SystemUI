@@ -591,12 +591,13 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
 		}
 		
 		  private void displayDefaultSecurityMessage() {
-		    
-		        if(KeyguardViewHostManager.isSuppotFinger()&&getFingerSwitchState()){
+
+			  if(KeyguardViewHostManager.isSuppotFinger()&&getFingerSwitchState()){
 		    		mSecurityMessageDisplay.setMessage(R.string.keyguard_password_enter_code_finger, true);
 		    	}else{ 		
 		    		mSecurityMessageDisplay.setMessage(R.string.keyguard_password_enter_code, true);
 		    	}
+		    	mSecurityMessageDisplay.setMessageInitColor();
 		    }
 		  
 		private boolean getFingerSwitchState(){

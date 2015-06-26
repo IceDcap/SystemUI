@@ -24,10 +24,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -59,6 +62,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.android.internal.util.MemInfoReader;
@@ -66,6 +70,7 @@ import com.android.internal.util.MemInfoReader;
 import android.text.format.Formatter;
 import android.app.ActivityManager;
 import android.app.ActivityManager.MemoryInfo;
+
 import com.android.systemui.gionee.GnUtil;
 
 public class RecentsActivity extends Activity implements OnClickListener , OnLongClickListener {
@@ -112,6 +117,8 @@ public class RecentsActivity extends Activity implements OnClickListener , OnLon
     private boolean isClearing = false;
     
     private PhoneStatusBar mStatusBar;
+    private List<String> musicApps = null;
+    MemInfoReader mMemInfoReader;
 
     private BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
         @Override
@@ -282,6 +289,7 @@ public class RecentsActivity extends Activity implements OnClickListener , OnLon
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         mContext = this;
+        mMemInfoReader = new MemInfoReader();
         mAm = ( ActivityManager ) mContext.getApplicationContext().getSystemService(
                 Context.ACTIVITY_SERVICE);
         getWindow().addPrivateFlags(
@@ -408,6 +416,9 @@ public class RecentsActivity extends Activity implements OnClickListener , OnLon
 
     @Override
     public void onClick(View v) {
+    	if(isPlayMusic(mContext)) {
+    		musicApps = getMusicApps(mContext);
+    	}
         isClearing = true;
         mStopTime = 10;
         mMemoryUsed = getMemoryAvailable();
@@ -545,8 +556,10 @@ public class RecentsActivity extends Activity implements OnClickListener , OnLon
     }
 	
 	private long getMemoryAvailable() {
-		mAm.getMemoryInfo(mMemInfo);
-        return mMemInfo.availMem;
+		mMemInfoReader.readMemInfo();
+		return mMemInfoReader.getFreeSize() + mMemInfoReader.getCachedSize();
+		//mAm.getMemoryInfo(mMemInfo);
+        //return mMemInfo.availMem;
 	}
 	
 	public String formatMemory(long size) {
@@ -625,5 +638,34 @@ public class RecentsActivity extends Activity implements OnClickListener , OnLon
         if (mStatusBar != null) {
             mStatusBar.showScreenPinningRequest(false);
         }
-    }
+	}
+
+	private static boolean isPlayMusic(Context context) {
+		AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+		return am.isMusicActive();
+	}
+
+	private static List<String> getMusicApps(Context context) {
+		List<String> ls = new ArrayList<String>();
+		try {
+			Intent intent = new Intent("android.intent.action.VIEW");
+			intent.setDataAndType(Uri.parse("file:///android_asset/gionee"), "audio/mpeg");
+			List<ResolveInfo> riLists = context.getPackageManager().queryIntentActivities(
+							intent,
+							PackageManager.MATCH_DEFAULT_ONLY | PackageManager.GET_RESOLVED_FILTER);
+			for (ResolveInfo ri : riLists) {
+				if (ri != null && ri.activityInfo != null) {
+					ls.add(ri.activityInfo.packageName);
+				}
+			}
+			Log.i(TAG, "music app -----> " + ls.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return ls;
+	}
+
+	public List<String> getMusicAppsList() {
+		return musicApps;
+	}
 }

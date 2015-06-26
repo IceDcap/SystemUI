@@ -66,6 +66,8 @@ public class AmigoKeyguardPage extends RelativeLayout {
 	
 	private RelativeLayout mHaoKanLayout;
 	
+	private ImageView imageViewScrollUp;
+	
 	public AmigoKeyguardPage(Context context) {
 		this(context, null);
 	}
@@ -134,7 +136,6 @@ public class AmigoKeyguardPage extends RelativeLayout {
 	private TextView mNotificationClickTipView;
 	private NotificationStackScrollLayout mNotificationContent;
 	private RelativeLayout mFingerIdentifyTip;
-	private RelativeLayout mGuideScrollUpLayout;
 	
 	private AmigoBatteryStatus mBatteryStatus = null;
 	private static final float BATTERY_HIDE_ALPHA = 0.001f;
@@ -204,33 +205,40 @@ public class AmigoKeyguardPage extends RelativeLayout {
         
     }
 	
+	
+	
 	public void addGuideScrollUpView(){
-	    LayoutInflater inflater=LayoutInflater.from(mContext);
-	    mGuideScrollUpLayout = (RelativeLayout)inflater.inflate(R.layout.keyguard_guide_scroll_up, null);
-	    ImageView scroll_up = (ImageView)mGuideScrollUpLayout.findViewById(R.id.keyguard_guide_scroll_up);
-		AmigoKeyguardPage.LayoutParams lp = new AmigoKeyguardPage.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT);
-		AnimationDrawable animationDrawable;
-		animationDrawable = (AnimationDrawable) scroll_up.getDrawable();
+ 
+	    imageViewScrollUp = new ImageView(getContext());
+	    AnimationDrawable animationDrawable = (AnimationDrawable) getResources().getDrawable(R.drawable.keyguard_guide_scroll_up_animation);
+	    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
+	    params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, TRUE);
+	    params.addRule(RelativeLayout.CENTER_HORIZONTAL, TRUE);
+	    params.bottomMargin = getResources().getDimensionPixelSize(R.dimen.guide_slide_up_view_marginbottom);
+	    imageViewScrollUp.setBackground(animationDrawable);
 		animationDrawable.start();
-		addView(mGuideScrollUpLayout, lp);
+		addView(imageViewScrollUp, params);
         Guide.setGuideState(GuideState.SCROLL_UP);
 	}
 	
 	
 	public void removeGuideScrollUpView() {
 
-		if (!Guide.needGuideScrollUp() || mGuideScrollUpLayout == null) {
+		if (!Guide.needGuideScrollUp()) {
 			return;
 		}
-		removeView(mGuideScrollUpLayout);
+		if (imageViewScrollUp != null) {
+		    removeView(imageViewScrollUp);
+		    imageViewScrollUp = null;
+        }
 		Guide.setNeedGuideScrollUp(false);
 		Guide.setBooleanSharedConfig(mContext, Guide.GUIDE_SCROLL_UP, false);
 		Guide.resetIdle();
 	}
 	
 	public void setGuideScrollUpVisibility(int visibility) {
-	     if (mGuideScrollUpLayout != null) {
-	         mGuideScrollUpLayout.setVisibility(visibility);
+	     if (imageViewScrollUp != null) {
+	         imageViewScrollUp.setVisibility(visibility);
         }
 	}
 	

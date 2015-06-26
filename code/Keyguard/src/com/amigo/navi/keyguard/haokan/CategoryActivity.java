@@ -22,7 +22,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationSet;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LayoutAnimationController;
@@ -49,8 +48,8 @@ import com.amigo.navi.keyguard.settings.KeyguardWallpaper;
 
 import java.io.File;
 import java.util.List;
+import java.util.Locale;
 
-import org.w3c.dom.Text;
 
 import com.android.keyguard.R;
 
@@ -69,7 +68,11 @@ public class CategoryActivity extends Activity{
     private Bitmap mWindowBackgroud;
     
     private TextView mTextView;
+    private ImageView mImageView;
     private static final String PATH = "category_pics";
+    
+    private boolean mlanguageZh = true;
+    
     private Handler mHandler = new Handler(){
 
          @Override
@@ -83,6 +86,7 @@ public class CategoryActivity extends Activity{
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
 	    getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+	    mlanguageZh = isLanguageZh();
         setContentView(R.layout.haokan_category_layout);
  
         UIController.getInstance().setCategoryActivity(this);
@@ -136,6 +140,16 @@ public class CategoryActivity extends Activity{
         mCategoryAdapter = new CategoryAdapter(this);
         mTextView = (TextView)findViewById(R.id.TextView);
         mTextView.setVisibility(View.GONE);
+        
+        mImageView = (ImageView)findViewById(R.id.haokan_category_back);
+        mImageView.setVisibility(View.GONE);
+        mImageView.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+		        finish();				
+			}
+		});
         
         mGridView = (GridView) findViewById(R.id.haokan_gridview);
         mGridView.setSelector(new ColorDrawable(Color.TRANSPARENT));
@@ -238,6 +252,8 @@ public class CategoryActivity extends Activity{
         textViewSet.setInterpolator(new DecelerateInterpolator());
         mTextView.setVisibility(View.VISIBLE);
         mTextView.startAnimation(textViewSet);
+        mImageView.setVisibility(View.VISIBLE);
+        mImageView.startAnimation(textViewSet);
     }
     
 
@@ -283,7 +299,6 @@ public class CategoryActivity extends Activity{
                 holder = (ViewHolder) convertView.getTag(); 
             }
             final Category category = list.get(position);
-//            holder.favorite.setVisibility(category.isFavorite() ? View.VISIBLE : View.GONE);
             
             holder.favorite
                     .setBackgroundResource(category.isFavorite() ? R.drawable.haokan_category_favorite
@@ -296,31 +311,14 @@ public class CategoryActivity extends Activity{
             	holder.image.setImageResource(R.drawable.category_loading);
             	downloadCategory(category.getTypeIconUrl());
             }
-//            holder.image.setImageDrawable(getDrawable(R.drawable.haokan_life));
-            
-            
-//            if (category.getTypeNameResId() != 0) {
-//                holder.title.setText(category.getTypeNameResId());
-//            }else {
-//                holder.title.setText(category.getTypeName());
-//            }
-            holder.title.setText("");
-            if(!TextUtils.isEmpty(category.getNameID())){
-            	try {
-                	holder.title.setText(getResId(category.getNameID()));
-				} catch (Exception e) {
-		            DebugLog.d(TAG,"getView setText error:" + e.getStackTrace());
-				}
-            }else{
-            	holder.title.setText(category.getTypeName());
-            }
+ 
+            holder.title.setText(mlanguageZh ? category.getTypeName() : category.getTypeNameEn());
             
             holder.image.setOnClickListener(new OnClickListener() {
                 
                 @Override
                 public void onClick(View arg0) {
-//                    holder.image.bindClickAnimator();
-//                    startAlphaAnim(holder.favorite, !category.isFavorite());
+ 
                     onItemClick(position);
                 }
             });
@@ -374,40 +372,6 @@ public class CategoryActivity extends Activity{
 		threadPool.submit(worker);
 	}
     
-    private void startAlphaAnim(final View view, final boolean visibility) {
-        
-        float fromAlpha = 1f;
-        float toAlpha = 0f;
-        if (visibility) {
-            fromAlpha = 0f;
-            toAlpha = 1f;
-        }
-        
-        AlphaAnimation alphaAnimation = new AlphaAnimation(fromAlpha, toAlpha);
-        alphaAnimation.setDuration(100);
-        alphaAnimation.setAnimationListener(new AnimationListener() {
-            
-            @Override
-            public void onAnimationStart(Animation arg0) {
-                if (view.getVisibility() != View.VISIBLE) {
-                    view.setVisibility(View.VISIBLE);
-                }
-            }
-            
-            @Override
-            public void onAnimationRepeat(Animation arg0) {
-                
-            }
-            
-            @Override
-            public void onAnimationEnd(Animation arg0) {
-                view.setVisibility(visibility ? View.VISIBLE : View.GONE);
-            }
-        });
-        view.startAnimation(alphaAnimation);
-        
-    }
-    
 
     private final class ViewHolder {
         public TextView title;
@@ -431,5 +395,12 @@ public class CategoryActivity extends Activity{
 
     }
 
+   
+    private boolean isLanguageZh() {
+        Locale locale = getResources().getConfiguration().locale;
+        String language = locale.getLanguage();
+        DebugLog.d(TAG, "language = " + language);
+        return "zh".equals(language);
+    }
     
 }

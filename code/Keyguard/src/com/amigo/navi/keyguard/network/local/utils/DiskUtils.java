@@ -116,7 +116,7 @@ public class DiskUtils {
             Bitmap reuseBitmap = reuseImage.getBitmap();
 
             if (null != reuseBitmap) {
-                Log.v("zhaowei", "scale = " + scale + " options.outWidth = " + options.outWidth + " ; reuseBitmap.getWidth() = " + reuseBitmap.getWidth());
+                DebugLog.d(TAG, "scale = " + scale + " options.outWidth = " + options.outWidth + " ; reuseBitmap.getWidth() = " + reuseBitmap.getWidth());
                 if (options.outWidth == reuseBitmap.getWidth()
                         && options.outHeight == reuseBitmap.getHeight()) {
                     reuseImage.setUsed(true);

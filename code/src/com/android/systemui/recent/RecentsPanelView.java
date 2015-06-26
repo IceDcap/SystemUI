@@ -74,6 +74,7 @@ import com.android.systemui.statusbar.phone.PhoneStatusBar;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
+import java.util.List;
 
 public class RecentsPanelView extends FrameLayout implements OnItemClickListener, RecentsCallback,
         StatusBarPanel, Animator.AnimatorListener {
@@ -968,9 +969,13 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
                 final ActivityManager am = (ActivityManager)
                         getContext().getSystemService(Context.ACTIVITY_SERVICE);
                 
+                List<String> musicApps = ((RecentsActivity) getContext()).getMusicAppsList();
                 try {
                     for (TaskDescription ad : mTaskDescriptionList) {
                         if (am != null) {
+                        	if((musicApps != null && musicApps.contains(ad.packageName))) {
+                        		continue;
+                        	}
                             am.removeTask(ad.persistentTaskId);
                             am.forceStopPackage(ad.packageName);
 

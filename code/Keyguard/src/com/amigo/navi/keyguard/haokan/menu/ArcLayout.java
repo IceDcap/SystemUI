@@ -54,7 +54,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
     private static int[][] MENU_ITEM_DRAWABLES = {
             {
                     R.drawable.haokan_arcmenu_favorite, R.drawable.haokan_arcmenu_favorite_press,
-                    R.drawable.haokan_arcmenu_favorite_press, R.drawable.haokan_arcmenu_favorite
+                    R.drawable.haokan_arcmenu_favorited, R.drawable.haokan_arcmenu_favorited_press
             },
             {
                     R.drawable.haokan_arcmenu_lock, R.drawable.haokan_arcmenu_lock_click,
@@ -831,7 +831,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
         
         switch (viewId) {
             case 0: 
-                if (mWallpaper.isFavorite()) {
+/*                if (mWallpaper.isFavorite()) {
                     DebugLog.d(TAG, "onClick  isFavorite  return");
                     if (isExpanded() && !animatorRunning()) {
                         startHide();
@@ -839,7 +839,11 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                     return;
                 }
                 HKAgent.onEventIMGFavorite(getContext().getApplicationContext(), mWallpaper);
-                onClickFavorite(arcItemButton);
+                onClickFavorite(arcItemButton);*/
+            	if (!mWallpaper.isFavorite()) {
+            		HKAgent.onEventIMGFavorite(getContext().getApplicationContext(), mWallpaper);
+                    onClickFavorite(arcItemButton);
+            	}
                 break;
             case 1:
                 DebugLog.d(TAG,"onLongPress wallpaper url:" + mWallpaper.getImgUrl());

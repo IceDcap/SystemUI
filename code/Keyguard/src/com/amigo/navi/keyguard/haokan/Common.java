@@ -48,6 +48,9 @@ public class Common {
     
     private static boolean isPowerSaverMode = false;
     
+    public static int displayPostion = -1;
+    public static int displayHour = -1;
+    
     public static String getUserId(Context context) {
         if (USER_ID == null) {
             USER_ID = NavilSettings.getStringSharedConfig(context, NavilSettings.USER_ID, null);

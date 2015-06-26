@@ -3,8 +3,6 @@ package com.amigo.navi.keyguard.haokan.entity;
 
 
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.widget.Toast;
 
 
 import java.io.Serializable;
@@ -12,26 +10,21 @@ import java.io.Serializable;
 import com.amigo.navi.keyguard.haokan.db.DataConstant;
 
 public class Category implements Serializable{
-    private static final long serialVersionUID = 1L; // 定义序列化ID
+    private static final long serialVersionUID = 1L;  
 
     private int typeId;
 
     private String typeName;
-
-    /**
-     * 类别图标地址
-     */
+    
+    private String typeNameEn;
+   
     private String typeIconUrl;
     
     private boolean favorite;
     
-    private int typeIconResId;
-    
-    private int typeNameResId;
-    
     private Bitmap icon;
     
-    private String nameID = "";
+ 
     //0 表示从网上获取的壁纸，1表示固定壁纸
     public static final int IMAGE_FROM_WEB = DataConstant.INTERNET;
     public static final int IMAGE_FROM_FIXED_FOLDER = DataConstant.LOCAL_ASSETS;
@@ -74,22 +67,6 @@ public class Category implements Serializable{
     }
 
    
-    public int getTypeIconResId() {
-        return typeIconResId;
-    }
-
-    public void setTypeIconResId(int typeIconResId) {
-        this.typeIconResId = typeIconResId;
-    }
-
-    public int getTypeNameResId() {
-        return typeNameResId;
-    }
-
-    public void setTypeNameResId(int typeNameResId) {
-        this.typeNameResId = typeNameResId;
-    }
-
     public Bitmap getIcon() {
         return icon;
     }
@@ -106,14 +83,7 @@ public class Category implements Serializable{
 		this.type = type;
 	}
 
-	public String getNameID() {
-		return nameID;
-	}
-
-	public void setNameID(String nameID) {
-		this.nameID = nameID;
-	}
-
+ 
 	public int getIsPicDownLod() {
 		return isPicDownLod;
 	}
@@ -130,8 +100,14 @@ public class Category implements Serializable{
 		this.sort = sort;
 	}
 
-     
-    
+    public String getTypeNameEn() {
+        return typeNameEn;
+    }
+
+    public void setTypeNameEn(String typeNameEn) {
+        this.typeNameEn = typeNameEn;
+    }
+
     
 
 }

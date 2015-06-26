@@ -38,12 +38,16 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.OverScroller;
+
 import com.android.systemui.R;
 import com.android.systemui.SwipeHelper;
 import com.android.systemui.recent.RecentsPanelView.TaskDescriptionAdapter;
 import com.android.systemui.recent.RecentsPanelView.ViewHolder;
+
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+
 import android.app.IActivityManager;
 import android.app.ActivityManagerNative;
 import android.os.UserHandle;
@@ -963,7 +967,9 @@ public class RecentsHorizontalScrollView extends HorizontalScrollView
 
 	private boolean canChildBeCleared(View view) {
         ViewHolder holder = (ViewHolder) view.getTag();
-        if ((holder != null && holder.isLockApp)) {
+        List<String> musicApps = ((RecentsActivity) getContext()).getMusicAppsList();
+        if ((holder != null && holder.isLockApp) 
+        		|| (musicApps != null && musicApps.contains(holder.taskDescription.packageName))) {
             return false;
         } else {
             return true;

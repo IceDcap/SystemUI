@@ -26,13 +26,13 @@
     android:orientation="horizontal"
     android:paddingEnd="@dimen/signal_cluster_battery_padding"
     >
-    <!-- <ImageView
+    <ImageView
         android:id="@+id/vpn"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:paddingEnd="6dp"
-        android:src="@drawable/stat_sys_vpn_ic"
-        /> -->
+        android:paddingEnd="3dp"
+        android:src="@drawable/gn_stat_sys_vpn"
+        /> 
     <FrameLayout
         android:id="@+id/wifi_combo"
         android:layout_height="wrap_content"
