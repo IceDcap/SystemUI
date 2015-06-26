@@ -203,7 +203,7 @@ public class GnNotificationService {
 	HashMap<String, Integer> mChagedPackages = new HashMap<>();
     public boolean isUidSystem(int uid) {
         final int appid = UserHandle.getAppId(uid);
-        Log.v(TAG, "Check SystemUI: appId = "+appid);
+        //Log.v(TAG, "Check SystemUI: appId = "+appid);
         return (appid == Process.SYSTEM_UID || appid == Process.PHONE_UID || uid == 0);
     }
     
