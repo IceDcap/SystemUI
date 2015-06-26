@@ -132,6 +132,11 @@
     <!-- fingerprint unlock -->
     <uses-permission android:name="com.fingerprints.service.ACCESS_FINGERPRINT_MANAGER" />
 
+    <!-- Youju -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="com.gionee.youju.statistics.permission.READ_PROVIDER" />
+    <uses-permission android:name="com.gionee.youju.statistics.permission.WRITE_PROVIDER" />
+    
     <application
         android:name=".SystemUIApplication"
         android:persistent="true"

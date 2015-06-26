@@ -109,7 +109,7 @@ public class KeyguardWallpaperContainer extends FrameLayout {
 
     
    public void onKeyguardModelChanged(int top,int maxBoundY, int  model) {
-        mTop = (int) (top * mScreenHeight * 1.175f / (float)maxBoundY);
+        mTop = (int) (top * mScreenHeight * 1.4f / (float)maxBoundY);
         
         mModel=model;
         if(model==UIController.SCROLL_TO_SECURTY){

@@ -22,6 +22,8 @@
     android:id="@+id/amigo_keyguard_pin_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     android:contentDescription="@string/keyguard_accessibility_pin_unlock"
     android:gravity="center_horizontal"
     android:orientation="vertical" >
@@ -38,15 +40,17 @@
         androidprv:layout_maxHeight="@dimen/keyguard_security_max_height"
     -->
    <TextView
-                    android:id="@+id/forget_password"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:paddingBottom="17dp"
-                    android:text="@string/forget_password"
-                    android:textColor="#ccffffff"
-                    android:textSize="16dp"
-                    android:visibility="invisible" />
+       android:layout_marginTop="@dimen/amigo_keyguard_pin_view_num_forget_margintop"
+       android:id="@+id/forget_password"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:gravity="center_horizontal"
+       android:paddingBottom="@dimen/amigo_keyguard_pin_view_num_forget_paddingbottom"
+       android:text="@string/forget_password"
+       android:textColor="#ccffffff"
+       android:textSize="16dp"
+       android:visibility="invisible" />
+
     <include
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -57,9 +61,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="24dp"
-        android:paddingLeft="42dp"
-        android:paddingRight="42dp" >
+        android:layout_marginTop="@dimen/amigo_keyguard_pin_view_num_row0_top"
+        android:paddingLeft="@dimen/amigo_keyguard_pin_view_num_padding"
+        android:paddingRight="@dimen/amigo_keyguard_pin_view_num_padding" >
 
         <com.android.keyguard.PasswordTextView
             android:id="@+id/pinEntry"
@@ -112,7 +116,7 @@
 
     <View
         android:layout_width="wrap_content"
-        android:layout_height="48dip" />
+        android:layout_height="@dimen/amigo_keyguard_pin_view_num_above_keyguard_bouncer_frame" />
 
     <LinearLayout
         android:id="@+id/keyguard_bouncer_frame"
@@ -147,7 +151,7 @@
                 android:id="@+id/key2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="37dip"
+                android:layout_marginLeft="@dimen/amigo_keyguard_pin_view_num_marginleft"
                 class="com.amigo.navi.keyguard.security.NumberPadKey"
                 android:background="@drawable/numpadkey_click_effect"
                 android:gravity="center"
@@ -160,7 +164,7 @@
                 android:id="@+id/key3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="37dip"
+                android:layout_marginLeft="@dimen/amigo_keyguard_pin_view_num_marginleft"
                 class="com.amigo.navi.keyguard.security.NumberPadKey"
                 android:background="@drawable/numpadkey_click_effect"
                 android:gravity="center"
@@ -172,7 +176,7 @@
 
         <View
             android:layout_width="wrap_content"
-            android:layout_height="18dip" />
+            android:layout_height="@dimen/amigo_keyguard_pin_view_num_linegap" />
 
         <LinearLayout
             android:id="@+id/row2"
@@ -198,7 +202,7 @@
                 android:id="@+id/key5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="37dip"
+                android:layout_marginLeft="@dimen/amigo_keyguard_pin_view_num_marginleft"
                 class="com.amigo.navi.keyguard.security.NumberPadKey"
                 android:background="@drawable/numpadkey_click_effect"
                 android:gravity="center"
@@ -211,7 +215,7 @@
                 android:id="@+id/key6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="37dip"
+                android:layout_marginLeft="@dimen/amigo_keyguard_pin_view_num_marginleft"
                 class="com.amigo.navi.keyguard.security.NumberPadKey"
                 android:background="@drawable/numpadkey_click_effect"
                 android:gravity="center"
@@ -223,7 +227,7 @@
 
         <View
             android:layout_width="wrap_content"
-            android:layout_height="18dip" />
+            android:layout_height="@dimen/amigo_keyguard_pin_view_num_linegap" />
 
         <LinearLayout
             android:id="@+id/row3"
@@ -249,7 +253,7 @@
                 android:id="@+id/key8"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="37dip"
+                android:layout_marginLeft="@dimen/amigo_keyguard_pin_view_num_marginleft"
                 class="com.amigo.navi.keyguard.security.NumberPadKey"
                 android:background="@drawable/numpadkey_click_effect"
                 android:gravity="center"
@@ -262,7 +266,7 @@
                 android:id="@+id/key9"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="37dip"
+                android:layout_marginLeft="@dimen/amigo_keyguard_pin_view_num_marginleft"
                 class="com.amigo.navi.keyguard.security.NumberPadKey"
                 android:background="@drawable/numpadkey_click_effect"
                 android:gravity="center"
@@ -274,7 +278,7 @@
 
         <View
             android:layout_width="wrap_content"
-            android:layout_height="18dip" />
+            android:layout_height="@dimen/amigo_keyguard_pin_view_num_linegap" />
 
         <LinearLayout
             android:id="@+id/row4"
@@ -288,8 +292,8 @@
                 android:id="@+id/key0"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="37dip"
-                android:layout_marginRight="37dip"
+                android:layout_marginLeft="@dimen/amigo_keyguard_pin_view_num_marginleft"
+                android:layout_marginRight="@dimen/amigo_keyguard_pin_view_num_marginleft"
                 class="com.amigo.navi.keyguard.security.NumberPadKey"
                 android:background="@drawable/numpadkey_click_effect"
                 android:gravity="center"
