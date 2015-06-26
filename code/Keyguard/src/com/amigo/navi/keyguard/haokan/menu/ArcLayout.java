@@ -745,7 +745,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                     boolean isLocalImage = mWallpaper.getImgId() == Wallpaper.WALLPAPER_FROM_PHOTO_ID;
                     
                     String imageFileName = new StringBuffer(FileUtil.getDirectoryFavorite()).append("/").append(Common.currentTimeDate()).append("_")
-                            .append(isLocalImage ? mWallpaper.getImgName() : mWallpaper.getImgId()).append(".jpg").toString();
+                            .append(isLocalImage ? mWallpaper.getImgName() : mWallpaper.getImgId()).append(".png").toString();
                     
                     if (currentWallpaper != null) {
                         success = FileUtil.saveWallpaper(currentWallpaper, imageFileName);
@@ -794,7 +794,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                     if (Common.SDfree()) {
                         boolean isLocalImage = mWallpaper.getImgId() == Wallpaper.WALLPAPER_FROM_PHOTO_ID;
                         String imageFileName = new StringBuffer(FileUtil.getDirectoryFavorite()).append("/").append(Common.currentTimeDate()).append("_")
-                                .append(isLocalImage ? mWallpaper.getImgName() : mWallpaper.getImgId()).append(".jpg").toString();
+                                .append(isLocalImage ? mWallpaper.getImgName() : mWallpaper.getImgId()).append(".png").toString();
                         Bitmap currentWallpaper = controller.getCurrentWallpaperBitmap(mWallpaper, false);
                         if (currentWallpaper != null) {
                             if (FileUtil.saveWallpaper(currentWallpaper, imageFileName)) {

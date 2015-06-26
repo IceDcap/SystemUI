@@ -311,7 +311,7 @@ public class KeyguardViewMediator extends SystemUI {
     private KeyguardDisplayManager mKeyguardDisplayManager;
 
     private final ArrayList<IKeyguardStateCallback> mKeyguardStateCallbacks = new ArrayList<>();
-    private boolean isKeyguardGoingAwayRunning=false;
+
 
     KeyguardUpdateMonitorCallback mUpdateCallback = new KeyguardUpdateMonitorCallback() {
 
@@ -699,7 +699,7 @@ public class KeyguardViewMediator extends SystemUI {
             if (DEBUG) Log.d(TAG, "onScreenTurnedOff(" + why + ")");
 
             resetKeyguardDonePendingLocked();
-            resetKeyguardGoingAwayRunningState();
+//            resetKeyguardGoingAwayRunningState();
             mHideAnimationRun = false;
 
             // Lock immediately based on setting if secure (user has a pin/pattern/password).
@@ -960,10 +960,7 @@ public class KeyguardViewMediator extends SystemUI {
      */
     public void setOccluded(boolean isOccluded) {
         if (DEBUG) Log.d(TAG, "setOccluded " + isOccluded);
-		if (mHandler.hasMessages(SET_OCCLUDED)) {
-			if (DEBUG) Log.w(TAG, "ignore this setOccluded.");
-			return;
-		}
+        mHandler.removeMessages(SET_OCCLUDED);
         Message msg = mHandler.obtainMessage(SET_OCCLUDED, (isOccluded ? 1 : 0), 0);
         mHandler.sendMessage(msg);
     }
@@ -974,13 +971,13 @@ public class KeyguardViewMediator extends SystemUI {
     private void handleSetOccluded(boolean isOccluded) {
         synchronized (KeyguardViewMediator.this) {
             if (DEBUG) {
-                Log.d(TAG, "mOccluded: "+mOccluded+" isOccluded: "+isOccluded+"  isKeyguardGoingAwayRunning="+isKeyguardGoingAwayRunning);
+                Log.d(TAG, "mOccluded: "+mOccluded+" isOccluded: "+isOccluded);
             }
             if (mOccluded != isOccluded) {
-            	if(!isOccluded && isKeyguardGoingAwayRunning){
+            /*	if(!isOccluded && isKeyguardGoingAwayRunning){
             		handleStartKeyguardExitAnimation( SystemClock.uptimeMillis() + mHideAnimation.getStartOffset(),
                             mHideAnimation.getDuration());
-            	}
+            	}*/
                 mOccluded = isOccluded;
                 setSkylightOccluded();
                 mStatusBarKeyguardViewManager.setOccluded(isOccluded);
@@ -1317,7 +1314,7 @@ public class KeyguardViewMediator extends SystemUI {
         synchronized (this) {
             resetKeyguardDonePendingLocked();
         }
-        resetKeyguardGoingAwayRunningState();
+//        resetKeyguardGoingAwayRunningState();
         if (authenticated) {
             mUpdateMonitor.clearFailedUnlockAttempts();
         }
@@ -1442,7 +1439,7 @@ public class KeyguardViewMediator extends SystemUI {
             mStatusBarKeyguardViewManager.show(options);
             mHiding = false;
             resetKeyguardDonePendingLocked();
-            resetKeyguardGoingAwayRunningState();
+//            resetKeyguardGoingAwayRunningState();
             mHideAnimationRun = false;
             updateActivityLockScreenState();
             adjustStatusBarLocked();
@@ -1467,7 +1464,6 @@ public class KeyguardViewMediator extends SystemUI {
 //                        mStatusBarKeyguardViewManager.shouldDisableWindowAnimationsForUnlock(),
 //                        mStatusBarKeyguardViewManager.isGoingToNotificationShade());
             	Log.d(TAG, "mKeyguardGoingAwayRunnable....run");
-            	isKeyguardGoingAwayRunning=true;
                 mWM.keyguardGoingAway(
                         true,
                         mStatusBarKeyguardViewManager.isGoingToNotificationShade());
@@ -1488,6 +1484,8 @@ public class KeyguardViewMediator extends SystemUI {
             mHiding = true;
             mStatusBarKeyguardViewManager.cancelFingerIdentify();
             if (mShowing && !mOccluded) {
+            	handleKeyguardExit(SystemClock.uptimeMillis() + mHideAnimation.getStartOffset(),
+                        mHideAnimation.getDuration());
                 if (!mHideAnimationRun) {
                     mStatusBarKeyguardViewManager.startPreHideAnimation(mKeyguardGoingAwayRunnable);
                 } else {
@@ -1497,7 +1495,10 @@ public class KeyguardViewMediator extends SystemUI {
 
                 // Don't try to rely on WindowManager - if Keyguard wasn't showing, window
                 // manager won't start the exit animation.
-                handleStartKeyguardExitAnimation(
+      /*          handleStartKeyguardExitAnimation(
+                        SystemClock.uptimeMillis() + mHideAnimation.getStartOffset(),
+                        mHideAnimation.getDuration());*/
+            	handleKeyguardExit(
                         SystemClock.uptimeMillis() + mHideAnimation.getStartOffset(),
                         mHideAnimation.getDuration());
             }
@@ -1512,9 +1513,9 @@ public class KeyguardViewMediator extends SystemUI {
     }
 
     private void handleStartKeyguardExitAnimation(long startTime, long fadeoutDuration) {
+    	if (DEBUG) Log.d(TAG, "handleStartKeyguardExitAnimation...mHiding="+mHiding );
         synchronized (KeyguardViewMediator.this) {
-			if (DEBUG) Log.d(TAG, "handleStartKeyguardExitAnimation...mHiding="+mHiding );
-			resetKeyguardGoingAwayRunningState();
+//			resetKeyguardGoingAwayRunningState();
             if (!mHiding) {
                 return;
             }
@@ -1536,6 +1537,35 @@ public class KeyguardViewMediator extends SystemUI {
             sendUserPresentBroadcast();
         }
     }
+    
+    
+    private void handleKeyguardExit(long startTime, long fadeoutDuration){
+        synchronized (KeyguardViewMediator.this) {
+   			if (DEBUG) Log.d(TAG, "handleKeyguardExit...mHiding="+mHiding );
+//   			resetKeyguardGoingAwayRunningState();
+               if (!mHiding) {
+                   return;
+               }
+               mHiding = false;
+
+               //GIONEE <Amigo_Keyguard>  jiating <2015-06-15> modify for CR01501770 begin
+               // only play "unlock" noises if not on a call (since the incall UI
+               // disables the keyguard)
+               if (mShowing && TelephonyManager.EXTRA_STATE_IDLE.equals(mPhoneState)) {
+                   playSounds(false);
+               }
+    			//GIONEE <Amigo_Keyguard>  jiating <2015-06-15> modify for CR01501770 end
+               setShowingLocked(false);
+               mStatusBarKeyguardViewManager.hide(startTime, fadeoutDuration);
+               resetKeyguardDonePendingLocked();
+               mHideAnimationRun = false;
+               updateActivityLockScreenState();
+               adjustStatusBarLocked();
+               sendUserPresentBroadcast();
+           }
+    }
+    
+    
 
     private void adjustStatusBarLocked() {
         if (mStatusBarManager == null) {
@@ -1636,9 +1666,9 @@ public class KeyguardViewMediator extends SystemUI {
         mHandler.removeMessages(KEYGUARD_DONE_PENDING_TIMEOUT);
     }
 
-    private void resetKeyguardGoingAwayRunningState(){
+   /* private void resetKeyguardGoingAwayRunningState(){
     	isKeyguardGoingAwayRunning=false;
-    }
+    }*/
     
     public void onBootCompleted() {
         if(DEBUG){Log.d(TAG, "onBootCompleted");}

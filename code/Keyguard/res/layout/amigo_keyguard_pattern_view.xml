@@ -92,7 +92,7 @@
             <RelativeLayout
                 android:id="@+id/row5"
                 android:layout_width="match_parent"
-                android:layout_height="72dp"
+                android:layout_height="@dimen/amigo_keyguard_pattern_view_row5_height"
                 android:paddingLeft="42dip"
                 android:paddingRight="42dip" >
 

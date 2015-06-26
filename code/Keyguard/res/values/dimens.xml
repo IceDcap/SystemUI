@@ -193,7 +193,7 @@
 
     <!-- NaviKeyguard dimens begin -->
 
-    <dimen name="kg_maincell_layout_carrier_margin_top">12dp</dimen>
+    <dimen name="kg_maincell_layout_carrier_margin_top">30dp</dimen>
     <dimen name="kg_maincell_layout_carrier_battery_gap">8dp</dimen>
     <dimen name="kg_maincell_layout_battery_notification_gap">48dp</dimen>
     <dimen name="kg_maincell_layout_notification_height">341dp</dimen>
@@ -425,5 +425,22 @@
 	<dimen name="amigo_unbind_account_text_size">16sp</dimen>
 	
 	<dimen name="amigo_unLock_fling_distance">60dp</dimen>
+	
+	<dimen name="amigo_keyguard_sim_pin_view_num_marginleft">37dp</dimen>
+	<dimen name="amigo_keyguard_sim_pin_view_num_linegap">14dp</dimen>
+	<dimen name="amigo_keyguard_sim_pin_view_num_key_enter_width">67dp</dimen>
+	<dimen name="amigo_keyguard_sim_pin_view_num_simPinEntry_top">20dp</dimen>
+	<dimen name="amigo_keyguard_sim_pin_view_num_keyguard_bouncer_frame_padding_h">42dp</dimen>
+	<dimen name="amigo_keyguard_sim_pin_view_num_above_keyguard_bouncer_frame">10dp</dimen>
+	
+	<dimen name="amigo_keyguard_pin_view_num_marginleft">37dp</dimen>
+	<dimen name="amigo_keyguard_pin_view_num_row0_top">24dp</dimen>
+	<dimen name="amigo_keyguard_pin_view_num_linegap">14dp</dimen>
+	<dimen name="amigo_keyguard_pin_view_num_forget_margintop">0dp</dimen>
+	<dimen name="amigo_keyguard_pin_view_num_forget_paddingbottom">12dp</dimen>
+	<dimen name="amigo_keyguard_pin_view_num_padding">42dp</dimen>
+	<dimen name="amigo_keyguard_pin_view_num_above_keyguard_bouncer_frame">40dp</dimen>
+	
+	<dimen name="amigo_keyguard_pattern_view_row5_height">72dp</dimen>
 
 </resources>
