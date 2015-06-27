@@ -2,65 +2,30 @@
 Build Notes
 ==================
 1.版本目的:
-bug fix
+Bugfix
 2.功能变更:
--
+Bugfix
 3.重点测试的问题:
-CR01495648
-修改锁屏收到SIM卡锁的pin_request状态后上锁更新了状态栏不可下拉，之后sim卡又更新为ready状态，锁屏没有密码锁了，但是没有更新状态栏导致状态栏不能下拉问题
-CR01478568
-【5.1MP】【GMS- verifier】：screen pinning test测试失败
-CR01408122
-修改为在密码锁冻结状态下，黑屏指纹不能解锁
-CR01497989
-【5.1MP】音乐：后台播放音乐，一键清理时会把音乐清除（必现）
-CR01459185
-订阅类别显示不全问题
-CR01484839
-【5.1MP】系统界面:插入两张SIM卡后，直接拔掉卡2，状态栏仍显示两张卡信号【2/10】
-CR01497913
-【5.1MP】设置：VPN连接成功后状态栏不显示连接成功钥匙图标【必现】（截图log）
-CR01497913
-【5.1MP】设置：VPN连接成功后状态栏不显示连接成功钥匙图标【必现】（截图log）
-CR01500458
-【5.1MP工厂】微信【6.1.0】与好友视频聊天挂断后》在微信主页界面切换横竖屏下方显示黑屏》反复切换横竖屏后死机，桌面背景
-CR01485659
-【5.1MP】随变桌面：按app键进入最近任务-最近任务剩余RAM与系统设置内部显示不一致（必现附图log）
-CR01466272
-调整通知中心和控制中心的背景，去掉模糊效果。
-CR01504955
-【5.1MP】品质压力:后台播放音乐，点击App键显示无后台运行，主界面进其中一个应用，返回键返回主界面点击App键恢复【1/100】
-CR01495773
-壁纸收藏保存为png格式
-CR01507205
-1. E8 数字密码与sim卡密码UI修改，“充电中”下移
-2. 7320适配 ：订阅界面/弧形菜单图标/密码锁/壁纸文案
-CR01503867
-【5.1MP】品质压力:上滑控制中心点击各快捷图标不显示开启状态，返回键返回，再次上滑控制中心图标显示为开启，半小时后恢复【】
-CR01507918
-【工厂】软件商店下载91智能锁安装并应用，按power键上锁，锁屏界面一直提示系统界面停止运行无法操作手机【必现】
-CR01425226
-(去掉模糊)
+CR01504165
+【5.1MP】品质压力:进文件管理，SD卡复制大于1G的文件夹到内部存储后删除，下拉菜单自动锁屏，解锁后定屏，五分钟后自动恢复【2/30】
+CR01506153
+系统界面：后台运行优酷，进入照相机中录制一个30s左右的视频后播放，按App切换到优酷，弹出com.android.systemUI已停止运行（3/10）
+
 4.应用数据库是否改变:
-YES
+No
 
 ==================
 Release Location
 ==================
-/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ao.zip
+/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ap.zip
 
 ==================
 CR List
 ==================
 [Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
-svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.as' non-existent in revision 6269
+CR01504165      Resolved   wujj       【5.1MP】品质压力:进文件管理，SD卡复制大于1G的文件夹到内部存储后删除，下拉菜单自动锁屏，解锁后定屏，五分钟后自动恢复【2/30】
+CR01506153      Resolved   fangjian   系统界面：后台运行优酷，进入照相机中录制一个30s左右的视频后播放，按App切换到优酷，弹出com.android.systemUI已停止运行（3/10）
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ap
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ao
+Code difference: svn diff -r 6275:6271 http://192.168.110.97/svn/Amigo_SystemUI/trunk
 
-svn: E200009: Could not display info for all targets because some targets don't exist
-svn: E205000: Syntax error in revision argument '6268:'
-File does not exist:  at getAppChangeSet.pl line 48
-
-==================
-Make sonar target URL:
-http://ss.alm.gionee.com/sonar
-http://ss.alm.gionee.com/sonar/dashboard/index/gionee.app:Amigo_SystemUI
-==================

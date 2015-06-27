@@ -45,6 +45,8 @@ import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.telephony.SubscriptionManager.OnSubscriptionsChangedListener;
 import android.telephony.TelephonyManager;
+import com.android.internal.telephony.ITelephony;
+import android.os.ServiceManager;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -1423,7 +1425,13 @@ public class NetworkControllerImpl extends BroadcastReceiver
             }else if(action.equals(TelephonyIntents.ACTION_SUBINFO_RECORD_UPDATED)) { 
                 boolean isAirPlaneMode = (Settings.Global.getInt(mContext.getContentResolver(),
                         Settings.Global.AIRPLANE_MODE_ON, 0) == 1);
-                if(isAirPlaneMode) {
+                boolean isRadioOn = true;
+                try {
+                	 isRadioOn = ITelephony.Stub.asInterface(ServiceManager.checkService("phone")).isRadioOn();
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+                if(isAirPlaneMode || !isRadioOn) {
                 	resetPhoneState(); 
                 }
             	updateNetworkType(); 

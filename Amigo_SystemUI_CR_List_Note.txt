@@ -961,3 +961,12 @@ svn: E205000: Syntax error in revision argument '6268:'
 File does not exist:  at getAppChangeSet.pl line 48
 
 ==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01504165      Resolved   wujj       【5.1MP】品质压力:进文件管理，SD卡复制大于1G的文件夹到内部存储后删除，下拉菜单自动锁屏，解锁后定屏，五分钟后自动恢复【2/30】
+CR01506153      Resolved   fangjian   系统界面：后台运行优酷，进入照相机中录制一个30s左右的视频后播放，按App切换到优酷，弹出com.android.systemUI已停止运行（3/10）
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ap
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ao
+Code difference: svn diff -r 6275:6271 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================

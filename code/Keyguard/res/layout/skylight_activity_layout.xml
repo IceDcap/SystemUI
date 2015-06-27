@@ -7,7 +7,6 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/skylight_height"
-        android:background="@drawable/skylight_bg_wallpaper"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:visibility="gone" >
