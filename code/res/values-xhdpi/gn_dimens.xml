@@ -8,7 +8,7 @@
     <dimen name="gn_snapshot_button_padding_bottom">15dp</dimen>
     
     <!-- Control center -->
-    <dimen name="gn_cc_height">372dp</dimen>
+    <dimen name="gn_cc_height">324dp</dimen>
     <dimen name="gn_cc_height_land">294dp</dimen>
     
 </resources>

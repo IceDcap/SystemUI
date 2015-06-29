@@ -52,6 +52,7 @@ import android.widget.TextView;
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.KWDataCache;
 import com.amigo.navi.keyguard.KeyguardViewHostManager;
+import com.amigo.navi.keyguard.haokan.Common;
 import com.amigo.navi.keyguard.haokan.RequestNicePicturesFromInternet;
 import com.amigo.navi.keyguard.haokan.UIController;
 import com.amigo.navi.keyguard.haokan.WallpaperCutActivity;
@@ -250,7 +251,9 @@ public class KeyguardSettingsActivity extends Activity {
             
             @Override
             public void onClick(View arg0) {
-                pickScreenLockWallpaper();
+                if (!Common.isFastClick(2000)) {
+                    pickScreenLockWallpaper();
+                }
             }
         });
     }

@@ -88,6 +88,9 @@ public class GnStorageNotification extends SystemUI {
                 boolean mUsbDeviceConnect = intent.getBooleanExtra(UsbManager.USB_CONNECTED, false);
                 Log.v(TAG, "UsbAccessoryMode " + mUsbDeviceConnect);
                 updateUsbMassStorageNotification(mUsbDeviceConnect, mUsbManager.getDefaultFunction());
+            } else if (action.equals(Intent.ACTION_BOOT_COMPLETED)) {
+            	Log.v(TAG,"receive Intent.ACTION_BOOT_COMPLETED");                
+                setToMtpByDefault();
             }
         }
     };
@@ -105,14 +108,11 @@ public class GnStorageNotification extends SystemUI {
 
     @Override
     public void start() {
-        if ( isFirstBoot()) {
-        	setToMtpByDefault();
-        }
-
 		mUsbManager = (UsbManager)mContext.getSystemService(Context.USB_SERVICE);
 		
         IntentFilter filter = new IntentFilter();
         filter.addAction(UsbManager.ACTION_USB_STATE);
+        filter.addAction(Intent.ACTION_BOOT_COMPLETED);
         mContext.registerReceiver(mUsbStateReceiver, filter);
 
         HandlerThread thr = new HandlerThread("SystemUI StorageNotification");
@@ -162,27 +162,31 @@ public class GnStorageNotification extends SystemUI {
     }
 
 	private boolean isFirstBoot() {
+		TelephonyManager tm = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
+		if (tm != null) {
+			String id = tm.getDeviceId();
+			if (id == null || (id.matches("9{14}.") || id.equals("0"))) {
+				Log.d(TAG,"IMEI is null .. ");
+				return false;
+			}
+		}
+
 		SharedPreferences preferences = mContext.getSharedPreferences("first_boot", Context.MODE_PRIVATE);
 		boolean isFirstBoot = preferences.getBoolean("boot_flag", true);
-		Log.v(TAG, "isFirstBoot = " + isFirstBoot);
 		if (isFirstBoot) {
 			Editor editor = preferences.edit();
 			editor.putBoolean("boot_flag", false);
 			editor.commit();
 		}
-		
-		TelephonyManager tm = (TelephonyManager) mContext
-				.getSystemService(Context.TELEPHONY_SERVICE);
-		if (tm != null) {
-			String id = tm.getDeviceId();
-			if (id == null || (id.matches("9{14}.") || id.equals("0"))) {
-				isFirstBoot = false;
-			}
-		}
+
+		Log.v(TAG,"isFirstBoot = " + isFirstBoot);
 		return isFirstBoot;
 	}
 
 	private void setToMtpByDefault() {
+		if ( !isFirstBoot()) {
+			return;
+		}
 		UsbManager usbManager = (UsbManager) mContext.getSystemService(Context.USB_SERVICE);
 		StringBuilder builder = new StringBuilder();
 		builder.append(UsbManager.USB_FUNCTION_MTP);

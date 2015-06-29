@@ -21,9 +21,10 @@
     
     <!-- QS more -->
     <string name="gn_qs_more_save">Save</string>
-    <string name="gn_qs_more_cancel">Abandon</string>
+    <string name="gn_qs_more_title">More</string>
     <string name="gn_qs_more_show_title">Show shortcut buttons</string>
     <string name="gn_qs_more_hide_title">Hide shortcut buttons</string>
+    <string name="gn_qs_more_tips">Long press and move icon to adjust the order of the icons</string>
     
     <!-- Control center shotcut -->
     <string name="gn_sc_calculator">Calculator</string>

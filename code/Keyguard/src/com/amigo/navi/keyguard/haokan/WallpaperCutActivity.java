@@ -281,9 +281,9 @@ public class WallpaperCutActivity extends Activity {
  
         Log.v(TAG, "bitmap " + bitmap.getWidth() + " " + bitmap.getHeight());
         Log.v("haokan", "filePath = " + filePath);
-        String fileName = null; 
+        String fileName = "temp"; 
         if (!TextUtils.isEmpty(filePath)) {
-            fileName = filePath.substring(filePath.lastIndexOf("%") + 1);
+            fileName = filePath.substring(filePath.lastIndexOf("/") + 1).replaceAll("[^A-Za-z0-9.]", "_");
         }
         Log.v("haokan", "fileName = " + fileName);
         UIController.getInstance().setSrceenLockWallpaper(this.getApplicationContext(), bitmap, fileName);

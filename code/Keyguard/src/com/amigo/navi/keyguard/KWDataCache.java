@@ -106,7 +106,7 @@ public class KWDataCache {
 	
 	public static int getXPageHeight(Resources resources){
 		if (sXPageHegiht == INVALID_VALUE) {
-			sXPageHegiht = getScreenHeight(resources)-getStatusBarHeight()
+			sXPageHegiht = getScreenHeight(resources)/*-getStatusBarHeight()*/
 								- resources.getDimensionPixelSize(R.dimen.ketguard_infozone_height)
 /*								- resources.getDimensionPixelSize(R.dimen.kg_infozone_margin_bottom)
 								- resources.getDimensionPixelSize(R.dimen.kg_infozone_margin_top_at_desk)*/

@@ -45,7 +45,7 @@ public class GnAirplaneModeTile extends GnQSTile<GnQSTile.BooleanState> {
     @Override
     public void handleClick() {
         GnYouJu.onEvent(mContext, "Amigo_SystemUI_CC", "GnAirplaneModeTile");
-        Log.d(TAG, "mState.value = " + mState.value);
+        Log.d(TAG, "handleClick " + !mState.value);
         setEnabled(!mState.value);
     }
 

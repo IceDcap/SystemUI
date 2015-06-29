@@ -19,13 +19,16 @@ import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.os.UserHandle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 
 import com.android.systemui.R;
+import com.android.systemui.gionee.cc.GnControlCenter;
 import com.android.systemui.gionee.cc.qs.brightness.GnToggleSlider.Listener;
 import com.android.systemui.gionee.GnYouJu;
+
 import java.util.ArrayList;
 
 public class GnBrightnessController implements GnToggleSlider.Listener {
@@ -44,6 +47,7 @@ public class GnBrightnessController implements GnToggleSlider.Listener {
 
     private final Context mContext;
     private final ImageView mIcon;
+    private final ImageView mMore;
     private final GnToggleSlider mControl;
     private final boolean mAutomaticAvailable;
     private final IPowerManager mPower;
@@ -130,7 +134,7 @@ public class GnBrightnessController implements GnToggleSlider.Listener {
 
     }
 
-    public GnBrightnessController(Context context, ImageView icon, GnToggleSlider control) {
+    public GnBrightnessController(Context context, ImageView icon, ImageView moreIcon, GnToggleSlider control) {
         mContext = context;
         mControl = control;
         mIcon = icon;
@@ -162,6 +166,16 @@ public class GnBrightnessController implements GnToggleSlider.Listener {
                 }
             }
         });
+        
+        mMore = moreIcon;
+        mMore.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                GnControlCenter.openMoreView();
+            }
+        });
+        
         
         mHandler = new Handler();
         mUserTracker = new GnCurrentUserTracker(mContext) {

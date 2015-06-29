@@ -35,9 +35,11 @@ public class RequestNicePicturesFromInternet {
     private static RequestNicePicturesFromInternet sInitInstance = null;
     private static Context mContext;
     private static String mPath = null;
-    private DealWithByteFile  mDealWithCategory;
-    private ReadAndWriteFileFromSD  mDealWithWallpaper;
+//    private DealWithByteFile  mDealWithCategory;
+//    private ReadAndWriteFileFromSD  mDealWithWallpaper;
     private static LockPatternUtils mLockPatternUtils;
+    private static int mScreenWid = 0;
+    private static int mScreenHei = 0;
     public synchronized static RequestNicePicturesFromInternet getInstance(Context context) {
 
         if (sInitInstance == null) {
@@ -45,6 +47,8 @@ public class RequestNicePicturesFromInternet {
             mContext = context.getApplicationContext();
             mPath = DiskUtils.getCachePath(mContext.getApplicationContext());    		
             mLockPatternUtils = new LockPatternUtils(mContext);
+        	mScreenWid = KWDataCache.getScreenWidth(mContext.getResources());
+        	mScreenHei = KWDataCache.getAllScreenHeigt(mContext);
         }
         return sInitInstance;
     }
@@ -53,18 +57,18 @@ public class RequestNicePicturesFromInternet {
 
     }
     
-    private int mScreenWid = 0;
-    private int mScreenHei = 0;
-    public void init(){
-    	mScreenWid = KWDataCache.getScreenWidth(mContext.getResources());
-    	mScreenHei = KWDataCache.getAllScreenHeigt(mContext);
-        mDealWithCategory = new DealWithByteFile(mContext
-                ,DiskUtils.CATEGORY_BITMAP_FOLDER,mPath);
-        LocalFileOperationInterface localFileOperationInterface = new LocalBitmapOperation(mContext);
-        mDealWithWallpaper = new ReadAndWriteFileFromSD(mContext
-                ,DiskUtils.WALLPAPER_BITMAP_FOLDER,mPath,localFileOperationInterface);
-//        registerData();
-    }
+//    private int mScreenWid = 0;
+//    private int mScreenHei = 0;
+//    public void init(){
+//    	mScreenWid = KWDataCache.getScreenWidth(mContext.getResources());
+//    	mScreenHei = KWDataCache.getAllScreenHeigt(mContext);
+//        mDealWithCategory = new DealWithByteFile(mContext
+//                ,DiskUtils.CATEGORY_BITMAP_FOLDER,mPath);
+//        LocalFileOperationInterface localFileOperationInterface = new LocalBitmapOperation(mContext);
+//        mDealWithWallpaper = new ReadAndWriteFileFromSD(mContext
+//                ,DiskUtils.WALLPAPER_BITMAP_FOLDER,mPath,localFileOperationInterface);
+////        registerData();
+//    }
     
     public void registerData(boolean isCheckFromOnToOff){
     		boolean isUpdate = KeyguardSettings.getWallpaperUpadteState(mContext);
@@ -144,11 +148,13 @@ public class RequestNicePicturesFromInternet {
         int updateDate = Common.getUpdateCategoryDate(mContext);
         DebugLog.d(TAG,"requestPictureCategory updateDate:" + updateDate);
         DebugLog.d(TAG,"requestPictureCategory updateDate:" + date);
-
+        
+        DealWithByteFile dealWithCategory = new DealWithByteFile(mContext
+                ,DiskUtils.CATEGORY_BITMAP_FOLDER,mPath);
         if(updateDate != date){
-            downloadCategoryPicturesFromNet(date,mDealWithCategory,isStop);
+            downloadCategoryPicturesFromNet(date,dealWithCategory,isStop);
         }else{
-            downloadCategoryPicturesFromDB(date,mDealWithCategory,isStop);
+            downloadCategoryPicturesFromDB(date,dealWithCategory,isStop);
         }
     }
 
@@ -244,11 +250,15 @@ public class RequestNicePicturesFromInternet {
                 DebugLog.d(TAG,"requestPictureList updateDate:" + updateDate);
                 DebugLog.d(TAG,"requestPictureList date:" + date);       
 
-                DebugLog.d(TAG,"requestPictureList date == updateDate:" + (date == updateDate));         
+                DebugLog.d(TAG,"requestPictureList date == updateDate:" + (date == updateDate));  
+                
+                LocalFileOperationInterface localFileOperationInterface = new LocalBitmapOperation(mContext);
+                ReadAndWriteFileFromSD dealWithWallpaper = new ReadAndWriteFileFromSD(mContext
+                        ,DiskUtils.WALLPAPER_BITMAP_FOLDER,mPath,localFileOperationInterface);
                 if(updateDate != date){
-                    downloadWallpaperPicturesFromNet(mDealWithWallpaper,isStop);
+                    downloadWallpaperPicturesFromNet(dealWithWallpaper,isStop);
                 }else{
-                    downloadWallpaperPicturesFromDB(mDealWithWallpaper,isStop);
+                    downloadWallpaperPicturesFromDB(dealWithWallpaper,isStop);
                 }
 
     }

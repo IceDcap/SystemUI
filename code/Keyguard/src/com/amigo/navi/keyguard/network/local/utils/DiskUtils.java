@@ -604,5 +604,12 @@ public class DiskUtils {
     public static String constructThumbFileNameByUrl(String url) {
         return constructFileNameByUrl(url) + THUMBNAIL;
     }
+    
+    public static String getAbsolutePath(Context context, String imgUrl) {
+        String fileName = constructFileNameByUrl(imgUrl);
+        return new StringBuffer(getCachePath(context)).append(File.separator)
+                .append(WALLPAPER_BITMAP_FOLDER).append(File.separator).append(fileName).toString();
+    }
+    
 		
 }

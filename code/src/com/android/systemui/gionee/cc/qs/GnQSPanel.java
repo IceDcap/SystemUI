@@ -67,6 +67,7 @@ public class GnQSPanel extends ViewGroup {
 
         mBrightnessController = new GnBrightnessController(getContext(),
                 (ImageView) findViewById(R.id.brightness_icon),
+                (ImageView) findViewById(R.id.more_icon),
                 (GnToggleSlider) findViewById(R.id.brightness_slider));
     }
 

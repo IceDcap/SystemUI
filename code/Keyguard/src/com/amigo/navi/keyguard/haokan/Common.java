@@ -492,5 +492,14 @@ public class Common {
         return getSDFreeSize() >= 10l;
     }
     
-    
+    public static boolean isFastClick(long duration) {
+        long time = System.currentTimeMillis();
+        long timeD = time - mLastClickTime;
+        mLastClickTime = time;
+        if (0 <= timeD && timeD < duration) {
+            return true;
+        }
+        return false;
+    }
+    private static long mLastClickTime = 0;
 }

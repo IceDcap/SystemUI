@@ -282,6 +282,7 @@ public class GnControlCenterView extends FrameLayout {
     }
 
     public void openMoreView() {
+        Log.d(TAG, "openMoreView");
         GnControlCenterMoreView.setOpen(true);
         GnControlCenter.dismiss();
         mHandler.sendEmptyMessageDelayed(ACTION_SHOW_MORE, 300);

@@ -17,15 +17,18 @@ import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Message;
+import android.os.RemoteException;
 import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.IWindowManager;
 import android.view.MotionEvent;
 import android.view.SoundEffectConstants;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManagerGlobal;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.ImageView;
@@ -161,8 +164,15 @@ public class GnControlCenterPanel extends ViewGroup implements GestureDetector.O
         super(context, attrs, defStyleAttr);
         
         mContext = context;
-        
-        boolean hasNavigationBar = mContext.getResources().getBoolean(com.android.internal.R.bool.config_showNavigationBar);
+
+        boolean hasNavigationBar = false;
+        try {
+            IWindowManager mWindowManagerService = WindowManagerGlobal.getWindowManagerService();
+            hasNavigationBar = mWindowManagerService.hasNavigationBar();
+            Log.d(TAG, "hasNavigationBar = " + hasNavigationBar);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
         int navigationBarH = mContext.getResources().getDimensionPixelSize(com.android.internal.R.dimen.navigation_bar_height);
         int heightPixels = getResources().getDisplayMetrics().heightPixels;
         if (hasNavigationBar) {            
@@ -204,6 +214,9 @@ public class GnControlCenterPanel extends ViewGroup implements GestureDetector.O
             mCCHeight = mContext.getResources().getDimensionPixelSize(R.dimen.gn_cc_height);
             mTopOffset = mHeight - mCCHeight;
         }
+        
+        Log.d(TAG, "newConfig.orientation = " + newConfig.orientation + " mCCHeight = " + mCCHeight
+                + " mWidth = " + mWidth + " mHeight = " + mHeight + " mTopOffset = " + mTopOffset);
     }
 
     @Override

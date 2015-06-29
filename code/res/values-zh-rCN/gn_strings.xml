@@ -27,9 +27,10 @@
     
     <!-- QS more -->
     <string name="gn_qs_more_save">保存</string>
-    <string name="gn_qs_more_cancel">舍弃</string>
+    <string name="gn_qs_more_title">更多</string>
     <string name="gn_qs_more_show_title">显示的快捷按钮</string>
     <string name="gn_qs_more_hide_title">不显示的快捷按钮</string>
+    <string name="gn_qs_more_tips">长按移动图标可调整图标顺序</string>
 
     <!-- Control center shotcut camera -->
     <string name="gn_camera_blind_shoot_success">拍照成功</string>

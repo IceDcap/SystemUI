@@ -248,7 +248,6 @@ public abstract class GnQSTile<TState extends State> implements Listenable {
         void startSettingsActivity(Intent intent, int delay);
         void warn(String message, Throwable t);
         void collapsePanels();
-        void openMoreView();
         Looper getLooper();
         Context getContext();
         Collection<GnQSTile<?>> getTiles();

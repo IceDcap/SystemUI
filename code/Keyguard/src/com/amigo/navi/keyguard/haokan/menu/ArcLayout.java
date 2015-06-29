@@ -17,6 +17,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.OvershootInterpolator;
 import com.amigo.navi.keyguard.DebugLog;
+import com.amigo.navi.keyguard.haokan.BitmapUtil;
 import com.amigo.navi.keyguard.haokan.Common;
 import com.amigo.navi.keyguard.haokan.FileUtil;
 import com.amigo.navi.keyguard.haokan.UIController;
@@ -740,7 +741,8 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                 int stringResId = R.string.haokan_tip_favorite_error;
                 if (Common.SDfree()) {
                     
-                    Bitmap currentWallpaper = controller.getCurrentWallpaperBitmap(mWallpaper , false);
+//                    Bitmap currentWallpaper = controller.getCurrentWallpaperBitmap(mWallpaper , false);
+                    Bitmap currentWallpaper = controller.getBitmapFromLocal(getContext().getApplicationContext(), mWallpaper);
                     
                     boolean isLocalImage = mWallpaper.getImgId() == Wallpaper.WALLPAPER_FROM_PHOTO_ID;
                     
@@ -749,6 +751,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                     
                     if (currentWallpaper != null) {
                         success = FileUtil.saveWallpaper(currentWallpaper, imageFileName);
+                        BitmapUtil.recycleBitmap(currentWallpaper);
                     }
                     
                     if (success) {
@@ -795,11 +798,14 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
                         boolean isLocalImage = mWallpaper.getImgId() == Wallpaper.WALLPAPER_FROM_PHOTO_ID;
                         String imageFileName = new StringBuffer(FileUtil.getDirectoryFavorite()).append("/").append(Common.currentTimeDate()).append("_")
                                 .append(isLocalImage ? mWallpaper.getImgName() : mWallpaper.getImgId()).append(".png").toString();
-                        Bitmap currentWallpaper = controller.getCurrentWallpaperBitmap(mWallpaper, false);
+//                        Bitmap currentWallpaper = controller.getCurrentWallpaperBitmap(mWallpaper, false);
+                        Bitmap currentWallpaper = controller.getBitmapFromLocal(getContext().getApplicationContext(), mWallpaper);
+                        
                         if (currentWallpaper != null) {
                             if (FileUtil.saveWallpaper(currentWallpaper, imageFileName)) {
                                 Common.insertMediaStore(getContext().getApplicationContext(),currentWallpaper.getWidth(), currentWallpaper.getHeight(), imageFileName);
                             }
+                            BitmapUtil.recycleBitmap(currentWallpaper);
                         }
                     }
                 }

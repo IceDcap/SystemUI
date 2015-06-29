@@ -554,6 +554,7 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
     	mPasswordEntry.setEnabled(false);
         final int index = getTimeOutSize();
         final long elapsedRealtime = System.currentTimeMillis();
+        isFrozen=true;
         if(DebugLog.DEBUGMAYBE) DebugLog.d(LOG_TAG, "handleAttemptLockout mSimpleNumViewCountdownTimer=:"+(mPasswordViewCountdownTimer==null));
         if(mPasswordViewCountdownTimer==null){
         	mPasswordViewCountdownTimer = new CountDownTimer(elapsedRealtimeDeadline - elapsedRealtime, 1000) {

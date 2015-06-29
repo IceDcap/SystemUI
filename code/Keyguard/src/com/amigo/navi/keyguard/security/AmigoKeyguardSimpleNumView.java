@@ -416,6 +416,7 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
 		    setKeyButtonClickEnable(false);
 	        final int index = getTimeOutSize();
 	        final long elapsedRealtime =System.currentTimeMillis();
+	        isFrozen=true;
 	        if(DebugLog.DEBUGMAYBE) DebugLog.d(LOG_TAG, "handleAttemptLockout mSimpleNumViewCountdownTimer=:"+(mSimpleNumViewCountdownTimer==null));
 	        if(mSimpleNumViewCountdownTimer==null){
 	        	mSimpleNumViewCountdownTimer = new CountDownTimer(elapsedRealtimeDeadline - elapsedRealtime, 1000) {

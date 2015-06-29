@@ -24,6 +24,8 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
@@ -48,7 +50,7 @@ public class GnControlCenter {
     private final static String ACTION_HALL_STATUS = "android.intent.action.HALL_STATUS";
     
     // Context
-    private Context mContext;
+    private static Context mContext;
     
     // bool
     private boolean isLockScreenAccess;
@@ -61,7 +63,7 @@ public class GnControlCenter {
     private PhoneStatusBar mStatusBar;
     
     // ControlCenter
-    private GnControlCenterView mControlCenterView;
+    private static GnControlCenterView mControlCenterView;
     
     // Immerse    
     private GnControlCenterImmerseView mImmerseView;
@@ -165,7 +167,6 @@ public class GnControlCenter {
                 true, mSwitchObserver);
         
         isHighDevice = GnUtil.isHighDevice(mContext);
-        Log.d(TAG, "isHighDevice:" + isHighDevice);
     }
     
     public void addControlCenter(GnControlCenterView center) {
@@ -360,5 +361,28 @@ public class GnControlCenter {
         if (isHighDevice) {
             GnBlurHelper.getBlurHelper().createBlurBg(context);
         }
+    }
+    
+    public static void openMoreView() {
+        mControlCenterView.openMoreView();
+    }
+    
+    public static boolean shouldShowTipsPage() {
+        final SharedPreferences preferences = mContext.getSharedPreferences("first_boot", Context.MODE_PRIVATE);
+        boolean firstEnter = preferences.getBoolean("first_enter_more", true);
+        return firstEnter;
+    }
+    
+    public static void updateFirstEntryFlag() {
+        final SharedPreferences preferences = mContext.getSharedPreferences("first_boot", Context.MODE_PRIVATE);
+        Handler handler = new Handler();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Editor editor = preferences.edit();
+                editor.putBoolean("first_enter_more", false);
+                editor.commit();
+            }
+        });
     }
 }

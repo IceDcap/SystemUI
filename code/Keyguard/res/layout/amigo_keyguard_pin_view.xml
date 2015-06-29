@@ -22,8 +22,6 @@
     android:id="@+id/amigo_keyguard_pin_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clipChildren="false"
-    android:clipToPadding="false"
     android:contentDescription="@string/keyguard_accessibility_pin_unlock"
     android:gravity="center_horizontal"
     android:orientation="vertical" >
@@ -40,7 +38,6 @@
         androidprv:layout_maxHeight="@dimen/keyguard_security_max_height"
     -->
    <TextView
-       android:layout_marginTop="@dimen/amigo_keyguard_pin_view_num_forget_margintop"
        android:id="@+id/forget_password"
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"

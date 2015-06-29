@@ -213,6 +213,7 @@ class TelephonyIcons {
     static final int NETWORK_TYPE_H = R.drawable.gn_stat_sys_network_type_h;
     static final int NETWORK_TYPE_3G = R.drawable.gn_stat_sys_network_type_3g;
     static final int NETWORK_TYPE_4G = R.drawable.gn_stat_sys_network_type_4g;
+    static final int NETWORK_TYPE_1X = R.drawable.gn_stat_sys_network_type_1x;
 
     static final MobileIconGroup THREE_G = new MobileIconGroup(
             "3G",
@@ -270,7 +271,7 @@ class TelephonyIcons {
             R.string.accessibility_data_connection_cdma,
             TelephonyIcons.ICON_1X,
             true,
-            TelephonyIcons.NETWORK_TYPE_G,
+            TelephonyIcons.NETWORK_TYPE_1X,
             TelephonyIcons.QS_DATA_1X
             );
 

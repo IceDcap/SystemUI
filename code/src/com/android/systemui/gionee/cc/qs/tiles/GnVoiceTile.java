@@ -92,6 +92,7 @@ public class GnVoiceTile extends GnQSTile<GnQSTile.BooleanState> {
 
         @Override
         public void onChange(boolean selfChange) {
+            Log.d(TAG, "mVoiceChangeObserver onChange");
             refreshState();
         }
     };

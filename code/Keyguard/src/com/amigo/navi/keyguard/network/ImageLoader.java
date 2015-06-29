@@ -43,7 +43,6 @@ public class ImageLoader implements ImageLoaderInterface{
     private Context mContext;
     int maxMemory = (int) Runtime.getRuntime().maxMemory() / 1024;
     int mCacheSize = maxMemory / 4;
-	private static final boolean PRINT_LOG = true;
 	private ArrayList<ImageViewWithLoadBitmap> mImageViewWithLoadBitmapList = new ArrayList<ImageViewWithLoadBitmap>();
 	public static final String THUMBNAIL_POSTFIX = "_thumbnail";
 	private boolean mNeedInit = true;
@@ -67,6 +66,32 @@ public class ImageLoader implements ImageLoaderInterface{
     
     public boolean mRelease = false;
     
+    
+    public void removeFirstLevelCache(String key) {
+        
+        Bitmap bmp = null;
+        synchronized (mFirstLevelCache) {
+            if (mFirstLevelCache != null && key != null) {
+                if (mFirstLevelCache.containsKey(key)) {
+                     bmp = mFirstLevelCache.remove(key);
+                }
+            }
+        }
+        if (bmp != null) {
+            synchronized (mImageViewWithLoadBitmapList) {
+                DebugLog.d(LOG_TAG,"mImageViewWithLoadBitmapList size :" + mImageViewWithLoadBitmapList.size());
+                int size = mImageViewWithLoadBitmapList.size();
+                for (int j = size - 1; j >= 0; j--) {
+                    ImageViewWithLoadBitmap view = mImageViewWithLoadBitmapList.get(j);
+                    if (view != null) {
+                        view.loadloadThumbnailFromCache();
+                    }
+                }
+            }
+            BitmapUtil.recycleBitmap(bmp);
+        }
+        
+    }
     
     /**
      * 清理缓存
@@ -156,7 +181,6 @@ public class ImageLoader implements ImageLoaderInterface{
 
     
     public boolean existInImageCache(String url){
-        DebugLog.d(LOG_TAG,"existInImageCache url:" + url);
     	return mFirstLevelCache.containsKey(url);
     }
     
@@ -196,7 +220,7 @@ public class ImageLoader implements ImageLoaderInterface{
 	
 	public void LoadingFailed(String url, FailReason failReason) {
 	     
-        if(PRINT_LOG){
+        if(DebugLog.DEBUG){
             DebugLog.d(LOG_TAG,"LoadingFailed url:" + url);
         }
  
@@ -214,7 +238,9 @@ public class ImageLoader implements ImageLoaderInterface{
 		
 		if (imageViewWithLoadBitmap != null) {
 		    boolean success = onLoadingFailed(imageViewWithLoadBitmap, url, failReason);
-		    Log.v("haokan", "LoadingFailed & success = " + success);
+		    if(DebugLog.DEBUG){
+		    	DebugLog.d(LOG_TAG, "LoadingFailed & success = " + success);
+		    }
 		    if (success) {
 		        imageViewWithLoadBitmap.onLoadingFailed(url, failReason);
 		    }
@@ -222,7 +248,7 @@ public class ImageLoader implements ImageLoaderInterface{
 	}
 	
 	public void LoadingComplete(String url, Bitmap bitmap) {
-        if(PRINT_LOG){
+        if(DebugLog.DEBUG){
             DebugLog.d(LOG_TAG,"LoadingComplete url:" + url);
         }
         DebugLog.d(LOG_TAG,"LoadingComplete url: mRelease = " + mRelease);
@@ -251,7 +277,7 @@ public class ImageLoader implements ImageLoaderInterface{
 						if (url.equals(view.getUrl())
 								|| url.equals(view.getUrl() + THUMBNAIL_POSTFIX)) {
 							{
-						        if(PRINT_LOG){
+						        if(DebugLog.DEBUG){
 						            DebugLog.d(LOG_TAG,"LoadingComplete size:" + size +";index :" +i);
 						        }
 								view.onLoadingComplete(url, bitmap);
@@ -263,35 +289,7 @@ public class ImageLoader implements ImageLoaderInterface{
 			}
 	}
 
-	public boolean loadImageToCache(String url,
-			DealWithFromLocalInterface dealWithFromLocalInterface, boolean isStoped, boolean reload) {
-		boolean isNullReturned = true;
-        if(PRINT_LOG){
-            DebugLog.d(LOG_TAG,"loadImageToCache isStoped:" + isStoped);
-        }
-		if (!isStoped) {
-			Bitmap bitmap = loadImageFromLocal(dealWithFromLocalInterface, url);
-	        if(PRINT_LOG){
-	            DebugLog.d(LOG_TAG,"loadImageToCache:" + url);
-	        }
-	/*        if (null != bitmap) {
-	        	addImage2Cache(url, bitmap);
-	        }*/
-	        if (null != bitmap) {
-	        	LoadingComplete(url, bitmap);
-	        	isNullReturned = false;
-	        }else {
-	            
-	            if (!reload) {
-	                FailReason failReason = new FailReason(
-	                        FailType.UNKNOWN, null);
-	                LoadingFailed(url, failReason);
-                }
-	        }
-		} 
-		return isNullReturned;
-	}
-    
+   
     public Bitmap loadImageFromLocal(DealWithFromLocalInterface dealWithFromLocalInterface
             ,String url){
         Bitmap bitmap = null;
@@ -348,11 +346,11 @@ public class ImageLoader implements ImageLoaderInterface{
 				Entry<String, Bitmap> entry = (Entry<String, Bitmap>) iter
 						.next();
 				String url = (String) entry.getKey();
-				if (PRINT_LOG) {
+				if (DebugLog.DEBUG) {
 					DebugLog.d(LOG_TAG, "removeImagefromCache url in mFirstLevelCache" + url);
 				}
 				if (!urlToBeReserved.contains(url)) {
-					if (PRINT_LOG) {
+					if (DebugLog.DEBUG) {
 						DebugLog.d(LOG_TAG, "removeImagefromCache url" + url);
 					}
 					urlToBeRemove.add(url);
@@ -395,9 +393,13 @@ public class ImageLoader implements ImageLoaderInterface{
 			if (!mNeedInit) {
 				while (ImageRemoved.isEmpty()) {
 					try {
-						DebugLog.d(LOG_TAG, "getBmpFromImageRemoved wait before");
+						if (DebugLog.DEBUGMAYBE){
+							DebugLog.d(LOG_TAG, "getBmpFromImageRemoved wait before");
+						}
 						ImageRemoved.wait();
-						DebugLog.d(LOG_TAG, "getBmpFromImageRemoved wait after");
+						if (DebugLog.DEBUGMAYBE){
+							DebugLog.d(LOG_TAG, "getBmpFromImageRemoved wait after");
+						}
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -474,7 +476,9 @@ public class ImageLoader implements ImageLoaderInterface{
                 }
 
                 ImageRemoved.notify();
-                DebugLog.d(LOG_TAG, "getBmpFromImageRemoved notify");
+                if (DebugLog.DEBUGMAYBE){
+                	DebugLog.d(LOG_TAG, "getBmpFromImageRemoved notify");
+                }
             }
         } else if (bmp.getWidth() == screenWid / 2 && bmp.getHeight() == screenheight / 2) {
             if (ThumbRemoved.size() <= 2) {

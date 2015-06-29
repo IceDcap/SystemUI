@@ -18,6 +18,7 @@ import android.graphics.PorterDuff;
 import android.os.Handler;
 import android.os.PowerManager.WakeLock;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -36,6 +37,7 @@ import com.amigo.navi.keyguard.AmigoKeyguardPage;
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.Guide;
 import com.amigo.navi.keyguard.Guide.GuideState;
+import com.amigo.navi.keyguard.KWDataCache;
 import com.amigo.navi.keyguard.KeyguardViewHost;
 import com.amigo.navi.keyguard.KeyguardViewHostManager;
 import com.amigo.navi.keyguard.haokan.PlayerManager.State;
@@ -145,7 +147,18 @@ public class UIController implements OnTouchlListener{
     private RelativeLayout toastView;
     
     private AmigoKeyguardBouncer mKeyguardBouncer;
+    
+    
+    private ImageLoader mImageLoader = null;
+    
+    
  
+    public ImageLoader getImageLoader() {
+        return mImageLoader;
+    }
+    public void setImageLoader(ImageLoader mImageLoader) {
+        this.mImageLoader = mImageLoader;
+    }
     public RelativeLayout getmArcMenu() {
         return mArcMenu;
     }
@@ -661,6 +674,31 @@ public class UIController implements OnTouchlListener{
         
     }
     
+    public Bitmap getBitmapFromLocal(Context context, Wallpaper wallpaper) {
+
+        Bitmap bitmap = null;
+        int type = wallpaper.getType();
+        String imgUrl = wallpaper.getImgUrl();
+        String filePath = "";
+        if (type == Wallpaper.WALLPAPER_FROM_WEB || type == Wallpaper.WALLPAPER_FROM_PHOTO) {
+            filePath = DiskUtils.getAbsolutePath(context, imgUrl);
+            File fileLocal = new File(filePath);
+            if (fileLocal.exists()) {
+                bitmap = DiskUtils.readFile(filePath, KWDataCache.getScreenWidth(context.getResources()));
+            } 
+        }else if (type == Wallpaper.WALLPAPER_FROM_FIXED_FOLDER) {
+            filePath = FileUtil.SCREENLOCK_WALLPAPER_LOCATION + File.separator + imgUrl;
+
+            File fileLocal = new File(filePath);
+            if (fileLocal.exists()) {
+                bitmap = DiskUtils.getImageFromSystem(context, filePath, null);
+            } 
+
+        }
+        return bitmap;
+    }
+    
+    
     public Bitmap getCurrentWallpaperBitmap(Context context, boolean thumb) {
     	Bitmap bitmap = getCurrentWallpaperBitmap(mCurrentWallpaper, thumb);
     	if(bitmap == null){
@@ -1170,6 +1208,12 @@ public class UIController implements OnTouchlListener{
                 }else{
                 	wallpaperDB.updateWallpaper(wallpaper);
                 }
+                
+                if (getImageLoader() != null) {
+                    getImageLoader().removeFirstLevelCache(Wallpaper.WALLPAPER_FROM_PHOTO_URL);
+                    getImageLoader().removeFirstLevelCache(Wallpaper.WALLPAPER_FROM_PHOTO_URL + ImageLoader.THUMBNAIL_POSTFIX);
+                }
+                
         	}
         }      
     }

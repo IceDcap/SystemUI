@@ -56,7 +56,6 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
 	private int mWidth = 0;
     private int mHeight = 0;
 //    private static final String PATH = "wallpaper_pics";
-    private static final boolean isPrintLog = true;
 	private static final String THUMBNAIL_POSTFIX = "_thumbnail";
     public ImageViewWithLoadBitmap(Context context) {
         super(context);
@@ -170,7 +169,7 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
         mWallPaper = wallpaper;
         this.mUrl = wallpaper.getImgUrl();
         this.setTag(mUrl);
-        if(isPrintLog){
+        if(DebugLog.DEBUG){
             DebugLog.d(LOG_TAG,"loadImageBitmap mUrl" + mUrl);
         }
         this.setmShowState(ShowState.SHOW_NOIMAGE);
@@ -246,7 +245,7 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
     }
     
 	private void loadBitmapCompleteDealWith(String url, Bitmap loadedImage) {
-        if(isPrintLog){
+        if(DebugLog.DEBUG){
             DebugLog.d(LOG_TAG,"loadBitmapCompleteDealWith url:" + url);
         }
         
@@ -261,7 +260,7 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
         
         
 		if (this.getmShowState() == ShowState.SHOW_IMAGE) {
-	        if(isPrintLog){
+	        if(DebugLog.DEBUG){
 	            DebugLog.d(LOG_TAG,"loadBitmapCompleteDealWith url SHOW_IMAGE");
 	        }
 //			if (url.equals(this.getUrl())) {
@@ -280,7 +279,7 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
 	}
 
 	private void loadBitmapCompleted(String url, Bitmap loadedImage) {
-		if (isPrintLog) {
+		if (DebugLog.DEBUG) {
 			DebugLog.d(LOG_TAG, "loadBitmapCompleted url " + url);
 		}
 		if (url.equals(this.getUrl())) {
@@ -289,7 +288,7 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
 				if (isSuccess) {
 					setmShowState(ShowState.SHOW_IMAGE);
 				}
-				if (isPrintLog) {
+				if (DebugLog.DEBUG) {
 					DebugLog.d(LOG_TAG, "loadBitmapCompleted url SHOW_IMAGE");
 				}
 			}
@@ -299,7 +298,7 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
 				if (isSuccess) {
 					setmShowState(ShowState.SHOW_THUMBNAIL);
 				}
-				if (isPrintLog) {
+				if (DebugLog.DEBUG) {
 					DebugLog.d(LOG_TAG,
 							"loadBitmapCompleted url SHOW_THUMBNAIL");
 				}
@@ -463,7 +462,7 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
 	public void loadloadThumbnailFromCache() {
         // TODO Auto-generated method stub
 	    boolean isRefresh = loadThumbnailFromCache();
-        if (isPrintLog) {
+        if (DebugLog.DEBUG) {
             DebugLog.d(LOG_TAG, "loadThumbnailToRefresh isRefresh:"
                     + isRefresh);
         }
@@ -478,7 +477,7 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
 	public void loadImageFromCacheIfNeeded() {
 		if (ShowState.SHOW_IMAGE != getmShowState()) {
 			boolean isRefresh = loadFromCache();
-			if (isPrintLog) {
+			if (DebugLog.DEBUG) {
 				DebugLog.d(LOG_TAG, "loadImageToRefresh isRefresh:" + isRefresh);
 			}
 			if (isRefresh) {
@@ -542,7 +541,7 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
 	public void onLoadingFailed(String imageUri, FailReason failReason) {
 		// WallpaperDB.getInstance(getContext().getApplicationContext()).updateDownLoadNotFinish(wallpaper);
 		mLoadState = State.FAILED;
-		if (isPrintLog) {
+		if (DebugLog.DEBUG) {
 			DebugLog.d(LOG_TAG, "onLoadingFailed imageUri:" + imageUri);
 		}
 		 
@@ -561,7 +560,7 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
 	@Override
 	public void onLoadingComplete(String imageUri, Bitmap loadedImage) {
 		mLoadState = State.LOADED;
-		if (isPrintLog) {
+		if (DebugLog.DEBUG) {
 			DebugLog.d(LOG_TAG, "onLoadingComplete imageUri:" + imageUri);
 			DebugLog.d(LOG_TAG, "onLoadingComplete loadedImage:" + loadedImage);
 		}
@@ -575,7 +574,7 @@ public class ImageViewWithLoadBitmap extends ImageView implements OnReloadListen
 
 	@Override
 	public void onLoadingCancelled(String imageUri) {
-		if (isPrintLog) {
+		if (DebugLog.DEBUG) {
 			DebugLog.d(LOG_TAG, "onLoadingCancelled onLoadingCancelled");
 		}
 		mLoadState = State.CANCELLED;

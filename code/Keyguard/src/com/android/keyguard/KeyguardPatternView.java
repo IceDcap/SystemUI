@@ -453,7 +453,8 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
         mLockPatternView.clearPattern();
         mLockPatternView.setEnabled(false);
         final int index = getTimeOutSize();
-        final long elapsedRealtime = System.currentTimeMillis();
+        final long elapsedRealtime = System.currentTimeMillis();	               
+        isFrozen=true;
         if(mCountdownTimer==null){
 	        mCountdownTimer = new CountDownTimer(elapsedRealtimeDeadline - elapsedRealtime, 1000) {
 	

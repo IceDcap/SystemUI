@@ -67,6 +67,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import android.util.Log;
+
 /**
  * POD used in the AsyncTask which saves an image in the background.
  */
@@ -122,7 +124,8 @@ class SaveImageInBackgroundTask extends AsyncTask<SaveImageInBackgroundData, Voi
     SaveImageInBackgroundTask(Context context, SaveImageInBackgroundData data,
             NotificationManager nManager, int nId) {
         Resources r = context.getResources();
-
+        
+        Log.i(TAG,"SaveImageInBackgroundData data.image=" + data.image);
         // Prepare all the output metadata
         mImageTime = System.currentTimeMillis();
         String imageDate = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date(mImageTime));
@@ -238,7 +241,8 @@ class SaveImageInBackgroundTask extends AsyncTask<SaveImageInBackgroundData, Voi
             values.put(MediaStore.Images.ImageColumns.WIDTH, mImageWidth);
             values.put(MediaStore.Images.ImageColumns.HEIGHT, mImageHeight);
             Uri uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-
+            Log.i(TAG, "SaveImageInBackgroundData mImageFilePath=" + mImageFilePath + ",mImageFileName=" + mImageFileName + ".mImageTime=" + mImageTime + ",mScreenshotDir" + mScreenshotDir.toString());
+            Log.i(TAG, "uri=" + uri.toString());
             String subjectDate = DateFormat.getDateTimeInstance().format(new Date(mImageTime));
             String subject = String.format(SCREENSHOT_SHARE_SUBJECT_TEMPLATE, subjectDate);
             Intent sharingIntent = new Intent(Intent.ACTION_SEND);
@@ -488,6 +492,7 @@ class GlobalScreenshot {
      */
     private void saveScreenshotInWorkerThread(Runnable finisher) {
         SaveImageInBackgroundData data = new SaveImageInBackgroundData();
+        Log.i(TAG, "SaveImageInBackgroundData data:" + data.toString());
         data.context = mContext;
         data.image = mScreenBitmap;
         data.iconSize = mNotificationIconSize;
@@ -520,6 +525,7 @@ class GlobalScreenshot {
      * Takes a screenshot of the current display and shows an animation.
      */
     void takeScreenshot(final Runnable finisher, final boolean statusBarVisible, final boolean navBarVisible) {
+    	Log.i(TAG, "go to takeScreenshot()...");
         // We need to orient the screenshot correctly (and the Surface api seems to take screenshots
         // only in the natural orientation of the device :!)
         mDisplay.getRealMetrics(mDisplayMetrics);
@@ -545,6 +551,7 @@ class GlobalScreenshot {
                     notifyScreenshotError(mContext, mNotificationManager);
                     finisher.run();
                 } else {
+                	Log.i(TAG, "mScreenBitmap :" + mScreenBitmap.toString());
                     MsgObject msgObject = new MsgObject(statusBarVisible, navBarVisible, finisher);
                     Message msg = mHandler.obtainMessage(1, msgObject);
                     mHandler.sendMessage(msg);

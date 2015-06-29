@@ -132,29 +132,27 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     }
 
 	private void onLayout() {
-    	if(PRINT_LOG){
+    	if(DebugLog.DEBUGMAYBE){
     		DebugLog.d(TAG, "onLayout");
     	}
         int childLeft = mFirstPosition * mChildWidth;
-		DebugLog.d(TAG, "test position mFirstPosition:" + mFirstPosition);
         final int count = getChildCount();
-    	if(PRINT_LOG){
+    	if(DebugLog.DEBUGMAYBE){
+    		DebugLog.d(TAG, "test position mFirstPosition:" + mFirstPosition);
     		DebugLog.d(TAG, "onLayout getChildCount():" + getChildCount());
     		DebugLog.d(TAG, "onLayout getScrollX():" + getScrollX());
     	}
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
-        	if(PRINT_LOG){
+        	if(DebugLog.DEBUGMAYBE){
         		DebugLog.d(TAG, "onLayout i:" + i);
         	}
             if (child.getVisibility() != View.GONE) {
-            	if(PRINT_LOG){
-            		DebugLog.d(TAG, "onLayout 1");
-            	}
+
 //                mChildWidth = child.getMeasuredWidth();
             	mChildWidth = KWDataCache.getScreenWidth(getResources());
                 int childHei = child.getMeasuredHeight();
-            	if(PRINT_LOG){
+            	if(DebugLog.DEBUGMAYBE){
             		DebugLog.d(TAG,"onLayout child:" + child);
             		DebugLog.d(TAG,"onLayout childLeft:" + childLeft);
             	}
@@ -166,16 +164,14 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 
 //        int shouldVisibleViewCount = getWidth() / mChildWidth + 1;
         int shouldVisibleViewCount = getWidth() / mChildWidth;
-    	if(PRINT_LOG){
+    	if(DebugLog.DEBUGMAYBE){
     		DebugLog.d(TAG, "onLayout shouldVisibleViewCount:"
     				+ shouldVisibleViewCount);
-    	}
-    	if(PRINT_LOG){
     		DebugLog.d(TAG, "onLayout mVisibleViewCount:" + mVisibleViewCount);
     	}
         if (mVisibleViewCount < shouldVisibleViewCount) {
             while (mVisibleViewCount < shouldVisibleViewCount) {
-            	if(PRINT_LOG){
+            	if(DebugLog.DEBUG){
             		DebugLog.d(TAG, "onLayout getChildCount:" + getChildCount());
             	}
                 makeAndAddView(mFirstPosition + getChildCount(), true);
@@ -299,7 +295,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     public void setSelection(int position) {
         mFirstPosition = position;
         int childCount = getChildCount();
-    	if(PRINT_LOG){
+    	if(DebugLog.DEBUG){
     		DebugLog.d(TAG, "setSelection mFirstPosition:" + mFirstPosition);
     		DebugLog.d(TAG, "setSelection childCount:" + childCount);
     	}
@@ -309,7 +305,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
             mRecyclerViews.add(view);
             detachViewFromParent(view);
         }
-    	if(PRINT_LOG){
+    	if(DebugLog.DEBUGMAYBE){
     		DebugLog.d(TAG, "setSelection mVisibleViewCount:" + mVisibleViewCount);
     	}
         int dataCount = mAdapter.getCount();
@@ -321,7 +317,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     		position = mAdapter.getCount() + position;
     	}
         for (int index = 0; index < addChildCount; index++) {
-        	if(PRINT_LOG){
+        	if(DebugLog.DEBUGMAYBE){
         		DebugLog.d(TAG, "setSelection position:" + position);
         		DebugLog.d(TAG, "setSelection index:" + index);
         	}
@@ -366,7 +362,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     }
 
     private View makeAndAddView(int position, boolean isEnd) {
-    	if(PRINT_LOG){
+    	if(DebugLog.DEBUG){
     		DebugLog.d(TAG, "makeAndAddView position:" + position);
     		DebugLog.d(TAG, "makeAndAddView mAdapter.getCount():" + mAdapter.getCount());
     	}
@@ -391,25 +387,24 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         boolean recycled = false;
 
         View child = mAdapter.getView(position, convertView, this);
-    	if(PRINT_LOG){
+    	if(DebugLog.DEBUGMAYBE){
     		DebugLog.d(TAG,"makeAndAddView------begin");
         	DebugLog.d(TAG,"makeAndAddView position:" + position);
         	DebugLog.d(TAG,"makeAndAddView left:" + child.getLeft());
         	DebugLog.d(TAG,"makeAndAddView right:" + child.getRight());
     	}
         if (convertView != null && child != null && convertView == child) {
-        	if(PRINT_LOG){
+        	if(DebugLog.DEBUG){
         		DebugLog.d(TAG,"makeAndAddView------recycled");
         	}
             recycled = true;
         }
-    	if(PRINT_LOG){
+    	if(DebugLog.DEBUG){
     		DebugLog.d(TAG,"makeAndAddView------end");
     	}
         return setupChild(child, isEnd, recycled);
     }
     
-    private static final boolean PRINT_LOG = true;
     private View setupChild(View child, boolean isEnd, boolean recycled) {
         ViewGroup.LayoutParams p = (ViewGroup.LayoutParams) child
                 .getLayoutParams();
@@ -424,7 +419,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     		firstChildLeft = firstChildView.getLeft();
     	}
     	int childCount = getChildCount();
-    	if(PRINT_LOG){
+    	if(DebugLog.DEBUGMAYBE){
 		DebugLog.d(TAG,"setupChild lastChildView childCount:" + childCount);
     	}
     	View lastChildView = getChildAt(childCount - 1);
@@ -432,70 +427,70 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     	if(lastChildView != null){
     		lastChildLeft = lastChildView.getLeft();
     	}
-    	if(PRINT_LOG){
+    	if(DebugLog.DEBUGMAYBE){
 		DebugLog.d(TAG,"setupChild lastChildView begin");
 		DebugLog.d(TAG,"setupChild lastChildView isEnd:" + isEnd);
 		DebugLog.d(TAG,"setupChild lastChildView getScrollX():" + getScrollX());
     	}
 		int scrollX = getScrollX();
     	if(isEnd){
-        	if(PRINT_LOG){
+        	if(DebugLog.DEBUGMAYBE){
         		DebugLog.d(TAG,"setupChild lastChildView lastChildView:" + lastChildView);
         	}
 			if(lastChildView != null){
-	        	if(PRINT_LOG){
+	        	if(DebugLog.DEBUGMAYBE){
     			DebugLog.d(TAG,"setupChild lastChildView left:" + lastChildLeft);
 	        	}
-	        	if(PRINT_LOG){
+	        	if(DebugLog.DEBUGMAYBE){
 	    			DebugLog.d(TAG,"setupChild lastChildView child left:" + child.getLeft());
 	        	}
     			child.setLeft(lastChildLeft + mScreenWid);
     			child.setRight(lastChildLeft + 2 * mScreenWid);
-	        	if(PRINT_LOG){
+	        	if(DebugLog.DEBUGMAYBE){
     			DebugLog.d(TAG,"setupChild lastChildView child1 left:" + child.getLeft());
 	        	}
 	        }else{
-	        	if(PRINT_LOG){
+	        	if(DebugLog.DEBUGMAYBE){
 	        		DebugLog.d(TAG,"setupChild lastChildView child2 left:" + child.getLeft());
 	        	}
     			child.setLeft(scrollX);
     			child.setRight(scrollX + mScreenWid);
     			recycled = false;
-	        	if(PRINT_LOG){
+	        	if(DebugLog.DEBUGMAYBE){
     			DebugLog.d(TAG,"setupChild lastChildView child3 recycled:" + recycled);
     			DebugLog.d(TAG,"setupChild lastChildView child3 left:" + child.getLeft());
 	        	}
 	        }
     	}else{
-        	if(PRINT_LOG){
+        	if(DebugLog.DEBUGMAYBE){
 			DebugLog.d(TAG,"setupChild lastChildView firstChildView:" + firstChildView);
         	}
 			if(firstChildView != null){
-	        	if(PRINT_LOG){
+	        	if(DebugLog.DEBUGMAYBE){
     			DebugLog.d(TAG,"setupChild firstChildView left:" + firstChildLeft);
 	        	}
-	        	if(PRINT_LOG){
+	        	if(DebugLog.DEBUGMAYBE){
 	        		DebugLog.d(TAG,"setupChild firstChildView1 child left:" + child.getLeft());
 	        	}
     			child.setLeft(firstChildLeft - mScreenWid);
     			child.setRight(firstChildLeft);
-	        	if(PRINT_LOG){
+	        	if(DebugLog.DEBUGMAYBE){
 	        		DebugLog.d(TAG,"setupChild firstChildView1 child left:" + child.getLeft());
 	        	}
 	        	}else{
-		        	if(PRINT_LOG){
+		        	if(DebugLog.DEBUGMAYBE){
 		        		DebugLog.d(TAG,"setupChild firstChildView2 child left:" + child.getLeft());
 		        	}
     			child.setLeft(scrollX);
     			child.setRight(scrollX + mScreenWid);
     			recycled = false;
-	        	if(PRINT_LOG){
+	        	if(DebugLog.DEBUGMAYBE){
 	        		DebugLog.d(TAG,"setupChild firstChildView3 child recycled:" + recycled);
 	        		DebugLog.d(TAG,"setupChild firstChildView3 child left:" + child.getLeft());
 	        	}
 	        }
     	}
-    	if(PRINT_LOG){
+    	if(DebugLog.DEBUGMAYBE){
     		DebugLog.d(TAG,"setupChild lastChildView end recycled:" + recycled);
     	}
         if (recycled) {
@@ -527,7 +522,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         boolean flag = false;
         final int action = event.getAction();
         int motionX = (int) event.getX();
-        if(PRINT_LOG){
+        if(DebugLog.DEBUGMAYBE){
         	Log.d(TAG, "onInterceptTouchEvent -> action = " + action);
         	Log.d(TAG, "onInterceptTouchEvent -> motionX = " + motionX);
         }
@@ -570,13 +565,13 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     
     public boolean dealwithTouchEvent(MotionEvent event) {
         final int action = event.getAction();
-        if(PRINT_LOG){
+        if(DebugLog.DEBUGMAYBE){
         	DebugLog.d(TAG, "motionUp -> action1 = " + action);
         }
         if (controller.isArcExpanded() || mAdapter.getCount() == 1) {
             return false;
         }
-        if(PRINT_LOG){
+        if(DebugLog.DEBUGMAYBE){
         	DebugLog.d(TAG, "motionUp -> action2 = " + action);
         }
         acquireVelocityTrackerAndAddMovement(event);
@@ -659,7 +654,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
             if(!isCanLoop && mCurrentPage < 0){
             	finalPage = mCurrentPage;
             }
-            if(PRINT_LOG){
+            if(DebugLog.DEBUGMAYBE){
             	DebugLog.d(TAG,"testscroll motionUp1:" + finalPage);
             }
             snapToPage(finalPage,motionX);
@@ -669,7 +664,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
             if(!isCanLoop && mCurrentPage > childCount - 1){
             	finalPage = mCurrentPage;
             }
-            if(PRINT_LOG){
+            if(DebugLog.DEBUGMAYBE){
             	DebugLog.d(TAG,"testscroll motionUp2:" + finalPage);
             }
             snapToPage(finalPage,motionX);
@@ -683,7 +678,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     protected void snapToPage(int page,int motionX){
         mNextPage = page;
         mNextPage = reviseFinalPage(mNextPage);
-        if(PRINT_LOG){
+        if(DebugLog.DEBUGMAYBE){
         	DebugLog.d(TAG,"testscroll snapToPage mNextPage:" + mNextPage);
         }
         int scrollToX = page * mChildWidth; 
@@ -732,16 +727,20 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     }
 
     private boolean scrollOutFirstPageBound(int scrollX) {
-        DebugLog.d(TAG,"testscroll scrollOutFirstPageBound scrollX:" + scrollX);
-        DebugLog.d(TAG,"testscroll scrollOutFirstPageBound getMaxScrollX():" + getMaxScrollX());
-        DebugLog.d(TAG,"testscroll scrollOutFirstPageBound mScreenWid:" + mScreenWid);
+    	if (DebugLog.DEBUG){
+    		DebugLog.d(TAG,"testscroll scrollOutFirstPageBound scrollX:" + scrollX);
+    		DebugLog.d(TAG,"testscroll scrollOutFirstPageBound getMaxScrollX():" + getMaxScrollX());
+    		DebugLog.d(TAG,"testscroll scrollOutFirstPageBound mScreenWid:" + mScreenWid);
+    		}
         return scrollX <= -mScreenWid;
     }
 
     private boolean scrollOutLastPageBound(int scrollX) {
-        DebugLog.d(TAG,"testscroll scrollOutLastPageBound scrollX:" + scrollX);
-        DebugLog.d(TAG,"testscroll scrollOutLastPageBound getMaxScrollX():" + getMaxScrollX());
-        DebugLog.d(TAG,"testscroll scrollOutLastPageBound mScreenWid:" + mScreenWid);
+    	if (DebugLog.DEBUG){
+    		DebugLog.d(TAG,"testscroll scrollOutLastPageBound scrollX:" + scrollX);
+    		DebugLog.d(TAG,"testscroll scrollOutLastPageBound getMaxScrollX():" + getMaxScrollX());
+    		DebugLog.d(TAG,"testscroll scrollOutLastPageBound mScreenWid:" + mScreenWid);
+    		}
         return scrollX >= getMaxScrollX() + mScreenWid;
     }
 
@@ -772,7 +771,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         }
         x = getFinalScrollX(x);
         int scrollX = getScrollX();
-        if(PRINT_LOG){
+        if(DebugLog.DEBUGMAYBE){
         	DebugLog.d(TAG,"testscroll smoothScrollTo x:" + x);
         	DebugLog.d(TAG,"testscroll smoothScrollTo scrollX:" + scrollX);
         }
@@ -786,8 +785,10 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         int scrollX = getScrollX();
         x = getFinalScrollX(x);
         scrollTo(x, getScrollY());
-    	DebugLog.d(TAG, "smoothScrollTo scrollX:" + scrollX);
-    	DebugLog.d(TAG, "smoothScrollTo x:" + x);
+        if (DebugLog.DEBUGMAYBE){
+        	DebugLog.d(TAG, "smoothScrollTo scrollX:" + scrollX);
+        	DebugLog.d(TAG, "smoothScrollTo x:" + x);
+        	}
         postInvalidate();
     }
 
@@ -999,7 +1000,9 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     }
     
     public int getPage(){
-        DebugLog.d(TAG,"getPage:" + mCurrentPage);
+    	if (DebugLog.DEBUG){
+    		DebugLog.d(TAG,"getPage:" + mCurrentPage);
+    		}
         return mCurrentPage;
     }
     

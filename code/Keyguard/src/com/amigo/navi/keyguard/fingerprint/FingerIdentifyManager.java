@@ -262,6 +262,7 @@ public class FingerIdentifyManager {
     private void fingerMatchFail() {
     	DebugLog.e(LOG_TAG, "fingerMatchFail  isSecureFrozen---"+isSecureFrozen());
     	if(isSecureFrozen()){
+    		cancel();
     		return;
     	}
     	
@@ -378,6 +379,12 @@ public class FingerIdentifyManager {
     		return;
     	}
     	resetFingerIds();
+    	startIdentifyIfNeed();
+    }
+    
+    
+    public void UnFrozenStartFingerIdentify(){
+    	DebugLog.d(LOG_TAG, "startIdentify  mIsStartIdentifyState:"+mIsStartIdentifyState);
     	startIdentifyIfNeed();
     }
     

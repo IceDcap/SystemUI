@@ -26,7 +26,6 @@ import com.amigo.navi.keyguard.network.theardpool.LoadImagePool;
 import com.amigo.navi.keyguard.network.theardpool.LoadImageThread;
 
 public class LoadCacheManager {
-	protected static final boolean isPrintLog = true;
 	protected static final String LOG_TAG = "LoadCacheManager";
 	private WallpaperList mWallpaperList;
 	private Context mContext;
@@ -49,7 +48,7 @@ public class LoadCacheManager {
 		mCurrentWallpaper = wallpaper;
 		mImageLoader.mRelease = false;
 		mWallpaperList = wallpaperList;
-		if (isPrintLog) {
+		if (DebugLog.DEBUGMAYBE) {
 			for (int i = 0; i < wallpaperList.size(); i++) {
 				DebugLog.d(LOG_TAG,
 						"refreshCache url wallpaperlist:"
@@ -65,7 +64,7 @@ public class LoadCacheManager {
 				break;
 			}
 		}
-		if (isPrintLog) {
+		if (DebugLog.DEBUG) {
 			DebugLog.d(LOG_TAG, "refreshCache url:" + wallpaper.getImgUrl()
 					+ " name:" + wallpaper.getImgName() + currentPos);
 		}
@@ -102,7 +101,7 @@ public class LoadCacheManager {
 		if (wallpaper == null) {
 			return;
 		}
-		if (isPrintLog) {
+		if (DebugLog.DEBUG) {
 			DebugLog.d(LOG_TAG, "getLoadImageList url:" + wallpaper.getImgUrl()
 					+ " name:" + wallpaper.getImgName());
 		}
@@ -117,7 +116,7 @@ public class LoadCacheManager {
 		LoadImagePool.getInstance(mContext.getApplicationContext()).cancelAllThread();
 		for (int i = 0; i < mWallpaperListToThumbCache.size(); i++) {
 			Wallpaper wallpaper = mWallpaperListToThumbCache.get(i);
-			if (isPrintLog) {
+			if (DebugLog.DEBUG) {
 				DebugLog.d(
 						LOG_TAG,
 						"startLoadToCache mWallpaperListToThumbCache url:"
@@ -128,7 +127,7 @@ public class LoadCacheManager {
 		}
 		for (int i = 0; i < mWallpaperListToImageCache.size(); i++) {
 			Wallpaper wallpaper = mWallpaperListToImageCache.get(i);
-			if (isPrintLog) {
+			if (DebugLog.DEBUG) {
 				DebugLog.d(
 						LOG_TAG,
 						"startLoadToCache mWallpaperListToImageCache url:"
@@ -146,6 +145,9 @@ public class LoadCacheManager {
 			Wallpaper wallpaper = mWallpaperListToImageCache.get(i);
 			String reservedUrl = wallpaper.getImgUrl();
 			if (mImageLoader.existInImageCache(reservedUrl)) {
+				if (DebugLog.DEBUG){
+					DebugLog.d(LOG_TAG,"mUrlToBeReserved existInImageCache url:" + reservedUrl);
+		        }
 				mUrlToBeReserved.add(reservedUrl);
 			}else{
 				mUrlToBeReserved.add(wallpaper.getImgUrl() + THUMBNAIL_POSTFIX);
@@ -170,7 +172,7 @@ public class LoadCacheManager {
 				loadUrl = loadUrl + THUMBNAIL_POSTFIX;
 			}
 
-			if (isPrintLog) {
+			if (DebugLog.DEBUG) {
 				DebugLog.d(LOG_TAG, "loadPageToCache load image thread url:"
 						+ loadUrl);
 				DebugLog.d(LOG_TAG,
@@ -178,7 +180,7 @@ public class LoadCacheManager {
 								+ wallpaper.getImgName());
 			}
 			if (mImageLoader.existInImageCache(loadUrl)) {
-				if (isPrintLog) {
+				if (DebugLog.DEBUG) {
 					DebugLog.d(LOG_TAG, "load image thread url existInImageCache:"
 							+ loadUrl);
 					}
@@ -195,21 +197,19 @@ public class LoadCacheManager {
 					DealWithFromLocalInterface readImageFromLocal = null;
 					Bitmap bmp = null;
 					if (isStop){
-						if (isPrintLog) {
+						if (DebugLog.DEBUG) {
 							DebugLog.d(LOG_TAG, "cancel load image thread url:"
 									+ needLoadingUrl + wallpaper.getImgName());
 						}
 						return;
 					}
  
-					if (isPrintLog) {
+					if (DebugLog.DEBUG) {
 						DebugLog.d(LOG_TAG, "load image thread url:"
 								+ needLoadingUrl + " time begin:"
 								+ System.currentTimeMillis());
 						DebugLog.d(LOG_TAG, "load image thread getType():"
-								+ wallpaper.getType());
-						DebugLog.d(LOG_TAG, "load image thread getImageName():"
-								+ wallpaper.getImgName());
+								+ wallpaper.getType() + "; getImageName():"+ wallpaper.getImgName());
 					}
 					if (wallpaper.getType() == Wallpaper.WALLPAPER_FROM_FIXED_FOLDER
 							&& (!needLoadingUrl.endsWith(THUMBNAIL_POSTFIX))) {
@@ -267,7 +267,7 @@ public class LoadCacheManager {
 					
 					
 
-					if (isPrintLog) {
+					if (DebugLog.DEBUG) {
 						DebugLog.d(
 								LOG_TAG,
 								"load image thread url:"

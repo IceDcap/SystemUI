@@ -103,7 +103,7 @@ public class AmigoKeyguardInfoZone extends FrameLayout{
 	private void init(Context context) {
 		mContext = context;
 		time = new Time();
-		mFontTypeRegular = FontCache.get("font/Roboto-Regular.ttf", mContext);
+		mFontTypeRegular = FontCache.get("font/METALANG.ttf", mContext);
 		mFontTypeThin = FontCache.get("font/Roboto-Thin.ttf", mContext);
 		
 		mFontTypeMedium = FontCache.get("font/Roboto-Medium.ttf", mContext);

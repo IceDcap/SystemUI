@@ -16,9 +16,6 @@
 
 package com.android.systemui.usb;
 
-//import android.app.Activity;
-//import android.app.AlertDialog;
-//import android.app.Dialog;
 import amigo.app.AmigoActivity;
 import amigo.app.AmigoAlertDialog;
 import android.content.BroadcastReceiver;
@@ -36,69 +33,58 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import amigo.widget.AmigoCheckBox;
-import amigo.widget.AmigoTextView;
-import amigo.changecolors.ChameleonColorManager;
 
+import com.amigo.internal.app.AmigoAlertActivity;
+import com.amigo.internal.app.AmigoAlertController;
 import com.android.systemui.R;
 
-public class UsbDebuggingActivity extends AmigoActivity
+public class UsbDebuggingActivity extends AmigoAlertActivity
                                   implements DialogInterface.OnClickListener {
     private static final String TAG = "UsbDebuggingActivity";
 
     private AmigoCheckBox mAlwaysAllow;
     private UsbDisconnectedReceiver mDisconnectedReceiver;
     private String mKey;
-    private String mFingerprints;
-    private static final int DEBUG_DIALOG = 1;
 
     @Override
     public void onCreate(Bundle icicle) {
     	setTheme(R.style.GnAlertDialogLight);
         super.onCreate(icicle);
-        ChameleonColorManager.getInstance().onCreate(this);
 
         if (SystemProperties.getInt("service.adb.tcp.port", 0) == 0) {
             mDisconnectedReceiver = new UsbDisconnectedReceiver(this);
         }
 
         Intent intent = getIntent();
-        mFingerprints = intent.getStringExtra("fingerprints");
+        String fingerprints = intent.getStringExtra("fingerprints");
         mKey = intent.getStringExtra("key");
 
-        if (mFingerprints == null || mKey == null) {
+        if (fingerprints == null || mKey == null) {
             finish();
             return;
         }
 
-        showDialog(DEBUG_DIALOG);
+
+        final AmigoAlertController.AlertParams ap = mAlertParams;
+        ap.mTitle = getString(R.string.usb_debugging_title);
+        ap.mMessage = getString(R.string.usb_debugging_message, fingerprints);
+        ap.mPositiveButtonText = getString(android.R.string.ok);
+        ap.mNegativeButtonText = getString(android.R.string.cancel);
+        ap.mPositiveButtonListener = this;
+        ap.mNegativeButtonListener = this;
+
+        // add "always allow" checkbox
+        LayoutInflater inflater = LayoutInflater.from(ap.mContext);
+        View checkbox = inflater.inflate(R.layout.gn_usb_debug_confirm, null);
+        mAlwaysAllow = (AmigoCheckBox)checkbox.findViewById(R.id.alwaysUse);
+        mAlwaysAllow.setText(getString(R.string.usb_debugging_always));
+        mAlwaysAllow.setTextColor(0x66000000);
+        mAlwaysAllow.setTextSize(12);
+        ap.mView = checkbox;
+
+        setupAlert();
     }
 
-    @Override
-    protected void onDestroy() {
-        // TODO Auto-generated method stub
-        super.onDestroy();
-        ChameleonColorManager.getInstance().onDestroy(this);
-    }
-
-	@Override
-	protected AmigoAlertDialog onCreateDialog(int id) {
-		AmigoAlertDialog dialog = null;
-		LayoutInflater inflater = getLayoutInflater();
-		AmigoAlertDialog.Builder builder = new AmigoAlertDialog.Builder(this);
-		builder.setTitle(R.string.usb_debugging_title);
-		View view = inflater.inflate(R.layout.gn_usb_debug_confirm, null);
-		builder.setNegativeButton(android.R.string.cancel, this);
-		builder.setPositiveButton(android.R.string.ok, this);
-		builder.setView(view);
-		dialog = builder.create();
-
-		AmigoTextView confirmText = (AmigoTextView) view.findViewById(R.id.confirm_text);
-		confirmText.setText(getString(R.string.usb_debugging_message, mFingerprints));
-		mAlwaysAllow = (AmigoCheckBox) view.findViewById(R.id.alwaysUse);
-//		mAlwaysAllow.setText(getString(R.string.usb_debugging_always));
-		return dialog;
-	}
-    
     private class UsbDisconnectedReceiver extends BroadcastReceiver {
         private final AmigoActivity mActivity;
         public UsbDisconnectedReceiver(AmigoActivity activity) {

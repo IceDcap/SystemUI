@@ -31,7 +31,6 @@ public class HorizontalAdapter extends BaseAdapter {
    private LayoutInflater mInflater;
    private ImageLoader mImageLoader = null;
    private boolean isAllowLoad = true;
-   private static final boolean PRINT_LOG = true;
    private ArrayList<OnReloadListener> mReloadListeners = new ArrayList<OnReloadListener>();
 //   private int[] mIDList = new int[]{R.drawable.a,R.drawable.b,R.drawable.c,R.drawable.d};
 //   ArrayList<Bitmap> bitmapList = new ArrayList<Bitmap>();
@@ -93,7 +92,7 @@ public class HorizontalAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-		if (PRINT_LOG) {
+		if (DebugLog.DEBUG) {
 			DebugLog.d(TAG, "getView position:" + position);
 			DebugLog.d(TAG,
 					"getView mWallpaperList size:" + mWallpaperList.size());
@@ -118,7 +117,7 @@ public class HorizontalAdapter extends BaseAdapter {
 //            }
 //            mReloadListeners.add((OnReloadListener) holder.img);
 //        }
-		if (PRINT_LOG) {
+		if (DebugLog.DEBUG) {
 			DebugLog.d(TAG,"makeAndAddView getView begin");
         }
 		
@@ -131,23 +130,6 @@ public class HorizontalAdapter extends BaseAdapter {
         return convertView;
     }
     
-/*    public int  getListenerPositon(int showPostion, isAllowLoad){
-    	int currentPage = UIController.getInstance().getCurrentIndex(isAllowLoad);
-		if (PRINT_LOG) {
-			DebugLog.d(TAG, "getListenerPositon showPostion" + showPostion +"url" + mWallpaperList.get(showPostion).getImgUrl() );
-			DebugLog.d(TAG, "getListenerPositon currentPage" + currentPage +"url" + mWallpaperList.get(currentPage).getImgUrl() );
-		}
-    	if (showPostion == currentPage){
-    		return 1;
-    	}
-    	if (showPostion-currentPage == -1 || showPostion-currentPage == mWallpaperList.size()-1){
-    		return 0;
-    	}
-    	if (currentPage - showPostion == -1 ||currentPage-showPostion == mWallpaperList.size()-1){
-    		return 2;
-    	}
-    	return -1;
-    } */
     
     public final class ViewHolder{
         public ImageViewWithLoadBitmap img;
@@ -159,14 +141,14 @@ public class HorizontalAdapter extends BaseAdapter {
     }
 
     public void lock() {
-        if(PRINT_LOG){
+        if(DebugLog.DEBUG){
         	DebugLog.d(TAG,"lock img");
         }
         this.isAllowLoad = false;
     }
 
     public void unlock() {
-        if(PRINT_LOG){
+        if(DebugLog.DEBUG){
         	DebugLog.d(TAG,"lock img no");
         }
         this.isAllowLoad = true;

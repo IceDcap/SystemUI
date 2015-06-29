@@ -34,10 +34,8 @@ import com.android.systemui.gionee.cc.qs.tiles.GnBluetoothTile;
 import com.android.systemui.gionee.cc.qs.tiles.GnCalculateTile;
 import com.android.systemui.gionee.cc.qs.tiles.GnCameraTile;
 import com.android.systemui.gionee.cc.qs.tiles.GnFakeCallTile;
-import com.android.systemui.gionee.cc.qs.tiles.GnLauncherTile;
 import com.android.systemui.gionee.cc.qs.tiles.GnLocationTile;
 import com.android.systemui.gionee.cc.qs.tiles.GnMobileDataTile;
-import com.android.systemui.gionee.cc.qs.tiles.GnMoreTile;
 import com.android.systemui.gionee.cc.qs.tiles.GnPowerTile;
 import com.android.systemui.gionee.cc.qs.tiles.GnRotationLockTile;
 import com.android.systemui.gionee.cc.qs.tiles.GnScreenShotTile;
@@ -128,11 +126,6 @@ public class GnQSTileHost implements GnQSTile.Host {
     }
     
     @Override
-    public void openMoreView() {
-        mGnControlCenterView.openMoreView();
-    }
-
-    @Override
     public Looper getLooper() {
         return mLooper;
     }
@@ -214,10 +207,8 @@ public class GnQSTileHost implements GnQSTile.Host {
         else if (tileSpec.equals("voice")) return new GnVoiceTile(this, tileSpec);
         else if (tileSpec.equals("screenshot")) return new GnScreenShotTile(this, tileSpec);
         else if (tileSpec.equals("alarm")) return new GnAlarmTile(this, tileSpec);
-//        else if (tileSpec.equals("launcher")) return new GnLauncherTile(this, tileSpec);
         else if (tileSpec.equals("power")) return new GnPowerTile(this, tileSpec);
         else if (tileSpec.equals("setting")) return new GnSettingTile(this, tileSpec);
-        else if (tileSpec.equals("more")) return new GnMoreTile(this, tileSpec);
         else if (tileSpec.endsWith("calculate")) return new GnCalculateTile(this, tileSpec);
         else if (tileSpec.endsWith("camera")) return new GnCameraTile(this, tileSpec);
         else if (tileSpec.endsWith("torch")) return new GnTorchTile(this, tileSpec);

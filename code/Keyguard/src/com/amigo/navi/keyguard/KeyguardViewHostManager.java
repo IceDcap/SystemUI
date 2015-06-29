@@ -98,6 +98,8 @@ public class KeyguardViewHostManager {
 //  private boolean IsClearLock = false;
     private static boolean isSuppotFinger=false;
     public static final int MSG_UPDATE_HAOKAN_LIST_SCREEN_OFF = 4;
+    public static final int MSG_UPDATE_HAOKAN_LIST_SCREEN_OFF_CLEARCACHE = 5;
+    private boolean isInitRefreshKeyguardListView = true;
     public static final String KEYGUARD_LOCK_BY_OTHERAPP="lockByOtherApp";
     
     private LoadCacheManager mCacheManger;
@@ -106,7 +108,7 @@ public class KeyguardViewHostManager {
         DebugLog.d(TAG,"KeyguardViewHostManager");
       	initVersionName(context);
         mNicePicturesInit = RequestNicePicturesFromInternet.getInstance(context.getApplicationContext());
-        mNicePicturesInit.init();
+//        mNicePicturesInit.init();
         KeyguardDataModelInit.getInstance(context).initData();
         mContext=context;
         mKeyguardViewHost=host;
@@ -550,24 +552,35 @@ public class KeyguardViewHostManager {
                 }
                 break;
             case MSG_UPDATE_HAOKAN_LIST_SCREEN_OFF:
-                WallpaperList wallpapers = (WallpaperList) msg.obj;
-                if(wallpapers.size() == 0){
-                    mKeyguardListView.setVisibility(View.GONE);
-                    mContainer.setVisibility(View.GONE);
-                    UIController.getInstance().getHaoKanLayout().setVisibility(View.GONE);
-                    mViewMediatorCallback.setKeyguardWallpaperShow(true);
-                }else{
-                    
-                    refreshHorizontalListView(wallpapers); 
-                    UIController.getInstance().refreshWallpaperInfo();
-                    // load the image to cache, which is to be shown after ScreenTurnedOn
-					mCacheManger
-							.refreshCache(mContext, mImageLoader,
-									mWallpaperAdapter.getWallpaperList(),
-									UIController.getInstance()
-											.getmCurrentWallpaper(), true);
+				if (isInitRefreshKeyguardListView || !mViewMediatorCallback.isScreenOn()) {
+					WallpaperList wallpapers = (WallpaperList) msg.obj;
+					if (wallpapers.size() == 0) {
+						mKeyguardListView.setVisibility(View.GONE);
+						mContainer.setVisibility(View.GONE);
+						UIController.getInstance().getHaoKanLayout()
+								.setVisibility(View.GONE);
+						mViewMediatorCallback.setKeyguardWallpaperShow(true);
+					} else {
+
+						refreshHorizontalListView(wallpapers);
+						UIController.getInstance().refreshWallpaperInfo();
+						// load the image to cache, which is to be shown after
+						// ScreenTurnedOn
+						mCacheManger.refreshCache(mContext, mImageLoader,
+								mWallpaperAdapter.getWallpaperList(),
+								UIController.getInstance()
+										.getmCurrentWallpaper(), true);
+
+						Message msgClearDelay = mHandler
+								.obtainMessage(MSG_UPDATE_HAOKAN_LIST_SCREEN_OFF_CLEARCACHE);
+						mHandler.sendMessageDelayed(msgClearDelay, 1000l);
+
+					}
+				}
+            case MSG_UPDATE_HAOKAN_LIST_SCREEN_OFF_CLEARCACHE:
+               	if (!mViewMediatorCallback.isScreenOn()){
 					releaseCache();
-                }
+               	}
                 break;
             default:
                 break;
@@ -696,6 +709,7 @@ public class KeyguardViewHostManager {
       mKeyguardViewHost.addView(mContainer, 0);
  
       UIController controller = UIController.getInstance();
+      controller.setImageLoader(mImageLoader);
       mKeyguardListView.setTouchlListener(controller);
       
       if (Common.isPowerSaverMode()) {
@@ -775,6 +789,9 @@ public class KeyguardViewHostManager {
                 WallpaperDB wallpaperDB = WallpaperDB.getInstance(mContext);
                 WallpaperList wallpaperList = queryWallpaperList();
                 int length = wallpaperList.size();
+                if (length == 0) {
+                    return;
+                }
                 int indexOfLocked = wallpaperList.indexOfLocked();
                 DebugLog.d(LOG_TAG, "refreshKeyguardListView length = " + length + "; indexOfLocked = " + indexOfLocked);
                 if (indexOfLocked != -1) { 
@@ -890,6 +907,7 @@ public class KeyguardViewHostManager {
             return;
         }
 //        updateDataAndRefreshKeyguardListView(false);
+        isInitRefreshKeyguardListView = false;
         refreshKeyguardListView();
     }
     
@@ -912,12 +930,11 @@ public class KeyguardViewHostManager {
         }
     };
     
-    private static final boolean PRINT_LOG = true;
     private ThreadUtil mThreadUtil = null;
     OnScrollListener mKeyguardListViewScrollListener = new OnScrollListener() {
         @Override
         public void onScrollMoving(int motionX) {
-            if(PRINT_LOG){
+            if(DebugLog.DEBUGMAYBE){
             	DebugLog.d(TAG,"onScrollMoving");
             }
             QuickSleepUtil.updateWallPaperScrollingState(false);
@@ -931,7 +948,7 @@ public class KeyguardViewHostManager {
         
         @Override
         public void onScrollEnd() {
-            if(PRINT_LOG){
+            if(DebugLog.DEBUG){
             	DebugLog.d(TAG,"onScrollEnd");
             }
             mWallpaperAdapter.unlock();
@@ -947,7 +964,7 @@ public class KeyguardViewHostManager {
         
         @Override
         public void onScrollBegin() {
-            if(PRINT_LOG){
+            if(DebugLog.DEBUG){
             	DebugLog.d(TAG,"onScrollBegin");
             }
             mWallpaperAdapter.lock();
@@ -1125,7 +1142,18 @@ public class KeyguardViewHostManager {
 	 * 通知密码锁已经解冻
 	 */
 	public void UnFrozenSecurityLock(){
-		startFingerIdentify();
+		UnFrozenStartFingerIdentify();
 	}
+	
+	  public void UnFrozenStartFingerIdentify(){
+	    	DebugLog.e(TAG, "UnFrozenStartFingerIdentify");
+	        mHandler.post(new Runnable() {
+	            @Override
+	            public void run() {
+	                mFingerIdentifyManager.UnFrozenStartFingerIdentify();
+	            }
+	        });
+	    }
+	
 	    
 }

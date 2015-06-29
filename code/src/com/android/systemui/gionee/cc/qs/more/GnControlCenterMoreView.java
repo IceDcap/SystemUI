@@ -3,10 +3,8 @@ package com.android.systemui.gionee.cc.qs.more;
 
 import java.util.Collection;
 
-import android.content.BroadcastReceiver;
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.BitmapDrawable;
@@ -16,19 +14,19 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.FrameLayout.LayoutParams;
 
 import com.android.systemui.R;
 import com.android.systemui.gionee.GnBlurHelper;
 import com.android.systemui.gionee.GnFontHelper;
 import com.android.systemui.gionee.GnUtil;
+import com.android.systemui.gionee.cc.GnControlCenter;
 import com.android.systemui.gionee.cc.qs.GnQSTile;
 
 public class GnControlCenterMoreView extends FrameLayout implements View.OnClickListener {
@@ -37,18 +35,22 @@ public class GnControlCenterMoreView extends FrameLayout implements View.OnClick
     
     private Context mContext;
 
-    private TextView mCancel;
-    private TextView mSave;
+    private ImageView mClose;
+    private ImageView mTipsClose;
+    private TextView mMore;
 
     private LinearLayout mMoreLayout;
     private LinearLayout mBackground;
     private RelativeLayout mHeader;
+    private RelativeLayout mTips;
     
     private GnDragGridView mDragGridView;
 
     private static boolean isOpened = false;
     private boolean isHighDevice = false;
     private boolean isAnimating = false;
+    
+    Handler mHandler = new Handler();
     
     public GnControlCenterMoreView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -60,9 +62,9 @@ public class GnControlCenterMoreView extends FrameLayout implements View.OnClick
 
     public void setTiles(Collection<GnQSTile<?>> collection) {
         mDragGridView.setTiles(collection);
-        mDragGridView.showMoreView();
     }
 
+    @SuppressLint("NewApi")
     @Override
     protected void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -78,20 +80,17 @@ public class GnControlCenterMoreView extends FrameLayout implements View.OnClick
             updateHeaderTextSize(res, R.dimen.gn_qs_more_header_text_size);
         }
         mHeader.setLayoutParams(lp);
-        mSave.setText(R.string.gn_qs_more_save);
-        mCancel.setText(R.string.gn_qs_more_cancel);
+        mMore.setText(R.string.gn_qs_more_title);
         
         updateFontTypeFace(newConfig);
     }
     
     private void updateFontTypeFace(Configuration newConfig) {
-        GnFontHelper.resetAmigoFont(newConfig, mSave, mCancel);
+        GnFontHelper.resetAmigoFont(newConfig, mMore);
     }
 
     private void updateHeaderTextSize(Resources res, int size) {
-        mCancel.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                res.getDimensionPixelSize(size));
-        mSave.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+        mMore.setTextSize(TypedValue.COMPLEX_UNIT_PX,
             res.getDimensionPixelSize(size));
     }
 
@@ -99,6 +98,9 @@ public class GnControlCenterMoreView extends FrameLayout implements View.OnClick
     public boolean dispatchKeyEvent(KeyEvent event) {
         switch (event.getKeyCode()) {
             case KeyEvent.KEYCODE_BACK:
+                if (mTips.isShown()) {
+                    return true;
+                }
                 pushDownOut(true);
                 break;
             default:
@@ -114,21 +116,25 @@ public class GnControlCenterMoreView extends FrameLayout implements View.OnClick
         mMoreLayout = (LinearLayout) findViewById(R.id.moreview);
         mBackground = (LinearLayout) findViewById(R.id.background);
         mHeader = (RelativeLayout) findViewById(R.id.header);
+        mTips = (RelativeLayout) findViewById(R.id.tips_layout);
         
         if (isHighDevice) {
             mBackground.setBackgroundColor(0xBF131313);
         } else {
-            mBackground.setBackgroundColor(0xFA222222);
+            mBackground.setBackgroundColor(0xFC202020);
         }
                 
-        mCancel = (TextView) findViewById(R.id.cancel);
-        mSave = (TextView) findViewById(R.id.save);
-        mCancel.setOnClickListener(this);
-        mSave.setOnClickListener(this);
+        mClose = (ImageView) findViewById(R.id.close);
+        mClose.setOnClickListener(this);
+        mMore = (TextView) findViewById(R.id.more);
+        mTipsClose = (ImageView) findViewById(R.id.tips_close);
+        mTipsClose.setOnClickListener(this);
 
         mDragGridView = (GnDragGridView) findViewById(R.id.dragview);
     }
     
+    @SuppressWarnings("deprecation")
+    @SuppressLint("NewApi")
     private void updateBackground() {
         if (!isHighDevice) {
             return;
@@ -145,21 +151,24 @@ public class GnControlCenterMoreView extends FrameLayout implements View.OnClick
     public void pushUpIn() {
         isAnimating = false;
         updateBackground();
-        mDragGridView.hideMoreView();
-//        mMoreLayout.setSystemUiVisibility(SYSTEM_UI_FLAG_IMMERSIVE | SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-        mMoreLayout.startAnimation(loadAnim(R.anim.gn_push_up_in, null));
+        // mMoreLayout.setSystemUiVisibility(SYSTEM_UI_FLAG_IMMERSIVE | SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        mMoreLayout.startAnimation(loadAnim(R.anim.gn_push_up_in, moveInListener));
     }
 
     public void pushDownOut(boolean needRecover) {
         if (isAnimating) {
             return;
         }
-        
-        if (needRecover) {
-            mDragGridView.recovery();
-        }
-        
+                
         mMoreLayout.startAnimation(loadAnim(R.anim.gn_push_down_out, moveOutListener));
+        
+        mHandler.postDelayed(new Runnable() {
+            
+            @Override
+            public void run() {                        
+                mDragGridView.onTilesChanged();
+            }
+        }, 400);
     }
 
     private Animation loadAnim(int id, Animation.AnimationListener listener) {
@@ -169,15 +178,39 @@ public class GnControlCenterMoreView extends FrameLayout implements View.OnClick
         }
         return anim;
     }
+    
+    private Animation.AnimationListener moveInListener = new Animation.AnimationListener() {
+
+        @Override
+        public void onAnimationEnd(Animation animation) {
+            boolean isFirstEnter = GnControlCenter.shouldShowTipsPage();
+            if (isFirstEnter) {
+                mTips.setVisibility(VISIBLE);
+                GnControlCenter.updateFirstEntryFlag();
+            }
+        }
+
+        @Override
+        public void onAnimationRepeat(Animation animation) {
+
+        }
+
+        @Override
+        public void onAnimationStart(Animation animation) {
+
+        }
+    };
 
     private Animation.AnimationListener moveOutListener = new Animation.AnimationListener() {
 
         @Override
         public void onAnimationEnd(Animation animation) {
             setVisibility(View.GONE);
-            mDragGridView.showMoreView();
-//            mMoreLayout.setBackgroundColor(0xFA222222);
-            GnBlurHelper.releaseBitmap(GnBlurHelper.mBlur);
+            mTips.setVisibility(GONE);
+            if (isHighDevice) {
+                mMoreLayout.setBackgroundColor(0xFA222222);
+                GnBlurHelper.releaseBitmap(GnBlurHelper.mBlur);
+            }
             setOpen(false);
             isAnimating = false;
         }
@@ -196,19 +229,11 @@ public class GnControlCenterMoreView extends FrameLayout implements View.OnClick
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.cancel:
+            case R.id.close:
                 pushDownOut(true);
                 break;
-            case R.id.save:
-                pushDownOut(false);
-                Handler mHandler = new Handler();
-                mHandler.postDelayed(new Runnable() {
-                    
-                    @Override
-                    public void run() {                        
-                        mDragGridView.onTilesChanged();
-                    }
-                }, 400);
+            case R.id.tips_close:
+                mTips.setVisibility(GONE);
                 break;
             default:
                 break;

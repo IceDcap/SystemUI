@@ -39,8 +39,9 @@ public class GnBrightnessDialog extends Activity {
         setContentView(R.layout.gn_qs_brightness_dialog);
 
         final ImageView icon = (ImageView) findViewById(R.id.brightness_icon);
+        final ImageView moreIcon = (ImageView) findViewById(R.id.more_icon);
         final GnToggleSlider slider = (GnToggleSlider) findViewById(R.id.brightness_slider);
-        mBrightnessController = new GnBrightnessController(this, icon, slider);
+        mBrightnessController = new GnBrightnessController(this, icon, moreIcon, slider);
     }
 
     @Override

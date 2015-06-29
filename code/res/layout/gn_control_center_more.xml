@@ -20,28 +20,27 @@
                 android:id="@+id/header"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/gn_qs_more_header_height" >
+                
+                <ImageView 
+                    android:id="@+id/close"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="16dp"
+                    android:src="@drawable/gn_ic_qs_more_close" />
 
                 <TextView
-                    android:id="@+id/cancel"
+                    android:id="@+id/more"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_alignParentLeft="true"
+                    android:layout_toRightOf="@id/close"
                     android:layout_centerHorizontal="true"
                     android:layout_marginLeft="@dimen/gn_qs_panel_padding_left"
                     android:gravity="center"
-                    android:text="@string/gn_qs_more_cancel"
+                    android:text="@string/gn_qs_more_title"
                     android:textSize="20sp" />
 
-                <TextView
-                    android:id="@+id/save"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginRight="@dimen/gn_qs_panel_padding_left"
-                    android:gravity="center"
-                    android:text="@string/gn_qs_more_save"
-                    android:textSize="20sp" />
             </RelativeLayout>
 
             <com.android.systemui.gionee.cc.qs.more.GnDragGridView
@@ -51,5 +50,42 @@
         </LinearLayout>
 
     </LinearLayout>
+    
+    <RelativeLayout
+        android:id="@+id/tips_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#fd000000"
+        android:visibility="gone">
+        
+        <ImageView
+            android:id="@+id/tips_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="125dp"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/gn_ic_qs_more_tips" />
+        
+        <TextView 
+            android:id="@+id/tips_lable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="112dp"
+            android:layout_below="@id/tips_icon"
+            android:text="@string/gn_qs_more_tips"
+            android:textColor="#80ffffff"
+            android:textSize="14sp"/>
+        
+        <ImageView 
+            android:id="@+id/tips_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="68dp"
+            android:src="@drawable/gn_ic_qs_more_tips_close"/>
+        
+    </RelativeLayout>
 
 </com.android.systemui.gionee.cc.qs.more.GnControlCenterMoreView>

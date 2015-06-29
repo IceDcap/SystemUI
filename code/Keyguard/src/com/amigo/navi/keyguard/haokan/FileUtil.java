@@ -46,7 +46,7 @@ public class FileUtil {
         boolean success = false;
         String localfile = getSdCardPath() + DIRECTORY_FAVORITE;
         isExistDirectory(localfile);
-        
+        Log.v("haokan", imageFileName);
         FileOutputStream out = null;
         
         File file = new File(imageFileName);
@@ -58,9 +58,11 @@ public class FileUtil {
         try {
             out = new FileOutputStream(file);
 //            success = bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out); 
-            success = bitmap.compress(Bitmap.CompressFormat.PNG, 100, out); 
+            success = bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            
         } catch (Exception e) {
             e.printStackTrace();
+            Log.v("haokan", "", e);
             success = false;
         } finally{
         

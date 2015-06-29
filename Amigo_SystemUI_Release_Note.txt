@@ -2,30 +2,29 @@
 Build Notes
 ==================
 1.版本目的:
-Bugfix
+bug fix
 2.功能变更:
-Bugfix
+NO
 3.重点测试的问题:
-CR01504165
-【5.1MP】品质压力:进文件管理，SD卡复制大于1G的文件夹到内部存储后删除，下拉菜单自动锁屏，解锁后定屏，五分钟后自动恢复【2/30】
-CR01506153
-系统界面：后台运行优酷，进入照相机中录制一个30s左右的视频后播放，按App切换到优酷，弹出com.android.systemUI已停止运行（3/10）
-
+CR01425226
+(控制中心改版：按钮增加为８个，去掉“完成”，　增加提示页)
+CR01507276
+USB：非第一次连接电脑，仍显示高通端口
 4.应用数据库是否改变:
 No
 
 ==================
 Release Location
 ==================
-/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ap.zip
+/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.as.zip
 
 ==================
 CR List
 ==================
 [Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
-CR01504165      Resolved   wujj       【5.1MP】品质压力:进文件管理，SD卡复制大于1G的文件夹到内部存储后删除，下拉菜单自动锁屏，解锁后定屏，五分钟后自动恢复【2/30】
-CR01506153      Resolved   fangjian   系统界面：后台运行优酷，进入照相机中录制一个30s左右的视频后播放，按App切换到优酷，弹出com.android.systemUI已停止运行（3/10）
-Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ap
-Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ao
-Code difference: svn diff -r 6275:6271 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01425226      Opened     huangwt    android L 新功能 控制中心
+CR01507276      Coded      hanbj      USB：非第一次连接电脑，仍显示高通端口
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.as
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.aq
+Code difference: svn diff -r 6334:6331 http://192.168.110.97/svn/Amigo_SystemUI/trunk
 
