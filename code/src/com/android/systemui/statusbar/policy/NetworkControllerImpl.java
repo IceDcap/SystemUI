@@ -45,12 +45,15 @@ import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.telephony.SubscriptionManager.OnSubscriptionsChangedListener;
 import android.telephony.TelephonyManager;
+
 import com.android.internal.telephony.ITelephony;
+
 import android.os.ServiceManager;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.util.SparseArray;
+
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.internal.telephony.IccCardConstants;
 import com.android.internal.telephony.PhoneConstants;
@@ -62,6 +65,7 @@ import com.android.systemui.R;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
@@ -1098,9 +1102,11 @@ public class NetworkControllerImpl extends BroadcastReceiver
             mSubscriptionInfo = info;
             mPhoneStateListener = new MobilePhoneStateListener(info.getSubscriptionId());
             mNetworkNameSeparator = getStringIfExists(R.string.status_bar_network_name_separator);
-            mNetworkNameDefault = getStringIfExists(
-                    com.android.internal.R.string.lockscreen_carrier_default);
-
+         // GIONE <wujj> <2015-06-29> modify for CR01507368 begin
+//            mNetworkNameDefault = getStringIfExists(
+//                    com.android.internal.R.string.lockscreen_carrier_default);
+            mNetworkNameDefault = getDefaultNetworkName();
+         // GIONE <wujj> <2015-06-29> modify for CR01507368 end
             mapIconSets();
 
             mLastState.networkName = mCurrentState.networkName = mNetworkNameDefault;
@@ -1986,6 +1992,20 @@ public class NetworkControllerImpl extends BroadcastReceiver
             return resId != 0 ? mContext.getString(resId) : "";
         }
 
+        // GIONE <wujj> <2015-06-29> modify for CR01507368 begin
+        protected String getDefaultNetworkName() {
+        	try {
+        		Class cl = Class.forName("com.android.internal.R$string");
+        		Field field = cl.getDeclaredField("lockscreen_carrier_default");
+				int id = (Integer)field.get(cl);
+				return mContext.getResources().getString(id);
+			} catch (Exception e) {
+				Log.v(TAG, "getDefaultNoSerivice exception");
+				return mContext.getResources().getString(R.string.no_service);
+			}
+        }
+        // GIONE <wujj> <2015-06-29> modify for CR01507368 end
+        
         protected I getIcons() {
             return (I) mCurrentState.iconGroup;
         }
