@@ -131,9 +131,7 @@ public class PhoneStatusBarPolicy {
         filter.addAction(Intent.ACTION_USER_SWITCHED);
         filter.addAction(Intent.ACTION_HEADSET_PLUG);
         filter.addAction(Intent.ACTION_ALARM_CHANGED);
-        if(mNfcAdapter != null) {
-        	filter.addAction(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED);
-        }
+    	filter.addAction(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED);
         mContext.registerReceiver(mIntentReceiver, filter, null, mHandler);
         initObserver();
 

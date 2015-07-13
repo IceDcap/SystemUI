@@ -67,6 +67,7 @@ public class SignalClusterView
     private int mSecondaryTelephonyPadding;
     private int mEndPadding;
     private int mEndPaddingNothingVisible;
+    private int mSlotCount;
 
     public SignalClusterView(Context context) {
         this(context, null);
@@ -83,6 +84,7 @@ public class SignalClusterView
     public void setNetworkController(NetworkControllerImpl nc) {
         if (DEBUG) Log.d(TAG, "NetworkController=" + nc);
         mNC = nc;
+        mSlotCount = mNC.gnGetPhoneCount();
     }
 
     public void setSecurityController(SecurityController sc) {
@@ -420,6 +422,9 @@ public class SignalClusterView
     }
     
     private int getSlotIndicator(int slotId) {
+    	if(mSlotCount < 2) {
+    		return 0;
+    	}
 		if (slotId == 0) {
 			return R.drawable.gn_sim_indicator_1;
 		} else if(slotId == 1) {

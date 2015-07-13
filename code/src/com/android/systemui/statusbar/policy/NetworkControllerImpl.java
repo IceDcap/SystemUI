@@ -734,6 +734,10 @@ public class NetworkControllerImpl extends BroadcastReceiver
         MobileSignalController controller = getDataController();
         return controller != null ? controller.getState().dataConnected : false;
     }
+    
+    public int gnGetPhoneCount() {
+		return mPhone.getPhoneCount();
+	}
 
     public void dump(FileDescriptor fd, PrintWriter pw, String[] args) {
         pw.println("NetworkController state:");

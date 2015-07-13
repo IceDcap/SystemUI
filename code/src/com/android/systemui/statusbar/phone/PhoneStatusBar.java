@@ -5111,5 +5111,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     		mWindowManager.removeViewImmediate(mNavigationBarView); 
     		mNavigationBarView = null;
     		} 
-    	}
+    }
+    
+    public void setSkyLightStatusBar(Context context) {
+		mGnSkyLightStatusBar = new GnSkyLightStatusBar(context);
+		mGnSkyLightStatusBar.setPhoneStatusBar(this);
+	}
 }

@@ -257,8 +257,10 @@ public class RecentsHorizontalScrollView extends HorizontalScrollView
             };*/
             thumbnailView.setClickable(true);
             thumbnailView.setOnClickListener(launchAppListener);
-            lockToScreenView.setClickable(true);
-            lockToScreenView.setOnClickListener(lockToScreenClickListener);
+            if(lockToScreenView != null) {
+            	lockToScreenView.setClickable(true);
+            	lockToScreenView.setOnClickListener(lockToScreenClickListener);
+            }
             //thumbnailView.setOnLongClickListener(longClickListener);
 
             // We don't want to dismiss recents if a user clicks on the app title
