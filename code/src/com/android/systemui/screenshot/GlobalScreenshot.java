@@ -491,6 +491,13 @@ class GlobalScreenshot {
      * Creates a new worker thread and saves the screenshot to the media store.
      */
     private void saveScreenshotInWorkerThread(Runnable finisher) {
+    	// GIONEE <wujj> <2015-07-13> add for CR01515932 begin
+    	if (mScreenBitmap == null) {
+    		Log.i(TAG, "ScreenShotBitmap is null");
+    		return;
+    	}
+    	// GIONEE <wujj> <2015-07-13> add for CR01515932 end
+    	
         SaveImageInBackgroundData data = new SaveImageInBackgroundData();
         Log.i(TAG, "SaveImageInBackgroundData data:" + data.toString());
         data.context = mContext;
