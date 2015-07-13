@@ -69,7 +69,6 @@ import java.util.List;
 public class UIController implements OnTouchlListener{
     
     
-    
     private static final String TAG = "haokan";
     
     public List<Animator> mAnimators = new ArrayList<Animator>();
@@ -85,16 +84,13 @@ public class UIController implements OnTouchlListener{
     
     private AmigoKeyguardInfoZone mInfozone;
     
-    
     private View mWebViewContainer;
     
     private View mCloseLinkLayout;
     
     private CaptionsView mCaptionsView;
     
-    private RelativeLayout mPlayerLayout;
-    
-//    private boolean mWebViewShowing = false;
+    private PlayerLayout mPlayerLayout;
     
     private static UIController instance = null;
     
@@ -133,10 +129,6 @@ public class UIController implements OnTouchlListener{
     public static final int SCROLL_TO_SECURTY=1;
     public static final int SECURITY_SUCCESS_UNLOCK=2;
     
-    private WakeLock mWakeLock = null;
-    
-    private TextView mTextViewMusicName, mTextViewArtist;
-    
     private RelativeLayout mHaoKanLayout;
     
 
@@ -148,17 +140,6 @@ public class UIController implements OnTouchlListener{
     
     private AmigoKeyguardBouncer mKeyguardBouncer;
     
-    
-    private ImageLoader mImageLoader = null;
-    
-    
- 
-    public ImageLoader getImageLoader() {
-        return mImageLoader;
-    }
-    public void setImageLoader(ImageLoader mImageLoader) {
-        this.mImageLoader = mImageLoader;
-    }
     public RelativeLayout getmArcMenu() {
         return mArcMenu;
     }
@@ -186,13 +167,7 @@ public class UIController implements OnTouchlListener{
     }
 
     public void startSettingsActivity(final Context context) {
-
-//        Intent intent = new Intent(context, KeyguardSettingsActivity.class);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-//        context.startActivity(intent);
-        
-        
-        
+ 
         if (UIController.getInstance().isSecure()) {
 
             KeyguardViewHostManager.getInstance().dismissWithDismissAction(new OnDismissAction() {
@@ -211,7 +186,6 @@ public class UIController implements OnTouchlListener{
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
             KeyguardViewHostManager.getInstance().showBouncerOrKeyguardDone();
             context.startActivity(intent);
-            
         }
 
     }
@@ -226,10 +200,6 @@ public class UIController implements OnTouchlListener{
     public UIController() {
     
     }
-
-
-    
-    
      
     
     public boolean isArcExpanded() {
@@ -247,6 +217,7 @@ public class UIController implements OnTouchlListener{
     
      
     public void showToast(int resId) {
+        
         Context context = getmKeyguardViewHost().getContext();
         if (toastView == null) {
             LayoutInflater inflate = (LayoutInflater)
@@ -295,9 +266,6 @@ public class UIController implements OnTouchlListener{
                 });
             }
         }, 2000);
-        
-        
- 
     }
  
     
@@ -352,7 +320,7 @@ public class UIController implements OnTouchlListener{
             week.setTranslationX(translationX / 4.0f);
             dateFestival.setTranslationX(translationX / 4.0f);
             
-            if (getmCurrentWallpaper() != null && getmCurrentWallpaper().getMusic() != null) {
+            if (mPlayerLayout.getVisibility() == View.VISIBLE) {
                 float playerTranslationX = translationX / (infozoneMaxTranslationX * 4.0f) * playerMaxTranslationX;
                 mPlayerLayout.setTranslationX(playerTranslationX);
                 float alpha =  1.0f - playerTranslationX / playerMaxTranslationX;
@@ -381,9 +349,7 @@ public class UIController implements OnTouchlListener{
         if (Common.isPowerSaverMode()) {
             return;
         }
-//        if (change) {
-//            getmCaptionsView().setContentVisibilityAnimation(false);
-//        }
+ 
         mInfozoneTranslationX = 0f;
         refreshWallpaperInfo();
         mCaptionsView.OnTouchUpAnimator();
@@ -446,14 +412,7 @@ public class UIController implements OnTouchlListener{
                 HorizontalAdapter mWallpaperAdapter = (HorizontalAdapter) getmKeyguardListView()
                         .getAdapter();
                 WallpaperList list = mWallpaperAdapter.getWallpaperList();
-                boolean hasLocked = false;
-
-                for (Wallpaper wallpaper : list) {
-                    if (wallpaper.isLocked()) {
-                        hasLocked = true;
-                        break;
-                    }
-                }
+                boolean hasLocked = list.indexOfLocked() != -1;
                 
                 if (list.size() > 1) {
                     DebugLog.d("guide",
@@ -463,10 +422,7 @@ public class UIController implements OnTouchlListener{
                     }
                 }
                 setNewWallpaperToDisplay(false);
-
             }
-            
-            
         }
     }
     
@@ -530,18 +486,12 @@ public class UIController implements OnTouchlListener{
     
     public void refreshWallpaperInfo() {
         int pos = getmKeyguardListView().getNextPage();
-        DebugLog.d(TAG,"refreshWallpaperInfo pos:" + pos);
-        DebugLog.d(TAG, "refreshWallpaperInfo getPage = " + pos);
+         
         HorizontalAdapter mWallpaperAdapter = (HorizontalAdapter) getmKeyguardListView().getAdapter(); 
         WallpaperList list = mWallpaperAdapter.getWallpaperList();
         Wallpaper wallpaper = null;
         if (list.size() > pos) {
             wallpaper = list.get(pos);
-        }
-        
-        if (wallpaper != null) {
-            DebugLog.d(TAG, "refreshWallpaperInfo() : pos = " + pos + "  " + wallpaper.toString());
-            refreshWallpaperInfo(wallpaper);
         }
         
         if (getDetailActivity() != null) {
@@ -552,52 +502,30 @@ public class UIController implements OnTouchlListener{
             }
         }
         
-
-    }
-    
-    public void refreshWallpaperInfo(final Wallpaper wallpaper) {
-
-        if (wallpaper == null) {
-            return;
-        }
- 
-        if (getmCurrentWallpaper() != null) {
-            if (getmCurrentWallpaper().getImgId() == wallpaper.getImgId()
-                    && getmCurrentWallpaper().getImgId() != Wallpaper.WALLPAPER_FROM_PHOTO_ID) {
-                DebugLog.d(TAG, "getmCurrentWallpaper().getImgId() == wallpaper.getImgId()  return");
-                return;
-            }
-        }
-        
-        setmCurrentWallpaper(wallpaper);
-        
-        PlayerManager playerManager = PlayerManager.getInstance();
-        if (playerManager.getState() != State.NULL) {
-            DebugLog.d(TAG, "player/pause Music");
-            mPlayerButton.setState(State.NULL);
-            playerManager.stopMusicPlayer(true); 
-            hideMusicPlayer(false);
-        }
-        
-        
-        if (wallpaper.getMusic() == null) {
-             
-            if (mPlayerLayout.getVisibility() == View.VISIBLE) {
-                mPlayerLayout.setVisibility(View.GONE);
+        if (wallpaper != null) {
+            
+            if (getmCurrentWallpaper() != null) {
+                if (getmCurrentWallpaper().getImgId() == wallpaper.getImgId()
+                        && getmCurrentWallpaper().getImgId() != Wallpaper.WALLPAPER_FROM_PHOTO_ID) {
+                    DebugLog.d(TAG, "getmCurrentWallpaper().getImgId() == wallpaper.getImgId()  return");
+                    return;
+                }
             }
             
-        }else {
-             
-            if (mPlayerLayout.getVisibility() != View.VISIBLE) {
-                mPlayerLayout.setVisibility(View.VISIBLE);
-            }
+            setmCurrentWallpaper(wallpaper);
             
-            PlayerManager.getInstance().setmCurrentMusic(wallpaper.getMusic());
-             
+            PlayerManager playerManager = PlayerManager.getInstance();
+            playerManager.changeCurrentMusic(wallpaper.getMusic());
+            boolean musicIsExist = wallpaper.getMusic() != null;
+            getPlayerLayout().setPlayerLayoutVisibility(musicIsExist);
+     
+
+     
+            mInfozone.setFestivalText(wallpaper.getFestival());
+            mCaptionsView.setContentText(wallpaper.getCaption());
         }
         
-        mInfozone.setFestivalText(wallpaper.getFestival());
-        mCaptionsView.setContentText(wallpaper.getCaption());
+
     }
     
     
@@ -644,6 +572,20 @@ public class UIController implements OnTouchlListener{
             return;
         }
         
+        if (getmCurrentWallpaper().isFavorite()) {
+            String path = getmCurrentWallpaper().getFavoriteLocalPath();
+            boolean isNotFavorite = TextUtils.isEmpty(path);
+            
+            if (!isNotFavorite) {
+                isNotFavorite = !new File(getmCurrentWallpaper().getFavoriteLocalPath()).exists();
+            }
+            if (isNotFavorite) {
+                getmCurrentWallpaper().setFavorite(false);
+                getmCurrentWallpaper().setFavoriteLocalPath("");
+                WallpaperDB.getInstance(mArcLayout.getContext().getApplicationContext()).updateFavorite(getmCurrentWallpaper());
+            }
+        }
+        
         VibatorUtil.amigoVibrate(mArcLayout.getContext().getApplicationContext(),
                 VibatorUtil.LOCKSCREEN_STORYMODE_DISPLAY, 100);
         
@@ -672,30 +614,6 @@ public class UIController implements OnTouchlListener{
         Bitmap bitmap = mWallpaperAdapter.getWallpaperByUrl(imgUrl);
         return bitmap;
         
-    }
-    
-    public Bitmap getBitmapFromLocal(Context context, Wallpaper wallpaper) {
-
-        Bitmap bitmap = null;
-        int type = wallpaper.getType();
-        String imgUrl = wallpaper.getImgUrl();
-        String filePath = "";
-        if (type == Wallpaper.WALLPAPER_FROM_WEB || type == Wallpaper.WALLPAPER_FROM_PHOTO) {
-            filePath = DiskUtils.getAbsolutePath(context, imgUrl);
-            File fileLocal = new File(filePath);
-            if (fileLocal.exists()) {
-                bitmap = DiskUtils.readFile(filePath, KWDataCache.getScreenWidth(context.getResources()));
-            } 
-        }else if (type == Wallpaper.WALLPAPER_FROM_FIXED_FOLDER) {
-            filePath = FileUtil.SCREENLOCK_WALLPAPER_LOCATION + File.separator + imgUrl;
-
-            File fileLocal = new File(filePath);
-            if (fileLocal.exists()) {
-                bitmap = DiskUtils.getImageFromSystem(context, filePath, null);
-            } 
-
-        }
-        return bitmap;
     }
     
     
@@ -737,7 +655,6 @@ public class UIController implements OnTouchlListener{
         
         if (top <= 50) {
             playerAlpha = 1.0f - top / 50.0f;
-           
         }
 
         if (!mCaptionsView.isContentVisible()) {
@@ -1054,91 +971,6 @@ public class UIController implements OnTouchlListener{
         animatorSet.start();
     }
     
-    
-    public void showMusicPlayer(final Music mCurrentMusic) {
-
-        mHandle.postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-
-                final String musicName = mCurrentMusic.getmMusicName();
-                final String musicArtist = mCurrentMusic.getmArtist();
-                boolean isEmptyMusicName = TextUtils.isEmpty(musicName);
-                boolean isEmptyMusicArtist = TextUtils.isEmpty(musicArtist);
-                
-                PropertyValuesHolder pvhTranslationX = PropertyValuesHolder.ofFloat(
-                        "translationX", 100, 0f);
-                PropertyValuesHolder alpha = PropertyValuesHolder.ofFloat("alpha", 0.1f, 1.0f);
-
-                AnimatorSet animatorSet = new AnimatorSet();
-
-                if (!isEmptyMusicName) {
-                    mTextViewMusicName.setText(musicName);
-                    mTextViewMusicName.setVisibility(View.VISIBLE);
-                    ObjectAnimator translationName = ObjectAnimator.ofPropertyValuesHolder(
-                            mTextViewMusicName, pvhTranslationX, alpha).setDuration(300);
-                    translationName.setInterpolator(new OvershootInterpolator(2.5f));
-                    animatorSet.play(translationName);
-                }else {
-                    mTextViewMusicName.setVisibility(View.GONE);
-                }
-                
-                if (!isEmptyMusicArtist) {
-                    mTextViewArtist.setText(musicArtist);
-                    mTextViewArtist.setVisibility(View.VISIBLE);
-                    ObjectAnimator translationArtist = ObjectAnimator.ofPropertyValuesHolder(
-                            mTextViewArtist, pvhTranslationX, alpha).setDuration(300);
-                    translationArtist.setInterpolator(new OvershootInterpolator(2.5f));
-                    translationArtist.setStartDelay(70);
-                    animatorSet.play(translationArtist);
-                }else {
-                    mTextViewArtist.setVisibility(View.GONE);
-                }
-
-                if (!isEmptyMusicArtist || !isEmptyMusicName) {
-                    animatorSet.start();
-                }
-            }
-        }, 50);
-
-    }
-    
-    
-    public void hideMusicPlayer(boolean anim) {
-
-        if (anim) {
-            
-            mHandle.postDelayed(new Runnable() {
-                
-                @Override
-                public void run() {
-                    
-                    PropertyValuesHolder pvhTranslationX = PropertyValuesHolder.ofFloat("translationX",
-                            0f, 100);
-                    
-                    PropertyValuesHolder alpha = PropertyValuesHolder.ofFloat("alpha", 0.0f);
-                    
-                    ObjectAnimator translationName = ObjectAnimator.ofPropertyValuesHolder(
-                            mTextViewMusicName, pvhTranslationX, alpha).setDuration(300);
-                    ObjectAnimator translationArtist = ObjectAnimator.ofPropertyValuesHolder(
-                            mTextViewArtist, pvhTranslationX, alpha).setDuration(300);
-                    
-                    translationArtist.setStartDelay(70);
-                    AnimatorSet animatorSet = new AnimatorSet();
-                    animatorSet.play(translationName).with(translationArtist);
-                    animatorSet.start();
-                    
-                }
-            }, 50);
-
-        } else {
-            mTextViewMusicName.setAlpha(0f);
-            mTextViewArtist.setAlpha(0f);
-        }
-
-    }
-    
     public void onChangePowerSaverMode(boolean saverMode) {
         int visibility = saverMode ? View.GONE : View.VISIBLE;
         getHaoKanLayout().setVisibility(visibility);
@@ -1165,59 +997,7 @@ public class UIController implements OnTouchlListener{
         this.mNewWallpaperToDisplay = mNewWallpaperToDisplay;
     }
     
-    public void setSrceenLockWallpaper(Context context,Bitmap bitmap, String name) {
-    	DebugLog.d(TAG,"setSrceenLockWallpaper bitmap:" + bitmap);
-        if(bitmap != null){
-        	String key = DiskUtils.constructFileNameByUrl(Wallpaper.WALLPAPER_FROM_PHOTO_URL);
-        	String savePath = DiskUtils.getCachePath(context) + File.separator + DiskUtils.WALLPAPER_BITMAP_FOLDER;
-        	DebugLog.d(TAG,"setSrceenLockWallpaper key:" + key);
-        	DebugLog.d(TAG,"setSrceenLockWallpaper savePath:" + savePath);
-        	boolean success = DiskUtils.saveBitmap(bitmap, key, savePath);
-        	if(bitmap != null && !bitmap.isRecycled()){
-        		bitmap.recycle();
-        	}
-        	if(success){
-        		KeyguardListView keyguardListView = getmKeyguardListView();
-        		HorizontalAdapter adapter = (HorizontalAdapter) keyguardListView.getAdapter();
-        		adapter.removeCacheByUrl(Wallpaper.WALLPAPER_FROM_PHOTO_URL);
-        		Wallpaper wallpaper = new Wallpaper();
-                Category category = new Category();
-                category.setTypeId(0);
-                category.setTypeName("photo");
-                wallpaper.setCategory(category);
-                wallpaper.setImgId(Wallpaper.WALLPAPER_FROM_PHOTO_ID);
-                wallpaper.setImgName(name);
-                wallpaper.setImgUrl(Wallpaper.WALLPAPER_FROM_PHOTO_URL);
-                wallpaper.setType(Wallpaper.WALLPAPER_FROM_PHOTO);
-                wallpaper.setTodayImage(1);
-                wallpaper.setLocked(true);
-                wallpaper.setRealOrder(0);
-                wallpaper.setShowOrder(0);
-                wallpaper.setDownloadFinish(DataConstant.DOWNLOAD_FINISH);
-                wallpaper.setFavorite(false);
-                WallpaperDB.getInstance(context).clearLock();
-                WallpaperDB wallpaperDB = WallpaperDB.getInstance(context);    
-                Wallpaper oldWallpaper = wallpaperDB.queryPicturesDownLoadedLock();
-                DebugLog.d(TAG,"save wallpaper setOnClickListener wallpaper oldWallpaper:" + oldWallpaper);
-            	DebugLog.d(TAG,"setSrceenLockWallpaper oldWallpaper:" + oldWallpaper);
-                if(oldWallpaper != null){
-                    unLockWallpaper(context,oldWallpaper);
-                }
-                if(!wallpaperDB.queryHasWallpaperFromPhoto()){
-                	wallpaperDB.insertWallpaper(0, wallpaper);
-                }else{
-                	wallpaperDB.updateWallpaper(wallpaper);
-                }
-                
-                if (getImageLoader() != null) {
-                    getImageLoader().removeFirstLevelCache(Wallpaper.WALLPAPER_FROM_PHOTO_URL);
-                    getImageLoader().removeFirstLevelCache(Wallpaper.WALLPAPER_FROM_PHOTO_URL + ImageLoader.THUMBNAIL_POSTFIX);
-                }
-                
-        	}
-        }      
-    }
-    
+ 
     private void hideGuideLongPress() {
 
         if (mGuideLongPressLayout == null) {
@@ -1302,14 +1082,16 @@ public class UIController implements OnTouchlListener{
     }
 
     
-    public RelativeLayout getmLayoutPlayer() {
+     
+    
+    public PlayerLayout getPlayerLayout() {
         return mPlayerLayout;
     }
-
-
-    public void setmLayoutPlayer(RelativeLayout mLayoutPlayer) {
-        this.mPlayerLayout = mLayoutPlayer;
+    
+    public void setPlayerLayout(PlayerLayout mPlayerLayout) {
+        this.mPlayerLayout = mPlayerLayout;
     }
+    
     
     public Wallpaper getmCurrentWallpaper() {
         return mCurrentWallpaper;
@@ -1319,17 +1101,6 @@ public class UIController implements OnTouchlListener{
         this.mCurrentWallpaper = mCurrentWallpaper;
     }
     
-     
-/*	public int getCurrentIndex(boolean isAllowLoad) {
-		int currentIndex;
-		if (isAllowLoad) {
-			currentIndex = mKeyguardListView.getPage();
-		} else {
-			currentIndex = mKeyguardListView.getPageWhenMoving();
-		}
-		return currentIndex;
-	}*/
-
 	public KeyguardListView getmKeyguardListView() {
         return mKeyguardListView;
     }
@@ -1400,25 +1171,6 @@ public class UIController implements OnTouchlListener{
         this.mAmigoKeyguardHostView = mAmigoKeyguardHostView;
     }
     
-    
-    public TextView getmTextViewMusicName() {
-        return mTextViewMusicName;
-    }
-    
-    public void setmTextViewMusicName(TextView mTextViewMusicName) {
-        this.mTextViewMusicName = mTextViewMusicName;
-    }
-    
-    public TextView getmTextViewArtist() {
-        return mTextViewArtist;
-    }
-    
-    public void setmTextViewArtist(TextView mTextViewArtist) {
-        this.mTextViewArtist = mTextViewArtist;
-    }
-    
-    
-    
     public AmigoKeyguardPage getAmigoKeyguardPage() {
         return mAmigoKeyguardPage;
     }
@@ -1431,103 +1183,12 @@ public class UIController implements OnTouchlListener{
     public void setGuideLongPressShowing(boolean mGuideLongPressShowing) {
         this.mGuideLongPressShowing = mGuideLongPressShowing;
     }
-    public boolean lockWallpaper(final Context context,final Wallpaper wallpaper) {
-    	boolean success = false;
-//    	if(isLocalData){
-//    		success = lockWhenLocalData(context,wallpaper);
-//    	}else{
-            success = lockWhenNotLocalData(context, wallpaper);
-//    	}
-        return success;
-    }
     
-    private boolean lockWhenLocalData(Context context,Wallpaper wallpaper){
-    	if(mLockWallpaper == null || (mLockWallpaper.getImgId() != wallpaper.getImgId())){
-        	if(mLockWallpaper != null){
-        		HorizontalAdapter adapter = (HorizontalAdapter) mKeyguardListView.getAdapter();
-        		WallpaperList wallpaperList = adapter.getWallpaperList();
-        		wallpaperList.remove(mLockWallpaper);
-        		wallpaperList.add(mLockWallpaper.getImgId(),mLockWallpaper);
-        		mLockWallpaper.setLocked(false);
-        	}
-        	wallpaper.setLocked(true);
-        	mLockWallpaper = wallpaper;
-    		Common.setLockID(context, wallpaper.getImgId());
-    		int page = mKeyguardListView.getPage();
-    		Common.setLockPosition(context, page);
-    	}
-    	return true;
-    }
-    
-	private boolean lockWhenNotLocalData(final Context context,
-			final Wallpaper wallpaper) {
-		boolean saveSuccess = false;
-        DebugLog.d(TAG,"save wallpaper setOnClickListener wallpaper url:" + wallpaper.getImgUrl());
-        WallpaperDB wallpaperDB = WallpaperDB.getInstance(context.getApplicationContext());
-        boolean success = false;
-        DebugLog.d(TAG,"save wallpaper setOnClickListener wallpaper 1");
-        Wallpaper oldWallpaper = wallpaperDB.queryPicturesDownLoadedLock();
-        DebugLog.d(TAG,"save wallpaper setOnClickListener wallpaper oldWallpaper:" + oldWallpaper);
-        if(oldWallpaper != null){
-            unLockWallpaper(context,oldWallpaper);
-        }
-        wallpaper.setLocked(true);
-        DebugLog.d(TAG,"save wallpaper setOnClickListener wallpaper wallpaper id:" + wallpaper.getImgId());
-        success = WallpaperDB.getInstance(context.getApplicationContext()).updateLock(wallpaper);
-        DebugLog.d(TAG,"save wallpaper setOnClickListener success:" + success);
-		return success;
-	}
-	private boolean unLockWallpaper(final Context context,Wallpaper oldWallpaper) {
-		boolean success = false;
-		oldWallpaper.setShowOrder(oldWallpaper.getRealOrder());
-		oldWallpaper.setLocked(false);
-		success = WallpaperDB.getInstance(context).updateShowOrderAndLock(oldWallpaper);
-		clearAllLock();
-		delNotTodayWallpaper(context);
-		return success;
-	}
-        
-    public boolean clearLock(Context context,Wallpaper wallpaper){
-    	return unLockWallpaper(context,wallpaper);
-    }
-    
-    private void delNotTodayWallpaper(Context context){
-        WallpaperDB wallpaperDB = WallpaperDB.getInstance(context.getApplicationContext());           
-        Wallpaper wallpaperNotToday = wallpaperDB.queryWallpaperNotTodayAndNotLock();
-        if(wallpaperNotToday != null){
-        	String url = wallpaperNotToday.getImgUrl();
-        	if(TextUtils.isEmpty(url)){
-        		DiskUtils.delFile(context,url);
-        	}
-        }
-        wallpaperDB.deleteWallpaperNotTodayAndNotLock();
-    }
-    
-    private void clearAllLock(){
-        	HorizontalAdapter adapter = (HorizontalAdapter) mKeyguardListView.getAdapter();
-        	adapter.clearAllLock();
-    }
-    
-    private Wallpaper mLockWallpaper = null;
-    public void setLockWallpaper(Wallpaper wallpaper){
-    	mLockWallpaper = wallpaper;
-    }
-    
-    public Wallpaper getLockWallpaper(){
-    	return mLockWallpaper;
-    }
-    
-    private boolean isLocalData = false;
-    public void setLocalData(boolean isLocal){
-    	isLocalData = isLocal;
-    }
-    
-    public boolean getLocalData(){
-    	return isLocalData;
-    }
+ 
     public AmigoKeyguardBouncer getKeyguardBouncer() {
         return mKeyguardBouncer;
     }
+    
     public void setKeyguardBouncer(AmigoKeyguardBouncer mKeyguardBouncer) {
         this.mKeyguardBouncer = mKeyguardBouncer;
     }
@@ -1536,6 +1197,12 @@ public class UIController implements OnTouchlListener{
         if (getmCaptionsView() != null && getmCurrentWallpaper() != null) {
             getmCaptionsView().setContentText(getmCurrentWallpaper().getCaption());
         }
+        
+        if (getPlayerLayout() != null && getmCurrentWallpaper() != null) {
+            getPlayerLayout().setPlayerLayoutVisibility(getmCurrentWallpaper().getMusic() != null);
+
+        }
     }
+    
     
 }

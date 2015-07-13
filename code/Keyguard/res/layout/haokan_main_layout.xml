@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <RelativeLayout
+    <com.amigo.navi.keyguard.haokan.PlayerLayout
         android:id="@+id/haokan_page_layout_player"
         android:layout_width="wrap_content"
         android:layout_height="35dp"
@@ -54,7 +54,7 @@
                 android:textColor="@color/haokan_music_singer_color"
                 android:textSize="@dimen/haokan_music_player_artist_textsize" />
         </LinearLayout>
-    </RelativeLayout>
+    </com.amigo.navi.keyguard.haokan.PlayerLayout>
 
     <com.amigo.navi.keyguard.haokan.CaptionsView
         android:id="@+id/haokan_page_layout_captions"

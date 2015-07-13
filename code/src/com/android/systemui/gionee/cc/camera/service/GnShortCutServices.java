@@ -4,7 +4,7 @@
 * add by huangwt for Android L at 20141210.
 * 
 */
-package com.android.systemui.gionee.cc.service;
+package com.android.systemui.gionee.cc.camera.service;
 
 import com.android.systemui.gionee.cc.camera.GnCameraUtil;
 import com.android.systemui.gionee.cc.camera.GnImageManager;

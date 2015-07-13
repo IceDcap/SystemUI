@@ -169,7 +169,6 @@ public class DiskManager {
               return obj;
             }
           } catch (IOException e) {
-            Log.d("testDiskCache","getImage error");
             DebugLog.d("HorizontalListView","makeAndAddView readBitmapFromLocal error:");
             e.printStackTrace();
           }finally{

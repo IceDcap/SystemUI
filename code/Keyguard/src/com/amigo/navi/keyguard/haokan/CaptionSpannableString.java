@@ -18,6 +18,8 @@ import android.view.View;
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.haokan.analysis.HKAgent;
 import com.amigo.navi.keyguard.haokan.entity.Caption;
+import com.amigo.navi.keyguard.network.NetworkRemind;
+import com.amigo.navi.keyguard.network.NetworkRemind.ClickContinueCallback;
 import com.android.keyguard.R;
 
 
@@ -95,7 +97,7 @@ public class CaptionSpannableString extends SpannableStringBuilder{
         
     }
     
-    private class WebURLSpan extends URLSpan{
+    private class WebURLSpan extends URLSpan implements ClickContinueCallback{
 
         public WebURLSpan(String url) {
             super(url);
@@ -115,16 +117,25 @@ public class CaptionSpannableString extends SpannableStringBuilder{
             }
 
             if (Common.getNetIsAvailable(mContext)) {
-                Intent intent = new Intent(mContext, DetailActivity.class);
-                intent.putExtra("link", mCaption.getLink());
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                mContext.startActivity(intent);
-                HKAgent.onEventIMGLink(mContext, UIController.getInstance().getmCurrentWallpaper());
+            	if(NetworkRemind.getInstance(mContext).needShowDialog()){
+            		NetworkRemind.getInstance(mContext).registeContinueCallback(this);
+            		NetworkRemind.getInstance(mContext).alertDialog();
+            	}else{
+            		startCaption();            		
+            	}
             } else {
                 UIController.getInstance().showToast(R.string.haokan_tip_check_net);
             }
             
         }
+
+		private void startCaption() {
+			Intent intent = new Intent(mContext, DetailActivity.class);
+			intent.putExtra("link", mCaption.getLink());
+			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			mContext.startActivity(intent);
+			HKAgent.onEventIMGLink(mContext, UIController.getInstance().getmCurrentWallpaper());
+		}
 
 
         @Override
@@ -133,6 +144,12 @@ public class CaptionSpannableString extends SpannableStringBuilder{
             ds.setColor(0xccffffff);  
             ds.setUnderlineText(false); 
         }
+
+		@Override
+		public void clickContinue() {
+			startCaption();
+			
+		}
         
     }
     

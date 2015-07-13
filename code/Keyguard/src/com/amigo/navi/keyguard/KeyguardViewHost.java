@@ -67,7 +67,7 @@ public class KeyguardViewHost extends FrameLayout {
        mOldFontStyle  = AmigoKeyguardUtils.getmOldFontStyle();;
        
        if(DEBUG){
-       	Log.d(LOG_TAG, "onConfigurationChanged() ..KeyguardHostView..mOldFontStyle="+mOldFontStyle);            	
+    	   DebugLog.d(LOG_TAG, "onConfigurationChanged() ..KeyguardHostView..mOldFontStyle="+mOldFontStyle);            	
        }
     }
 
@@ -191,8 +191,8 @@ public class KeyguardViewHost extends FrameLayout {
         mAmigoKeyguardView.dismiss();
     }
     
-    public void finishIfNoSecure(){
-        mAmigoKeyguardView.finishIfNoSecure();
+    public void resetToHomePositionIfNoSecure(){
+        mAmigoKeyguardView.resetToHomePositionIfNoSecure();
     }
     
     public boolean needsFullscreenBouncer(){
@@ -278,7 +278,9 @@ public class KeyguardViewHost extends FrameLayout {
     
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-    	Log.i(LOG_TAG, "hostView...dispatchKeyEvent...event.getKeyCode()="+event.getKeyCode());
+    	if(DebugLog.DEBUG){
+	          DebugLog.v(LOG_TAG, "hostView...dispatchKeyEvent...event.getKeyCode()="+event.getKeyCode());
+	    }
     	 boolean down = event.getAction() == KeyEvent.ACTION_DOWN;
          switch (event.getKeyCode()) {
              case KeyEvent.KEYCODE_BACK:
@@ -293,7 +295,9 @@ public class KeyguardViewHost extends FrameLayout {
     }
     
     public boolean  onBackPress(){
-    	Log.i(LOG_TAG, "hostView...onBackPress");
+    	if(DebugLog.DEBUG){
+	          DebugLog.v(LOG_TAG, "hostView...onBackPress");
+	    }
     	if ( mAmigoKeyguardView!=null) {
        	 return mAmigoKeyguardView.onBackPress(); 
         }
@@ -353,8 +357,14 @@ public class KeyguardViewHost extends FrameLayout {
     
     
     private AnimatorSet mScaleHostAnimator = null;
-
+    private boolean isStartunlockByFinger=false;
     public void unlockByFingerIdentify() {
+    	
+    	if(isStartunlockByFinger ||  !KeyguardViewHostManager.getInstance().isScreenOn()){
+    		DebugLog.d(LOG_TAG, "unlockByFingerIdentify....isStartunlockByFinger="+isStartunlockByFinger);
+    		return;
+    	}
+    	isStartunlockByFinger=true;
         if (mScaleHostAnimator == null) {
             ObjectAnimator animator1 = ObjectAnimator.ofFloat(this, "scaleX", 1f, 0.6f);
             ObjectAnimator animator2 = ObjectAnimator.ofFloat(this, "scaleY", 1f, 0.6f);
@@ -379,17 +389,31 @@ public class KeyguardViewHost extends FrameLayout {
                     setVisibility(View.GONE);
                     resetHostView();
                     mViewMediatorCallback.userActivity();
+                    isStartunlockByFinger=false;
+               
                 }
 
                 @Override
                 public void onAnimationCancel(Animator animation) {
+                	DebugLog.d(LOG_TAG, "unlockByFingerIdentify....onAnimationCancel=");
                     resetHostView();
+                    isStartunlockByFinger=false;
                 }
             });
         }
         mScaleHostAnimator.start();
 
     }
+    
+	public void unlockByBlackFingerIdentify() {
+
+		mAmigoKeyguardView.finish();
+		setVisibility(View.GONE);
+		resetHostView();
+		mViewMediatorCallback.userActivity();
+		isStartunlockByFinger = false;
+
+	}
     
     private void cancelFingerUnlock() {
         if (mScaleHostAnimator != null) {

@@ -248,7 +248,7 @@ public class LoadCacheManager {
                     Bitmap bitmap = mImageLoader.loadImageFromLocal(readImageFromLocal,
                             needLoadingUrl);
                     boolean isUsed = reuseImage.isUsed();
-                    DebugLog.d(LOG_TAG, "zhaowei isUsed:" + isUsed + " Url = " + needLoadingUrl);
+                    DebugLog.d(LOG_TAG, " isUsed:" + isUsed + " Url = " + needLoadingUrl);
                     if (!isUsed) {
                         mImageLoader.addBmpToImageRemoved(reuseImage.getBitmap());
                     }

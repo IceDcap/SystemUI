@@ -997,3 +997,112 @@ Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.aq
 Code difference: svn diff -r 6334:6331 http://192.168.110.97/svn/Amigo_SystemUI/trunk
 
 ==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.cu' non-existent in revision 6387
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6384:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.1.ac' non-existent in revision 6445
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6444:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.1.ae' non-existent in revision 6476
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6476:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.0.0_V6.1.0.av' non-existent in revision 6479
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6479:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.aw' non-existent in revision 6481
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6480:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01459185      Opened     zhaowei    {Navi锁屏}提交Navi锁屏代码
+CR01504157      Coded      hanbj      【5.1MP】MISC：开启USB调试弹窗界面，点击弹窗外空白处，界面亮度不会恢复(视频）
+CR01505839      Opened     jiating    【5.1MP】MISC：手表控开始匹配>点“下载并安装”下载过程中，灭屏待机，按power键亮屏，手机卡死在锁屏界面无法正常解锁(6/10)
+CR01513311      Coded      huangwt    【5.1MP】工厂：上拉控制中心长按相机图标拍照,保存的照片模糊100%
+CR01514498      Opened     hanjuan    壁纸下载后不清晰，用户选定图片做壁纸不够清晰
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ax
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.aw
+Code difference: svn diff -r 6499:6483 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ay' non-existent in revision 6528
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6528:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ba' non-existent in revision 6552
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6552:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ba
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.az
+Code difference: svn diff -r 6553:6554 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.bn' non-existent in revision 6572
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6566:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.db' non-existent in revision 6614
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6614:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.dc' non-existent in revision 6645
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6642:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================

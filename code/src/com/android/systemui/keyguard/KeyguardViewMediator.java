@@ -422,7 +422,7 @@ public class KeyguardViewMediator extends SystemUI {
                 case ABSENT:
                     resetStateLocked();
                     adjustStatusBarLocked();
-                    mStatusBarKeyguardViewManager.finishIfNoSecure();
+                    mStatusBarKeyguardViewManager.resetToHomePositionIfNoSecure();
                     break;
                 case PIN_REQUIRED:
                 case PUK_REQUIRED:

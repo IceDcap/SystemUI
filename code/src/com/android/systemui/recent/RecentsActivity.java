@@ -323,15 +323,17 @@ public class RecentsActivity extends Activity implements OnClickListener , OnLon
         mIntentFilter.addAction(WINDOW_ANIMATION_START_INTENT);
         registerReceiver(mIntentReceiver, mIntentFilter);
         
-        LayoutParams lp = (LayoutParams) mRecentReleaseLayout.getLayoutParams();
-        if (hasNavigationBar()) {
-            lp.setMargins(0, 0, 0, 0);
-        } else {
-            int navigationBarH = mContext.getResources().getDimensionPixelSize(
-                    com.android.internal.R.dimen.navigation_bar_height);
-            lp.setMargins(0, 0, 0, navigationBarH);
+        if (mRecentReleaseLayout != null) {
+            LayoutParams lp = (LayoutParams) mRecentReleaseLayout.getLayoutParams();
+            if (hasNavigationBar()) {
+                lp.setMargins(0, 0, 0, 0);
+            } else {
+                int navigationBarH = mContext.getResources().getDimensionPixelSize(
+                        com.android.internal.R.dimen.navigation_bar_height);
+                lp.setMargins(0, 0, 0, navigationBarH);
+            }
+            mRecentReleaseLayout.setLayoutParams(lp);
         }
-        mRecentReleaseLayout.setLayoutParams(lp);
         
         //CR01506153 fj <2015-6-26> begin
         if (mRecentAppClearView != null) {
@@ -560,10 +562,10 @@ public class RecentsActivity extends Activity implements OnClickListener , OnLon
     }
 	
 	private long getMemoryAvailable() {
-		mMemInfoReader.readMemInfo();
-		return mMemInfoReader.getFreeSize() + mMemInfoReader.getCachedSize();
-		//mAm.getMemoryInfo(mMemInfo);
-        //return mMemInfo.availMem;
+		/*mMemInfoReader.readMemInfo();
+		return mMemInfoReader.getFreeSize() + mMemInfoReader.getCachedSize();*/
+		mAm.getMemoryInfo(mMemInfo);
+        return mMemInfo.availMem;
 	}
 	
 	public String formatMemory(long size) {
@@ -575,6 +577,9 @@ public class RecentsActivity extends Activity implements OnClickListener , OnLon
         }
 
         return "" + sizeM + "M";*/
+		//Gionee <fangjian> <2015-07-07> add for CR01513841 begin
+		if (size < 0) size = 0; 
+		//Gionee <fangjian> <2015-07-07> add for CR01513841 end
 		return Formatter.formatFileSize(mContext, size);
     }
 	

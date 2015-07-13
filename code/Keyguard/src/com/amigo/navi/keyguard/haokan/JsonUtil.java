@@ -3,6 +3,7 @@ package com.amigo.navi.keyguard.haokan;
 
 import android.content.Context;
 import android.text.TextUtils;
+
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.haokan.db.DataConstant;
 import com.amigo.navi.keyguard.haokan.entity.Client;
@@ -167,6 +168,8 @@ public class JsonUtil {
                                 wallpaper.setShowTimeEnd(times[1]);
                             }
                         }
+                        
+                        wallpaper.setSort(jsonObject5.optInt("st"));
                         
                         Music music = new Music();
  
@@ -341,10 +344,12 @@ public class JsonUtil {
                     String MusicURL = jsonObjectImg.optString("MusicURL");
                     
                     String lock = jsonObjectImg.optString("Lock");
+                    int id = i + 1;
                     
                     Music music = null;
                     if (!TextUtils.isEmpty(MusicURL)) {
                         music = new Music();
+                        music.setMusicId(String.valueOf(id));
                         music.setmMusicName(MusicName);
                         music.setmArtist(MusicSinger);
                         music.setDownLoadUrl(MusicURL);
@@ -356,7 +361,6 @@ public class JsonUtil {
                     category.setTypeId(0);
                     category.setTypeName("inlay");
                     wallpaper.setCategory(category);
-                    int id = i + 1;
                     wallpaper.setImgId(id);
                     wallpaper.setDisplayName(imageName);
                     wallpaper.setImgName(imageTitle);
@@ -379,12 +383,13 @@ public class JsonUtil {
                     wallpaper.setType(Wallpaper.WALLPAPER_FROM_FIXED_FOLDER);
                     wallpaper.setRealOrder(i);
                     wallpaper.setShowOrder(i); 
-                    wallpaper.setTodayImage(1);
+                    wallpaper.setTodayImage(true);
                     if("1".equals(lock)){
                         wallpaper.setLocked(true);
                     }else{
                         wallpaper.setLocked(false);
                     }
+                    wallpaper.setSort(i);
                     wallpaper.setDownloadFinish(DataConstant.DOWNLOAD_FINISH);
                     list.add(wallpaper);
                 }

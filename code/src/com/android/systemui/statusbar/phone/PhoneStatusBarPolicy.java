@@ -116,6 +116,7 @@ public class PhoneStatusBarPolicy {
         mContext = context;
         mService = (StatusBarManager)context.getSystemService(Context.STATUS_BAR_SERVICE);
         mNfcAdapter = NfcAdapter.getDefaultAdapter(context);
+        Log.d(TAG, "mNfcAdapter = " + mNfcAdapter);
 
         // listen for broadcasts
         IntentFilter filter = new IntentFilter();
@@ -554,16 +555,16 @@ public class PhoneStatusBarPolicy {
 	
 	//nfc
 	private final void updateNfc(Intent intent) {
-		int newStatus = intent.getIntExtra(NfcAdapter.EXTRA_ADAPTER_STATE,
-                NfcAdapter.STATE_OFF);
+		int newStatus = intent.getIntExtra(NfcAdapter.EXTRA_ADAPTER_STATE, NfcAdapter.STATE_OFF);
+		Log.d(TAG, "updateNFC ICON newStatus = " + newStatus);
 		switch (newStatus) {
-        case NfcAdapter.STATE_OFF:
-            mService.setIconVisibility(GN_NFC, false);                
-            break;
-        case NfcAdapter.STATE_ON:
-            mService.setIconVisibility(GN_NFC, true);
-            break;
-    }
+			case NfcAdapter.STATE_OFF:
+				mService.setIconVisibility(GN_NFC, false);
+				break;
+			case NfcAdapter.STATE_ON:
+				mService.setIconVisibility(GN_NFC, true);
+				break;
+		}
 	}
 	
 	private boolean isNfcEnabled() {

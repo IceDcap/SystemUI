@@ -251,7 +251,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
     
     private void notifySwitched() {
     	for(PageSwitchCallback switchPage : mPageSwitchCallback) {
-    	    if(DebugLog.DEBUG)Log.v(LOG_TAG,"notifySwitched mCurrentPageIndex:" + mCurrentPageIndex);
+    	    if(DebugLog.DEBUG)DebugLog.d(LOG_TAG,"notifySwitched mCurrentPageIndex:" + mCurrentPageIndex);
     		switchPage.onPageSwitched(getPageAt(mCurrentPageIndex), mCurrentPageIndex);
     	}
     }
@@ -280,7 +280,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
      * Initializes various states for this workspace.
      */
     protected void init() {
-        Log.d(LOG_TAG, "init");
+    	DebugLog.d(LOG_TAG, "init");
         mDirtyPageContent = new ArrayList<Boolean>();
         mDirtyPageContent.ensureCapacity(32);
         mScroller = new Scroller(getContext(), new ScrollInterpolator());
@@ -304,7 +304,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
     }
 
     public void setDeleteDropTarget(View v) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "setDeleteDropTarget");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "setDeleteDropTarget");
         mDeleteDropTarget = v;
     }
 
@@ -337,17 +337,17 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
     }
 
     public void setMinScale(float f) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "setMinScale f=" + f);
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "setMinScale f=" + f);
         mMinScale = f;
         requestLayout();
     }
 
     @Override
     public void setScaleX(float scaleX) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "setScaleX scaleX=" + scaleX);
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "setScaleX scaleX=" + scaleX);
         super.setScaleX(scaleX);
         if (isReordering(true)) {
-            if(DebugLog.DEBUG)Log.d(LOG_TAG, "setScaleX 1");
+            if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "setScaleX 1");
             float[] p = mapPointFromParentToChild(this, mParentDownMotionX, mParentDownMotionY);
             mLastMotionX = p[0];
             mLastMotionY = p[1];
@@ -374,7 +374,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
     }
 
     int getViewportOffsetY() {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "getViewportOffsetY: "+getMeasuredHeight()+" getViewportHeight:"+getViewportHeight());
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "getViewportOffsetY: "+getMeasuredHeight()+" getViewportHeight:"+getViewportHeight());
         return (getMeasuredHeight() - getViewportHeight()) / 2;
 //        return 0;
     }
@@ -447,7 +447,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
         int offset         = getChildOffset(mCurrentPageIndex);
         int relativeOffset = getRelativeChildOffset(mCurrentPageIndex);
         int newX = offset - relativeOffset;
-        if(DebugLog.DEBUG){Log.d(LOG_TAG, "updateCurrentPageScroll offset=" + offset
+        if(DebugLog.DEBUG){DebugLog.d(LOG_TAG, "updateCurrentPageScroll offset=" + offset
         		+ ",relOffset=" + relativeOffset + ",newX=" + newX);}
         scrollTo(newX, 0);
         mScroller.setFinalX(newX);
@@ -586,7 +586,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "onMeasure");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "onMeasure");
         if (getChildCount() == 0) {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             return;
@@ -678,8 +678,8 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
 
         if (childCount > 0) {
             if (DEBUG)
-//          Log.d(LOG_TAG, "getRelativeChildOffset(): " + getViewportWidth() + ", " + getChildWidth(0));
-            if(DebugLog.DEBUG)Log.d(LOG_TAG, "getRelativeChildOffset(): " + getViewportHeight() + ", " + getChildHeight(0));
+//          DebugLog.d(LOG_TAG, "getRelativeChildOffset(): " + getViewportWidth() + ", " + getChildWidth(0));
+            if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "getRelativeChildOffset(): " + getViewportHeight() + ", " + getChildHeight(0));
 
             // Calculate the variable page spacing if necessary
             if (mPageSpacing == AUTOMATIC_PAGE_SPACING) {
@@ -717,7 +717,6 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
         if (childCount == 0) {
             return;
         }
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "onLayout()");
 
         int offsetX = getViewportOffsetX();
         int offsetY = getViewportOffsetY();
@@ -755,7 +754,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
     
     @Override
     public void onChildViewAdded(View parent, View child) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "onChildViewAdded");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "onChildViewAdded");
         // This ensures that when children are added, they get the correct
         // transforms / alphas
         // in accordance with any scroll effects.
@@ -766,13 +765,13 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
 
     @Override
     public void onChildViewRemoved(View parent, View child) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "onChildViewRemoved");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "onChildViewRemoved");
         mForceScreenScrolled = true;
     }
 
     protected void invalidateCachedOffsets() {
         int count = getChildCount();
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "invalidateCachedOffsets count=" + count);
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "invalidateCachedOffsets count=" + count);
         if (count == 0) {
             mChildOffsets = null;
             mChildRelativeOffsets = null;
@@ -791,7 +790,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
     }
 
     protected int getChildOffset(int index) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "getChildOffset index=" + index);
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "getChildOffset index=" + index);
         if (index < 0 || index > getChildCount() - 1)
             return 0;
 
@@ -816,7 +815,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
     }
 
     protected int getRelativeChildOffset(int index) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "getRelativeChildOffset index=" + index);
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "getRelativeChildOffset index=" + index);
         if (index < 0 || index > getChildCount() - 1)
             return 0;
 
@@ -836,7 +835,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
         // This functions are called enough times that it actually makes a
         // difference in the
         // profiler -- so just inline the max() here
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "getScaledMeasuredWidth child=" + child);
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "getScaledMeasuredWidth child=" + child);
         final int measuredWidth = child.getMeasuredWidth();
         final int minWidth = mMinimumWidth;
         final int maxWidth = (minWidth > measuredWidth) ? minWidth : measuredWidth;
@@ -918,7 +917,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
 
     @Override
     public boolean requestChildRectangleOnScreen(View child, Rect rectangle, boolean immediate) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "requestChildRectangleOnScreen");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "requestChildRectangleOnScreen");
         int page = indexToPage(indexOfChild(child));
         if (page != mCurrentPageIndex || !mScroller.isFinished()) {
             snapToPage(page);
@@ -929,7 +928,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
 
     @Override
     protected boolean onRequestFocusInDescendants(int direction, Rect previouslyFocusedRect) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "onRequestFocusInDescendants");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "onRequestFocusInDescendants");
         int focusablePage;
         if (mNextPage != INVALID_PAGE) {
             focusablePage = mNextPage;
@@ -961,7 +960,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
 
     @Override
     public void addFocusables(ArrayList<View> views, int direction, int focusableMode) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "addFocusables");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "addFocusables");
         if (mCurrentPageIndex >= 0 && mCurrentPageIndex < getPageCount()) {
             getPageAt(mCurrentPageIndex).addFocusables(views, direction, focusableMode);
         }
@@ -985,7 +984,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
      */
     @Override
     public void focusableViewAvailable(View focused) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "focusableViewAvailable");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "focusableViewAvailable");
         View current = getPageAt(mCurrentPageIndex);
         View v = focused;
         while (true) {
@@ -1009,7 +1008,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
      * Return true if a tap at (x, y) should trigger a flip to the previous page.
      */
     protected boolean hitsPreviousPage(float x, float y) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "hitsPreviousPage");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "hitsPreviousPage");
         return (x < getViewportOffsetX() + getRelativeChildOffset(mCurrentPageIndex) - mPageSpacing);
     }
 
@@ -1017,7 +1016,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
      * Return true if a tap at (x, y) should trigger a flip to the next page.
      */
     protected boolean hitsNextPage(float x, float y) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "hitsNextPage");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "hitsNextPage");
         return (x > (getViewportOffsetX() + getViewportWidth() - getRelativeChildOffset(mCurrentPageIndex) + mPageSpacing));
     }
 
@@ -1224,7 +1223,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
     }
 
     protected float getMaxScrollProgress() {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "getMaxScrollProgress");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "getMaxScrollProgress");
         return 1.0f;
     }
 
@@ -1242,7 +1241,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
     }
 
     protected void acceleratedOverScroll(float amount) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "acceleratedOverScroll");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "acceleratedOverScroll");
         int screenSize = getViewportWidth();
 
         // We want to reach the max over scroll effect when the user has
@@ -1269,12 +1268,12 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
     }
 
     protected void overScroll(float amount) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "overScroll");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "overScroll");
         dampedOverScroll(amount);
     }
 
     protected void dampedOverScroll(float offsetX) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "dampedOverScroll(), offsetX=" + offsetX);
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "dampedOverScroll(), offsetX=" + offsetX);
         if(offsetX == 0) return;
         
         int screenWidth = getViewportWidth();
@@ -1299,7 +1298,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
     }
 
     protected float maxOverScroll() {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "maxOverScroll");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "maxOverScroll");
         // Using the formula in overScroll, assuming that f = 1.0 (which it
         // should generally not
         // exceed). Used to find out how much extra wallpaper we need for the
@@ -1312,7 +1311,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
     // This curve determines how the effect of scrolling over the limits of the
     // page dimishes as the user pulls further and further from the bounds
     private float overScrollInfluenceCurve(float f) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "overScrollInfluenceCurve");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "overScrollInfluenceCurve");
         f -= 1.0f;
         return f * f * f + 1.0f;
     }
@@ -1342,7 +1341,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
 
             case MotionEvent.ACTION_UP:
             	handleActionUp(ev);
-			    Log.i("hxcdebug", "pagerview--ontouch--up");
+            	DebugLog.d("hxcdebug", "pagerview--ontouch--up");
                 break;
 
             case MotionEvent.ACTION_CANCEL:
@@ -1371,7 +1370,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
 	}
 
 	private void handleActionUp(MotionEvent ev) {
-		Log.d(LOG_TAG, "handleActionUp()");
+		DebugLog.d(LOG_TAG, "handleActionUp()");
 		// Gionee <jiangxiao> <2014-04-18> modify for CR01200286 begin
 //		if (mTouchState == TOUCH_STATE_SCROLLING) {
 //		    handleActionUpScrolling(ev);
@@ -1394,7 +1393,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
 	}
 
 	private void handleActionUpReordering(MotionEvent ev) {
-		Log.d(LOG_TAG, "handleActionUpReordering()");
+		DebugLog.d(LOG_TAG, "handleActionUpReordering()");
 		// Update the last motion position
 		mLastMotionX = ev.getX();
 		mLastMotionY = ev.getY();
@@ -1423,7 +1422,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
 	}
 
 	private void handleActionUpNextPage() {
-		Log.d(LOG_TAG, "handleActionUpNextPage()");
+		DebugLog.d(LOG_TAG, "handleActionUpNextPage()");
 		// at this point we have not moved beyond the touch slop
 		// (otherwise mTouchState would be TOUCH_STATE_SCROLLING), so
 		// we can just page
@@ -1436,7 +1435,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
 	}
 
 	private void handleActionUpPrevPage() {
-		Log.d(LOG_TAG, "handleActionUpPrevPage()");
+		DebugLog.d(LOG_TAG, "handleActionUpPrevPage()");
 		// at this point we have not moved beyond the touch slop
 		// (otherwise mTouchState would be TOUCH_STATE_SCROLLING), so
 		// we can just page
@@ -1449,7 +1448,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
 	}
 
 	private void handleActionUpScrolling(MotionEvent ev) {
-	    if(DebugLog.DEBUG)Log.d(LOG_TAG, "handleActionUpScrolling()");
+	    if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "handleActionUpScrolling()");
 		final int activePointerId = mActivePointerId;
 		// Gionee <jiangxiao> <2014-04-18> modify for CR01200286 begin
 		float x = ev.getX();
@@ -1540,12 +1539,12 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
 		int leftBufferEdge = (int) (mapPointFromChildToParent(this, mViewport.left, 0)[0] + bufferSize);
 		int rightBufferEdge = (int) (mapPointFromChildToParent(this, mViewport.right, 0)[0] - bufferSize);
 
-		if(DebugLog.DEBUG)Log.d(LOG_TAG, "leftBufferEdge: " + leftBufferEdge);
-		if(DebugLog.DEBUG)Log.d(LOG_TAG, "rightBufferEdge: " + rightBufferEdge);
-		if(DebugLog.DEBUG)Log.d(LOG_TAG, "mLastMotionX: " + mLastMotionX);
-		if(DebugLog.DEBUG)Log.d(LOG_TAG, "mLastMotionY: " + mLastMotionY);
-		if(DebugLog.DEBUG)Log.d(LOG_TAG, "mParentDownMotionX: " + mParentDownMotionX);
-		if(DebugLog.DEBUG)Log.d(LOG_TAG, "mParentDownMotionY: " + mParentDownMotionY);
+		if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "leftBufferEdge: " + leftBufferEdge);
+		if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "rightBufferEdge: " + rightBufferEdge);
+		if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "mLastMotionX: " + mLastMotionX);
+		if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "mLastMotionY: " + mLastMotionY);
+		if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "mParentDownMotionX: " + mParentDownMotionX);
+		if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "mParentDownMotionY: " + mParentDownMotionY);
 
 		int pageIndexToSnapTo = -1;
 		if((mParentDownMotionX < leftBufferEdge) && (dragViewIndex > 0)) {
@@ -1666,7 +1665,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
 	}
 
 	private void handleActionDown(MotionEvent ev) {
-		Log.d(LOG_TAG, "handleActionDown()");
+		DebugLog.d(LOG_TAG, "handleActionDown()");
 		/*
 		 * If being flinged and user touches, stop the fling.
 		 * isFinished() will be false if being flinged.
@@ -1708,7 +1707,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
     public abstract void onAddView(View v, int index);
 
     private void resetTouchState() {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "resetTouchState");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "resetTouchState");
         releaseVelocityTracker();
         endReordering();
         mTouchState = TOUCH_STATE_REST;
@@ -1721,7 +1720,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
 
     @Override
     public boolean onGenericMotionEvent(MotionEvent event) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "onGenericMotionEvent");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "onGenericMotionEvent");
         if ((event.getSource() & InputDevice.SOURCE_CLASS_POINTER) != 0) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_SCROLL: {
@@ -1759,7 +1758,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
     }
 
     private void releaseVelocityTracker() {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "releaseVelocityTracker");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "releaseVelocityTracker");
         if (mVelocityTracker != null) {
             mVelocityTracker.recycle();
             mVelocityTracker = null;
@@ -1767,7 +1766,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
     }
 
     private void onSecondaryPointerUp(MotionEvent ev) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "onSecondaryPointerUp");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "onSecondaryPointerUp");
         final int pointerIndex = (ev.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK) >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
         final int pointerId = ev.getPointerId(pointerIndex);
         if (pointerId == mActivePointerId) {
@@ -1787,7 +1786,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
 
     @Override
     public void requestChildFocus(View child, View focused) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "requestChildFocus");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "requestChildFocus");
         super.requestChildFocus(child, focused);
         int page = indexToPage(indexOfChild(child));
         if (page >= 0 && page != getCurrentPageIndex() && !isInTouchMode()) {
@@ -1796,7 +1795,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
     }
 
     protected int getChildIndexForRelativeOffset(int relativeOffset) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "getChildIndexForRelativeOffset");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "getChildIndexForRelativeOffset");
         final int childCount = getChildCount();
         int left;
         int right;
@@ -1811,7 +1810,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
     }
 
     protected int getChildWidth(int index) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "getChildWidth");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "getChildWidth");
         // This functions are called enough times that it actually makes a
         // difference in the
         // profiler -- so just inline the max() here
@@ -1820,7 +1819,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
         return (minWidth > measuredWidth) ? minWidth : measuredWidth;
     }
     protected int getChildHeight(int index) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "getChildHeight");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "getChildHeight");
         // This functions are called enough times that it actually makes a
         // difference in the
         // profiler -- so just inline the max() here
@@ -1844,7 +1843,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
     }
 
     int getPageNearestToCenterOfScreen() {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "getPageNearestToCenterOfScreen");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "getPageNearestToCenterOfScreen");
         int minDistanceFromScreenCenter = Integer.MAX_VALUE;
         int minDistanceFromScreenCenterIndex = -1;
         int screenCenter = getViewportOffsetX() + getScrollX() + (getViewportWidth() / 2);
@@ -1864,7 +1863,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
     }
 
     protected void snapToDestination() {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "snapToDestination");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "snapToDestination");
         snapToPage(getPageNearestToCenterOfScreen(), PAGE_SNAP_ANIMATION_DURATION);
     }
 
@@ -1886,21 +1885,21 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
     // that the distance
     // of travel has on the overall snap duration.
     float distanceInfluenceForSnapDuration(float f) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "distanceInfluenceForSnapDuration");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "distanceInfluenceForSnapDuration");
         f -= 0.5f; // center the values about 0.
         f *= 0.3f * Math.PI / 2.0f;
         return (float) Math.sin(f);
     }
 
     protected void snapToPageWithVelocity(int whichPage, int velocity) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "snapToPageWithVelocity");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "snapToPageWithVelocity");
         whichPage = Math.max(0, Math.min(whichPage, getChildCount() - 1));
         int halfScreenSize = getViewportWidth() / 2;
 
         if (DEBUG)
-            Log.d(LOG_TAG, "snapToPage.getChildOffset(): " + getChildOffset(whichPage));
+            DebugLog.d(LOG_TAG, "snapToPage.getChildOffset(): " + getChildOffset(whichPage));
         if (DEBUG)
-            Log.d(LOG_TAG, "snapToPageWithVelocity.getRelativeChildOffset(): " + getViewportWidth() + ", "
+            DebugLog.d(LOG_TAG, "snapToPageWithVelocity.getRelativeChildOffset(): " + getViewportWidth() + ", "
                     + getChildWidth(whichPage));
         final int newX = getChildOffset(whichPage) - getRelativeChildOffset(whichPage);
         int delta = newX - mUnboundedScrollX;
@@ -1938,26 +1937,26 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
     }
 
     protected void snapToPage(int whichPage) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "snapToPage");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "snapToPage");
         snapToPage(whichPage, PAGE_SNAP_ANIMATION_DURATION);
     }
 
     protected void snapToPageImmediately(int whichPage) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "snapToPageImmediately");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "snapToPageImmediately");
         snapToPage(whichPage, PAGE_SNAP_ANIMATION_DURATION, true);
     }
 
     protected void snapToPage(int whichPage, int duration) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "snapToPage");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "snapToPage");
         snapToPage(whichPage, duration, false);
     }
 
     protected void snapToPage(int whichPage, int duration, boolean immediate) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "snapToPage");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "snapToPage");
         whichPage = Math.max(0, Math.min(whichPage, getPageCount() - 1));
 
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "snapToPage.getChildOffset(): " + getChildOffset(whichPage));
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "snapToPage.getRelativeChildOffset(): " + getViewportWidth() + ", "
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "snapToPage.getChildOffset(): " + getChildOffset(whichPage));
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "snapToPage.getRelativeChildOffset(): " + getViewportWidth() + ", "
                 + getChildWidth(whichPage));
         int newX = getChildOffset(whichPage) - getRelativeChildOffset(whichPage);
         final int sX = mUnboundedScrollX;
@@ -1966,7 +1965,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
     }
 
     protected void snapToPage(int whichPage, int delta, int duration) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "snapToPage");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "snapToPage");
         snapToPage(whichPage, delta, duration, false);
     }
 
@@ -2004,7 +2003,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
     }
 
     public void scrollLeft() {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "scrollLeft");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "scrollLeft");
         if (mScroller.isFinished()) {
             if (mCurrentPageIndex > 0)
                 snapToPage(mCurrentPageIndex - 1);
@@ -2015,7 +2014,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
     }
 
     public void scrollRight() {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "scrollRight");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "scrollRight");
         if (mScroller.isFinished()) {
             if (mCurrentPageIndex < getChildCount() - 1)
                 snapToPage(mCurrentPageIndex + 1);
@@ -2026,7 +2025,7 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
     }
 
     public int getPageForView(View v) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "getPageForView");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "getPageForView");
         int result = -1;
         if (v != null) {
             ViewParent vp = v.getParent();
@@ -2580,6 +2579,6 @@ public abstract class KeyguardPagerView extends ViewGroup implements ViewGroup.O
     protected void finalize() throws Throwable {
         // TODO Auto-generated method stub
         super.finalize();
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "finalize");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "finalize");
     }
 }

@@ -40,7 +40,9 @@ public class FingerIdentifyManager {
     public FingerIdentifyManager(Context  context){
         mContext=context;
         sInstance=this  ;
+        FingerThread.getInstance().init();
         registerFingerSwitchObserver();
+        
     }
             
     public static FingerIdentifyManager  getInstance(){
@@ -64,13 +66,18 @@ public class FingerIdentifyManager {
         };
     };
     
-    private void startIdentifyIfNeed(){
-        boolean isStartFingerPrint=isActiveFingerPrint();
-        DebugLog.d(LOG_TAG, "startIdentifyIfNeed  isStartFingerPrint:"+isStartFingerPrint);
-        if(isStartFingerPrint && isHaveFinger()){
-        	startIdentifyTimeout(mFingerInts, 25*1000);
-        }
-    }
+	private void startIdentifyIfNeed() {
+
+		boolean isStartFingerPrint = isActiveFingerPrint();
+		DebugLog.d(LOG_TAG, "startIdentifyIfNeed  isStartFingerPrint:"
+				+ isStartFingerPrint);
+		if (isStartFingerPrint && isHaveFinger()) {
+			DebugLog.d(LOG_TAG, "startIdentifyIfNeed...."
+					+ Thread.currentThread().getId());
+			startIdentifyTimeout(mFingerInts, 25 * 1000);
+		}
+
+	}
 
     private boolean isActiveFingerPrint() {
         KeyguardViewHostManager manager = KeyguardViewHostManager.getInstance();
@@ -118,6 +125,41 @@ public class FingerIdentifyManager {
         return true;
     }
     
+    public boolean openFingerPrintOrNot(){
+    	 KeyguardViewHostManager manager = KeyguardViewHostManager.getInstance();
+         if (manager == null) {
+             return false;
+         }
+         DebugLog.d(LOG_TAG, "isActiveFingerPrint  isSecureFrozen: "+isSecureFrozen());
+         if(isSecureFrozen()){
+         	return false;
+         }
+
+         boolean isSecure = manager.isSecure();
+         DebugLog.d(LOG_TAG, "isActiveFingerPrint  isSecure: "+isSecure);
+         if (!isSecure) {
+             return false;
+         }
+         boolean isSkylightShown = manager.getIsSkylightShown();
+         DebugLog.d(LOG_TAG, "isActiveFingerPrint  isSkylightShown: "+isSkylightShown);
+         if (isSkylightShown) {
+             return false;
+         }
+         boolean isKeyguardShown = manager.isShowingAndNotOccluded();
+         DebugLog.d(LOG_TAG, "isActiveFingerPrint  isKeyguardShown: "+isKeyguardShown);
+         if (!isKeyguardShown) {
+             return false;
+         }
+         
+         boolean isSimRequired = manager.needsFullscreenBouncer();
+         DebugLog.d(LOG_TAG, "isActiveFingerPrint  isSimRequired: "+isSimRequired);
+         if (isSimRequired) {
+             return false;
+         }
+         return true;
+    }
+    
+    
     private boolean readFingerprintSwitchValue(){
         //0 is close;1 is open
         int unlockValue = Settings.Secure.getInt(mContext.getContentResolver(),
@@ -137,75 +179,80 @@ public class FingerIdentifyManager {
     	return mFingerprintSwitchOpen && isHaveFinger();
     }
     
+	private void getIds() {
 
-    private int[] getIds() {
-        DebugLog.d(LOG_TAG, "getIds() start  time: "+SystemClock.uptimeMillis());
-        try {
-            Class<?> GnFingerPrintManager = (Class<?>) Class.forName(CLASS_GNFPMANAGER);
-            Method getIds = GnFingerPrintManager.getMethod("getIds");
-            Object obj = GnFingerPrintManager.newInstance();
+		DebugLog.d(LOG_TAG, "resetFingerIds...."
+				+ Thread.currentThread().getId());
+		DebugLog.d(LOG_TAG,
+				"getIds() start  time: " + SystemClock.uptimeMillis());
+		try {
 
-            int[] ids = (int[]) getIds.invoke(obj);
-            
-            DebugLog.d(LOG_TAG, "getIds() end ids=" + Arrays.toString(ids)+"  time: "+SystemClock.uptimeMillis());
-            return ids;
-        } catch (Exception e) {
-            DebugLog.d(LOG_TAG, Log.getStackTraceString(e));
-            
-        }
-        return null;
-    }
+			Class<?> GnFingerPrintManager = (Class<?>) Class
+					.forName(CLASS_GNFPMANAGER);
+			Method getIds = GnFingerPrintManager.getMethod("getIds");
+			Object obj = GnFingerPrintManager.newInstance();
+
+			int[] ids = (int[]) getIds.invoke(obj);
+
+			DebugLog.d(LOG_TAG, "getIds() end ids=" + Arrays.toString(ids)
+					+ "  time: " + SystemClock.uptimeMillis());
+			mFingerInts = ids;
+		} catch (Exception e) {
+			DebugLog.d(LOG_TAG, Log.getStackTraceString(e));
+			mFingerInts = null;
+		}
+	}
     
     public void cancel( ) {
-        DebugLog.d(LOG_TAG, "cancel()-start--");
-        try {
-            Method cancel = mGnFingerPrintManagerClass.getMethod("cancel");
-            cancel.invoke(mObj);
-            mIsStartIdentifyState = false;
-        } catch (Exception e) {
-            e.toString();
-        }finally{
-        	resetIdentifyFailedTimes();
-        }
-    }
-    
-//    public void startIdentify(int[] ids) {
-//        try {
-//            DebugLog.d(LOG_TAG, "startIdentify() start");
-//            Class<?> GnFingerPrintManager = (Class<?>) Class.forName(CLASS_GNFPMANAGER);
-//            Object obj = GnFingerPrintManager.newInstance();
-//            mGnFingerPrintManagerClass = GnFingerPrintManager;
-//            mObj = obj;
-//            
-//            Method startIdentify = GnFingerPrintManager.getMethod("startIdentify", IGnIdentifyCallback.class,
-//                    int[].class);
-//            startIdentify.invoke(obj, mIdentifyCb, ids);
-//            DebugLog.d(LOG_TAG, "startIdentify() end");
-//
-//        } catch (Exception e) {
-//            DebugLog.d(LOG_TAG, Log.getStackTraceString(e));
-//        }
-//    }
-    
-    private void startIdentifyTimeout(int[] ids, long timeout) {
-        try {
-            DebugLog.d(LOG_TAG, "startIdentifyTimeout() start");
-            mIsStartIdentifyState = true;
-            
-            Class<?> GnFingerPrintManager = (Class<?>) Class.forName(CLASS_GNFPMANAGER);
-            Object obj = GnFingerPrintManager.newInstance();
-            mGnFingerPrintManagerClass = GnFingerPrintManager;
-            mObj = obj;
-            
-            Method startIdentify = GnFingerPrintManager.getMethod("startIdentify", IGnIdentifyCallback.class, int[].class, long.class);
-            startIdentify.invoke(obj, mIdentifyCb, ids, timeout);
-            
-            DebugLog.d(LOG_TAG, "startIdentifyTimeout() end");
 
-        } catch (Exception e) {
-            DebugLog.d(LOG_TAG, Log.getStackTraceString(e));
-        }
+    	synchronized (this) {
+    	 	FingerThread.getInstance().excuteTask(new Runnable() {
+    			
+    			@Override
+    			public void run() {
+    				DebugLog.d(LOG_TAG, "cancel...."+Thread.currentThread().getId());
+    				 DebugLog.d(LOG_TAG, "cancel()-start--");
+    			        try {
+    			            Method cancel = mGnFingerPrintManagerClass.getMethod("cancel");
+    			            cancel.invoke(mObj);
+    			            mIsStartIdentifyState = false;
+    			        } catch (Exception e) {
+    			            e.toString();
+    			        }finally{
+    			        	resetIdentifyFailedTimes();
+    			        }
+    				
+    				
+    			}
+    		});
+		}
+       
     }
+    
+
+	private void startIdentifyTimeout(final int[] ids, final long timeout) {
+
+		try {
+			DebugLog.d(LOG_TAG, "startIdentifyTimeout() start...Arrays.toString(ids)="+Arrays.toString(ids));
+			mIsStartIdentifyState = true;
+
+			Class<?> GnFingerPrintManager = (Class<?>) Class
+					.forName(CLASS_GNFPMANAGER);
+			Object obj = GnFingerPrintManager.newInstance();
+			mGnFingerPrintManagerClass = GnFingerPrintManager;
+			mObj = obj;
+
+			Method startIdentify = GnFingerPrintManager.getMethod(
+					"startIdentify", IGnIdentifyCallback.class, int[].class,
+					long.class);
+			startIdentify.invoke(obj, mIdentifyCb, ids, timeout);
+
+			DebugLog.d(LOG_TAG, "startIdentifyTimeout() end");
+
+		} catch (Exception e) {
+			DebugLog.d(LOG_TAG, Log.getStackTraceString(e));
+		}
+	}
 
     
     private IGnIdentifyCallback mIdentifyCb = new IGnIdentifyCallback() {
@@ -251,7 +298,14 @@ public class FingerIdentifyManager {
 			return;
 			
 		} else if (reason == 1) {// timeout
-			startIdentifyIfNeed();
+		     synchronized (this) {
+   	    		FingerThread.getInstance().excuteTask(new Runnable() {
+   					@Override
+   					public void run() {
+   						 startIdentifyIfNeed();
+   					}
+   	    		});
+              }
 			
 		} else if (reason == 0) {
 			DebugLog.d(LOG_TAG, "onFingerNoMatch mIdentifyFailedTimes: " + mIdentifyFailedTimes);
@@ -274,14 +328,29 @@ public class FingerIdentifyManager {
                  KeyguardViewHostManager.getInstance().shakeFingerIdentifyTip();
                  VibatorUtil.amigoVibrate(mContext, VibatorUtil.LOCKSCREEN_UNLOCK_CODE_ERROR,
                        VibatorUtil.UNLOCK_ERROR_VIBRATE_TIME);
-                 startIdentifyIfNeed();
+                 synchronized (this) {
+      	    		FingerThread.getInstance().excuteTask(new Runnable() {
+      					@Override
+      					public void run() {
+      						 startIdentifyIfNeed();
+      					}
+      	    		});
+                 }
+                
                  
     		} else if(mIdentifyFailedTimes == 2){
     			mIdentifyFailedTimes = 0;
     			KeyguardViewHostManager.getInstance().shakeFingerIdentifyTip();
     			VibatorUtil.amigoVibrate(mContext, VibatorUtil.LOCKSCREEN_UNLOCK_CODE_ERROR,
                         VibatorUtil.UNLOCK_ERROR_VIBRATE_TIME);
-    			startIdentifyIfNeed();
+    		     synchronized (this) {
+       	    		FingerThread.getInstance().excuteTask(new Runnable() {
+       					@Override
+       					public void run() {
+       						 startIdentifyIfNeed();
+       					}
+       	    		});
+                  }
     			KeyguardViewHostManager.getInstance().scrollToUnlockHeightByOther(true);
     		}
     		
@@ -290,7 +359,14 @@ public class FingerIdentifyManager {
     		
     		mIdentifyFailedTimes = 0;
     		KeyguardViewHostManager.getInstance().fingerPrintFailed();
-    		startIdentifyIfNeed();
+    	     synchronized (this) {
+   	    		FingerThread.getInstance().excuteTask(new Runnable() {
+   					@Override
+   					public void run() {
+   						 startIdentifyIfNeed();
+   					}
+   	    		});
+              }
     	}
     }
     
@@ -312,7 +388,15 @@ public class FingerIdentifyManager {
  		public void handleMessage(Message msg) {
  			super.handleMessage(msg);
  			readFingerprintSwitchValue();
- 			resetFingerIds();
+ 			synchronized (this) {
+ 	    		FingerThread.getInstance().excuteTask(new Runnable() {
+ 					@Override
+ 					public void run() {
+ 						getIds();
+ 					}
+ 	    		});
+ 			}
+ 			
  		}
  	};
  	
@@ -325,10 +409,7 @@ public class FingerIdentifyManager {
  				new FingerSwitchContentObserver(mFingerHandler));
  	}
  	
-	private void resetFingerIds() {
-		mFingerInts = getIds();
-	}
-	
+
     private boolean isHaveFinger(){
     	if(mFingerInts != null && mFingerInts.length > 0){
     		DebugLog.d(LOG_TAG, "isHaveFinger  return true");
@@ -374,19 +455,40 @@ public class FingerIdentifyManager {
  	}
 
     public void startIdentify(){
-    	DebugLog.d(LOG_TAG, "startIdentify  mIsStartIdentifyState:"+mIsStartIdentifyState);
-    	if(mIsStartIdentifyState){
-    		return;
+    	
+    	synchronized (this) {
+    		FingerThread.getInstance().excuteTask(new Runnable() {
+				@Override
+				public void run() {
+					DebugLog.d(LOG_TAG, "startIdentify  mIsStartIdentifyState:"+mIsStartIdentifyState);
+					if(mIsStartIdentifyState){
+			    		return;
+			    	}
+					getIds();
+			    	startIdentifyIfNeed();
+				}
+				
+    		});
+	    	
     	}
-    	resetFingerIds();
-    	startIdentifyIfNeed();
+    		
+    	
     }
     
     
     public void UnFrozenStartFingerIdentify(){
     	DebugLog.d(LOG_TAG, "startIdentify  mIsStartIdentifyState:"+mIsStartIdentifyState);
-    	startIdentifyIfNeed();
+        synchronized (this) {
+	    		FingerThread.getInstance().excuteTask(new Runnable() {
+					@Override
+					public void run() {
+						 startIdentifyIfNeed();
+					}
+	    		});
+         }
     }
     
  	// <Gionee> feihm CR01165190 end
+    
+
 }

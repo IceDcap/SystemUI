@@ -31,10 +31,9 @@ public class FileUtil {
      * 
      */
     public static void deleteMusic() {
-        DebugLog.d(TAG, "delete all local music");
         String musicPath = Common.getSdCardPath() + DIRECTORY_MUSIC;
         boolean flag = deleteDirectory(musicPath);
-        Log.v(TAG, "deleteMusic  flag = " + flag);
+        DebugLog.d(TAG, "deleteMusic  flag = " + flag);
     }
     
     public static String getDirectoryFavorite() {
@@ -46,7 +45,7 @@ public class FileUtil {
         boolean success = false;
         String localfile = getSdCardPath() + DIRECTORY_FAVORITE;
         isExistDirectory(localfile);
-        Log.v("haokan", imageFileName);
+        DebugLog.d(TAG, imageFileName);
         FileOutputStream out = null;
         
         File file = new File(imageFileName);
@@ -62,7 +61,7 @@ public class FileUtil {
             
         } catch (Exception e) {
             e.printStackTrace();
-            Log.v("haokan", "", e);
+            Log.d(TAG, "", e);
             success = false;
         } finally{
         
@@ -147,7 +146,7 @@ public class FileUtil {
         isExistDirectory(localfile);
         if (fileScreenLock.isDirectory()) {
             File[] files = fileScreenLock.listFiles();
-            Log.v(TAG, "files.length = " + files.length);
+            DebugLog.d(TAG, "files.length = " + files.length);
             for (final File file : files) {
 
                 String absolutePath = file.getAbsolutePath();
@@ -155,7 +154,7 @@ public class FileUtil {
                     try {
                         String destPath = localfile
                                 + file.getAbsolutePath().substring(absolutePath.lastIndexOf("/"));
-                        Log.v(TAG, "destPath = " + destPath);
+                        DebugLog.d(TAG, "destPath = " + destPath);
                         File dest = new File(destPath);
                         if (!dest.exists()) {
                             dest.createNewFile();
@@ -169,12 +168,12 @@ public class FileUtil {
                         FileChannel sourceCh = fis.getChannel();
                         FileChannel destCh = fos.getChannel();
                         long value = sourceCh.transferTo(0, sourceCh.size(), destCh); 
-                        Log.v(TAG, "value = " + value);
+                        DebugLog.d(TAG, "value = " + value);
                         Common.insertMediaStore(context,0, 0, destPath);
                         sourceCh.close();
                         destCh.close();
                     } catch (Exception e) {
-                        Log.v(TAG, "", e);
+                    	Log.d(TAG, "", e);
                     }
                 }
             }
@@ -186,7 +185,7 @@ public class FileUtil {
         File fileScreenLock = new File(SCREENLOCK_WALLPAPER_LOCATION);
         if (fileScreenLock.exists() && fileScreenLock.isDirectory()) {
             File[] files = fileScreenLock.listFiles();
-            Log.v(TAG, "files.length = " + files.length);
+            DebugLog.d(TAG, "files.length = " + files.length);
             for (final File file : files) {
                 if (file.isFile() && file.getAbsolutePath().endsWith(".jpg")) {
                     try {
@@ -194,7 +193,7 @@ public class FileUtil {
                         DiskUtils.saveDefaultThumbnail(context, fis, file.getName());
                         fis.close();
                     } catch (Exception e) {
-                        Log.v(TAG, "", e);
+                    	Log.d(TAG, "", e);
                     } 
                 }
             }

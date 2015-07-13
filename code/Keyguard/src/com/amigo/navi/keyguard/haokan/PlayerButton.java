@@ -10,7 +10,9 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
+import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.haokan.PlayerManager.State;
+import com.amigo.navi.keyguard.haokan.entity.Music;
 import com.android.keyguard.R;
 
 public class PlayerButton extends View {
@@ -39,10 +41,23 @@ public class PlayerButton extends View {
     
     public void setState(State mState) {
         this.mState = mState;
-        if (mState == State.NULL) {
+        if (mState == State.NULL || mState == State.PREPARE) {
             mFraction = 0;
         }
         invalidate();
+    }
+    
+    
+    public void setState(Music music) {
+        if (music == null) {
+            setState(State.NULL);
+            return;
+        }
+        this.mState = music.getmState();
+        this.mFraction = music.getProgress();
+        DebugLog.d("zhaowei", "mState = " + mState + "  Progress = " + mFraction + "  ");
+        invalidate();
+        
     }
 
     public float getFraction() {

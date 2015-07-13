@@ -6,17 +6,17 @@
 
     <com.amigo.navi.keyguard.haokan.LongPressView
         android:id="@+id/LongPressView"
-        android:layout_width="44dp"
-        android:layout_height="44dp"
+        android:layout_width="@dimen/guide_long_press_view_size"
+        android:layout_height="@dimen/guide_long_press_view_size"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="160dp" />
+        android:layout_marginTop="@dimen/guide_long_press_view_margintop" />
 
     <ImageView
         android:id="@+id/hand"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="180dp"
+        android:layout_marginTop="@dimen/guide_long_press_hand_margintop"
         android:alpha="0"
         android:src="@drawable/hand"
           />
@@ -26,7 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="227dp"
+        android:layout_marginBottom="@dimen/guide_long_press_hand_marginbottom"
         android:alpha="0"
         android:gravity="center"
         android:text="@string/guide_long_press_tip" />
@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="68dp"
+        android:layout_marginBottom="@dimen/guide_long_press_closeview_marginbottom"
         android:alpha="0"
         android:background="@drawable/guide_long_press_close" />
 

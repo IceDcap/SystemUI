@@ -375,6 +375,13 @@
 	<dimen name="guide_long_press_secondcircle_maxradius">12dp</dimen>
 	<dimen name="guide_long_press_thirdcircle_maxradius">20dp</dimen>
 	
+	<dimen name="guide_long_press_view_size">44dp</dimen>
+	<dimen name="guide_long_press_view_margintop">160dp</dimen>
+	<dimen name="guide_long_press_hand_margintop">180dp</dimen>
+	<dimen name="guide_long_press_hand_marginbottom">227dp</dimen>
+	<dimen name="guide_long_press_closeview_marginbottom">68dp</dimen>
+	
+	
 	<dimen name="guide_click_title_circle_to_radius">15dp</dimen>
 	<dimen name="guide_click_title_circle_from_radius">0dp</dimen>
 	<dimen name="guide_click_title_view_size">40dp</dimen>

@@ -11,7 +11,7 @@ import android.util.Log;
 public class DebugLog {
 	
 	public static final boolean DEBUG = true;
-	public static final boolean DEBUGMAYBE=true;
+	public static final boolean DEBUGMAYBE=false;
 	private static final boolean OUTPUT_LOGCAT = true;
 //	private static final boolean OUTPUT_FILE = true;
 	private static final String TAG = "NaviKeyguard";

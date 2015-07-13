@@ -295,14 +295,14 @@ public class AmigoKeyguardInfoZone extends FrameLayout{
 	@Override
 	protected void onAttachedToWindow() {
 	    super.onAttachedToWindow();
-	    if(DebugLog.DEBUG)Log.d(TAG, "NewWidget42 onAttachedToWindow " + this);
+	    if(DebugLog.DEBUG)DebugLog.d(TAG, "NewWidget42 onAttachedToWindow " + this);
 	    registeReceivers();
 	}
 	
 	@Override
 	protected void onDetachedFromWindow() {
 		super.onDetachedFromWindow();
-		if(DebugLog.DEBUG)Log.d(TAG, "NewWidget42 onDetachedFromWindow ");
+		if(DebugLog.DEBUG)DebugLog.d(TAG, "NewWidget42 onDetachedFromWindow ");
 		retrieve();
 	}
 	
@@ -351,7 +351,7 @@ public class AmigoKeyguardInfoZone extends FrameLayout{
 		
 		Date date = new Date();
 		boolean is24HourFormat = DateFormat.is24HourFormat(mContext);
-		if(DebugLog.DEBUG){Log.d(TAG,
+		if(DebugLog.DEBUG){DebugLog.d(TAG,
 				"is24HourFormat-----" + is24HourFormat + ",hash="
 						+ mContext.hashCode() + ",date " + date);}
 		setHourFormat(mWidgetTimeHour,date, is24HourFormat);
@@ -459,7 +459,7 @@ public class AmigoKeyguardInfoZone extends FrameLayout{
 		// Gionee <jingyn> <2014-08-04> add for CR01334148 begin
 		if (dateFormat instanceof SimpleDateFormat) {
             String pattern=((SimpleDateFormat) dateFormat).toLocalizedPattern();
-            if(DebugLog.DEBUG)Log.d(TAG, "pattern: "+pattern);
+            if(DebugLog.DEBUG)DebugLog.d(TAG, "pattern: "+pattern);
             if ("yyyy-M-d".equals(pattern)) {
                 ((SimpleDateFormat) dateFormat).applyPattern("yyyy-MM-dd");
             }
@@ -474,12 +474,12 @@ public class AmigoKeyguardInfoZone extends FrameLayout{
 	@Override
 	protected void onVisibilityChanged(View changedView, int visibility) {
 		super.onVisibilityChanged(changedView, visibility);
-		if(DebugLog.DEBUG)Log.d(TAG, "onVisibilityChanged = " + visibility);
+		if(DebugLog.DEBUG)DebugLog.d(TAG, "onVisibilityChanged = " + visibility);
 	}
 
 	@Override
 	protected void onWindowVisibilityChanged(int visibility) {
-	    if(DebugLog.DEBUG)Log.d(TAG, "onWindowVisibilityChanged = " + visibility);
+	    if(DebugLog.DEBUG)DebugLog.d(TAG, "onWindowVisibilityChanged = " + visibility);
 		if (visibility == View.VISIBLE && mAnimationRunnable != null) {
 			mHandler.postAtFrontOfQueue(mAnimationRunnable);
 			mAnimationRunnable = null;

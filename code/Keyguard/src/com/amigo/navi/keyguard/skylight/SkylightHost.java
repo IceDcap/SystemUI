@@ -227,7 +227,7 @@ public class SkylightHost extends FrameLayout {
      * when music is playing, add music widget
      */
     private void addMusicWidget() {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "isMusicForzen: "+mIsMusicFrozen+"  is MusicWidget null? "+(mMusicWidget==null));
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "isMusicForzen: "+mIsMusicFrozen+"  is MusicWidget null? "+(mMusicWidget==null));
         if (mIsMusicFrozen) {
             mPagerView.removeView(mMusicWidget);
             KeyguardWidgetUtils.getInstance(mContext).deleteWidget(KeyguardWidgetUtils.WIDGET_NAME_MUSIC_SKYLIGHT);
@@ -238,7 +238,7 @@ public class SkylightHost extends FrameLayout {
                 //((ViewGroup)mMusicWidget.getParent()).removeView(mMusicWidget);
             } else {
                 mMusicWidget = KeyguardWidgetUtils.getInstance(mContext).createMusicWidgetForSkylight();
-                if(DebugLog.DEBUG)Log.d(LOG_TAG, "addMusicWidget  widget is null? " + (mMusicWidget == null));
+                if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "addMusicWidget  widget is null? " + (mMusicWidget == null));
                 if (mMusicWidget != null) {
                     int musicPaddingBottom = getResources().getDimensionPixelSize(R.dimen.skylight_music_padding_bottom);
                     mMusicWidget.setPadding(0, 0, 0, musicPaddingBottom);
@@ -259,7 +259,7 @@ public class SkylightHost extends FrameLayout {
     
 
     private void setToMusicPageIfPlaying(){
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "isMusicPlaying: "+mIsMusicPlaying);
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "isMusicPlaying: "+mIsMusicPlaying);
         if(mIsMusicPlaying){
             mPagerView.setCurrentPageIndex(0);
             mPagerView.toast();
@@ -384,7 +384,7 @@ public class SkylightHost extends FrameLayout {
     	super.onAttachedToWindow();
     	KeyguardWidgetUtils.getInstance(mContext).startHostListening();
     	registerReceivers();
-    	if(DebugLog.DEBUG)Log.d(LOG_TAG, "SkylightHost  onAttachedToWindow()");
+    	if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "SkylightHost  onAttachedToWindow()");
     }
     
     @Override
@@ -392,12 +392,12 @@ public class SkylightHost extends FrameLayout {
     	super.onDetachedFromWindow();
     	unregisterReceivers();
     	KeyguardWidgetUtils.getInstance(mContext).stopHostListening();
-    	if(DebugLog.DEBUG)Log.d(LOG_TAG, "SkylightHost  onDetachedFromWindow()");
+    	if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "SkylightHost  onDetachedFromWindow()");
     }
     
     public void onConfigurationChanged() {
         if (DebugLog.DEBUG)
-            Log.d(LOG_TAG, "skylight host onConfigurationChanged------------ ");
+        	DebugLog.d(LOG_TAG, "skylight host onConfigurationChanged------------ ");
         Configuration newConfig = getResources().getConfiguration();
         String currentFontStyle = AmigoKeyguardUtils.getCurrretFontStyle(newConfig, mOldFontStyle);
         boolean isChangeFontStyle = false;
@@ -480,7 +480,7 @@ public class SkylightHost extends FrameLayout {
                 if (MUSIC_PACKAGE_NAME.equals(packageName)) {
                     getIsMusicAppFrozen();
                     if (DebugLog.DEBUG)
-                        Log.d(LOG_TAG, "packageName: " + packageName + "  action: " + action + " isMusicFrozen: "
+                    	DebugLog.d(LOG_TAG, "packageName: " + packageName + "  action: " + action + " isMusicFrozen: "
                                 + mIsMusicFrozen);
                 } else if (WEATHER_PACKAGE_NAME.equals(packageName)) {
                     mHandler.sendEmptyMessage(UPDATE_WEATHER_INFO);

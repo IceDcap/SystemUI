@@ -351,7 +351,7 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 		if (widthMode == MeasureSpec.UNSPECIFIED
 				|| heightMode == MeasureSpec.UNSPECIFIED
 				|| widthSize <= 0 || heightSize <= 0) {
-		    Log.d(LOG_TAG, "onMeasure  UNSPECIFIED---------");
+			DebugLog.d(LOG_TAG, "onMeasure  UNSPECIFIED---------");
 		    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 			return;
 		}
@@ -531,7 +531,7 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 	public boolean onInterceptTouchEvent(MotionEvent event) {
 		int action = event.getActionMasked();
 		 if(DebugLog.DEBUGMAYBE){
-			 Log.d(LOG_TAG, "touchdebug--hostview--onInterceptTouchEvent:"+action);
+			 DebugLog.d(LOG_TAG, "touchdebug--hostview--onInterceptTouchEvent:"+action);
 		 }
 		
 		switch (action) {
@@ -561,7 +561,7 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 					break;
 		}
 		 if(DebugLog.DEBUGMAYBE){
-			 Log.d("jings", "onInterceptTouchEvent return "+mScrollDirection );
+			 DebugLog.d(LOG_TAG, "onInterceptTouchEvent return "+mScrollDirection );
 		 }
 
 		return (mScrollDirection != DIRECTION_NONE);
@@ -619,10 +619,12 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 			DebugLog.d(LOG_TAG, "confirmScrollDirection...mScrollDirectionConfirmed="+mScrollDirectionConfirmed);
 		}
 		if(mScrollDirectionConfirmed) return;
-        DebugLog.d(TAG, "confirmScrollDirection currY:"+currY);
-        DebugLog.d(TAG, "confirmScrollDirection mDownMotionY:"+mDownMotionY);
-        DebugLog.d(TAG, "confirmScrollDirection currX:"+currX);
-        DebugLog.d(TAG, "confirmScrollDirection mDownMotionX:"+mDownMotionX);
+		if(DebugLog.DEBUGMAYBE){
+	        DebugLog.d(TAG, "confirmScrollDirection currY:"+currY);
+	        DebugLog.d(TAG, "confirmScrollDirection mDownMotionY:"+mDownMotionY);
+	        DebugLog.d(TAG, "confirmScrollDirection currX:"+currX);
+	        DebugLog.d(TAG, "confirmScrollDirection mDownMotionX:"+mDownMotionX);
+		}
 		float deltaY = currY - mDownMotionY;
 		float deltaX = currX - mDownMotionX;
 		boolean angleConform = isAngleConform(deltaX, deltaY);
@@ -709,7 +711,9 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 //		if(!mKeyguardViewManager.isShowing()){
 //			return false;
 //		}
-		DebugLog.d(TAG,"onActionMove mScrollDirection:" + mScrollDirection);
+		if(DebugLog.DEBUGMAYBE){
+			DebugLog.d(TAG,"onActionMove mScrollDirection:" + mScrollDirection);
+		}
 		if(mScrollDirection == DIRECTION_NONE){
 			confirmIfIntercept(event);
 		}else if(mScrollDirection == DIRECTION_DOWN || mScrollDirection == DIRECTION_UP){
@@ -1162,7 +1166,7 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 	
 	public void finish(){
 	     boolean deferKeyguardDone = false;
-	        if(DebugLog.DEBUG)Log.d(LOG_TAG, "KeyguardViewBase finish  mViewMediatorCallback: "+mViewMediatorCallback+"  deferKeyguardDone: "+deferKeyguardDone);
+	        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "KeyguardViewBase finish  mViewMediatorCallback: "+mViewMediatorCallback+"  deferKeyguardDone: "+deferKeyguardDone);
 	        if (mOnDisMissAction != null) {
 	            deferKeyguardDone = mOnDisMissAction.onDismiss();
 	            mOnDisMissAction = null;
@@ -1179,15 +1183,16 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 	/**
 	 * invoke by absent sim card
 	 */
-	public void finishIfNoSecure(){
-	    if(!isSecure()&&mViewMediatorCallback.isShowingAndNotOccluded()){
-	        finish();
+	public void resetToHomePositionIfNoSecure(){
+	    if(!isSecure()&&mViewMediatorCallback.isShowingAndNotOccluded() && isHostYAtTopPostion()){
+//	        finish();
+	    	resetHostYToHomePosition();
 	    }
 	}
 
 	public void keyguardDone(){
 	    if(mViewMediatorCallback!=null){
-	        Log.d("jings", "host view  keyguardDone");
+	    	DebugLog.d(LOG_TAG, "host view  keyguardDone");
 	        mViewMediatorCallback.keyguardDone(true);
 	    }
 	    

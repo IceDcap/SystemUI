@@ -53,8 +53,7 @@ public class GnControlCenterPanel extends ViewGroup implements GestureDetector.O
     private static final float MAXIMUM_ACCELERATION = 5000.0f;
     private static final int VELOCITY_UNITS = 500;
     private static final int MSG_ANIMATE = 1000;
-    private static final int MSG_SHAKE_ANIMATE = 1001;
-    private static final int MSG_INVALIDATE = 1002;
+    private static final int MSG_INVALIDATE = 1001;
     private static final int ANIMATION_FRAME_DURATION = 1000 / 60;
 
     private static final int EXPANDED_FULL_OPEN = -10001;
@@ -611,8 +610,7 @@ public class GnControlCenterPanel extends ViewGroup implements GestureDetector.O
             case MotionEvent.ACTION_MOVE:
                 mVelocityTracker.addMovement(event);
                 int position = (int) event.getY() - getTop();
-                final View handle = mHandle;
-                moving(position, handle);
+                moving(position, mHandle);
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
@@ -635,12 +633,6 @@ public class GnControlCenterPanel extends ViewGroup implements GestureDetector.O
         }
         
         if (DEBUG) Log.d(TAG, "moving  deltaY = " + deltaY);
-        
-        invalidateRegion(handle, deltaY);
-    }
-
-    private void shaking(final View handle) {
-        int deltaY = (int) (sShakeDelta[mShakeDeltaIndex] * mAnimatedVelocityRatio);
         
         invalidateRegion(handle, deltaY);
     }
@@ -738,21 +730,6 @@ public class GnControlCenterPanel extends ViewGroup implements GestureDetector.O
                 mHandler.sendMessageAtTime(mHandler.obtainMessage(MSG_ANIMATE),
                         mCurrentAnimationTime);
             }
-        }
-    }
-
-    private void doShakeAnimation() {
-        if (mShakeDeltaIndex < 29) {
-            shaking(mHandle);
-            mCurrentAnimationTime += ANIMATION_FRAME_DURATION;
-            mHandler.sendMessageAtTime(mHandler.obtainMessage(MSG_SHAKE_ANIMATE),
-                    mCurrentAnimationTime);
-            mShakeDeltaIndex++;
-        } else {
-            mShakeDeltaIndex = 0;
-            mAnimating = false;
-            mFling = false;
-            openDrawer();
         }
     }
 
@@ -952,9 +929,6 @@ public class GnControlCenterPanel extends ViewGroup implements GestureDetector.O
             switch (m.what) {
                 case MSG_ANIMATE:
                     doAnimation();
-                    break;
-                case MSG_SHAKE_ANIMATE:
-                    doShakeAnimation();
                     break;
                 case MSG_INVALIDATE:
                     invalidate();

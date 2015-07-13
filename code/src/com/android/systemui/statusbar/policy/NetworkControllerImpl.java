@@ -432,10 +432,11 @@ public class NetworkControllerImpl extends BroadcastReceiver
             }
             // Might have different subscriptions now.
             updateMobileControllers();
+            recalculateEmergency();
         } else if (action.equals(TelephonyIntents.ACTION_SUBINFO_RECORD_UPDATED)) { 
 
         	for (MobileSignalController controller : mMobileSignalControllers.values()) { 
-        	controller.handleBroadcast(intent); 
+        		controller.handleBroadcast(intent); 
         	} 
 
         	updateMobileControllers(); 
@@ -515,6 +516,12 @@ public class NetworkControllerImpl extends BroadcastReceiver
         HashMap<Integer, MobileSignalController> cachedControllers =
                 new HashMap<Integer, MobileSignalController>(mMobileSignalControllers);
         mMobileSignalControllers.clear();
+        
+        final int emergencyLength = mEmergencyListeners.size();
+        for (int i = 0; i < emergencyLength; i++) {
+            mEmergencyListeners.get(i).setEmergencyCallsOnly(false);
+        }
+        
         final int num = subscriptions.size();
         for (int i = 0; i < num; i++) {
             int subId = subscriptions.get(i).getSubscriptionId();
@@ -543,6 +550,11 @@ public class NetworkControllerImpl extends BroadcastReceiver
                 cachedControllers.get(key).unregisterListener();
             }
         }
+        
+        for (MobileSignalController controller : mMobileSignalControllers.values()) {
+            controller.setInvalid(true);
+        }
+        
         // There may be new MobileSignalControllers around, make sure they get the current
         // inet condition and airplane mode.
         pushConnectivityToSignals();
@@ -1718,6 +1730,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
                 }
                 mDataState = state;
                 mDataNetType = networkType;
+                updateNetworkType();
                 updateTelephony();
             }
 
@@ -1855,6 +1868,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
         private final State[] mHistory;
         // Where to copy the next state into.
         private int mHistoryIndex;
+        boolean mInvalid = false;
 
         public SignalController(String tag, Context context, int type,
                 List<NetworkSignalChangedCallback> signalCallbacks,
@@ -1904,14 +1918,21 @@ public class NetworkControllerImpl extends BroadcastReceiver
          * needs to trigger callbacks related to it.
          */
         public boolean isDirty() {
-            if (!mLastState.equals(mCurrentState)) {
+        	Log.d(TAG, "isDirty : " + mInvalid);
+            if (!mLastState.equals(mCurrentState) || mInvalid) {
                 if (DEBUG) {
                     Log.d(mTag, "Change in state from: " + mLastState + "\n"
                             + "\tto: " + mCurrentState);
                 }
+                mInvalid = false;
                 return true;
             }
+            mInvalid = false;
             return false;
+        }
+        
+        void setInvalid(boolean isValid) {
+            mInvalid = isValid;
         }
 
         public void saveLastState() {

@@ -1,5 +1,7 @@
 package com.amigo.navi.keyguard.settings;
 
+import com.amigo.navi.keyguard.DebugLog;
+
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -40,7 +42,23 @@ public class KeyguardSettings {
 	
 	public static final String PF_NEED_COPY_WALLPAPER = "pf_need_copy_wallpaper";
 	
-    
+	// 日志上传时间间隔控制
+	private static final String TIME_LOGSUPLOAD_LAST = "time_logs_upload_last";	
+
+	public static void setLogsUploadTime(Context context, long time) {
+        SharedPreferences sp = context.getSharedPreferences(PREFERENCE_NAME,
+                Context.MODE_PRIVATE);
+        Editor editor = sp.edit();
+        editor.putLong(TIME_LOGSUPLOAD_LAST, time);
+		editor.commit();
+	}
+
+	public static long getLogsUploadTime(Context context, long time) {
+        SharedPreferences sp = context.getSharedPreferences(PREFERENCE_NAME,
+                Context.MODE_PRIVATE);
+        return sp.getLong(TIME_LOGSUPLOAD_LAST,	time);
+	}
+	
     public static void setDoubleDesktopLockState(Context context,boolean value){
         SharedPreferences sp = context.getSharedPreferences(PREFERENCE_NAME,
                 Context.MODE_PRIVATE);
@@ -132,7 +150,7 @@ public class KeyguardSettings {
     }
     
     public static void cancelNotification(Context context) {
-        Log.v(TAG, "cancelNotification");
+    	DebugLog.d(TAG, "cancelNotification");
         NotificationManager mNotificationManager;
         mNotificationManager = (NotificationManager)context.getSystemService("notification");
         try {

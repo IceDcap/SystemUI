@@ -38,6 +38,7 @@ import com.amigo.navi.keyguard.Guide.GuideState;
 import com.amigo.navi.keyguard.haokan.CaptionsView;
 import com.amigo.navi.keyguard.haokan.Common;
 import com.amigo.navi.keyguard.haokan.PlayerButton;
+import com.amigo.navi.keyguard.haokan.PlayerLayout;
 import com.amigo.navi.keyguard.haokan.UIController;
 import com.amigo.navi.keyguard.modules.AmigoBatteryStatus;
 import com.android.keyguard.KeyguardUpdateMonitor;
@@ -156,8 +157,6 @@ public class AmigoKeyguardPage extends RelativeLayout {
 	
 	
 	
-	private RelativeLayout mPlayerLayout;
-	private CaptionsView mCaptionsView;
 	
 	private void addHKMainLayout() {
 
@@ -173,30 +172,28 @@ public class AmigoKeyguardPage extends RelativeLayout {
 	    
 	    LayoutInflater inflater=LayoutInflater.from(mContext);
 	    mHaoKanLayout = (RelativeLayout)inflater.inflate(R.layout.haokan_main_layout, null);
-	    mPlayerLayout = (RelativeLayout) mHaoKanLayout.findViewById(R.id.haokan_page_layout_player);
-	    mCaptionsView = (CaptionsView) mHaoKanLayout.findViewById(R.id.haokan_page_layout_captions);
-        PlayerButton playerButton = (PlayerButton) mPlayerLayout.findViewById(R.id.haokan_page_layout_imageButton);
+	    PlayerLayout playerLayout = (PlayerLayout) mHaoKanLayout.findViewById(R.id.haokan_page_layout_player);
+	    CaptionsView captionsView = (CaptionsView) mHaoKanLayout.findViewById(R.id.haokan_page_layout_captions);
+        PlayerButton playerButton = (PlayerButton) playerLayout.findViewById(R.id.haokan_page_layout_imageButton);
         
-        
-        TextView musicName = (TextView) mPlayerLayout.findViewById(R.id.haokan_page_layout_music);
-        TextView musicArtist = (TextView) mPlayerLayout.findViewById(R.id.haokan_page_layout_Artist);
-        
-        UIController controller = UIController.getInstance();
-        controller.setmLayoutPlayer(mPlayerLayout);
-        controller.setmCaptionsView(mCaptionsView);
+        final UIController controller = UIController.getInstance();
+        controller.setPlayerLayout(playerLayout);
+        controller.setmCaptionsView(captionsView);
         controller.setmPlayerButton(playerButton);
-        controller.setmTextViewMusicName(musicName);
-        controller.setmTextViewArtist(musicArtist);
+ 
         controller.setHaoKanLayout(mHaoKanLayout);
+        
+        final PlayerManager playerManager =  PlayerManager.getInstance();
+        
         playerButton.setOnClickListener(new OnClickListener() {
             
             @Override
             public void onClick(View arg0) {
-                PlayerManager.getInstance().pauseOrPlayer();
+                playerManager.pauseOrPlayer(controller.getmCurrentWallpaper().getMusic());
             }
         });
-        PlayerManager.getInstance().setPlayerButton(playerButton);
-        PlayerManager.getInstance().init(getContext().getApplicationContext());
+        playerManager.setPlayerButton(playerButton);
+        playerManager.setPlayerLayout(playerLayout);
         addView(mHaoKanLayout, params);
         
         if (Common.isPowerSaverMode()) {

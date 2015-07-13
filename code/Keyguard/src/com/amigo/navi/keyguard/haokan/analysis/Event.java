@@ -87,7 +87,7 @@ public class Event {
     public static final int IMG_LOCK = 23;
   
     /**
-     * 自动更新（1开启 0关闭）
+     * 自动更新（2开启 1关闭）
      */
     public static final int SETTING_UPDATE = 31;
     

@@ -220,7 +220,7 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
 
 					@Override
 					public void onSucess(Object o) {
-                          Log.i("jiating","ForgetPasswordButton...onSuccess") ;
+				        if(DebugLog.DEBUG) DebugLog.d(TAG, "ForgetPasswordButton...onSuccess");
                   		checkPasswordResult(true, UNLOCK_FAIL_UNKNOW_REASON,null);
 					}
 

@@ -90,7 +90,7 @@ public class SkyPagerView extends KeyguardPagerView {
         @Override
         public void onAnimationUpdate(ValueAnimator animation) {
             Float animationValue=(Float)animation.getAnimatedValue();
-            if(DebugLog.DEBUG)Log.d(LOG_TAG, "animationValue: "+animationValue);
+            if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "animationValue: "+animationValue);
             if(mIndicator!=null){
                 mIndicator.setAlpha(animationValue);
             }
@@ -132,7 +132,7 @@ public class SkyPagerView extends KeyguardPagerView {
     @Override
     protected void onPageBeginMoving() {
         super.onPageBeginMoving();
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "onPageBeginMoving");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "onPageBeginMoving");
         showPageIndicator(ANIMATOR_DURATION);
     }
     
@@ -153,7 +153,7 @@ public class SkyPagerView extends KeyguardPagerView {
     @Override
     protected void onPageEndMoving() {
         super.onPageEndMoving();
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "onPageEndMoving");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "onPageEndMoving");
         hidePageIndicator(ANIMATOR_DURATION);
     }
     
@@ -174,12 +174,12 @@ public class SkyPagerView extends KeyguardPagerView {
     
     @Override
     public void onRemoveView(View v, boolean draging) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "onRemoveView");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "onRemoveView");
     }
 
     @Override
     public void onAddView(View v, int index) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "onAddView");
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "onAddView");
 
     }
     

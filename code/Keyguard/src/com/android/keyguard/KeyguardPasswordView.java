@@ -308,7 +308,7 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
 
 					@Override
 					public void onSucess(Object o) {
-                          Log.i("jiating","ForgetPasswordButton...onSuccess") ;
+                          Log.i(LOG_TAG,"ForgetPasswordButton...onSuccess") ;
                           checkPasswordResult(true, UNLOCK_FAIL_UNKNOW_REASON);
 					}
 

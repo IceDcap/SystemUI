@@ -27,7 +27,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="16dp"
+                    android:layout_marginLeft="9dp"
                     android:src="@drawable/gn_ic_qs_more_close" />
 
                 <TextView
@@ -36,10 +36,10 @@
                     android:layout_height="match_parent"
                     android:layout_toRightOf="@id/close"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginLeft="@dimen/gn_qs_panel_padding_left"
+                    android:layout_marginLeft="30dp"
                     android:gravity="center"
                     android:text="@string/gn_qs_more_title"
-                    android:textSize="20sp" />
+                    android:textSize="@dimen/gn_qs_more_header_text_size" />
 
             </RelativeLayout>
 

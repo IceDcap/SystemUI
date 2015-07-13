@@ -76,7 +76,7 @@ public class AmigoKeyguardSimPinView extends AmigoKeyguardSimPinPukBaseView {
     KeyguardUpdateMonitorCallback mUpdateMonitorCallback = new KeyguardUpdateMonitorCallback() {
         @Override
         public void onSimStateChanged(int subId, int slotId, State simState) {
-           if (DEBUG) Log.v(TAG, "onSimStateChanged(subId=" + subId + ",state=" + simState + ")");
+           if (DEBUG) DebugLog.d(TAG, "onSimStateChanged(subId=" + subId + ",state=" + simState + ")");
            resetState();
        };
     };
@@ -91,7 +91,7 @@ public class AmigoKeyguardSimPinView extends AmigoKeyguardSimPinPukBaseView {
 
     public void resetState() {
         super.resetState();
-        if (DEBUG) Log.v(TAG, "Resetting state");
+        if (DEBUG) DebugLog.d(TAG, "Resetting state");
         resetPasswordText(true /* animate */);
         KeyguardUpdateMonitor monitor = KeyguardUpdateMonitor.getInstance(mContext);
         mSubId = monitor.getNextSubIdForState(IccCardConstants.State.PIN_REQUIRED);
@@ -106,7 +106,7 @@ public class AmigoKeyguardSimPinView extends AmigoKeyguardSimPinPukBaseView {
                 
                 String simName=getOptrNameUsingSubId(mSubId);
                 int degree=getRetryPinCount(mSubId);
-                if (DEBUG) Log.v(TAG, "Resetting state..degree="+degree);
+                if (DEBUG) DebugLog.d(TAG, "Resetting state..degree="+degree);
                 if (degree > 0) {
                 	int strId = R.string.keyguard_password_enter_pin_code_message;
                 	msg = getContext().getString(strId,simName,degree);
@@ -123,6 +123,7 @@ public class AmigoKeyguardSimPinView extends AmigoKeyguardSimPinPukBaseView {
 //                }
 //            }
             mSecurityMessageDisplay.setMessage(msg, true);
+            setProgressBarVisible(false);
 //            mSimImageView.setImageTintList(ColorStateList.valueOf(color));
         }
     }
@@ -151,7 +152,7 @@ public class AmigoKeyguardSimPinView extends AmigoKeyguardSimPinPukBaseView {
         } else if(attemptsRemaining<0){
             displayMessage = getContext().getString(R.string.kg_password_pin_failed);
         }
-        if (DEBUG) Log.d(LOG_TAG, "getPinPasswordErrorMessage:"
+        if (DEBUG) DebugLog.d(LOG_TAG, "getPinPasswordErrorMessage:"
                 + " attemptsRemaining=" + attemptsRemaining + " displayMessage=" + displayMessage);
         return displayMessage;
     }
@@ -225,12 +226,12 @@ public class AmigoKeyguardSimPinView extends AmigoKeyguardSimPinPukBaseView {
         public void run() {
             try {
                 if (DEBUG) {
-                    Log.v(TAG, "call supplyPinReportResultForSubscriber(subid=" + mSubId + ")");
+                	DebugLog.d(TAG, "call supplyPinReportResultForSubscriber(subid=" + mSubId + ")");
                 }
                 final int[] result = ITelephony.Stub.asInterface(ServiceManager
                         .checkService("phone")).supplyPinReportResultForSubscriber(mSubId, mPin);
                 if (DEBUG) {
-                    Log.v(TAG, "supplyPinReportResult returned: " + result[0] + " " + result[1]);
+                	DebugLog.d(TAG, "supplyPinReportResult returned: " + result[0] + " " + result[1]);
                 }
                 post(new Runnable() {
                     public void run() {
@@ -238,7 +239,7 @@ public class AmigoKeyguardSimPinView extends AmigoKeyguardSimPinPukBaseView {
                     }
                 });
             } catch (RemoteException e) {
-                Log.e(TAG, "RemoteException for supplyPinReportResult:", e);
+            	Log.d(TAG, "RemoteException for supplyPinReportResult:", e);
                 post(new Runnable() {
                     public void run() {
                         onSimCheckResponse(PhoneConstants.PIN_GENERAL_FAILURE, -1);
@@ -255,21 +256,17 @@ public class AmigoKeyguardSimPinView extends AmigoKeyguardSimPinPukBaseView {
       mPasswordEntry.addTextChangedListener(new TextWatcher() {
           @Override
           public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
-              // TODO Auto-generated method stub
-              Log.d(LOG_TAG, "onTextChanged");
-              
+  
           }
           
           @Override
           public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
                   int arg3) {
-              // TODO Auto-generated method stub
-              Log.d(LOG_TAG, "beforeTextChanged");
           }
           
           @Override
           public void afterTextChanged(Editable arg0) {
-              Log.d(LOG_TAG, "afterTextChanged");
+        	  DebugLog.d(LOG_TAG, "afterTextChanged");
               final int pwdLength = mPasswordEntry.getText().length();
               
               resetPinDelete(pwdLength);
@@ -367,7 +364,7 @@ public class AmigoKeyguardSimPinView extends AmigoKeyguardSimPinPukBaseView {
                                     mSecurityMessageDisplay.setMessage(getContext().getString(
                                             R.string.kg_password_pin_failed), true);
                                 }
-                                if (DEBUG) Log.d(LOG_TAG, "verifyPasswordAndUnlock "
+                                if (DEBUG)DebugLog.d(LOG_TAG, "verifyPasswordAndUnlock "
                                         + " CheckSimPin.onSimCheckResponse: " + result
                                         + " attemptsRemaining=" + attemptsRemaining);
                                 
@@ -476,7 +473,7 @@ public class AmigoKeyguardSimPinView extends AmigoKeyguardSimPinPukBaseView {
 	   @Override
 	    public boolean onInterceptTouchEvent(MotionEvent ev) {
 	    	if(ev.getY()>=mKeyguardBouncerFrame.getTop()){
-	            Log.d("KeyguardPatternUnlockView", "onInterceptTouchEvent.......=");
+	    		DebugLog.d("KeyguardPatternUnlockView", "onInterceptTouchEvent.......=");
 	            requestDisallowInterceptTouchEvent(true);
 	        }
 	    	return super.onInterceptTouchEvent(ev);

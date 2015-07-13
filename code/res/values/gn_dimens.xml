@@ -102,9 +102,9 @@
     <dimen name="gn_qs_tile_setting_padding_top">3dp</dimen>
     <dimen name="gn_qs_brightness_tile_width">30dp</dimen>
     <dimen name="gn_qs_brightness_tile_padding_left">32dp</dimen>
-    <dimen name="gn_qs_brightness_tile_padding_left_land">70dp</dimen>
-    <dimen name="gn_qs_brightness_tile_padding_right">14dp</dimen>
-    <dimen name="gn_qs_brightness_tile_padding_right_land">52dp</dimen>
+    <dimen name="gn_qs_brightness_tile_padding_left_land">68dp</dimen>
+    <dimen name="gn_qs_brightness_tile_padding_right">12dp</dimen>
+    <dimen name="gn_qs_brightness_tile_padding_right_land">47dp</dimen>
     <dimen name="gn_qs_brightness_padding_top">24dp</dimen>
     <dimen name="gn_qs_brightness_padding_top_land">24dp</dimen>
     <dimen name="gn_qs_brightness_padding_bottom">7dp</dimen>
@@ -120,7 +120,7 @@
     <dimen name="gn_qs_more_tile_padding_top_land">10dp</dimen>
     <dimen name="gn_qs_more_header_height">50dp</dimen>
     <dimen name="gn_qs_more_header_height_land">40dp</dimen>
-    <dimen name="gn_qs_more_header_text_size">20sp</dimen>
+    <dimen name="gn_qs_more_header_text_size">18sp</dimen>
     <dimen name="gn_qs_more_header_text_size_land">16sp</dimen>
     <dimen name="gn_qs_more_title_height">40dp</dimen>
     <dimen name="gn_qs_more_title_height_land">30dp</dimen>

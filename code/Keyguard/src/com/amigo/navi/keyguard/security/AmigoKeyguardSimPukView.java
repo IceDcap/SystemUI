@@ -77,7 +77,7 @@ public class AmigoKeyguardSimPukView extends AmigoKeyguardSimPinPukBaseView {
     KeyguardUpdateMonitorCallback mUpdateMonitorCallback = new KeyguardUpdateMonitorCallback() {
         @Override
         public void onSimStateChanged(int subId, int slotId, State simState) {
-           if (DEBUG) Log.v(TAG, "onSimStateChanged(subId=" + subId + ",state=" + simState + ")");
+           if (DEBUG) DebugLog.d(TAG, "onSimStateChanged(subId=" + subId + ",state=" + simState + ")");
            resetState();
        };
     };
@@ -148,7 +148,7 @@ public class AmigoKeyguardSimPukView extends AmigoKeyguardSimPinPukBaseView {
                 int color = Color.WHITE;
                 String simName=getOptrNameUsingSubId(mSubId);
                 int degree=getRetryPukCount(mSubId);
-                if (DEBUG) Log.v(TAG, "Resetting state..degree="+degree);
+                if (DEBUG)DebugLog.d(TAG, "Resetting state..degree="+degree);
                
                 if (degree > 0) {
                 	int strId = R.string.keyguard_password_enter_puk_code_message;
@@ -168,6 +168,7 @@ public class AmigoKeyguardSimPukView extends AmigoKeyguardSimPinPukBaseView {
 //                    }
 //                }
                 mSecurityMessageDisplay.setMessage(msg, true);
+                setProgressBarVisible(false);
             }
             mPasswordEntry.requestFocus();
         }
@@ -195,13 +196,13 @@ public class AmigoKeyguardSimPukView extends AmigoKeyguardSimPinPukBaseView {
         } else {
             displayMessage = getContext().getString(R.string.kg_password_puk_failed);
         }
-        if (DEBUG) Log.d(LOG_TAG, "getPukPasswordErrorMessage:"
+        if (DEBUG) DebugLog.d(LOG_TAG, "getPukPasswordErrorMessage:"
                 + " attemptsRemaining=" + attemptsRemaining + " displayMessage=" + displayMessage);
         return displayMessage;
     }
 
     public void resetState() {
-    	 if (DEBUG) Log.d(LOG_TAG, "resetState");
+    	 if (DEBUG) DebugLog.d(LOG_TAG, "resetState");
         super.resetState();
         resetPasswordText(true /* animate */);
         mStateMachine.reset();
@@ -291,21 +292,18 @@ public class AmigoKeyguardSimPukView extends AmigoKeyguardSimPinPukBaseView {
       mPasswordEntry.addTextChangedListener(new TextWatcher() {
           @Override
           public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
-              // TODO Auto-generated method stub
-              Log.d(LOG_TAG, "onTextChanged");
-              
+        
           }
           
           @Override
           public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
                   int arg3) {
-              // TODO Auto-generated method stub
-              Log.d(LOG_TAG, "beforeTextChanged");
+
           }
           
           @Override
           public void afterTextChanged(Editable arg0) {
-              Log.d(LOG_TAG, "afterTextChanged");
+              
               final int pwdLength = mPasswordEntry.getText().length();
               
               resetPinDelete(pwdLength);
@@ -317,6 +315,7 @@ public class AmigoKeyguardSimPukView extends AmigoKeyguardSimPinPukBaseView {
     
     
     private void resetPinDelete(int num){
+    	DebugLog.d(LOG_TAG, "resetPinDelete....num="+num);
         if(num > 0){
             ((TextView)pinDelete).setText(getContext().getResources().getString(R.string.keyguard_simple_number_delete));
         }else{
@@ -370,11 +369,10 @@ public class AmigoKeyguardSimPukView extends AmigoKeyguardSimPinPukBaseView {
         @Override
         public void run() {
             try {
-                if (DEBUG) Log.v(TAG, "call supplyPukReportResult()");
                 final int[] result = ITelephony.Stub.asInterface(ServiceManager
                     .checkService("phone")).supplyPukReportResultForSubscriber(mSubId, mPuk, mPin);
                 if (DEBUG) {
-                    Log.v(TAG, "supplyPukReportResult returned: " + result[0] + " " + result[1]);
+                	DebugLog.d(TAG, "supplyPukReportResult returned: " + result[0] + " " + result[1]);
                 }
                 post(new Runnable() {
                     public void run() {
@@ -543,7 +541,7 @@ public class AmigoKeyguardSimPukView extends AmigoKeyguardSimPinPukBaseView {
 	 @Override
 	    public boolean onInterceptTouchEvent(MotionEvent ev) {
 	    	if(ev.getY()>=mKeyguardBouncerFrame.getTop()){
-	            Log.d("KeyguardPatternUnlockView", "onInterceptTouchEvent.......=");
+	    		DebugLog.d("KeyguardPatternUnlockView", "onInterceptTouchEvent.......=");
 	            requestDisallowInterceptTouchEvent(true);
 	        }
 	    	return super.onInterceptTouchEvent(ev);

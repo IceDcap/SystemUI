@@ -4,27 +4,30 @@ Build Notes
 1.版本目的:
 bug fix
 2.功能变更:
-NO
+No
 3.重点测试的问题:
-CR01425226
-(控制中心改版：按钮增加为８个，去掉“完成”，　增加提示页)
-CR01507276
-USB：非第一次连接电脑，仍显示高通端口
+CR01513337
+【5.1MP】任意界面上滑控制中心，长按相机拍照成功后，下拉状态栏预览照片模糊【10次出现8次】
+
+CR01518399
+解锁时释放HorizontalListView中所有的view，亮屏上锁时需要重新加载view
+CR01408122
+修改为：在线程里查出壁纸数据库数据列表后，通过handler在UI线程里更新到全局的壁纸数据列表里，而不是在线程里获取完直接在线程里更新数据
 4.应用数据库是否改变:
 No
 
 ==================
 Release Location
 ==================
-/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.as.zip
+/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bd.zip
 
 ==================
 CR List
 ==================
 [Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
-CR01425226      Opened     huangwt    android L 新功能 控制中心
-CR01507276      Coded      hanbj      USB：非第一次连接电脑，仍显示高通端口
-Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.as
-Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.aq
-Code difference: svn diff -r 6334:6331 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.dc' non-existent in revision 6645
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6642:'
+File does not exist:  at getAppChangeSet.pl line 48
 

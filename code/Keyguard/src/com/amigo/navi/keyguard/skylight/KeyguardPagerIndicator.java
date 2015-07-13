@@ -58,14 +58,14 @@ public class KeyguardPagerIndicator extends View {
         MARGIN_RINGHT_AND_LEFT = (int) (MARGIN_RINGHT_AND_LEFT * density);
         sIndicatorW=getResources().getDisplayMetrics().widthPixels;
         sIndicatorW =sIndicatorW-MARGIN_RINGHT_AND_LEFT*2;
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "sIndicatorW: "+sIndicatorW);
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "sIndicatorW: "+sIndicatorW);
         //Gionee <huangxc><2013-12-18> modify for CR00967751 end
         mIndicatorDw = rs.getDrawable(R.drawable.kw_page_indicator);
         mIndicatorBg = rs.getDrawable(R.drawable.kw_indicator_bg);
     }
 
     public void setCurPage(int curPage) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "setCurPage curPage=" + curPage);
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "setCurPage curPage=" + curPage);
         mCurPage = curPage;
         requestLayout();
         invalidate();
@@ -73,7 +73,7 @@ public class KeyguardPagerIndicator extends View {
     
 
     public void setCountPage(int countPage) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "setCountPage countPage=" + countPage);
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "setCountPage countPage=" + countPage);
         mCountPage = countPage;
         if (countPage <= 1) {
             setVisibility(INVISIBLE);

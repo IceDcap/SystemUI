@@ -37,8 +37,24 @@ public class Music implements Serializable{
     
     private boolean mIsLocal;
     
+    private int mCurrentPosition = 0;
+    
     private State mState = State.NULL;
     
+    private float mProgress = 0f;
+    
+    private int duration;
+    
+    
+    
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
     public State getmState() {
         return mState;
     }
@@ -155,5 +171,23 @@ public class Music implements Serializable{
         DebugLog.d("MUSIC", "ID=" + mId + ", Name" + mMusicName );
         return super.toString();
     }
+
+    public int getCurrentPosition() {
+        return mCurrentPosition;
+    }
+
+    public void setCurrentPosition(int mCurrentPosition) {
+        this.mCurrentPosition = mCurrentPosition;
+    }
+
+    public float getProgress() {
+        return mProgress;
+    }
+
+    public void setProgress(float mProgress) {
+        this.mProgress = mProgress;
+    }
+    
+    
 
 }

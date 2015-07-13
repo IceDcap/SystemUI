@@ -279,7 +279,6 @@ public class KeyguardSettingsActivity extends Activity {
 
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK && null != data) {  
             Uri selectedImage = data.getData(); 
-            Log.v("haokan", "selectedImage = " + selectedImage);
             DebugLog.d(TAG, "selectedImage = " + selectedImage);
             Intent intent = new Intent(this, WallpaperCutActivity.class);
             intent.setAction(Intent.ACTION_ATTACH_DATA);

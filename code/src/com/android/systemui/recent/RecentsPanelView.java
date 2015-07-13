@@ -449,11 +449,11 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
     }
 
     private void showImpl(boolean show) {
-        sendCloseSystemWindows(getContext(), BaseStatusBar.SYSTEM_DIALOG_REASON_RECENT_APPS);
 
         mShowing = show;
 
         if (show) {
+        	sendCloseSystemWindows(getContext(), BaseStatusBar.SYSTEM_DIALOG_REASON_RECENT_APPS);
             // if there are no apps, bring up a "No recent apps" message
             boolean noApps = mRecentTaskDescriptions != null
                     && (mRecentTaskDescriptions.size() == 0);

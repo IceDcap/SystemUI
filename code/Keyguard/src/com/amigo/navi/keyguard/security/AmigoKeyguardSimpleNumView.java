@@ -253,7 +253,9 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
 
 					@Override
 					public void onSucess(Object o) {
-                          Log.i("jiating","ForgetPasswordButton...onSuccess") ;
+						if(DebugLog.DEBUG){
+					          DebugLog.v(LOG_TAG, "ForgetPasswordButton...onSuccess");
+					    }
                           checkPasswordResult(true, UNLOCK_FAIL_UNKNOW_REASON);
 					}
 
@@ -290,26 +292,20 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
         mPasswordEntry.requestFocus();
         mPasswordEntry.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
-                // TODO Auto-generated method stub
-                Log.d(LOG_TAG, "onTextChanged");
-                
+            public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {                
             }
             
             @Override
             public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
                     int arg3) {
-                // TODO Auto-generated method stub
-                Log.d(LOG_TAG, "beforeTextChanged");
             }
             
             @Override
             public void afterTextChanged(Editable arg0) {
-                Log.d(LOG_TAG, "afterTextChanged");
                 final int pwdLength = mPasswordEntry.getText().length();
                 refreshImageStat(pwdLength);
                 resetPinDelete(pwdLength);
-                Log.d(LOG_TAG, "afterTextChanged--> password length is " + pwdLength+"getPasswordText()="+getPasswordText());
+                DebugLog.d(LOG_TAG, "afterTextChanged--> password length is " + pwdLength+"getPasswordText()="+getPasswordText());
                 if (pwdLength == MIN_PASSWORD_LENGTH_BEFORE_CHECKING) {
                     // mPasswordEntry.setEnabled(false);
                     setKeyButtonClickEnable(false);
@@ -325,7 +321,7 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
         String entry = getPasswordText();
         boolean isLockDone=false;
         
-        Log.d(LOG_TAG, "verifyPasswordAndUnlock entry: "+entry);
+        DebugLog.d(LOG_TAG, "verifyPasswordAndUnlock entry: "+entry);
         if (mLockPatternUtils.checkPassword(entry)) {
         	isLockDone=true;    
         } else {
@@ -522,6 +518,8 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
         // TODO Auto-generated method stub
         if (mUnLockFailReason != UNLOCK_FAIL_REASON_TIMEOUT) {
             setKeyButtonClickEnable(true);
+        }else{
+        	setKeyButtonClickEnable(false);
         }
     }
     
@@ -659,7 +657,7 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
     	if(ev.getY()>=mForgetButton.getTop()){
-            Log.d("KeyguardPatternUnlockView", "onInterceptTouchEvent.......=");
+    		DebugLog.d("KeyguardPatternUnlockView", "onInterceptTouchEvent.......=");
             requestDisallowInterceptTouchEvent(true);
         }
     	return super.onInterceptTouchEvent(ev);

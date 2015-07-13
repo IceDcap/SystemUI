@@ -46,22 +46,7 @@ public class AmigoKeyguardUtils {
         return context.getResources().getDisplayMetrics().density;
     }
 
-    public static Bitmap getBlurBitmap(Bitmap blurBitmapOut, int blurRatio) {
 
-        try {
-            Class c = Class.forName("amigo.widget.blur.AmigoBlur");
-            Method m = c.getMethod("getInstance");
-            m.setAccessible(true);
-            Object obj = m.invoke(c);
-            Method method = c
-                    .getMethod("nativeProcessBitmap", Bitmap.class, int.class, int.class, int.class, int.class);
-            method.setAccessible(true);
-            method.invoke(obj, blurBitmapOut, 24, blurBitmapOut.getWidth(), blurBitmapOut.getHeight(), blurRatio);
-        } catch (Exception e) {
-            Log.e("BlurBitmap", "getBitmapError-->", e);
-        }
-        return blurBitmapOut;
-    }
 
     /**
      * get id by reflection,because of the resource id is mutability
@@ -359,6 +344,7 @@ public class AmigoKeyguardUtils {
 	private static final String ALARM_BROADCAST_ACTIVITY_NAME="com.android.deskclock.alarmclock.broadcast.AlarmBroadCastActivity";
     private static final String ALARM_ACTIVITY_NAME="com.android.deskclock.alarmclock.AlarmAlert";
     private static final String IN_CALL_ACTIVITY_NAME="com.android.incallui.InCallActivity";
+    private static final String SYSTEM_ALARM_ACTIVITY="com.android.deskclock.alarmclock.AlarmAlertFullScreen";
 
     public static boolean isAlarmOrInCallActivityTop(Context context){
         boolean isTop=false;
@@ -367,7 +353,7 @@ public class AmigoKeyguardUtils {
         if(taskInfos!=null&&taskInfos.size()>0){
             RunningTaskInfo topTaskInfo=taskInfos.get(0);
             String topActivityName=topTaskInfo.topActivity.getClassName();
-            isTop = ALARM_ACTIVITY_NAME.equals(topActivityName)||IN_CALL_ACTIVITY_NAME.equals(topActivityName) || ALARM_BROADCAST_ACTIVITY_NAME.equals(topActivityName);
+            isTop = ALARM_ACTIVITY_NAME.equals(topActivityName)||IN_CALL_ACTIVITY_NAME.equals(topActivityName) || ALARM_BROADCAST_ACTIVITY_NAME.equals(topActivityName)|| SYSTEM_ALARM_ACTIVITY.equals(topActivityName);
             DebugLog.d(LOG_TAG, "topActivityName: "+topActivityName+"  isTop: "+isTop);
         }
         return isTop;

@@ -125,11 +125,6 @@ public class LoggerThread extends HandlerThread implements Callback{
 		Job job = new Job() {
 			@Override
 			public void runTask() {
-				try {
-					Thread.sleep(5000);
-				} catch (Exception e) {
-					// TODO: handle exception
-				}
 				ArrayList<MessageModel> list = StatisticsDB.getInstance(
 						mContext).getEventMsg();
 				uploadAllLog(list);

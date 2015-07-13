@@ -328,7 +328,7 @@ public class CaptionsView extends RelativeLayout {
 //        ObjectAnimator animationDate = ObjectAnimator.ofPropertyValuesHolder(date, pvhdate).setDuration(1168);
         ObjectAnimator animationTime = ObjectAnimator.ofPropertyValuesHolder(time, pvhtime).setDuration(1068);
         
-        final View playerLayout = UIController.getInstance().getmLayoutPlayer();        
+        final View playerLayout = UIController.getInstance().getPlayerLayout();      
         animationTime.addUpdateListener(new AnimatorUpdateListener() {
             
             @Override

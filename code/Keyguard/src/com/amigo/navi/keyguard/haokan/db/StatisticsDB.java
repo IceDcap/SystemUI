@@ -188,7 +188,7 @@ public class StatisticsDB extends BaseDB{
             cursor.close();
         }
         
-        DebugLog.d(TAG, "===============================log==============================================");
+/*        DebugLog.d(TAG, "===============================log==============================================");
         for (int i = 0; i < group.size(); i++) {
             MessageModel messageModel = group.get(i);
             DebugLog.d(TAG, "messageModel.jsonData = " + messageModel.jsonData);
@@ -200,7 +200,7 @@ public class StatisticsDB extends BaseDB{
                 sb.append(",");
             }
             DebugLog.d(TAG, "messageModel.idList = " + sb.toString());
-        }
+        }*/
         
         return group;
     }

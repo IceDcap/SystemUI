@@ -149,6 +149,7 @@
     <string name="guide_long_press_tip">长按呼出更多功能菜单</string>
     <string name="cancel">Cancel</string>
     <string name="apply">Apply</string>
+    <string name="setting">setting...</string>
 
       
     <string name="keyguard_sim_name">"SIM Card"</string>
@@ -206,5 +207,8 @@
       <string name="insufficient_memory">Insufficient memory, please free up some space</string>
       <string name="lockscreen_emergency_call">Emergency call</string>
      <string name="lockscreen_return_to_call">Return to call</string>
+      <string name="lockscreen_plugged_in">"Charging <xliff:g id="number">%d</xliff:g><xliff:g id="percent">%%"</xliff:g></string>
+      
+      <string name="network_dialog_Allinformation">Play  music and access network will use the data traffic during running , Please consult  local carriers for the date charges ;</string>
       
 </resources>

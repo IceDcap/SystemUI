@@ -1481,7 +1481,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         //CR01490949 end
         view.set(icon);
         mStatusIcons.addView(view, viewIndex, new LinearLayout.LayoutParams(
-                LayoutParams.WRAP_CONTENT, mIconSize));
+        		mIconSize, mIconSize));
         view = new StatusBarIconView(mContext, slot, null);
         view.set(icon);
 //        mStatusIconsKeyguard.addView(view, viewIndex, new LinearLayout.LayoutParams(

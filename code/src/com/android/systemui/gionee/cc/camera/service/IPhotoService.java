@@ -2,11 +2,11 @@
  * This file is auto-generated.  DO NOT MODIFY.
  * Original file: /home/wangli/env/workspace4.0/Amigo_shortcuttools_2/src/com/gionee/navil/shortcuttools/service/IPhotoService.aidl
  */
-package com.android.systemui.gionee.cc.service;
+package com.android.systemui.gionee.cc.camera.service;
 public interface IPhotoService extends android.os.IInterface
 {
 /** Local-side IPC implementation stub class. */
-public static abstract class Stub extends android.os.Binder implements com.android.systemui.gionee.cc.service.IPhotoService
+public static abstract class Stub extends android.os.Binder implements com.android.systemui.gionee.cc.camera.service.IPhotoService
 {
 private static final java.lang.String DESCRIPTOR = "com.gionee.navil.shortcuttools.service.IPhotoService";
 /** Construct the stub at attach it to the interface. */
@@ -18,16 +18,16 @@ this.attachInterface(this, DESCRIPTOR);
  * Cast an IBinder object into an com.gionee.navil.shortcuttools.service.IPhotoService interface,
  * generating a proxy if needed.
  */
-public static com.android.systemui.gionee.cc.service.IPhotoService asInterface(android.os.IBinder obj)
+public static com.android.systemui.gionee.cc.camera.service.IPhotoService asInterface(android.os.IBinder obj)
 {
 if ((obj==null)) {
 return null;
 }
 android.os.IInterface iin = (android.os.IInterface)obj.queryLocalInterface(DESCRIPTOR);
-if (((iin!=null)&&(iin instanceof com.android.systemui.gionee.cc.service.IPhotoService))) {
-return ((com.android.systemui.gionee.cc.service.IPhotoService)iin);
+if (((iin!=null)&&(iin instanceof com.android.systemui.gionee.cc.camera.service.IPhotoService))) {
+return ((com.android.systemui.gionee.cc.camera.service.IPhotoService)iin);
 }
-return new com.android.systemui.gionee.cc.service.IPhotoService.Stub.Proxy(obj);
+return new com.android.systemui.gionee.cc.camera.service.IPhotoService.Stub.Proxy(obj);
 }
 public android.os.IBinder asBinder()
 {
@@ -71,7 +71,7 @@ return true;
 }
 return super.onTransact(code, data, reply, flags);
 }
-private static class Proxy implements com.android.systemui.gionee.cc.service.IPhotoService
+private static class Proxy implements com.android.systemui.gionee.cc.camera.service.IPhotoService
 {
 private android.os.IBinder mRemote;
 Proxy(android.os.IBinder remote)

@@ -17,7 +17,12 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.OvershootInterpolator;
 import com.amigo.navi.keyguard.DebugLog;
+ 
+import com.amigo.navi.keyguard.KeyguardViewHostManager;
+import com.amigo.navi.keyguard.KeyguardWallpaperManager;
+ 
 import com.amigo.navi.keyguard.haokan.BitmapUtil;
+ 
 import com.amigo.navi.keyguard.haokan.Common;
 import com.amigo.navi.keyguard.haokan.FileUtil;
 import com.amigo.navi.keyguard.haokan.UIController;
@@ -46,11 +51,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
             { R.string.haokan_arc_menu_subscribe, R.string.haokan_arc_menu_subscribe }, 
             { R.string.haokan_arc_menu_setting, R.string.haokan_arc_menu_setting }};
     
-//    private static int[] MENU_ITEM_DRAWABLES = {
-//        R.drawable.arcmenu_favorite_background, R.drawable.arcmenu_locked_background,
-//        R.drawable.arcmenu_subscribe_background,
-//        R.drawable.arcmenu_setting_background
-//    };
+ 
     
     private static int[][] MENU_ITEM_DRAWABLES = {
             {
@@ -732,93 +733,14 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
      * @param arcItemButton
      */
     private void onClickFavorite(final ArcItemButton arcItemButton) {
-
-        new Thread(new Runnable() {
-            
-            @Override
-            public void run() {
-                boolean success = false;
-                int stringResId = R.string.haokan_tip_favorite_error;
-                if (Common.SDfree()) {
-                    
-//                    Bitmap currentWallpaper = controller.getCurrentWallpaperBitmap(mWallpaper , false);
-                    Bitmap currentWallpaper = controller.getBitmapFromLocal(getContext().getApplicationContext(), mWallpaper);
-                    
-                    boolean isLocalImage = mWallpaper.getImgId() == Wallpaper.WALLPAPER_FROM_PHOTO_ID;
-                    
-                    String imageFileName = new StringBuffer(FileUtil.getDirectoryFavorite()).append("/").append(Common.currentTimeDate()).append("_")
-                            .append(isLocalImage ? mWallpaper.getImgName() : mWallpaper.getImgId()).append(".png").toString();
-                    
-                    if (currentWallpaper != null) {
-                        success = FileUtil.saveWallpaper(currentWallpaper, imageFileName);
-                        BitmapUtil.recycleBitmap(currentWallpaper);
-                    }
-                    
-                    if (success) {
-                        mWallpaper.setFavoriteLocalPath(imageFileName);
-                        mWallpaper.setFavorite(true);
-                        WallpaperDB.getInstance(getContext().getApplicationContext()).updateFavorite(mWallpaper);
-                        Common.insertMediaStore(getContext().getApplicationContext(),currentWallpaper.getWidth(), currentWallpaper.getHeight(), imageFileName);
-                        stringResId = R.string.haokan_tip_save_gallery;
-                    }
-                } else {
-                    stringResId = R.string.insufficient_memory;
-                }
-                
-                postShowToast(stringResId, 300);
-                
-            }
-        }).start();
-    }
-    
-    private void postShowToast(final int stringResId, int delay) {
-        postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                controller.showToast(stringResId);
-            }
-        }, delay);
+        KeyguardWallpaperManager keyguardWallpaperManager = KeyguardViewHostManager.getInstance().getKeyguardWallpaperManager();
+        keyguardWallpaperManager.onClickFavorite(mWallpaper);
     }
     
     private void onClickLocked(final ArcItemButton arcItemButton) {
-
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-
-                boolean success =  false;
-                
-                if(mWallpaper.isLocked()){
-                    success = controller.clearLock(getContext(),mWallpaper);
-                }else{
-                    success = controller.lockWallpaper(getContext(), mWallpaper);
-                    
-                    if (Common.SDfree()) {
-                        boolean isLocalImage = mWallpaper.getImgId() == Wallpaper.WALLPAPER_FROM_PHOTO_ID;
-                        String imageFileName = new StringBuffer(FileUtil.getDirectoryFavorite()).append("/").append(Common.currentTimeDate()).append("_")
-                                .append(isLocalImage ? mWallpaper.getImgName() : mWallpaper.getImgId()).append(".png").toString();
-//                        Bitmap currentWallpaper = controller.getCurrentWallpaperBitmap(mWallpaper, false);
-                        Bitmap currentWallpaper = controller.getBitmapFromLocal(getContext().getApplicationContext(), mWallpaper);
-                        
-                        if (currentWallpaper != null) {
-                            if (FileUtil.saveWallpaper(currentWallpaper, imageFileName)) {
-                                Common.insertMediaStore(getContext().getApplicationContext(),currentWallpaper.getWidth(), currentWallpaper.getHeight(), imageFileName);
-                            }
-                            BitmapUtil.recycleBitmap(currentWallpaper);
-                        }
-                    }
-                }
-                if (success) {
-                    
-                    HKAgent.onEventWallpaperLock(getContext().getApplicationContext(), mWallpaper);
-                    int stringResId = mWallpaper.isLocked() ? R.string.haokan_tip_screen_on_show : R.string.haokan_tip_no_lock_show;
-                    postShowToast(stringResId, 500);
-                     
-                }  
-            }
-        }).start();
-
+        
+        KeyguardWallpaperManager keyguardWallpaperManager = KeyguardViewHostManager.getInstance().getKeyguardWallpaperManager();
+        keyguardWallpaperManager.onClickLocked(mWallpaper);
     }
     
     

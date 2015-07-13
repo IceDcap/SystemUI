@@ -185,7 +185,6 @@ public class LongPressView extends View {
                 float Value = (Float) animation.getAnimatedValue();
                 mRadiusThird = Value;
                 int alpha = (int) (DEFAULT_ALPHA_THIRD * (1.0f - animation.getAnimatedFraction()));
-                Log.v("guide", "alpha = " + alpha);
                 mPaintThird.setAlpha(alpha);
                 invalidate();
             }  

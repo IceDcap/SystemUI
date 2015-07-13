@@ -8,8 +8,11 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.text.TextUtils;
 
+
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.KWDataCache;
+import com.amigo.navi.keyguard.KeyguardViewHostManager;
+import com.amigo.navi.keyguard.KeyguardWallpaperManager;
 import com.amigo.navi.keyguard.haokan.analysis.HKAgent;
 import com.amigo.navi.keyguard.haokan.db.CategoryDB;
 import com.amigo.navi.keyguard.haokan.db.WallpaperDB;
@@ -70,12 +73,12 @@ public class RequestNicePicturesFromInternet {
 ////        registerData();
 //    }
     
-    public void registerData(boolean isCheckFromOnToOff){
+    public void registerData(final boolean isCheckFromOnToOff){
     		boolean isUpdate = KeyguardSettings.getWallpaperUpadteState(mContext);
             DebugLog.d(TAG,"registerUserID isUpdate:" + isUpdate);
     		if(!isUpdate){
     			if(isCheckFromOnToOff){
-    				HKAgent.uploadAllLog();
+    				HKAgent.uploadAllLog(mContext, false);
     			}
     			return;
     		}
@@ -103,7 +106,7 @@ public class RequestNicePicturesFromInternet {
                   String userID = registerUserID();
                   DebugLog.d(TAG,"registerData userID:" + userID);
                   if(!TextUtils.isEmpty(userID)){
-                      HKAgent.uploadAllLog();
+                      HKAgent.uploadAllLog(mContext, true);
                       requestPictureCategory(isStop);
                       requestPictureList(isStop);
                   }
@@ -298,10 +301,12 @@ public class RequestNicePicturesFromInternet {
 			ReadAndWriteFileFromSD dealWithBitmap, boolean isStop,
 			WallpaperList wallpaperList, boolean isFirstBitmapOfCurrentDay) {
 	    
+        KeyguardWallpaperManager keyguardWallpaperManager = KeyguardViewHostManager.getInstance()
+                .getKeyguardWallpaperManager();
 	    boolean isFirst = isFirstBitmapOfCurrentDay;
 	    final WallpaperDB wallpaperDB = WallpaperDB.getInstance(mContext);
 		WallpaperList deleteList = null;
-		
+		 
         for(int index = 0;index < wallpaperList.size();index++){
             DebugLog.d(TAG,"downloadWallpaperPicturesFromNet isStop:" + isStop);
             if(isStop){
@@ -334,20 +339,26 @@ public class RequestNicePicturesFromInternet {
                             deleteList = wallpaperDB.queryExcludeFixedWallpaper();
                             wallpaperDB.insertAfterDeleteAll(wallpaperList);
                             Common.setUpdateWallpaperDate(mContext,date);
-                            Common.displayHour = -1;
-                            Common.displayPostion = -1;
+                            keyguardWallpaperManager.displayHour = -1;
+                            keyguardWallpaperManager.displayPostion = -1;
                             UIController.getInstance().setNewWallpaperToDisplay(true);
                             isFirst = false;
                             FileUtil.deleteMusic();
                         }
-                        
                         wallpaperDB.updateDownLoadFinish(wallpaper);
-                        
+                        keyguardWallpaperManager.setDownloading(true);
                     }
             }
         }
+        keyguardWallpaperManager.setDownloading(false);
+        keyguardWallpaperManager.setDownloadComplete(true);
         
-        delOldWallpaper(dealWithBitmap, !isFirst, deleteList);
+        if (!isFirst) {
+            DebugLog.d(TAG, "setDownloadComplete  setDeleteList");
+            keyguardWallpaperManager.setDeleteList(deleteList);
+            keyguardWallpaperManager.onDownLoadComplete();
+        }
+ 
 	}
 
 	private void delOldWallpaper(ReadAndWriteFileFromSD dealWithBitmap, boolean savedSuccess, WallpaperList delList) {

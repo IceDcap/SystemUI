@@ -107,7 +107,7 @@ public class Guide {
         setNeedGuideSlideAround(preferences.getBoolean(GUIDE_SLIDE_AROUND, true));
         setNeedGuideScrollUp(preferences.getBoolean(GUIDE_SCROLL_UP, true));
 
-        Log.v("guide", "Guide init needGuideScrollUp=" + needGuideScrollUp()
+        DebugLog.d("guide", "Guide init needGuideScrollUp=" + needGuideScrollUp()
                 + " needGuideLongPress=" + needGuideLongPress() + " needGuideNewWallpaper="
                 + needGuideNewWallpaper() + " needGuideSlideAround=" + needGuideSlideAround()
                 + " needGuideSlideFeedBack=" + needGuideSlideFeedBack());

@@ -58,7 +58,7 @@ public class DetailActivity extends Activity {
             this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
-            this.getWindow().setStatusBarColor(Color.TRANSPARENT);
+            this.getWindow().setStatusBarColor(0xffd7d7d7);
             this.getWindow().setNavigationBarColor(Color.TRANSPARENT);
         }
 

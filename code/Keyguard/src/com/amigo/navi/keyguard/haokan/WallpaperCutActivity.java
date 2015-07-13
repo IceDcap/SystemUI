@@ -10,7 +10,7 @@ import java.io.IOException;
 import amigo.app.AmigoActivity;
 import amigo.app.AmigoAlertDialog;
 import amigo.widget.AmigoButton;
-
+import amigo.app.AmigoProgressDialog;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.WallpaperManager;
@@ -40,6 +40,7 @@ import android.widget.ImageView.ScaleType;
 
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.KWDataCache;
+import com.amigo.navi.keyguard.KeyguardViewHostManager;
  
 import com.amigo.navi.keyguard.haokan.CropImageView;
 import com.amigo.navi.keyguard.haokan.CutImageView;
@@ -85,6 +86,7 @@ public class WallpaperCutActivity extends Activity {
     private Runnable mToastRunnable = new Runnable() {
         @Override
         public void run() {
+            cancelProgressDialog();
             finish();
         }
     };
@@ -99,7 +101,7 @@ public class WallpaperCutActivity extends Activity {
 
         mScreenWidth = getResources().getDisplayMetrics().widthPixels;
         mScreenHeight = getResources().getDisplayMetrics().heightPixels;
-        Log.d(TAG, "mScreenHeight=" + mScreenHeight);
+        DebugLog.d(TAG, "mScreenHeight=" + mScreenHeight);
 
         mImageView = (CutImageView) findViewById(R.id.image);
         mCropImageView = (CropImageView) findViewById(R.id.display_crop);
@@ -130,6 +132,8 @@ public class WallpaperCutActivity extends Activity {
     private void init(Bitmap bmp) {
         mBitmapWidth = bmp.getWidth();
         mBitmapHeight = bmp.getHeight();
+        DebugLog.d(TAG, "mBitmapWidth=" + mBitmapWidth+",mBitmapHeight"+mBitmapHeight);
+        
         initCutView(bmp);
         mApplyButton = (AmigoButton) findViewById(R.id.apply);
         mApplyButton.setOnClickListener(mApplyOnClickListener);
@@ -174,7 +178,7 @@ public class WallpaperCutActivity extends Activity {
         WallpaperManager wpm = WallpaperManager.getInstance(getApplicationContext());
         Bitmap scaleBitmap = CommonUtils.scaleBitmap(bitmap, mScreenHeight);
         String cachePath = getCacheDir().getAbsolutePath();
-        Log.d(TAG, "cachePath=" + cachePath);
+        DebugLog.d(TAG, "cachePath=" + cachePath);
         File paperFile = CommonUtils.writeFile(scaleBitmap, cachePath,"Constants.DESK_NAME");
         try {
             int wallpaperWidth = mScreenWidth * 2;
@@ -202,7 +206,7 @@ public class WallpaperCutActivity extends Activity {
                 return getContentBitmap(filePath, w, h);
             }
 
-            Log.d(TAG, "filePath=" + filePath);
+            DebugLog.d(TAG, "filePath=" + filePath);
             fileInputStream = new FileInputStream(filePath);
             bufferedInputStream = new BufferedInputStream(
                     fileInputStream);
@@ -241,7 +245,7 @@ public class WallpaperCutActivity extends Activity {
     }
 
     private Bitmap getContentBitmap(String url, int w, int h) {
-        Log.d(TAG, "url=" + url);
+    	DebugLog.d(TAG, "url=" + url);
         Bitmap bitmap = null;
         ParcelFileDescriptor parcelFileDescriptor = null;
         try {
@@ -279,14 +283,9 @@ public class WallpaperCutActivity extends Activity {
 
     private void setSrceenLockWallpaper(Bitmap bitmap) {
  
-        Log.v(TAG, "bitmap " + bitmap.getWidth() + " " + bitmap.getHeight());
-        Log.v("haokan", "filePath = " + filePath);
-        String fileName = "temp"; 
-        if (!TextUtils.isEmpty(filePath)) {
-            fileName = filePath.substring(filePath.lastIndexOf("/") + 1).replaceAll("[^A-Za-z0-9.]", "_");
+        if (bitmap != null) {
+            KeyguardViewHostManager.getInstance().getKeyguardWallpaperManager().setSrceenLockWallpaper(bitmap);
         }
-        Log.v("haokan", "fileName = " + fileName);
-        UIController.getInstance().setSrceenLockWallpaper(this.getApplicationContext(), bitmap, fileName);
     }
 
     private Bitmap getCropBitmap() throws ArithmeticException {
@@ -306,6 +305,7 @@ public class WallpaperCutActivity extends Activity {
         Bitmap singleScreen = null;
         try {
             newBitmap = Bitmap.createBitmap(source, xLeft, yTop, width, height);
+            DebugLog.d(TAG, "hanjuan="+"xLeft"+xLeft+"yTop"+yTop+"width"+width+"height"+height);
             if (newBitmap != null) {
                 singleScreen = BitmapUtil.getResizedBitmapForSingleScreen(newBitmap,
                         KWDataCache.getScreenHeight(getResources()),
@@ -326,12 +326,39 @@ public class WallpaperCutActivity extends Activity {
 
         @Override
         public void onClick(View v) {
-            apply();
+            if (!Common.isFastClick(2000)) {
+                apply();
+            }
         }
     };
-
+    
+    private AmigoProgressDialog mProgressDialog;
+    
+    private void showProgressDialog() {
+       if (mProgressDialog == null) {
+            
+            mProgressDialog = new AmigoProgressDialog(this);
+            mProgressDialog.setMessage(getString(R.string.setting));
+            mProgressDialog.setCancelable(false);
+            mProgressDialog.setCanceledOnTouchOutside(false);
+        }
+        mProgressDialog.show();
+    }
+    
+    private void cancelProgressDialog() {
+        if (mProgressDialog != null) {
+             if (mProgressDialog.isShowing()) {
+                 mProgressDialog.cancel();
+            }
+         }
+     }
+    
+    
+    
+    
     private void apply() {
         if (!mInit) {
+        	DebugLog.d(TAG, "apply"+"true");
             return;
         }
 
@@ -341,6 +368,7 @@ public class WallpaperCutActivity extends Activity {
 //            return;
 //        }
 
+        showProgressDialog();
          
         final long startTime = System.currentTimeMillis();
         Thread setWallpaperThread = new Thread() {
@@ -374,6 +402,7 @@ public class WallpaperCutActivity extends Activity {
 
         @Override
         public void onClick(View v) {
+            cancelProgressDialog();
             finish();
         }
     };
@@ -381,6 +410,7 @@ public class WallpaperCutActivity extends Activity {
 
     private void initCutView(Bitmap bitmap) {
         if (mCutType.equals(CUT_DESK_MUTI)) {
+        	DebugLog.d(TAG, "initCutView=" + "if");
             float scaleW = ((float) mScreenWidth) / bitmap.getWidth();
             float rate = 1.0f * bitmap.getWidth() / bitmap.getHeight();
             if (rate > 0.9f) {

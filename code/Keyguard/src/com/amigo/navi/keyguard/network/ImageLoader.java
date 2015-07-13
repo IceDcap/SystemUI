@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.KWDataCache;
 import com.amigo.navi.keyguard.KeyguardViewHostManager;
+import com.amigo.navi.keyguard.KeyguardWallpaperManager;
 import com.amigo.navi.keyguard.haokan.BitmapUtil;
 import com.amigo.navi.keyguard.haokan.FileUtil;
 import com.amigo.navi.keyguard.haokan.db.WallpaperDB;
@@ -138,15 +139,8 @@ public class ImageLoader implements ImageLoaderInterface{
 			mNeedInit = true;
 		}	
 		synchronized (mImageViewWithLoadBitmapList) {
-		    DebugLog.d(LOG_TAG,"mImageViewWithLoadBitmapList size :" + mImageViewWithLoadBitmapList.size());
-		    int size = mImageViewWithLoadBitmapList.size();
-            for (int j = size - 1; j >= 0; j--) {
-                ImageViewWithLoadBitmap view = mImageViewWithLoadBitmapList.get(j);
-                if (view != null) {
-                    view.loadloadThumbnailFromCache();
-                }
-            }
-//			mImageViewWithLoadBitmapList.clear();
+
+			mImageViewWithLoadBitmapList.clear();
 		}
 		System.gc();
 	}
@@ -542,7 +536,7 @@ public class ImageLoader implements ImageLoaderInterface{
                         }
                     }
  
-                    Message msg = mHandler.obtainMessage(KeyguardViewHostManager.MSG_UPDATE_HAOKAN_LIST);
+                    Message msg = mHandler.obtainMessage(KeyguardWallpaperManager.MSG_UPDATE_HAOKAN_LIST);
                     msg.obj = wallpaperList;
                     msg.arg1 = index;
                     mHandler.sendMessage(msg);

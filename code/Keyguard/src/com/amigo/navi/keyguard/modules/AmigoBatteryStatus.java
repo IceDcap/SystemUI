@@ -102,7 +102,7 @@ public class AmigoBatteryStatus {
 			if(isCharged()) {
 				text = context.getString(R.string.amigo_keyguard_charged);
 			} else {
-				try {
+				/*try {
 					long chargingTimeRemaining = mBatteryInfo.computeChargeTimeRemaining();
 					if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "chargingTimeRemaining:"+chargingTimeRemaining);
 					if (chargingTimeRemaining > 0) {
@@ -117,8 +117,8 @@ public class AmigoBatteryStatus {
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
-//				text = context.getString(R.string.lockscreen_plugged_in, level);
+				}*/
+				text = context.getString(R.string.lockscreen_plugged_in, level);
 			}
 		} else if(isBatteryLow()) {
 			text = context.getString(R.string.amigo_keyguard_low_battery);

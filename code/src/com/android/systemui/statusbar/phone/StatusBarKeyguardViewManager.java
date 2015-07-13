@@ -579,8 +579,8 @@ public class StatusBarKeyguardViewManager implements KeyguardBouncerCallback ,Ke
         mStatusBarWindowManager.setKeyguardShowWallpaper(isShow);
     }
    
-    public void finishIfNoSecure(){
-        mKeyguardViewHostManager.finishIfNoSecure();
+    public void resetToHomePositionIfNoSecure(){
+        mKeyguardViewHostManager.resetToHomePositionIfNoSecure();
     }
     
     public void unlockKeyguardByOtherApp(){

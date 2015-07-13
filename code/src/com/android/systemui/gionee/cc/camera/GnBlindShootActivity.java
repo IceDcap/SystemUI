@@ -8,7 +8,7 @@ package com.android.systemui.gionee.cc.camera;
 */
 import java.util.List;
 
-import com.android.systemui.gionee.cc.service.IPhotoService;
+import com.android.systemui.gionee.cc.camera.service.IPhotoService;
 import com.android.systemui.gionee.cc.util.GnAppConstants;
 import com.android.systemui.gionee.cc.util.GnVibrateUtil;
 import com.android.systemui.R;
@@ -34,6 +34,7 @@ import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.Size;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.util.Log;
@@ -62,6 +63,8 @@ public class GnBlindShootActivity extends Activity {
 
     private NotificationManager mNotificationManager;
     private Notification mNotification;
+    
+    Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,6 +155,8 @@ public class GnBlindShootActivity extends Activity {
                 mParameters.setPictureSize(targetSize.width, targetSize.height);
                 mParameters.setFlashMode(Parameters.FLASH_MODE_OFF);
                 mParameters.setPictureFormat(ImageFormat.JPEG);
+                mParameters.setFocusMode("manual");
+                mParameters.set("afeng-pos", "110");
                 mCamera.setParameters(mParameters);
             }
         } catch (Exception e) {
@@ -180,18 +185,25 @@ public class GnBlindShootActivity extends Activity {
 
             Log.d(TAG, IPhotoService.class.getName());
             Intent intent = new Intent();
-            intent.setClassName("com.android.systemui", "com.android.systemui.gionee.cc.service.GnShortCutServices");
+            intent.setClassName("com.android.systemui", "com.android.systemui.gionee.cc.camera.service.GnShortCutServices");
             bindService(intent, mServiceConn, Context.BIND_AUTO_CREATE);
         }
     }
 
     private void autoFocus() {
         Log.d(TAG, "autoFocus");
-        try {
-            mCamera.takePicture(null, null, mPicCallback);
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-        }
+        mHandler.postDelayed(new Runnable() {
+            
+            @Override
+            public void run() {
+                try {
+                    Log.d(TAG, "takePicture");
+                    mCamera.takePicture(null, null, mPicCallback);
+                } catch (RuntimeException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, 100);
     }
 
     private boolean checkCameraHardware(Context context) {

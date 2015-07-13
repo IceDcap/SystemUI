@@ -16,6 +16,7 @@
 
 package com.amigo.navi.keyguard.fingerprint;
 
+import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.KeyguardViewHostManager;
 
 import android.app.Service;
@@ -25,6 +26,7 @@ import android.os.Bundle;
 import android.os.Debug;
 import android.os.IBinder;
 import android.os.Process;
+import android.os.RemoteException;
 import android.util.Log;
 
 
@@ -32,7 +34,7 @@ import android.util.Log;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 public class AmigoFingerService extends Service {
-    static final String TAG = "KeyguardService";
+    static final String TAG = "AmigoFingerService";
     static final String PERMISSION = android.Manifest.permission.CONTROL_KEYGUARD;
 
 
@@ -44,7 +46,9 @@ public class AmigoFingerService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-    	Log.i("jiating", "onBind");
+    	if(DebugLog.DEBUG){
+    		DebugLog.i(TAG, "onBind");
+    	}
         return mBinder;
     }
 
@@ -63,11 +67,21 @@ public class AmigoFingerService extends Service {
     private final IAmigoFingerService.Stub mBinder = new IAmigoFingerService.Stub() {
 
           public void blackScreenFingerSuccess(){
-        	  Log.i("jiating", "blackScreenFingerSuccess");
-        	  checkPermission();
-        	  
+        	  if(DebugLog.DEBUG){
+          		DebugLog.i(TAG, "blackScreenFingerSuccess");
+          	}
+        	  checkPermission();	  
         	  KeyguardViewHostManager.getInstance().unlockByBlackScreenFingerIdentify();
           }
+
+		@Override
+		public boolean openFingerPrintOrNot() throws RemoteException {
+			if(DebugLog.DEBUG){
+          		DebugLog.i(TAG, "openFingerPrintOrNot");
+          	}
+        	  checkPermission();	
+        	 return  KeyguardViewHostManager.getInstance().openFingerPrintOrNot();
+		}
     };
 }
 

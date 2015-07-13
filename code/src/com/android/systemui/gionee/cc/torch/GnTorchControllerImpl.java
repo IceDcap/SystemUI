@@ -13,12 +13,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.ContentObserver;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -130,6 +132,9 @@ public final class GnTorchControllerImpl implements GnTorchController {
         mTorchManager = GnTorchManager.getInstance(mContext);
         mTorch = mTorchManager.getTorch();
         mTorch.registerUiStateCallback(mTorchUiCallback);
+        
+        mContext.getContentResolver().registerContentObserver(
+                Settings.Global.getUriFor("amigo_powermode"), true, mPowerModeObserver);
     }
 
     public static GnTorchControllerImpl getInstance(Context context) {
@@ -234,4 +239,12 @@ public final class GnTorchControllerImpl implements GnTorchController {
         
         return isAppRunning;
     }
+    
+    private ContentObserver mPowerModeObserver = new ContentObserver(new Handler()) {
+        @Override
+        public void onChange(boolean selfChange) {
+            Log.d(TAG, "mPowerModeObserver selfChange=" + selfChange);
+            setTorchOff();
+        }
+    };
 }

@@ -856,11 +856,26 @@ public abstract class BaseStatusBar extends SystemUI implements
         return vetoButton;
     }
 
+    // Gionee <hanbj> <20150707> add for CR01511508 begin
+	private int getInternalResIdByName(String resName) {
+		int id = 0;
+	    try {
+	        Class<?> c = Class.forName("com.android.internal.R$id");
+	        Field field = c.getField(resName);
+	        id = field.getInt(null);
+	    } catch (Exception ex) {
+	        Log.i(TAG, " --- ex="+ex);
+	    }
+	    return id;
+	}
+    // Gionee <hanbj> <20150707> add for CR01511508 end
 
     protected void applyColorsAndBackgrounds(StatusBarNotification sbn,
             NotificationData.Entry entry) {
-
-        if (entry.expanded.getId() != com.android.internal.R.id.status_bar_latest_event_content) {
+        // Gionee <hanbj> <20150707> modify for CR01511508 begin
+        //if (entry.expanded.getId() != com.android.internal.R.id.status_bar_latest_event_content) {
+        if (entry.expanded.getId() != getInternalResIdByName("status_bar_latest_event_content")) {
+		// Gionee <hanbj> <20150707> modify for CR01511508 end
             // Using custom RemoteViews
             if (entry.targetSdk >= Build.VERSION_CODES.GINGERBREAD
                     && entry.targetSdk < Build.VERSION_CODES.LOLLIPOP) {
@@ -889,8 +904,12 @@ public abstract class BaseStatusBar extends SystemUI implements
 
     public boolean isMediaNotification(NotificationData.Entry entry) {
         // TODO: confirm that there's a valid media key
+        // Gionee <hanbj> <20150707> modify for CR01517339 begin
+        //return entry.expandedBig != null &&
+        //       entry.expandedBig.findViewById(com.android.internal.R.id.media_actions) != null;
         return entry.expandedBig != null &&
-               entry.expandedBig.findViewById(com.android.internal.R.id.media_actions) != null;
+               entry.expandedBig.findViewById(getInternalResIdByName("media_actions")) != null;
+        // Gionee <hanbj> <20150707> modify for CR01517339 end
     }
 
     // The gear button in the guts that links to the app's own notification settings
@@ -1878,7 +1897,9 @@ public abstract class BaseStatusBar extends SystemUI implements
             if ((isLockscreenPublicMode() && !mShowLockscreenNotifications) ||
                     (onKeyguard && (visibleNotifications >= maxKeyguardNotifications
                             || !showOnKeyguard))) {
+               // Gionee <hanbj> <20150706> delete for CR01504926 begin
                // entry.row.setVisibility(View.GONE);
+               // Gionee <hanbj> <20150706> delete for CR01504926 end
                 if (onKeyguard && showOnKeyguard) {
                     mKeyguardIconOverflowContainer.getIconsView().addNotification(entry);
                 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import android.app.ActivityManagerNative;
 import android.app.Notification;
@@ -25,6 +26,7 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Message;
 import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.os.UserHandle;
@@ -61,6 +63,8 @@ import com.amigo.navi.keyguard.notification.NotificationContentView;
 import com.amigo.navi.keyguard.notification.NotificationData;
 import com.amigo.navi.keyguard.notification.NotificationData.Entry;
 import com.amigo.navi.keyguard.notification.StatusBarIconView;
+import com.amigo.navi.keyguard.notification.UpdateData;
+import com.amigo.navi.keyguard.notification.UpdateNotificationCache;
 import com.amigo.navi.keyguard.util.AmigoKeyguardUtils;
 import com.amigo.navi.keyguard.util.DataStatistics;
 
@@ -71,7 +75,39 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
 	private static KeyguardNotificationModule mInstance = null;
 	private NotificationCallback mCallback = null;
 	private NotificationData mNotificationData;
-	private final Handler mHandler = new Handler();
+    private static final int UPDATE_NOTIFICATION=0;
+    private static final int EXECUTE_NOTIFICATION_CACHE=1;
+    private static final int DELAY_EXCUTE_UPDATE_TIME=200;
+	private final Handler mHandler=new Handler() {
+		 public void handleMessage(android.os.Message msg) {
+			 
+			 switch (msg.what) {
+			case UPDATE_NOTIFICATION:
+				UpdateData updateData=(UpdateData) msg.obj;
+				updateNotification(updateData.notification, updateData.rankingMap);
+				mUpdateNotificationCache.removeUpdateNotificationData(updateData.notification.getKey());
+				break;
+			case EXECUTE_NOTIFICATION_CACHE:
+				int datasSize=mUpdateNotificationCache.getNotificationDatas().size();
+		    	if(DebugLog.DEBUG) DebugLog.d(TAG, "handleMessage....EXECUTE_NOTIFICATION_CACHE..datasSize="+datasSize);
+				int i=0;
+				if(datasSize>0){
+					  Iterator iter = mUpdateNotificationCache.getNotificationDatas().entrySet().iterator();    
+					    while (iter.hasNext()) {
+					    	i++;
+					        java.util.Map.Entry entry =  (java.util.Map.Entry) iter.next(); 
+					        Message message=mHandler.obtainMessage(UPDATE_NOTIFICATION,  entry.getValue());
+					        mHandler.sendMessage(message);				        
+					    }  
+				}	
+
+				mHandler.removeMessages(EXECUTE_NOTIFICATION_CACHE);
+				break;
+			default:
+				break;
+			}
+		 };
+	};
 	private IStatusBarService mBarService;
 	// Notification type share preference name
 	private static final String NOTIFICATION_TYPE_PREFRENCE = "notification_types";
@@ -93,6 +129,7 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
     private static final int STATE_OPEN = 2;
     
     private boolean isRemoved = false;
+    private UpdateNotificationCache mUpdateNotificationCache;
 
 	/**
 	 * initial the maps early, this is the default type for notifications.
@@ -175,6 +212,7 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
         mFilter.addAction(DevicePolicyManager.ACTION_DEVICE_POLICY_MANAGER_STATE_CHANGED);
 //        mFilter.addAction(SYSTEMUISHARED_CHANGE);
         mFilter.addAction(SYSTEMUI_NOTIFY_PANEL_STATE_CHANGE);
+        mUpdateNotificationCache=new UpdateNotificationCache();
 	}
 	
 	private void handleCode(int state_code) {
@@ -252,9 +290,7 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
 		mHandler.post(new Runnable() {
             @Override
             public void run() {
-            	if(DebugLog.DEBUGMAYBE) DebugLog.d(TAG, "handlNotificationPosted");
                 Notification n = sbn.getNotification();
-                if(DebugLog.DEBUGMAYBE) DebugLog.d(TAG, "handlNotificationPosted......"+n);
                 boolean isUpdate = mNotificationData.get(sbn.getKey()) != null;
 
                 // Ignore children of notifications that have a summary, since we're not
@@ -274,7 +310,14 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
                     return;
                 }
                 if (isUpdate) {
-					updateNotification(sbn, rankingMap);
+                	
+                	mUpdateNotificationCache.addUpdateNotificationData(new UpdateData(sbn, rankingMap));
+                    if(!mHandler.hasMessages(EXECUTE_NOTIFICATION_CACHE)){
+                    	DebugLog.d(TAG, "handlNotificationPosted-isUpdate....mUpdateNotificationCache.getNotificationDatas().size()="+mUpdateNotificationCache.getNotificationDatas().size());
+                    		mHandler.sendEmptyMessageDelayed(EXECUTE_NOTIFICATION_CACHE, DELAY_EXCUTE_UPDATE_TIME);
+                    }
+                	
+//					updateNotification(sbn, rankingMap);
                 } else {
                     addNotification(sbn, rankingMap);
                 }
@@ -836,7 +879,6 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
 	}
 
 	private void addNotificationViews(Entry entry, RankingMap ranking) {
-		if(DebugLog.DEBUGMAYBE) DebugLog.d(TAG, "addNotificationViews:"+entry);
 		if (entry == null) {
 			return;
 		}
@@ -866,6 +908,7 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
 		if(DebugLog.DEBUG) DebugLog.d(TAG, "removeAllNotifications");
 		mNotificationData.getActiveNotifications().clear();
 		mNotificationData.getmEntries().clear();
+		mUpdateNotificationCache.getNotificationDatas().clear();
 		notifyUpdate();
 	}
 	
@@ -970,18 +1013,13 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
 	
 	@Override
 	public boolean isImportantNotification(StatusBarNotification sbn) {
-		if(DebugLog.DEBUGMAYBE) DebugLog.d(TAG, "isImportantNotification --sbn " +(sbn==null));
 		if (sbn == null)
 			return false;
-//		String pkgName = sbn.getPackageName();
-//		if(DebugLog.DEBUGMAYBE) DebugLog.d(TAG, "isImportantNotification --sbn...pkgName " +pkgName);
-		if(DebugLog.DEBUGMAYBE) DebugLog.d(TAG, "isImportantNotification --sbn isImport" +sbn.getNotification().priority);
+
 		if(sbn.getNotification().priority==Notification.PRIORITY_MAX){
+			if(DebugLog.DEBUGMAYBE) DebugLog.d(TAG, "isImportantNotification --sbn isImport."+sbn.getPackageName());
 			return true;
 		}
-		/*if (mImportantNotificationMap.containsKey(pkgName)) {
-			return true;
-		}*/
 		return false;
 	}
 	

@@ -36,6 +36,7 @@ import amigo.widget.AmigoCheckBox;
 
 import com.amigo.internal.app.AmigoAlertActivity;
 import com.amigo.internal.app.AmigoAlertController;
+import amigo.changecolors.ChameleonColorManager;
 import com.android.systemui.R;
 
 public class UsbDebuggingActivity extends AmigoAlertActivity
@@ -50,6 +51,7 @@ public class UsbDebuggingActivity extends AmigoAlertActivity
     public void onCreate(Bundle icicle) {
     	setTheme(R.style.GnAlertDialogLight);
         super.onCreate(icicle);
+        ChameleonColorManager.getInstance().onCreate(this);
 
         if (SystemProperties.getInt("service.adb.tcp.port", 0) == 0) {
             mDisconnectedReceiver = new UsbDisconnectedReceiver(this);
@@ -83,6 +85,13 @@ public class UsbDebuggingActivity extends AmigoAlertActivity
         ap.mView = checkbox;
 
         setupAlert();
+    }
+
+    @Override
+    public void onDestroy() {
+        // TODO Auto-generated method stub
+        super.onDestroy();
+        ChameleonColorManager.getInstance().onDestroy(this);
     }
 
     private class UsbDisconnectedReceiver extends BroadcastReceiver {

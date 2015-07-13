@@ -106,6 +106,9 @@ public class DiskUtils {
          if(scale == 0){
         	 scale = 1;
          }
+         DebugLog.d("haokan","decodeBitmap decodeBitmap imageWidth:" + imageWidth);
+         DebugLog.d("haokan","decodeBitmap decodeBitmap scale:" + scale);
+         DebugLog.d("haokan","decodeBitmap decodeBitmap ss.length:" + ss.length);
          
           
          options.inJustDecodeBounds = false;
@@ -131,7 +134,7 @@ public class DiskUtils {
          Bitmap bitmap = null;
          try {
              bitmap = BitmapFactory.decodeByteArray(ss, 0, ss.length, options);
-             
+             DebugLog.d("haokan","decodeBitmap decodeBitmap bitmap.getByteCount:" + bitmap.getByteCount());
          } catch (OutOfMemoryError e) {
             Log.e("haokan", "", e);
          } catch (Exception e) {
@@ -178,7 +181,7 @@ public class DiskUtils {
     public static byte[] convertBitmap(Bitmap bmp){
 		 DebugLog.d(TAG,"convertBitmap 1");
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        bmp.compress(CompressFormat.JPEG, 100, output);
+        bmp.compress(CompressFormat.PNG, 100, output);
 //            bmp.recycle();//自由选择是否进行回收
         byte[] result = output.toByteArray();//转换成功了
         try {
@@ -529,7 +532,7 @@ public class DiskUtils {
         newOpts.inJustDecodeBounds = false;
         Bitmap thumbnailBitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length,
                 newOpts);
-        Log.v("haokan",
+        DebugLog.d("haokan",
                 "saveThumbnail byteArray getWidth = " + thumbnailBitmap.getWidth()
                         + "  getHeight =" + thumbnailBitmap.getHeight());
         byte[] thumbByteArray = convertBitmap(thumbnailBitmap);
@@ -557,10 +560,10 @@ public class DiskUtils {
             saveThumbnail(bitmap, key, path);
             bitmap.recycle();
         } catch (Exception e) {
-            Log.v("haokan", "", e);
+        	Log.d("haokan", "", e);
             e.printStackTrace();
         } catch (OutOfMemoryError e) {
-            Log.v("haokan", "", e);
+        	Log.d("haokan", "", e);
         }
     }
     

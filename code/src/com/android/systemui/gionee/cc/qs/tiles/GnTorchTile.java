@@ -6,23 +6,29 @@ import com.android.systemui.R;
 import com.android.systemui.gionee.GnYouJu;
 import com.android.systemui.gionee.cc.qs.GnQSTile;
 import com.android.systemui.gionee.cc.qs.GnQSTile.BooleanState;
+import com.android.systemui.gionee.cc.qs.policy.GnTorchController;
 import com.android.systemui.gionee.cc.torch.GnTorchControllerImpl;
 
 public class GnTorchTile extends GnQSTile<BooleanState> {
 
     private GnTorchControllerImpl mController;
     
+    private GnTorchController mGnTorchController;
+    
     public GnTorchTile(Host host, String spec) {
         super(host, spec);
         mController = GnTorchControllerImpl.getInstance(mContext);
+        mGnTorchController = new GnTorchController(mContext);
     }
 
     @Override
     public void setListening(boolean listening) {
         if (listening) {
             mController.addStateChangedCallback(mCallback);
+            mGnTorchController.addListener(mListener);
         } else {
             mController.removeStateChangedCallback(mCallback);
+            mGnTorchController.removeListener(mListener);
         }
     }
 
@@ -64,6 +70,27 @@ public class GnTorchTile extends GnQSTile<BooleanState> {
         @Override
         public void onTorchStateChange(boolean enabled) {
             refreshState(enabled);
+        }
+    };
+    
+    private final GnTorchController.FlashlightListener mListener = new GnTorchController.FlashlightListener() {
+        
+        @Override
+        public void onFlashlightOff() {
+            Log.d(TAG, "onFlashlightOff");
+            refreshState(false);
+        }
+        
+        @Override
+        public void onFlashlightError() {
+            Log.d(TAG, "onFlashlightError");
+            refreshState(false);
+        }
+        
+        @Override
+        public void onFlashlightAvailabilityChanged(boolean available) {
+            Log.d(TAG, "onFlashlightAvailabilityChanged");
+            refreshState(false);
         }
     };
 }

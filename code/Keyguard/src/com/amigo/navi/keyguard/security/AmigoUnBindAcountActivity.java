@@ -78,7 +78,6 @@ public class AmigoUnBindAcountActivity  extends AmigoActivity {
 	
 	@Override
 	protected void onPause() {
-        Log.i("jiating","AmigoUnBindAcountActivity...onPause");
 		super.onPause();
 	}
 	

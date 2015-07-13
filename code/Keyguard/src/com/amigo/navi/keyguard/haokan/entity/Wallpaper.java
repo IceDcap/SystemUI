@@ -51,19 +51,22 @@ public class Wallpaper implements Serializable{
     
     private boolean locked;
     
-    private int isTodayWallpaper;
+//    private int isTodayWallpaper;
     
     private float realOrder;
     
-    private float showOrder;
+    private int showOrder;
     
-    private String showTimeBegin;
+    private String showTimeBegin = "NA";
     
-    private String showTimeEnd;
+    private String showTimeEnd = "NA";
     
-    private int todayImage;
+    private boolean todayImage;
     
     private int downloadFinish;
+    
+    
+    private int sort;
     
     
     public boolean isLocked() {
@@ -254,13 +257,13 @@ public class Wallpaper implements Serializable{
         this.type = type;
     }
 
-    public int getIsTodayWallpaper() {
-        return isTodayWallpaper;
-    }
-
-    public void setIsTodayWallpaper(int isTodayWallpaper) {
-        this.isTodayWallpaper = isTodayWallpaper;
-    }
+//    public int getIsTodayWallpaper() {
+//        return isTodayWallpaper;
+//    }
+//
+//    public void setIsTodayWallpaper(int isTodayWallpaper) {
+//        this.isTodayWallpaper = isTodayWallpaper;
+//    }
 
     public float getRealOrder() {
         return realOrder;
@@ -270,11 +273,11 @@ public class Wallpaper implements Serializable{
         this.realOrder = realOrder;
     }
 
-    public float getShowOrder() {
+    public int getShowOrder() {
         return showOrder;
     }
 
-    public void setShowOrder(float showOrder) {
+    public void setShowOrder(int showOrder) {
         this.showOrder = showOrder;
     }
     
@@ -320,21 +323,40 @@ public class Wallpaper implements Serializable{
         this.displayName = displayName;
     }
 
-	public int getTodayImage() {
-		return todayImage;
-	}
-
-	public void setTodayImage(int todayImage) {
-		this.todayImage = todayImage;
-	}
+//	public int getTodayImage() {
+//		return todayImage;
+//	}
+//
+//	public void setTodayImage(int todayImage) {
+//		this.todayImage = todayImage;
+//	}
+    
+    
+    
 
 	public int getDownloadFinish() {
 		return downloadFinish;
 	}
 
-	public void setDownloadFinish(int downloadFinish) {
+	public boolean isTodayImage() {
+        return todayImage;
+    }
+
+    public void setTodayImage(boolean todayImage) {
+        this.todayImage = todayImage;
+    }
+
+    public void setDownloadFinish(int downloadFinish) {
 		this.downloadFinish = downloadFinish;
 	}
+
+    public int getSort() {
+        return sort;
+    }
+
+    public void setSort(int sort) {
+        this.sort = sort;
+    }
     
     
 

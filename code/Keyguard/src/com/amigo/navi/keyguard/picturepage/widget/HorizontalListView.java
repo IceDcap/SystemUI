@@ -327,6 +327,23 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         requestLayout();
     }
 
+    public void removeallchild() {
+        int childCount = getChildCount();
+        for (int index = 0; index < childCount; index++) {
+            View view = getChildAt(0);
+            ImageViewWithLoadBitmap imageViewWithLoadBitmap = null;
+            if (view != null) {
+                imageViewWithLoadBitmap = (ImageViewWithLoadBitmap)view.findViewById(R.id.image);
+            }
+            if (imageViewWithLoadBitmap != null) {
+                ((ViewGroup)(imageViewWithLoadBitmap.getParent())).removeView(imageViewWithLoadBitmap);
+            }
+            detachViewFromParent(view);
+            imageViewWithLoadBitmap = null;
+            view = null;
+        }
+    }
+
     public void setLeftAndRightOffset(int leftAndRightOffset) {
         mLeftAndRightOffset = leftAndRightOffset;
     }

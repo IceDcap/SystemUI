@@ -4,9 +4,11 @@ package com.amigo.navi.keyguard.haokan;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RadialGradient;
+import android.graphics.Rect;
 import android.graphics.Shader;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
@@ -32,13 +34,17 @@ public class KeyguardWallpaperContainer extends FrameLayout {
     
     private int mModel;
     
-    private Drawable bottomDrawable = null;
     
     private static final int BLINDDEGREE = 150;
     
     private int[] colors = new int[] {0xffffffff, 0xffffffff, /*0xddffffff, 0xaaffffff, 0x66ffffff, 0x22ffffff, */0x00ffffff,};
     
     private float[] stops = new float[] { 0, 0.82f, /*0.75f, 0.80f, 0.85f, 0.90f,*/ 1.0f};
+    
+    
+    private Paint mBottomPaint = new Paint();
+    private LinearGradient mLinearGradient;
+    private Rect mBottomRect;
     
     public KeyguardWallpaperContainer(Context context) {
         this(context,null);
@@ -57,7 +63,6 @@ public class KeyguardWallpaperContainer extends FrameLayout {
         super(context, attrs, defStyleAttr, defStyleRes);
         mScreenHeight = Common.getScreenHeight(getContext().getApplicationContext());
         mScreenWidth =  Common.getScreenWidth(getContext().getApplicationContext());
-//        mTop = mScreenHeight;
         
         cx = mScreenWidth / 2.0f;
         cy = mScreenHeight / 2.0f;
@@ -67,11 +72,14 @@ public class KeyguardWallpaperContainer extends FrameLayout {
         UIController.getInstance().setmKeyguardWallpaperContainer(this);
         mPaint.setAntiAlias(true);
 //        mPaint.setXfermode(new PorterDuffXfermode(Mode.DST_ATOP));
-        
         mPaint.setXfermode(new PorterDuffXfermode(Mode.XOR));
-        bottomDrawable = getResources().getDrawable(R.drawable.infozone_background);
-        bottomDrawable.setBounds(0, mScreenHeight - getResources().getDimensionPixelSize(R.dimen.ketguard_infozone_height), mScreenWidth, mScreenHeight);
+ 
+        mBottomRect = new Rect(0, mScreenHeight - getResources().getDimensionPixelSize(R.dimen.ketguard_infozone_height), mScreenWidth, mScreenHeight);
+        mLinearGradient = new LinearGradient(0, mBottomRect.top, 0, mBottomRect.bottom, new int[] {Color.TRANSPARENT, 0x15000000, 0x40000000}, null,
+                Shader.TileMode.CLAMP);
+        mBottomPaint.setShader(mLinearGradient); 
     }
+    
     
     public void reset() {
         mTop = Integer.MAX_VALUE;
@@ -89,7 +97,8 @@ public class KeyguardWallpaperContainer extends FrameLayout {
     @Override
     protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
-        bottomDrawable.draw(canvas);
+        
+        canvas.drawRect(mBottomRect, mBottomPaint);
         
         if (mModel!=UIController.SCROLL_TO_SECURTY && mTop != Integer.MAX_VALUE) {
             cy = mScreenHeight * 3 - mTop;

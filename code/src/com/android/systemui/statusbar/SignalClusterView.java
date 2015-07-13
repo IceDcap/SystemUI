@@ -396,8 +396,11 @@ public class SignalClusterView
             // When this isn't next to wifi, give it some extra padding between the signals.
             mMobileGroup.setPaddingRelative(isSecondaryIcon ? mSecondaryTelephonyPadding : 0,
                     0, 0, 0);
-            mMobile.setPaddingRelative(mIsMobileTypeIconWide ? mWideTypeIconStartPadding : 0,
-                    0, 0, 0);
+            //Gionee <fangjian> <2015-07-07> modify for CR01503190 begin
+            //mMobile.setPaddingRelative(mIsMobileTypeIconWide ? mWideTypeIconStartPadding : 0,
+            //        0, 0, 0);
+            mMobile.setPaddingRelative(mWideTypeIconStartPadding,0,0,0);
+            //Gionee <fangjian> <2015-07-07> modify for CR01503190 end
 
             if (DEBUG) Log.d(TAG, String.format("mobile: %s sig=%d mIsAirPlaneMode=%s netType=%d mobileType=%d inout=%d mSubId=%d",
                         (mMobileVisible ? "VISIBLE" : "GONE"), mMobileStrengthId, mIsAirplaneMode, mNetworkTypeId, mMobileTypeId, mMobileInOutId, mSubId));

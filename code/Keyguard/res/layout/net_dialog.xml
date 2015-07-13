@@ -12,13 +12,14 @@
         android:layout_marginRight="16dp"
         android:textSize="18sp"
         android:textColor="#CC000000"
+        android:id="@+id/dialog_information_title"
         android:text="@string/dialog_information_point" />
     
     <amigo.widget.AmigoTextView
         
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-       
+        android:id="@+id/dialog_Allinformation_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:textSize="18sp"

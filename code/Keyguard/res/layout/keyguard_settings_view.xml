@@ -119,7 +119,7 @@
     </LinearLayout>
     
     <View
-        android:paddingLeft="@dimen/settings_paddingleft"
+        android:layout_marginLeft="@dimen/settings_paddingleft"
         android:layout_below="@id/only_wlan_layout"
         android:id="@+id/settings_divider_second"
         android:layout_width="match_parent"
@@ -171,7 +171,7 @@
     </LinearLayout>
 
     <View
-        android:paddingLeft="@dimen/settings_paddingleft"
+        android:layout_marginLeft="@dimen/settings_paddingleft"
         android:id="@+id/settings_divider"
         android:layout_width="match_parent"
         android:layout_height="@dimen/settings_line_height"
@@ -254,9 +254,9 @@
         android:paddingRight="@dimen/settings_guide_text_padding_h"
         android:paddingTop="@dimen/settings_guide_text_padding_top"
         android:shadowColor="#000000"
-        android:shadowDx="2"
-        android:shadowDy="2"
-        android:shadowRadius="2"
+        android:shadowDx="0"
+        android:shadowDy="1"
+        android:shadowRadius="1"
         android:text="@string/haokan_wallpaper_update_guide_text"
         android:textColor="@color/keyguard_setting_guide_textcolor"
         android:textSize="@dimen/settings_guide_textsize"

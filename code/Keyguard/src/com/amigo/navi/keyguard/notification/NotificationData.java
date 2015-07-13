@@ -141,7 +141,7 @@ public class NotificationData {
                 return (int) (nb.getNotification().when - na.getNotification().when);
             }
         */
-            if(DebugLog.DEBUG)  DebugLog.d("compare", "nb.getNotification()"+nb.getNotification().when+"getPostTime()="+nb.getPostTime());
+            if(DebugLog.DEBUGMAYBE)  DebugLog.d("compare", "nb.getNotification()"+nb.getNotification().when+"getPostTime()="+nb.getPostTime());
         	return (int)(nb.getNotification().when- na.getNotification().when);	
         }
     };
@@ -222,11 +222,10 @@ public class NotificationData {
         for (int i = 0; i < N; i++) {
             Entry entry = mEntries.valueAt(i);
             StatusBarNotification sbn = entry.notification;
-            if(DebugLog.DEBUGMAYBE) DebugLog.d("compare", "sbn"+sbn.getKey()+"getPackage="+sbn.getPackageName());
             if (shouldFilterOut(sbn)) {
                 continue;
             }
-            if(DebugLog.DEBUG) DebugLog.d("compare", "sbn"+sbn.getKey()+"getPackage="+sbn.getPackageName()+"sbn.getUID"+sbn.getUid());
+            if(DebugLog.DEBUGMAYBE) DebugLog.d("compare", "sbn"+sbn.getKey()+"getPackage="+sbn.getPackageName()+"sbn.getUID"+sbn.getUid());
             if (sbn.getNotification().isGroupSummary()) {
                 mGroupsWithSummaries.add(sbn.getGroupKey());
             }

@@ -190,9 +190,9 @@ public class SkylightView extends FrameLayout {
     }
 
     private void getNextBgIndex() {
-        Log.d(LOG_TAG, "changeSkylightBg-------");
+    	DebugLog.d(LOG_TAG, "changeSkylightBg-------");
         SkylightHost host = getParentSkylightHost(SkylightView.this);
-        Log.d(LOG_TAG, "host: " + host);
+        DebugLog.d(LOG_TAG, "host: " + host);
         if (host == null) {
             return;
         }
@@ -221,7 +221,7 @@ public class SkylightView extends FrameLayout {
     }
     
     private SkylightHost getParentSkylightHost(View view) {
-        Log.d(LOG_TAG, "getParentSkylightHost-------");
+    	DebugLog.d(LOG_TAG, "getParentSkylightHost-------");
         ViewParent parent = view.getParent();
         if (parent != null) {
             if (parent instanceof SkylightHost) {
@@ -264,7 +264,7 @@ public class SkylightView extends FrameLayout {
                 countStr = strMaxMissCount;
             }
             if(DebugLog.DEBUG)
-                Log.d(LOG_TAG, "onMissCallCountChanged count=" + count);
+            	DebugLog.d(LOG_TAG, "onMissCallCountChanged count=" + count);
             mMissCallTextImageBt.setTextView(countStr);
             if (count == 0) {
                 mMissCallTextImageBt.setVisibility(View.GONE);
@@ -303,7 +303,7 @@ public class SkylightView extends FrameLayout {
     private void updateViewByLocal() {
         Locale oldLocale = mConfiguration.locale;
         Locale newLocale = getResources().getConfiguration().locale;
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "oldLocale: "+oldLocale+"  newLocale: "+newLocale+" isequals:  "+oldLocale.equals(newLocale));
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "oldLocale: "+oldLocale+"  newLocale: "+newLocale+" isequals:  "+oldLocale.equals(newLocale));
         if (!oldLocale.equals(newLocale)) {
             updateViewWhenLocalChange(newLocale);
             mConfiguration.locale = newLocale;
@@ -315,7 +315,7 @@ public class SkylightView extends FrameLayout {
      */
     private void updateViewWhenLocalChange(Locale locale) {
         RelativeLayout.LayoutParams params=(RelativeLayout.LayoutParams)mSkylightView.getLayoutParams();
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "updateViewWhenLocalChange:  "+Locale.CHINA.equals(locale));
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "updateViewWhenLocalChange:  "+Locale.CHINA.equals(locale));
         if(Locale.CHINA.equals(locale)){
             mWeatherLayout.setVisibility(View.VISIBLE);
             params.topMargin=getResources().getDimensionPixelSize(R.dimen.skylight_time_margin_top);
@@ -327,9 +327,9 @@ public class SkylightView extends FrameLayout {
     }
 
     private void updateWeatherView(WeatherData forecastData) {
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "updateWeatherView---------focastData: "+((forecastData==null)?"null":forecastData.toString()));
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "updateWeatherView---------focastData: "+((forecastData==null)?"null":forecastData.toString()));
         if (forecastData != null) {
-            Log.d(LOG_TAG, "SkylightView temperature: "+forecastData.getLiveTemperatureWithUnit());
+        	DebugLog.d(LOG_TAG, "SkylightView temperature: "+forecastData.getLiveTemperatureWithUnit());
             final String cityName = forecastData.getCityName();
             mTemperatureText.setText(forecastData.getLiveTemperatureWithUnit());
             mCitytext.setText(cityName);
@@ -372,7 +372,7 @@ public class SkylightView extends FrameLayout {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         if(DebugLog.DEBUG)
-            Log.d(LOG_TAG, "onAttachedToWindow");
+        	DebugLog.d(LOG_TAG, "onAttachedToWindow");
         registeCallbacks();
     }
 
@@ -380,7 +380,7 @@ public class SkylightView extends FrameLayout {
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         if(DebugLog.DEBUG)
-            Log.d(LOG_TAG, "onDetachedFromWindow");
+        	DebugLog.d(LOG_TAG, "onDetachedFromWindow");
         unregistCallbacks();
     }
 
@@ -401,7 +401,7 @@ public class SkylightView extends FrameLayout {
     
     private void setTime(Context ctx, Date date) {
         boolean is24HourFormat = DateFormat.is24HourFormat(ctx);
-        if(DebugLog.DEBUG)Log.d(LOG_TAG, "is24HourFormat-----" + is24HourFormat + ",hash=" + ctx.hashCode() + ",date " + date);
+        if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "is24HourFormat-----" + is24HourFormat + ",hash=" + ctx.hashCode() + ",date " + date);
         SimpleDateFormat timeHourFormat12 = new SimpleDateFormat("h:");
         Time time = new Time();
         time.setToNow();

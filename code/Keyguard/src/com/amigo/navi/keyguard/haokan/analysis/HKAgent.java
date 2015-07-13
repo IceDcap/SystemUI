@@ -4,6 +4,7 @@ import android.content.Context;
 import com.amigo.navi.keyguard.haokan.Common;
 import com.amigo.navi.keyguard.haokan.entity.EventLogger;
 import com.amigo.navi.keyguard.haokan.entity.Wallpaper;
+import com.amigo.navi.keyguard.settings.KeyguardSettings;
 
 
 public class HKAgent {
@@ -102,7 +103,18 @@ public class HKAgent {
     }
     
     /** upload all log to server */
-    public static void uploadAllLog() {
+    public static void uploadAllLog(Context context, boolean isCheck) {
+		long currentTime = System.currentTimeMillis();
+		if (isCheck) {
+	    	//Don't upload logs again within 6 hours
+			long interval = 6 * 60 * 60 * 1000; // 6h
+			long lastTime = KeyguardSettings.getLogsUploadTime(context, 0l);
+			if (currentTime > lastTime && currentTime - lastTime < interval) {
+				return;
+			}
+		}
+
+    	KeyguardSettings.setLogsUploadTime(context, currentTime);
         mLog.sendLogMsg();
     }
     

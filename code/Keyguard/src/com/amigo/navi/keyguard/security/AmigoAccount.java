@@ -8,10 +8,13 @@ import com.gionee.account.sdk.GioneeAccount;
 import com.gionee.account.sdk.vo.LoginInfo;
 import android.os.ServiceManager;
 import android.os.UserHandle;
+
+import com.amigo.navi.keyguard.DebugLog;
 import com.android.internal.widget.ILockSettings;
 
 public class AmigoAccount {
 	
+	private final static String TAG="AmigoAccount";
 	private GioneeAccount gioneeAccount;
 	private Context mContext;
 	private String userName;
@@ -50,7 +53,9 @@ public class AmigoAccount {
 			if(mGnLockSettingsService!=null){
 			 userNameID = mGnLockSettingsService.getString(BING_AMIGO_ACCOUNT,null,UserHandle.USER_OWNER);
 			}
-			 Log.i("jiating","ForgetPasswordButton..userNameID="+userNameID) ;
+			if(DebugLog.DEBUG){
+		          DebugLog.i(TAG, "ForgetPasswordButton..userNameID="+userNameID);
+		    }
 			if (userNameID == null) {
 				loginInfo = null;
 			} else {
@@ -60,11 +65,15 @@ public class AmigoAccount {
 				loginInfo = new LoginInfo();
 				loginInfo.setName(userName);
 				loginInfo.setUid(uid);
-				 Log.i("jiating","ForgetPasswordButton.....userName="+userName+"uid="+uid) ;
+				if(DebugLog.DEBUG){
+			          DebugLog.i(TAG, "ForgetPasswordButton.....userName="+userName+"uid="+uid);
+			    }
 			}
 		} catch (Exception e) {
 			loginInfo=null;
-			 Log.i("jiating","ForgetPasswordButton..Exception.="+e.getMessage()) ;
+			if(DebugLog.DEBUG){
+		          DebugLog.e(TAG, "ForgetPasswordButton..Exception.="+e.getMessage());
+		    }
 		}
 		
 		return loginInfo;
@@ -74,7 +83,9 @@ public class AmigoAccount {
 	
 	
 	   private ILockSettings getGnLockSettings() {
-		   Log.i("jiating","getGnLockSettings()") ;
+			if(DebugLog.DEBUG){
+		          DebugLog.v(TAG, "getGnLockSettings");
+		    }
 	        if (mGnLockSettingsService == null) {
 	            mGnLockSettingsService = ILockSettings.Stub.asInterface(ServiceManager.getService("lock_settings")); 
 	        }

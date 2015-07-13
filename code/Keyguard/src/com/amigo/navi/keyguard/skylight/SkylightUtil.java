@@ -55,7 +55,7 @@ public class SkylightUtil {
 			Method method = cls.getMethod("GetNodeState", int.class);
 			Integer hallValue = (Integer) method
 					.invoke(sAmigoServerManager, getHallSwitchNodeId(context));
-			if(DebugLog.DEBUG)Log.d(LOG_TAG, "hallValue: "+hallValue);
+			if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "hallValue: "+hallValue);
 			isHallOpen = (hallValue != HALL_STATUS_CLOSE);
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -75,7 +75,7 @@ public class SkylightUtil {
                     .forName("android.os.amigoserver.AmigoServerManager");
             Field field= cls.getField("NODE_TYPE_HALL_SWITCH_STATE");
             sHallSwitchNodeId=field.getInt(sAmigoServerManager);
-            if(DebugLog.DEBUG)Log.d(LOG_TAG, "getHallSwitchNodeId:   "+sHallSwitchNodeId);
+            if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "getHallSwitchNodeId:   "+sHallSwitchNodeId);
         } catch (Exception e) {
             e.printStackTrace();
         }}
@@ -93,7 +93,7 @@ public class SkylightUtil {
     }
     
 	public static void readSkylightLocationFromXml() {
-	    if(DebugLog.DEBUG)Log.d(LOG_TAG, "readSkylightLocationFromXml------------");
+	    if(DebugLog.DEBUG)DebugLog.d(LOG_TAG, "readSkylightLocationFromXml------------");
 		FileInputStream fis = null;
 		SkylightLocation location = new SkylightLocation();
 		try {
@@ -138,7 +138,7 @@ public class SkylightUtil {
 					e.printStackTrace();
 				}
 			}
-			Log.d(LOG_TAG, "location lenght: "+location.getHeight());
+			DebugLog.d(LOG_TAG, "location lenght: "+location.getHeight());
 			if(location.getHeight()>0){
 				SkylightHost.sLocation=location;
 			}

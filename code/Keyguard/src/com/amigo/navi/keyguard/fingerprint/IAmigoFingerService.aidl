@@ -20,5 +20,6 @@ package com.amigo.navi.keyguard.fingerprint;
 interface IAmigoFingerService
 {
     void blackScreenFingerSuccess();
+    boolean openFingerPrintOrNot();
 }
 
