@@ -17,6 +17,7 @@
 package com.android.systemui.usb;
 
 import java.io.File;
+import java.lang.reflect.Method;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -162,13 +163,8 @@ public class GnStorageNotification extends SystemUI {
     }
 
 	private boolean isFirstBoot() {
-		TelephonyManager tm = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
-		if (tm != null) {
-			String id = tm.getDeviceId();
-			if (id == null || (id.matches("9{14}.") || id.equals("0"))) {
-				Log.d(TAG,"IMEI is null .. ");
-				return false;
-			}
+		if(isInvalidIMEI(mContext)) {
+			return false;
 		}
 
 		SharedPreferences preferences = mContext.getSharedPreferences("first_boot", Context.MODE_PRIVATE);
@@ -181,6 +177,23 @@ public class GnStorageNotification extends SystemUI {
 
 		Log.v(TAG,"isFirstBoot = " + isFirstBoot);
 		return isFirstBoot;
+	}
+	
+	private boolean  isInvalidIMEI(Context context) {
+		TelephonyManager tm = (TelephonyManager) context
+				.getSystemService(Context.TELEPHONY_SERVICE);
+		boolean isInvalidImei = false;
+		try {
+			Class<?> clazz = Class.forName("android.telephony.TelephonyManager");
+			Method mth = clazz.getMethod("gnIsImeiValid");
+			isInvalidImei = !(Boolean) mth.invoke(tm);
+		} catch (Exception e) {
+			String id = tm.getDeviceId();
+			Log.v(TAG, "---imei="+id.length());
+			isInvalidImei = id == null || (id.matches("9{14}.")|| id.equals("0"));
+		}
+		Log.v(TAG, "----isInvalidImei="+isInvalidImei);
+          return isInvalidImei;
 	}
 
 	private void setToMtpByDefault() {

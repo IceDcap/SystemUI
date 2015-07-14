@@ -48,11 +48,10 @@
         android:orientation="horizontal"
         >
 
-        <com.android.systemui.statusbar.AlphaOptimizedFrameLayout
+        <com.android.keyguard.AlphaOptimizedLinearLayout
             android:id="@+id/notification_icon_area"
-            android:layout_width="0dip"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:orientation="horizontal"
             >
             <!-- The alpha of this area is both controlled from PhoneStatusBarTransitions and
@@ -83,12 +82,13 @@
                     />
 
             </com.android.keyguard.AlphaOptimizedRelativeLayout>
-        </com.android.systemui.statusbar.AlphaOptimizedFrameLayout>
+        </com.android.keyguard.AlphaOptimizedLinearLayout>
 
         <com.android.keyguard.AlphaOptimizedLinearLayout android:id="@+id/system_icon_area"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
+            android:gravity="right"
             >
 
             <include layout="@layout/system_icons" />

@@ -2,32 +2,31 @@
 Build Notes
 ==================
 1.版本目的:
-bug fix
+bugfix
 2.功能变更:
-No
+无
 3.重点测试的问题:
-CR01513337
-【5.1MP】任意界面上滑控制中心，长按相机拍照成功后，下拉状态栏预览照片模糊【10次出现8次】
-
-CR01518399
-解锁时释放HorizontalListView中所有的view，亮屏上锁时需要重新加载view
-CR01408122
-修改为：在线程里查出壁纸数据库数据列表后，通过handler在UI线程里更新到全局的壁纸数据列表里，而不是在线程里获取完直接在线程里更新数据
+CR01519710 、CR01518583 、CR01514202 
 4.应用数据库是否改变:
 No
 
 ==================
 Release Location
 ==================
-/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bd.zip
+/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bf.zip
 
 ==================
 CR List
 ==================
 [Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
-svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.dc' non-existent in revision 6645
-
-svn: E200009: Could not display info for all targets because some targets don't exist
-svn: E205000: Syntax error in revision argument '6642:'
-File does not exist:  at getAppChangeSet.pl line 48
+CR01459185      Opened     zhaowei    {Navi锁屏}提交Navi锁屏代码
+CR01515932      Coded      wujj       【自动化测试_monkey】 MISC:进行Monkey72小时测试，com.android.systemui:screenshot出现空指针异常
+CR01518583      Coded      guozj      【5.1MP工厂】微信【6.2.2.】游戏龙界启示录运行时》按APP键退出系统界面停止运行且锁屏后无法使用指纹解锁【手势解锁恢复，附视频】
+CR01518794      Resolved   huangwt    【5.1MP】跑monkey出现系统界面停止运行
+CR01518869      Resolved   guozj      【5.1MP】NFC:开启NFC成功后，状态栏没有显示图标，NFC不能用，重启恢复，10台机器，一台出现。
+CR01519689      Coded      guozj      8609 SystemUI5.1适配
+CR01519710      Coded      guozj      修改获取IMEI逻辑
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bf
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.be
+Code difference: svn diff -r 6668:6653 http://192.168.110.97/svn/Amigo_SystemUI/trunk
 

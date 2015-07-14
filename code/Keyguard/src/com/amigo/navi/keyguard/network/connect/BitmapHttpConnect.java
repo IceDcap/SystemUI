@@ -70,8 +70,8 @@ public class BitmapHttpConnect {
             urlConn.setConnectTimeout(mTimeOut);
             urlConn.setReadTimeout(mTimeOut);
             reqCode = urlConn.getResponseCode();
-            DebugLog.d(TAG,"loadImageFromInternet conUrl:" + conUrl.toString());
-            DebugLog.d(TAG,"loadImageFromInternet reqCode:" + reqCode);
+            DebugLog.d(TAG,"loadImageFromInternetByByte conUrl:" + conUrl.toString());
+            DebugLog.d(TAG,"loadImageFromInternetByByte reqCode:" + reqCode);
             if (reqCode == HttpStatus.SC_OK) {
                 inputStream = urlConn.getInputStream();
                 result = readInputStream(inputStream);

@@ -195,24 +195,26 @@ public class DiskUtils {
     }
 
     public static String getCachePath(Context context){
-        String cachePath = "";
-        File file = null;
-        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
-            || !Environment.isExternalStorageRemovable()) {
-        	  file = context.getExternalCacheDir();
-        } 
-        if(file != null){
-        	cachePath = file.getPath();
-            if(!TextUtils.isEmpty(cachePath))
-            {
-            	return cachePath;
-            }
-        }
-        file = context.getCacheDir();
-        if(file != null){
-        	cachePath = file.getPath();
-        }
-        return cachePath;
+    	String cachePath = context.getCacheDir().getPath();
+    	return cachePath;
+//        String cachePath = "";
+//        File file = null;
+//        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
+//            || !Environment.isExternalStorageRemovable()) {
+//        	  file = context.getExternalCacheDir();
+//        } 
+//        if(file != null){
+//        	cachePath = file.getPath();
+//            if(!TextUtils.isEmpty(cachePath))
+//            {
+//            	return cachePath;
+//            }
+//        }
+//        file = context.getCacheDir();
+//        if(file != null){
+//        	cachePath = file.getPath();
+//        }
+//        return cachePath;
     }
     
     public static String getSDPath(Context context){

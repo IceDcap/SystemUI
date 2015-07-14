@@ -134,6 +134,35 @@ public class SkylightHost extends FrameLayout {
         }
     }
 
+    private void loadBackground() {
+		Log.i(LOG_TAG, "loadBackground--------mBgCount:" + mBgCount);
+        if(mBgLayout != null){
+			if(mBgCount > 0){
+				readBgBitmapFromSys(mBgCurrenIndex);
+			} else {
+				setDefaultBackground();
+			}
+		}
+    }
+
+    private void removeBackground() {
+		Log.i(LOG_TAG, "removeBackground--------");
+        if(mBgLayout != null){
+			Log.i(LOG_TAG, "remove the background image of skylight");
+			mBgLayout.setBackground(null);
+			BitmapUtil.recycleBitmap(mBgBitmap);
+			mBgBitmap = null;
+        }
+    }
+
+    private void setDefaultBackground() {
+		Log.i(LOG_TAG, "setDefaultBackground--------");
+        if(mBgLayout != null){
+			Drawable bg = getResources().getDrawable(R.drawable.skylight_bg_wallpaper);
+			mBgLayout.setBackground(bg);
+        }
+    }
+
     private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -141,6 +170,8 @@ public class SkylightHost extends FrameLayout {
             case UPDATE_BACKGROUD:
                 Bitmap bm=(Bitmap)msg.obj;
                 if(mBgCurrenIndex!=msg.arg1){
+					Log.e(LOG_TAG, "invalid background index!!");
+					setDefaultBackground();
                     BitmapUtil.recycleBitmap(bm);
                     return;
                 }
@@ -200,6 +231,7 @@ public class SkylightHost extends FrameLayout {
     
     public void showSkylight() {
         if(DebugLog.DEBUG)Log.d(LOG_TAG, "isMusicPlaying: "+mIsMusicPlaying);
+		loadBackground();
         if (mIsMusicPlaying) {
             addMusicWidget();
             DataStatistics.getInstance().skylightClose(mContext, DataStatistics.SKYLIGHT_SHOW_MUSIC);
@@ -254,7 +286,7 @@ public class SkylightHost extends FrameLayout {
     }
     
     public void hideSkylight(){
-        
+        removeBackground();
     }
     
 
@@ -326,6 +358,8 @@ public class SkylightHost extends FrameLayout {
 
             File file = new File(SkylightUtil.SKYLIGHT_BG_PATH);
             if (!file.exists()) {
+				Log.w(LOG_TAG, "background files don't exist! set default background.");
+				setDefaultBackground(); 
                 return;
             }
             String[] fileNames = file.list();
@@ -333,12 +367,10 @@ public class SkylightHost extends FrameLayout {
             if (mBgCount > 0) {
                 mBgCurrenIndex = SkylightUtil.readValueFromSharePreference(mContext, SkylightUtil.SKYLIGHT_SP,
                         SkylightUtil.BG_CURRENT_INDEX_KEY);
-                readBgBitmapFromSys(mBgCurrenIndex);
+                //readBgBitmapFromSys(mBgCurrenIndex); //xfge
             }
         }
-
     }
-    
     
     protected void readBgBitmapFromSys(int bgIndex) {
         FileInputStream fis = null;
@@ -347,6 +379,8 @@ public class SkylightHost extends FrameLayout {
             Bitmap bm = BitmapFactory.decodeStream(fis);
             DebugLog.d(LOG_TAG, "readBgBitmapFromSys  bgCount: "+mBgCount+"  index: "+bgIndex+" bm: "+bm);
             if (bm == null) {
+				Log.e(LOG_TAG, "failed to read background!");
+				setDefaultBackground();
                 return;
             }
             Message msg = mHandler.obtainMessage(UPDATE_BACKGROUD, bm);

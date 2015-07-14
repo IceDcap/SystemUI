@@ -8,8 +8,7 @@
         android:id="@+id/skylight_bg_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:background="@drawable/skylight_bg_wallpaper" >
+        android:layout_alignParentTop="true" >
 
         <FrameLayout
             android:id="@+id/skyligt_window"

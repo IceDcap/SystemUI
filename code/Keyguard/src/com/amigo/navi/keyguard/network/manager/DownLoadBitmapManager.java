@@ -2,14 +2,17 @@ package com.amigo.navi.keyguard.network.manager;
 import java.net.URL;
 import java.util.ArrayList;
 
+import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.network.connect.BitmapHttpConnect;
 import com.amigo.navi.keyguard.network.connect.ConnectionParameters;
 import com.amigo.navi.keyguard.network.connect.NetWorkUtils;
+import com.amigo.navi.keyguard.settings.KeyguardSettings;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 
 public class DownLoadBitmapManager {
+	private static final String TAG="DownLoadBitmapManager";
     private static DownLoadBitmapManager sManager = null;
 
     public synchronized static DownLoadBitmapManager getInstance() {
@@ -25,6 +28,9 @@ public class DownLoadBitmapManager {
     }
     
     public Bitmap downLoadBitmap(Context context,String url){
+    	if(! isDownloadingDataFromInternet(context)){
+    		return null;
+    	}
         String method = ConnectionParameters.HTTP_GET;
         int timeOut = ConnectionParameters.NET_TIMEOUT;
         if (context != null
@@ -37,6 +43,9 @@ public class DownLoadBitmapManager {
     }
     
     public byte[] downLoadBitmapByByte(Context context,String url){
+    	if(! isDownloadingDataFromInternet(context)){
+    		return null;
+    	}
         String method = ConnectionParameters.HTTP_GET;
         int timeOut = ConnectionParameters.NET_TIMEOUT;
         if (context != null
@@ -47,5 +56,23 @@ public class DownLoadBitmapManager {
         URL bitmapUrl = NetWorkUtils.constructRequestURL(url,null);
         return download.loadImageFromInternetByByte(bitmapUrl);
     }
+
+	private boolean isDownloadingDataFromInternet(Context context) {
+		boolean isUpdate = KeyguardSettings.getWallpaperUpadteState(context);
+        DebugLog.d(TAG,"registerUserID WallpaperUpadteisUpdate:" + isUpdate);
+		if(!isUpdate){
+			return false;
+		}
+    	boolean isUpdateOnWifi = KeyguardSettings.getOnlyWlanState(context);
+        DebugLog.d(TAG,"downLoadBitmapByByte isUpdateOnWifi:" + isUpdateOnWifi);
+		if(isUpdateOnWifi){
+    		boolean isWifi = NetWorkUtils.isWifi(context);
+            DebugLog.d(TAG,"downLoadBitmapByByte isWifi:" + isWifi);
+    		if(!isWifi){
+    			return false;
+    		}
+		}
+		return true;
+	}
     
 }
