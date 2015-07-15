@@ -261,7 +261,7 @@ public class GnUsbStorageActivity extends AmigoActivity implements View.OnClickL
 
             @Override
             public void run() {
-                mSettingUMS = mStorageManager.isUsbMassStorageEnabled();
+                mSettingUMS = checkUmsEnabled();
                 mHandler.sendEmptyMessage(UPDATE_CHARGE_BUTTON);
             }
             
@@ -273,7 +273,7 @@ public class GnUsbStorageActivity extends AmigoActivity implements View.OnClickL
             mAsyncStorageHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    switchDisplay(mStorageManager.isUsbMassStorageEnabled());
+                    switchDisplay(checkUmsEnabled());
                 }
             });
         } catch (Exception ex) {
@@ -571,13 +571,13 @@ public class GnUsbStorageActivity extends AmigoActivity implements View.OnClickL
     		return;
     	}
     	if (!mIsChargeOpened) {
-            // mUsbManager.setCurrentFunction(UsbManager.USB_FUNCTION_MASS_STORAGE, true);
-            if (mStorageManager.isUsbMassStorageEnabled()) {
+            // setUmsFunction();
+            if (checkUmsEnabled()) {
                 //switchUsbMassStorage(false);
                 mStorageManager.disableUsbMassStorage();
                 mSettingUMS = false;
             } else {
-                mUsbManager.setCurrentFunction(UsbManager.USB_FUNCTION_MASS_STORAGE, true);
+                setUmsFunction();
             }
             mUsbButton.setBackgroundResource(R.drawable.gn_ic_usb_storage_unpress);
             mChargeButton.setBackgroundResource(R.drawable.gn_ic_usb_charge_sel_unpress);
@@ -592,7 +592,7 @@ public class GnUsbStorageActivity extends AmigoActivity implements View.OnClickL
         } else {
             mIsChargeOpened = true;
             mChargeButton.setBackgroundResource(R.drawable.gn_ic_usb_charge_sel_unpress);
-            mUsbManager.setCurrentFunction(UsbManager.USB_FUNCTION_MASS_STORAGE, true);
+            setUmsFunction();
         }
     }
     private void switchToPtpMode(){
@@ -609,7 +609,7 @@ public class GnUsbStorageActivity extends AmigoActivity implements View.OnClickL
             mIsPtpOpened = true;
             mIsChargeOpened = false;
         } else {
-            mUsbManager.setCurrentFunction(UsbManager.USB_FUNCTION_MASS_STORAGE, true);
+            setUmsFunction();
             mPtpButton.setBackgroundResource(R.drawable.gn_ic_usb_ptp_unpress);
             mIsPtpOpened = false;
             if (!mDebugState && !mSettingUMS) {
@@ -626,7 +626,7 @@ public class GnUsbStorageActivity extends AmigoActivity implements View.OnClickL
      * This function is extracted from onClik() in the mUsbView branch.
      * */
 	public void switchToUsbMassStorageMode() {
-	   if (!mStorageManager.isUsbMassStorageEnabled()) {
+	   if (!checkUmsEnabled()) {
 	       String externalStorageState = Environment.getExternalStorageState();
 		   if (externalStorageState.equals(Environment.MEDIA_REMOVED)
 	           || externalStorageState.equals(Environment.MEDIA_BAD_REMOVAL)
@@ -637,7 +637,7 @@ public class GnUsbStorageActivity extends AmigoActivity implements View.OnClickL
            mIsUMSSwitching = true;
 		   if (mIsPtpOpened) {
 		       Log.d(TAG, "mIsPtpOpened is true!");
-		       mUsbManager.setCurrentFunction(UsbManager.USB_FUNCTION_MASS_STORAGE, true);
+		       setUmsFunction();
 		       mPtpButton.setBackgroundResource(R.drawable.gn_ic_usb_ptp_unpress);
 		       mIsPtpOpened = false;
 		   }
@@ -659,8 +659,7 @@ public class GnUsbStorageActivity extends AmigoActivity implements View.OnClickL
 	 * */
     private void switchToMtpMode() {
     	String currentFunctions = getCurrentFunction();
-    	if (!mStorageManager.isUsbMassStorageEnabled() 
-		   && !containsFunction(currentFunctions, UsbManager.USB_FUNCTION_MTP)) {
+    	if (!checkUmsEnabled() && !containsFunction(currentFunctions, UsbManager.USB_FUNCTION_MTP)) {
 	       String externalStorageState = Environment.getExternalStorageState();
 	       if (externalStorageState.equals(Environment.MEDIA_REMOVED)
 	               || externalStorageState.equals(Environment.MEDIA_BAD_REMOVAL)
@@ -675,8 +674,10 @@ public class GnUsbStorageActivity extends AmigoActivity implements View.OnClickL
 	       }
 	       StringBuilder builder = new StringBuilder();
 	       builder.append(UsbManager.USB_FUNCTION_MTP);
-	       builder.append(",");
-	       builder.append(UsbManager.USB_FUNCTION_MASS_STORAGE);
+	       if (isUsbCDRomSupport()) {
+		       builder.append(",");
+		       builder.append(UsbManager.USB_FUNCTION_MASS_STORAGE);
+	       }
 	       String targetFunction = builder.toString();
 	       mUsbManager.setCurrentFunction(targetFunction, true);
 	       Log.v(TAG, "switchToMtpMode: setTargetFunction to ["+targetFunction+"]");
@@ -686,13 +687,35 @@ public class GnUsbStorageActivity extends AmigoActivity implements View.OnClickL
 	       mIsChargeOpened = false;
 	       mIsMtpOpened = true;
     	} else {
-    		mUsbManager.setCurrentFunction(UsbManager.USB_FUNCTION_MASS_STORAGE, true);
+    		setUmsFunction();
     		mStorageManager.disableUsbMassStorage();
     		mSettingUMS = false;
     		mIsMtpOpened = false;
     	}
     }
-    
+
+    // GIONEE <wujj> <2015-07-15> modify begin
+    // In GBL8609 OTA project, CDRom is not support, so need to disable mass_storage function.
+    // see init.qcom.usb.rc, there is no configuration for mtp,mass_storage
+	private void setUmsFunction() {
+		mUsbManager.setCurrentFunction(UsbManager.USB_FUNCTION_MASS_STORAGE,true);
+	}
+
+	private boolean checkUmsEnabled() {
+		if(!isUsbCDRomSupport())
+			return false;
+		return mStorageManager.isUsbMassStorageEnabled();
+	}
+	
+	private boolean isUsbCDRomSupport() {
+		String buildVersion = SystemProperties.get("ro.gn.gnprojectid", null);
+		if ("CBL8609".equals(buildVersion)) {
+			return false;
+		}
+		return true;
+	}
+	// GIONEE <wujj> <2015-07-15> modify end
+	
     /**
      * Check whether MTP is the default Usb mode.Normally the usb functions is in mtp,adb style.
      * The current default one is the first part of the string.
@@ -722,7 +745,7 @@ public class GnUsbStorageActivity extends AmigoActivity implements View.OnClickL
                 Settings.Secure.putInt(getContentResolver(), Settings.Secure.ADB_ENABLED, 0);
                 mDebugState = false;
 
-                if (!mIsPtpOpened && !mStorageManager.isUsbMassStorageEnabled() && !mIsMtpOpened) {
+                if (!mIsPtpOpened && !checkUmsEnabled() && !mIsMtpOpened) {
                     mChargeButton.setBackgroundResource(R.drawable.gn_ic_usb_charge_sel_unpress);
                     mIsChargeOpened = true;
                 }
@@ -730,7 +753,7 @@ public class GnUsbStorageActivity extends AmigoActivity implements View.OnClickL
                 if (mIsChargeOpened) {
                     mIsChargeOpened = false;
                     mChargeButton.setBackgroundResource(R.drawable.gn_ic_usb_charge_unpress);
-                    mUsbManager.setCurrentFunction(UsbManager.USB_FUNCTION_MASS_STORAGE, true);
+                    setUmsFunction();
                 }
                 Settings.Secure.putInt(getContentResolver(), Settings.Secure.ADB_ENABLED, 1);
                 mDebugState = true;
