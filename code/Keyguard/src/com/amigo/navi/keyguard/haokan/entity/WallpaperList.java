@@ -2,9 +2,13 @@ package com.amigo.navi.keyguard.haokan.entity;
 
 
 import com.amigo.navi.keyguard.haokan.Common;
+import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class WallpaperList extends ArrayList<Wallpaper> {
@@ -131,5 +135,17 @@ public class WallpaperList extends ArrayList<Wallpaper> {
         this.existLocked = existLocked;
     }
     
+    
+	public List<String> getfilePaths() {
+		 
+		Iterator<Wallpaper> it = this.iterator();
+		List<String> filePaths = new ArrayList<String>();
+		while (it.hasNext()) {
+			String url = it.next().getImgUrl();
+			filePaths.add(DiskUtils.constructFileNameByUrl(url));
+			filePaths.add(DiskUtils.constructThumbFileNameByUrl(url));
+		}
+		return filePaths;
+	}
 
 }

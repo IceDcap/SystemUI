@@ -42,7 +42,7 @@ public class DiskUtils {
     
     public static String THUMBNAIL = ImageLoader.THUMBNAIL_POSTFIX;
     
-    //加密存储
+   
     public static boolean saveBitmap(byte[] bs,OutputStream outputStream){
         BufferedOutputStream os = null;
         ByteArrayInputStream bis = null;
@@ -88,14 +88,14 @@ public class DiskUtils {
     }
     
     public static Bitmap decodeBitmap(InputStream is,int screenWid, ReuseImage reuseImage){
-        //解密图片
+       
          byte[] ss = getBitmapFromSdkard(is);
          DebugLog.d("HorizontalListView","makeAndAddView decodeBitmap ss:" + ss);
          if(ss == null) {
              return null;
          }
          Options options = new Options();
-         // 不去真正解析图片，只是获取图片的宽高
+       
          options.inJustDecodeBounds = true;
          BitmapFactory.decodeByteArray(ss, 0, ss.length, options);
          int imageWidth = options.outWidth;
@@ -143,7 +143,7 @@ public class DiskUtils {
          return bitmap;
     }
     
-    //解密图片
+   
     public static byte[] getBitmapFromSdkard(InputStream is){
     	ByteArrayOutputStream bos = null;
         try {
@@ -182,8 +182,8 @@ public class DiskUtils {
 		 DebugLog.d(TAG,"convertBitmap 1");
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         bmp.compress(CompressFormat.PNG, 100, output);
-//            bmp.recycle();//自由选择是否进行回收
-        byte[] result = output.toByteArray();//转换成功了
+
+        byte[] result = output.toByteArray();
         try {
 			DebugLog.d(TAG,"convertBitmap 2");
             output.close();
@@ -194,9 +194,13 @@ public class DiskUtils {
         }
     }
 
+    
+    private static String HAOKAN_DIR = null;
     public static String getCachePath(Context context){
-    	String cachePath = context.getCacheDir().getPath();
-    	return cachePath;
+    	if (HAOKAN_DIR == null) {
+    		HAOKAN_DIR = context.getFilesDir().getPath() + "/haokan";
+		}
+    	return HAOKAN_DIR;
 //        String cachePath = "";
 //        File file = null;
 //        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
@@ -271,7 +275,7 @@ public class DiskUtils {
         {  
         	int screenWid = KWDataCache.getScreenWidth(context.getResources());
             Options options = new Options();
-            // 不去真正解析图片，只是获取图片的宽高
+           
             options.inJustDecodeBounds = true;
         	DebugLog.d(TAG,"getImageFromAssetsFile fileName:" + fileName);
             is = am.open(fileName);  
@@ -341,9 +345,9 @@ public class DiskUtils {
 		return bitmap;
     }
     
-	//加密存储
+	
 	public static boolean saveBitmap(byte[] bs, String fileName, String path){
-		 // 保存文件   
+		
 		 File file = new File(path);
 		 if(!file.exists()){
 			 boolean bo = file.mkdirs();
@@ -380,7 +384,7 @@ public class DiskUtils {
 	public static boolean deleteFile(String sPath) {   
 		   boolean flag = false;   
 		   File file = new File(sPath);   
-		    // 路径为文件且不为空则进行删除   
+  
 		    if (file.isFile() && file.exists()) {   
 		    	flag = file.delete();   
 //		        flag = true;   
@@ -471,7 +475,7 @@ public class DiskUtils {
 			if(bt == null){
 				return false;
 			}
-			 // 保存文件   
+		
 			try {
 				 DebugLog.d(TAG,"saveBitmap path:" + path);
 				 DebugLog.d(TAG,"saveBitmap key:" + key);
@@ -508,25 +512,13 @@ public class DiskUtils {
         return baos.toByteArray();
     }
 
-    /**
-     * 保存缩略图
-     * 
-     * @param bitmap 原始图片
-     * @param key 原始图片名字
-     * @param path 路径
-     */
+  
     public static void saveThumbnail(Bitmap bitmap, String key, String path) {
         byte[] byteArray = convertBitmap(bitmap);
         saveThumbnail(byteArray, key, path);
     }
 
-    /**
-     * 保存缩略图
-     * 
-     * @param byteArray 原始数据
-     * @param key
-     * @param path
-     */
+  
     public static void saveThumbnail(byte[] byteArray, String key, String path) {
 
         BitmapFactory.Options newOpts = new BitmapFactory.Options();
@@ -570,12 +562,7 @@ public class DiskUtils {
     }
     
 
-    /**
-     * 获取系统内置图片的缩略图
-     * 
-     * @param path
-     * @return
-     */
+  
     public static Bitmap getSystemImageThumb(String path) {
         Bitmap bitmap = null;
 

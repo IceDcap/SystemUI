@@ -201,4 +201,14 @@ public class FileUtil {
     }
     
     
+    public static File[] getAllFileFormCache(Context context) {
+    	File cacheDir = new File(DiskUtils.getCachePath(context) + File.separator + DiskUtils.WALLPAPER_BITMAP_FOLDER);
+    	File[] files = null;
+    	if (cacheDir.isDirectory() && cacheDir.exists()) {
+    		files = cacheDir.listFiles();
+		}
+		return files;
+	}
+    
+    
 }

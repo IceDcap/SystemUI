@@ -25,6 +25,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import com.amigo.navi.keyguard.DebugLog;
+import com.amigo.navi.keyguard.settings.KeyguardSettings;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -38,6 +39,7 @@ public class NetWorkUtils {
     private static final String TESTING_ENVIRONMENT_FILE_NAME = "keyguard_test";
     private static final String IMMEDIATELY_GET_WALLPAPER_FILE_NAME = "at_once";
     private static final String PATH_DIVIDE = "//";
+    private static boolean isInterruptDownload=false;
 //    public static boolean isNetworkAvailable(Context context) {
 //        ConnectivityManager connectivityManager = (ConnectivityManager) context
 //                .getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -153,6 +155,33 @@ public class NetWorkUtils {
 		}
 		return false;
 
+	}
+	
+	
+	public static boolean needInterruptDownloadOrNot(){
+		 return isInterruptDownload;
+	}
+	
+	public static void setInterruptDownload(boolean isInterrupt){
+		isInterruptDownload=isInterrupt;
+	}
+	
+	public static  boolean isDownloadingDataFromInternet(Context context) {
+		boolean isUpdate = KeyguardSettings.getWallpaperUpadteState(context);
+        DebugLog.d(TAG,"isDownloadingDataFromInternet WallpaperUpadteisUpdate:" + isUpdate);
+		if(!isUpdate){
+			return false;
+		}
+    	boolean isUpdateOnWifi = KeyguardSettings.getOnlyWlanState(context);
+        DebugLog.d(TAG,"isDownloadingDataFromInternet isUpdateOnWifi:" + isUpdateOnWifi);
+		if(isUpdateOnWifi){
+    		boolean isWifi = NetWorkUtils.isWifi(context);
+            DebugLog.d(TAG,"isDownloadingDataFromInternet isWifi:" + isWifi);
+    		if(!isWifi){
+    			return false;
+    		}
+		}
+		return true;
 	}
     
 }

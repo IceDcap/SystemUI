@@ -351,6 +351,7 @@ public class RequestNicePicturesFromInternet {
             }
         }
         keyguardWallpaperManager.setDownloading(false);
+        DebugLog.d(TAG, "DownloadComplete");
         keyguardWallpaperManager.setDownloadComplete(true);
         
         if (!isFirst) {

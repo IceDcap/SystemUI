@@ -47,6 +47,7 @@ public class BitmapHttpConnect {
                 inputStream = urlConn.getInputStream();
                 result = readInputStream(inputStream);
                 if(result != null && result.length == contentLength){
+                	DebugLog.d(TAG,"loadImageFromInternet success");
                 	bitmap = createBitmap(bitmap, result);
                 }
             }
@@ -60,7 +61,6 @@ public class BitmapHttpConnect {
 
     public byte[] loadImageFromInternetByByte(URL conUrl) {
         InputStream inputStream = null;
-        Bitmap bitmap = null;
         byte[] result = null;
         try {
             int reqCode = ConnectionStatus.NETWORK_EXCEPTION;
@@ -73,8 +73,12 @@ public class BitmapHttpConnect {
             DebugLog.d(TAG,"loadImageFromInternetByByte conUrl:" + conUrl.toString());
             DebugLog.d(TAG,"loadImageFromInternetByByte reqCode:" + reqCode);
             if (reqCode == HttpStatus.SC_OK) {
+                int contentLength = urlConn.getContentLength();
                 inputStream = urlConn.getInputStream();
-                result = readInputStream(inputStream);
+                byte[] resultTemp = readInputStream(inputStream);
+                if(resultTemp != null && resultTemp.length == contentLength){
+                	result=resultTemp;
+                }
             }
         } catch (Exception e) {
             DebugLog.d(TAG,"loadImageFromInternet e:" + e);
@@ -120,9 +124,10 @@ public class BitmapHttpConnect {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();  
         byte[] buffer = new byte[1024];  
         int len = -1;  
-        while ((len = in.read(buffer)) != -1) {  
+        while ((len = in.read(buffer)) != -1  && !NetWorkUtils.needInterruptDownloadOrNot()) {  
             baos.write(buffer, 0, len);  
         }  
+        
         baos.close();  
         in.close();  
         return baos.toByteArray();

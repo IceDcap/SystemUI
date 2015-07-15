@@ -28,7 +28,7 @@ public class DownLoadBitmapManager {
     }
     
     public Bitmap downLoadBitmap(Context context,String url){
-    	if(! isDownloadingDataFromInternet(context)){
+    	if(!NetWorkUtils.isDownloadingDataFromInternet(context)){
     		return null;
     	}
         String method = ConnectionParameters.HTTP_GET;
@@ -43,7 +43,7 @@ public class DownLoadBitmapManager {
     }
     
     public byte[] downLoadBitmapByByte(Context context,String url){
-    	if(! isDownloadingDataFromInternet(context)){
+    	if(!NetWorkUtils.isDownloadingDataFromInternet(context)){
     		return null;
     	}
         String method = ConnectionParameters.HTTP_GET;
@@ -57,22 +57,6 @@ public class DownLoadBitmapManager {
         return download.loadImageFromInternetByByte(bitmapUrl);
     }
 
-	private boolean isDownloadingDataFromInternet(Context context) {
-		boolean isUpdate = KeyguardSettings.getWallpaperUpadteState(context);
-        DebugLog.d(TAG,"registerUserID WallpaperUpadteisUpdate:" + isUpdate);
-		if(!isUpdate){
-			return false;
-		}
-    	boolean isUpdateOnWifi = KeyguardSettings.getOnlyWlanState(context);
-        DebugLog.d(TAG,"downLoadBitmapByByte isUpdateOnWifi:" + isUpdateOnWifi);
-		if(isUpdateOnWifi){
-    		boolean isWifi = NetWorkUtils.isWifi(context);
-            DebugLog.d(TAG,"downLoadBitmapByByte isWifi:" + isWifi);
-    		if(!isWifi){
-    			return false;
-    		}
-		}
-		return true;
-	}
+
     
 }

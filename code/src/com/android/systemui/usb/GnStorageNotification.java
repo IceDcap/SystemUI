@@ -189,11 +189,11 @@ public class GnStorageNotification extends SystemUI {
 			isInvalidImei = !(Boolean) mth.invoke(tm);
 		} catch (Exception e) {
 			String id = tm.getDeviceId();
-			Log.v(TAG, "---imei="+id.length());
+			Log.v(TAG, "---imei = " + (id == null ? 0 : id.length()));
 			isInvalidImei = id == null || (id.matches("9{14}.")|| id.equals("0"));
 		}
-		Log.v(TAG, "----isInvalidImei="+isInvalidImei);
-          return isInvalidImei;
+		Log.v(TAG, "----isInvalidImei = "+isInvalidImei);
+        return isInvalidImei;
 	}
 
 	private void setToMtpByDefault() {

@@ -312,7 +312,7 @@ public class WallpaperCutActivity extends Activity {
                         KWDataCache.getScreenWidth(getResources()));
             }
             BitmapUtil.recycleBitmap(newBitmap);
-            BitmapUtil.recycleBitmap(source);
+//            BitmapUtil.recycleBitmap(source);
         } catch (OutOfMemoryError e) {
             Log.d(TAG, "", e);
         } catch (Exception e) {

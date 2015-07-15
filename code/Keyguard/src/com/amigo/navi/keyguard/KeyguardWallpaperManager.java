@@ -32,8 +32,10 @@ import com.android.keyguard.ViewMediatorCallback;
 import com.android.keyguard.R;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class KeyguardWallpaperManager {
 
@@ -123,13 +125,20 @@ public class KeyguardWallpaperManager {
                     
                     Message msg = mHandler.obtainMessage(MSG_UPDATE_HAOKAN_LIST_SCREEN_OFF,wallpaperList);
                     mHandler.sendMessage(msg);
+                    
+                    
+                    if (isDownloadComplete()) {
+						deleteOldWallpapers(wallpaperList);
+						setDownloadComplete(false);
+					}
+                    
                 }
             }).start();
             
-            if (isDownloadComplete()) {
-                deleteOldWallpaper();
-                setDownloadComplete(false);
-            }
+//            if (isDownloadComplete()) {
+//                deleteOldWallpaper();
+//                setDownloadComplete(false);
+//            }
         }else {
             Message msg = mHandler.obtainMessage(MSG_UPDATE_HAOKAN_LIST_SCREEN_OFF);
             mHandler.sendMessage(msg);
@@ -402,11 +411,17 @@ public class KeyguardWallpaperManager {
                 wallpaperDB.updateWallpaper(wallpaper);
             }
             
-            if (getImageLoader() != null) {
-                getImageLoader().removeFirstLevelCache(Wallpaper.WALLPAPER_FROM_PHOTO_URL);
-                getImageLoader().removeFirstLevelCache(Wallpaper.WALLPAPER_FROM_PHOTO_URL + ImageLoader.THUMBNAIL_POSTFIX);
-            }
-            
+            mHandler.post(new Runnable() {
+				@Override
+				public void run() {
+					if (getImageLoader() != null) {
+						getImageLoader().removeFirstLevelCache(Wallpaper.WALLPAPER_FROM_PHOTO_URL);
+						getImageLoader().removeFirstLevelCache(Wallpaper.WALLPAPER_FROM_PHOTO_URL + ImageLoader.THUMBNAIL_POSTFIX);
+					
+						refreshCache(false);
+					}
+				}
+			});
         }
     }
     
@@ -499,7 +514,9 @@ public class KeyguardWallpaperManager {
         
         mKeyguardListView.setVisibility(View.GONE);
         mContainer.setVisibility(View.GONE);
-        UIController.getInstance().getHaoKanLayout().setVisibility(View.GONE);
+        if(UIController.getInstance().getHaoKanLayout()!=null){
+        	UIController.getInstance().getHaoKanLayout().setVisibility(View.GONE);
+        }
         mViewMediatorCallback.setKeyguardWallpaperShow(true);
         
     }
@@ -651,5 +668,36 @@ public class KeyguardWallpaperManager {
             mHandler.sendMessage(msg);
         }
     }
+    
+    private void deleteOldWallpapers(WallpaperList wallpaperList) {
+    	DebugLog.d(TAG, "deleteOldWallpapers");
+    	File[] listFiles = FileUtil.getAllFileFormCache(mAppContext);
+    	if (listFiles == null) {
+			return;
+		}
+    	List<String> filePaths = wallpaperList.getfilePaths();
+    	
+    	List<File> ls = new ArrayList<File>();
+    	int len = listFiles.length;
+    	int size = filePaths.size();
+    	for (int i = 0; i < len; i++) {
+    		DebugLog.d(TAG, "listFiles[i]  = " + listFiles[i].getName());
+    		for (int j = 0; j < filePaths.size(); j++) {
+    			if (filePaths.get(j).equals(listFiles[i].getName())) {
+    				listFiles[i] = null;
+    				break;
+    			}
+			}
+		}
+    	DebugLog.v(TAG, "delete");
+    	for (int i = 0; i < len; i++) {
+			if (listFiles[i] != null) {
+				DebugLog.d(TAG, "listFiles = " + listFiles[i].getName());
+				listFiles[i].delete();
+			}
+		}
+    	 
+    	
+	}
     
 }

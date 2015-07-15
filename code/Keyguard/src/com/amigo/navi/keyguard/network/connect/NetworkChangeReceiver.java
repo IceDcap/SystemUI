@@ -22,7 +22,8 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
 		PlayerManager.getInstance().netStateChange(networkState);
         DebugLog.d(TAG,"test onReceive networkState:" + networkState);
         RequestNicePicturesFromInternet nicePicturesInit = RequestNicePicturesFromInternet.getInstance(context);
-		if(networkState){
+		if(networkState && NetWorkUtils.isDownloadingDataFromInternet(context)){
+			NetWorkUtils.setInterruptDownload(false);
 			try {
 				if(!TimeControlManager.getInstance(context).isFinishUpdateTime()){
 //		        TimeControlManager.getInstance().init(mContext);
@@ -31,10 +32,12 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
 				}
 			} catch (Exception e) {
 				DebugLog.d(TAG,"onReceive error:" + e);
-			}
+			}	
 		    nicePicturesInit.registerData(false);
 		}else{
+			NetWorkUtils.setInterruptDownload(true);
 	        nicePicturesInit.shutDownWorkPool();
+	        
 		}
 	}
 }
