@@ -143,7 +143,10 @@ public class GnUsbStorageActivity extends AmigoActivity implements View.OnClickL
     private StorageEventListener mStorageListener = new StorageEventListener() {
         @Override
         public void onStorageStateChanged(String path, String oldState, String newState) {
-            final boolean on = newState.equals(Environment.MEDIA_SHARED);
+            final boolean on = newState.equals(Environment.MEDIA_SHARED)
+            		// GIONEE <wujj> <2015-07-15> add for CR01516872 begin
+            		&& isUsbCDRomSupport();
+            		//GIONEE <wujj> <2015-07-15> add for CR01516872 end
             Log.d(TAG, "onStorageStateChanged - on: " + on + ", mSettingUMS: " + mSettingUMS + ", path: "
                     + path + ", oldState: " + oldState + ", newState: " + newState);
 
