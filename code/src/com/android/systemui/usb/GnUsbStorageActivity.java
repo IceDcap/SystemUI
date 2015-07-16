@@ -712,7 +712,7 @@ public class GnUsbStorageActivity extends AmigoActivity implements View.OnClickL
 	
 	private boolean isUsbCDRomSupport() {
 		String buildVersion = SystemProperties.get("ro.gn.gnprojectid", null);
-		if ("CBL8609".equals(buildVersion)) {
+		if ("CBL8609".equals(buildVersion) || "CBL8605".equals(buildVersion)) {
 			return false;
 		}
 		return true;
