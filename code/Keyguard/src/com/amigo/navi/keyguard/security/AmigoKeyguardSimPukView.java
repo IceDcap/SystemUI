@@ -140,8 +140,9 @@ public class AmigoKeyguardSimPukView extends AmigoKeyguardSimPinPukBaseView {
             mPukText="";
             state = ENTER_PUK;
             KeyguardUpdateMonitor monitor = KeyguardUpdateMonitor.getInstance(mContext);
-            mSubId = monitor.getNextSubIdForState(IccCardConstants.State.PUK_REQUIRED);
-            if (SubscriptionManager.isValidSubscriptionId(mSubId)) {
+            int subIdTemp = monitor.getNextSubIdForState(IccCardConstants.State.PUK_REQUIRED);
+            if (SubscriptionManager.isValidSubscriptionId(subIdTemp)) {
+            	mSubId=subIdTemp;
                 int count = TelephonyManager.getDefault().getSimCount();
                 Resources rez = getResources();
                 String msg;

@@ -133,10 +133,13 @@ public class KeyguardViewHostManager {
         mKeyguardWallpaperManager.init(mContext);
         
         addKeyguardArcMenu();
-        mFingerIdentifyManager=new FingerIdentifyManager(context);
+        
          
         mKeyguardViewHost.setConfigChangeCallback(mConfigChangeCallback);
         isSuppotFinger=SystemProperties.get("ro.gn.fingerprint.support").equals("FPC");
+        if(isSuppotFinger){
+        	mFingerIdentifyManager=new FingerIdentifyManager(context);
+        }
 
 		//GIONEE <Amigo_Keyguard> gexiufeng <2015-06-18> modify [2/2] begin: show haokan in power saver mode.
 		//initPowerSaverObserver();
@@ -341,22 +344,26 @@ public class KeyguardViewHostManager {
     
     public void startFingerIdentify(){
     	DebugLog.e(TAG, "startFingerIdentify");
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                mFingerIdentifyManager.startIdentify();
-            }
-        });
+    	if(isSuppotFinger){
+	        mHandler.post(new Runnable() {
+	            @Override
+	            public void run() {
+	                mFingerIdentifyManager.startIdentify();
+	            }
+	        });
+    	}
     }
     
     public void cancelFingerIdentify() {
     	DebugLog.d(TAG, "cancelFingerIdentify");
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                mFingerIdentifyManager.cancel();
-            }
-        });
+    	if(isSuppotFinger){
+	        mHandler.post(new Runnable() {
+	            @Override
+	            public void run() {
+	                mFingerIdentifyManager.cancel();
+	            }
+	        });
+    	}
     }
     
     public void setViewMediatorCallback(ViewMediatorCallback callback){
@@ -923,12 +930,15 @@ public class KeyguardViewHostManager {
 	
 	  public void UnFrozenStartFingerIdentify(){
 	    	DebugLog.e(TAG, "UnFrozenStartFingerIdentify");
-	        mHandler.post(new Runnable() {
-	            @Override
-	            public void run() {
-	                mFingerIdentifyManager.UnFrozenStartFingerIdentify();
-	            }
-	        });
+	    	if(isSuppotFinger){
+		        mHandler.post(new Runnable() {
+		            @Override
+		            public void run() {
+		                mFingerIdentifyManager.UnFrozenStartFingerIdentify();
+		            }
+		        });
+	        
+	    	}
 	    }
 	
  

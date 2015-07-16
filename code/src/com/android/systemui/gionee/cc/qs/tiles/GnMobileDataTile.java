@@ -19,6 +19,7 @@ import com.android.systemui.R;
 import com.android.systemui.gionee.cc.qs.GnQSTile;
 import com.android.systemui.gionee.cc.qs.policy.GnMobileDataController;
 import com.android.systemui.gionee.cc.qs.policy.GnMobileDataController.MobileDataChangedCallback;
+import com.android.systemui.gionee.GnFeatureOption;
 //import com.android.systemui.gionee.statusbar.util.GnSIMHelper;
 import com.android.systemui.gionee.GnYouJu;
 
@@ -84,12 +85,17 @@ public class GnMobileDataTile extends GnQSTile<GnQSTile.BooleanState> {
         }
         
         state.value = mController.isMobileDataEnabled() && !noSim && !airplaneEnabled;
-        state.label = r.getString(R.string.gn_qs_data_connect);
         state.visible = mController.hasMobileDataFeature();
         state.clickable = noSim || airplaneEnabled ? false : true;
         state.iconId = noSim || airplaneEnabled ? R.drawable.gn_ic_qs_no_sim
                 : state.value ? R.drawable.gn_ic_qs_dataconnect_on
                 : R.drawable.gn_ic_qs_dataconnect_off;
+        
+        if (GnFeatureOption.GN_CTCC_SUPPORT) {
+            state.label = r.getString(R.string.gn_qs_mobile_data);
+        } else {            
+            state.label = r.getString(R.string.gn_qs_data_connect);
+        }
         
         Log.d(TAG, "state.value = " + state.value + "  noSim = " + noSim + "  airplaneEnabled = " + airplaneEnabled);
     }

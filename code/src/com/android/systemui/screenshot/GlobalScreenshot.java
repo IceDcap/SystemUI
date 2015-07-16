@@ -632,7 +632,11 @@ class GlobalScreenshot {
             mScreenshotAnimation.end();
             mScreenshotAnimation.removeAllListeners();
         }
-
+        //add by y3_gionee hangh for CR01485458 start
+        if (mScreenshotLayout != null && mScreenshotLayout.isAttachedToWindow()) {
+            mWindowManager.removeView(mScreenshotLayout);
+        }
+        //add by y3_gionee hangh for CR01485458 end
         mWindowManager.addView(mScreenshotLayout, mWindowLayoutParams);
         ValueAnimator screenshotDropInAnim = createScreenshotDropInAnimation();
         ValueAnimator screenshotFadeOutAnim = createScreenshotDropOutAnimation(w, h,

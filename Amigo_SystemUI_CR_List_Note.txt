@@ -1129,3 +1129,29 @@ svn: E205000: Syntax error in revision argument '6685:'
 File does not exist:  at getAppChangeSet.pl line 48
 
 ==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.1.ah' non-existent in revision 6732
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6731:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.1.ah' non-existent in revision 6735
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6733:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01516872      Opened     wujj       USB：通过USB连接PC，无法开启MTP存储模式（必现）
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bm
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bl
+Code difference: svn diff -r 6738:6737 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================

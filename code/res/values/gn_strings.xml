@@ -18,6 +18,14 @@
     <string name="gn_qs_torch">Torch</string>
     <string name="gn_qs_camera">Camera</string>
     <string name="gn_qs_fake_call">FakeCall</string>
+    <string name="gn_qs_super_screen_shot">Super screenshots</string>
+    <string name="gn_qs_normal_screen_shot">Normal screenshots</string>
+    <string name="gn_qs_long_screen_shot">Long screenshots</string>
+    <string name="gn_qs_part_screen_shot">Part screenshots</string>
+
+    
+    <!-- Control center quick setting CT -->
+    <string name="gn_qs_mobile_data">Mobile data</string>
     
     <!-- QS more -->
     <string name="gn_qs_more_save">Save</string>

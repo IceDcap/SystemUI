@@ -18,6 +18,16 @@
     <string name="gn_qs_torch">手电筒</string>
     <string name="gn_qs_camera">相机</string>
     <string name="gn_qs_fake_call">虚拟来电</string>
+
+    <string name="gn_qs_super_screen_shot">超级截屏</string>
+    <string name="gn_qs_normal_screen_shot">截屏</string>
+    <string name="gn_qs_long_screen_shot">长截屏</string>
+    <string name="gn_qs_part_screen_shot">局部截屏</string>
+
+    
+    <!-- Control center quick setting CT -->
+    <string name="gn_qs_mobile_data">移动数据</string>
+
         
     <!-- Control center shotcut -->
     <string name="gn_sc_calculator">计算器</string>

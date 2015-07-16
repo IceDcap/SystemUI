@@ -647,10 +647,10 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
     @Override
     public void onPause(int reason) {
     	setVisibility(View.INVISIBLE);
-    	if (reason == KeyguardSecurityView.SCREEN_OFF && mSimpleNumViewCountdownTimer != null) {
+    	/*if (reason == KeyguardSecurityView.SCREEN_OFF && mSimpleNumViewCountdownTimer != null) {
     		mSimpleNumViewCountdownTimer.cancel();
     		mSimpleNumViewCountdownTimer = null;
-        }
+        }*/
     }
     
     

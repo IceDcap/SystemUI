@@ -492,10 +492,10 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
 
     @Override
     public void onPause(int reason) {
-        if (reason == KeyguardSecurityView.SCREEN_OFF && mCountdownTimer != null) {
+ /*       if (reason == KeyguardSecurityView.SCREEN_OFF && mCountdownTimer != null) {
             mCountdownTimer.cancel();
             mCountdownTimer = null;
-        }
+        }*/
         setVisibility(INVISIBLE);
     }
 

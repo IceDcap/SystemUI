@@ -94,8 +94,9 @@ public class AmigoKeyguardSimPinView extends AmigoKeyguardSimPinPukBaseView {
         if (DEBUG) DebugLog.d(TAG, "Resetting state");
         resetPasswordText(true /* animate */);
         KeyguardUpdateMonitor monitor = KeyguardUpdateMonitor.getInstance(mContext);
-        mSubId = monitor.getNextSubIdForState(IccCardConstants.State.PIN_REQUIRED);
-        if (SubscriptionManager.isValidSubscriptionId(mSubId)) {
+        int subIdTemp=monitor.getNextSubIdForState(IccCardConstants.State.PIN_REQUIRED);
+        if (SubscriptionManager.isValidSubscriptionId(subIdTemp)) {
+        	mSubId=subIdTemp;
             int count = TelephonyManager.getDefault().getSimCount();
             Resources rez = getResources();
             String msg;

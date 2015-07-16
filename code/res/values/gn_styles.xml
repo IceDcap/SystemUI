@@ -83,6 +83,13 @@
         <item name="android:taskToBackEnterAnimation">@null</item>  
         <item name="android:taskToBackExitAnimation">@null</item>  
            
+    </style>
+         <style name="GnScreenShotAlertDialogDark" parent="@amigo:style/Theme.Amigo.Light.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:background">#FA222222</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
     </style>  
     
 </resources>
