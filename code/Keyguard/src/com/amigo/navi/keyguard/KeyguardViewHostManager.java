@@ -131,7 +131,7 @@ public class KeyguardViewHostManager {
         mKeyguardWallpaperManager.setWallpaperContainer(mContainer);
         mKeyguardWallpaperManager.setViewMediatorCallback(callback);
         mKeyguardWallpaperManager.init(mContext);
-        
+        UIController.getInstance().setmViewMediatorCallback(callback);
         addKeyguardArcMenu();
         
          
@@ -225,6 +225,7 @@ public class KeyguardViewHostManager {
         updateNotifiOnkeyguard(true);
         beginStatics();
 		if (mViewMediatorCallback.isScreenOn()) {
+			DebugLog.d(TAG, "show  isScreenOn  updateListView");
 			mKeyguardWallpaperManager.updateListView();
 		}
         refreshCacheScreenOn();

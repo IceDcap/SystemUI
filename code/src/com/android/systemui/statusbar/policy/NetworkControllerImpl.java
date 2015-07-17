@@ -1364,28 +1364,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
 					}
                 	mSignalClusters.get(i).setMobileInout(mCurrentState.dataConnected, mobileInOutIcon, mSubscriptionInfo.getSimSlotIndex());
                 }
-            } else {
-                int networkTypeIcon = 0;
-                int mobileInOutIcon = 0;
-                int length = mSignalsChangedCallbacks.size();
-
-                for(int i = 0; i< signalClustersLength; i++) {
-                	mSignalClusters.get(i).setNetworkType(networkTypeIcon, mSubscriptionInfo.getSimSlotIndex());
-                	if(mCurrentState.dataConnected) {
-                		if(mCurrentState.activityIn) {
-                			mobileInOutIcon = R.drawable.gn_stat_sys_signal_in;
-                		} else if(mCurrentState.activityOut) {
-                			mobileInOutIcon = R.drawable.gn_stat_sys_signal_out;
-						} else {
-							mobileInOutIcon = R.drawable.gn_stat_sys_signal_inout_null;
-						}
-                	} else {
-						mobileInOutIcon = 0;
-					}
-                	mSignalClusters.get(i).setMobileInout(mCurrentState.dataConnected, mobileInOutIcon, mSubscriptionInfo.getSimSlotIndex());
-                }
-            
-			}
+            }
         }
 
         @Override
@@ -1723,7 +1702,6 @@ public class NetworkControllerImpl extends BroadcastReceiver
                 updateTelephony(); 
                 
                 mServiceState = state;
-                updateTelephony();
             }
 
             @Override

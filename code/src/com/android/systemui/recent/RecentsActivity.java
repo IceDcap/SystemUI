@@ -542,7 +542,11 @@ public class RecentsActivity extends Activity implements OnClickListener , OnLon
         		mContext.getResources().getString(R.string.gn_memory_available), 
                 formatMemory(getMemoryAvailable()),
                 formatMemory(getPhoneRamMemory()));
-        mMemoryInfo.setText(memoryInfo);
+        if(mMemInfo == null && mRecentsPanel != null) {
+        	mMemoryInfo = (TextView) mRecentsPanel.findViewById(R.id.memory_status);
+        } else {
+        	mMemoryInfo.setText(memoryInfo);
+		}
         
         mAngle = calculateAngle();
         mHandler.sendEmptyMessage(MSG_SCAN);

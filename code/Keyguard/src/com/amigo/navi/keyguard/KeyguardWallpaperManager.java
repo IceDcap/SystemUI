@@ -357,7 +357,7 @@ public class KeyguardWallpaperManager {
     
     public void setSrceenLockWallpaper(Bitmap bitmap) {
         
-        
+    	DebugLog.d(TAG, "setSrceenLockWallpaper");
         String key = DiskUtils.constructFileNameByUrl(Wallpaper.WALLPAPER_FROM_PHOTO_URL);
         String savePath = DiskUtils.getCachePath(mAppContext) + File.separator + DiskUtils.WALLPAPER_BITMAP_FOLDER;
         boolean success = DiskUtils.saveBitmap(bitmap, key, savePath);
@@ -390,10 +390,11 @@ public class KeyguardWallpaperManager {
             wallpaper.setFavorite(false);
             wallpaper.setShowTimeBegin("NA");
             wallpaper.setShowTimeEnd("NA");
-            
             int indexOfLocked = mWallpaperList.indexOfLocked();
+            DebugLog.v(TAG, "indexOfLocked = " + indexOfLocked);
             if (indexOfLocked != -1) {
                 Wallpaper lockedWallpaper = mWallpaperList.get(indexOfLocked);
+                DebugLog.v(TAG, lockedWallpaper.getImgName());
                 unLockWallpaper(lockedWallpaper);
             }
             
@@ -401,7 +402,7 @@ public class KeyguardWallpaperManager {
             WallpaperDB wallpaperDB = WallpaperDB.getInstance(mAppContext);    
             
             int indexOfLocal = mWallpaperList.indexOfLocal();
-            
+            DebugLog.d(TAG, "indexOfLocal = " + indexOfLocal);
             if(indexOfLocal == -1){
                 wallpaperDB.insertWallpaper(0, wallpaper);
                 mWallpaperList.add(wallpaper);
@@ -410,7 +411,7 @@ public class KeyguardWallpaperManager {
                 mWallpaperList.add(indexOfLocal, wallpaper);
                 wallpaperDB.updateWallpaper(wallpaper);
             }
-            
+            DebugLog.d(TAG, "mWallpaperList size = " + mWallpaperList.size());
             mHandler.post(new Runnable() {
 				@Override
 				public void run() {
@@ -487,6 +488,7 @@ public class KeyguardWallpaperManager {
         {
             isFirst = false;
             final WallpaperList wallpapers = mWallpaperList;
+            DebugLog.d(TAG, "updateListView wallpapers size = " + wallpapers.size());
             if (wallpapers.size() == 0) {
                 showSystemWallpaper();
             } else {

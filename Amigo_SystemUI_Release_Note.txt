@@ -6,21 +6,24 @@ Bugfix
 2.功能变更:
 无
 3.重点测试的问题:
-CR01516872 USB：通过USB连接PC，无法开启MTP存储模式（必现）
+适配8605 OTA usb没有CDROM引起的MTP问题。
 4.应用数据库是否改变:
 No
 
 ==================
 Release Location
 ==================
-/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bm.zip
+/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bn.zip
 
 ==================
 CR List
 ==================
 [Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
-CR01516872      Opened     wujj       USB：通过USB连接PC，无法开启MTP存储模式（必现）
-Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bm
-Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bl
-Code difference: svn diff -r 6738:6737 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01408122      Opened     jiating    【NAVI锁屏2.0.0.y】打开小米锁屏后 ，从 navi桌面不能下拉上锁
+CR01466272      Opened     wujj       上传Android5.1 SystemUI原生代码
+CR01503887      Opened     jiating    系统界面:开机,提示输入sim卡pin码时等待灭屏,按power键亮屏输入pin码提示"系统界面"停止运行  29/30  随机
+CR01521508      Opened     hanjuan    7320长截屏适配
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bn
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bm
+Code difference: svn diff -r 6753:6740 http://192.168.110.97/svn/Amigo_SystemUI/trunk
 

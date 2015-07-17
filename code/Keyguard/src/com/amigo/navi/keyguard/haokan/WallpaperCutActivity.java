@@ -88,6 +88,7 @@ public class WallpaperCutActivity extends Activity {
         public void run() {
             cancelProgressDialog();
             finish();
+            UIController.getInstance().lockKeyguardByOther();
         }
     };
 
@@ -404,6 +405,7 @@ public class WallpaperCutActivity extends Activity {
         public void onClick(View v) {
             cancelProgressDialog();
             finish();
+            UIController.getInstance().lockKeyguardByOther();
         }
     };
 

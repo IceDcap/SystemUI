@@ -52,6 +52,7 @@ import android.widget.TextView;
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.KWDataCache;
 import com.amigo.navi.keyguard.KeyguardViewHostManager;
+import com.amigo.navi.keyguard.haokan.BlankActivity;
 import com.amigo.navi.keyguard.haokan.Common;
 import com.amigo.navi.keyguard.haokan.RequestNicePicturesFromInternet;
 import com.amigo.navi.keyguard.haokan.UIController;
@@ -62,6 +63,7 @@ import com.amigo.navi.keyguard.haokan.db.DataConstant;
 import com.amigo.navi.keyguard.haokan.db.WallpaperDB;
 import com.amigo.navi.keyguard.haokan.entity.Category;
 import com.amigo.navi.keyguard.haokan.entity.Wallpaper;
+import com.amigo.navi.keyguard.network.connect.NetWorkUtils;
 import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
 import com.android.keyguard.KeyguardHostView.OnDismissAction;
 import com.android.keyguard.R;
@@ -101,7 +103,8 @@ public class KeyguardSettingsActivity extends Activity {
 		super.onCreate(arg0); 
 		
 		setSecure(UIController.getInstance().isSecure());
-//		getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
 		initView();
 		
 		UIController.getInstance().setKeyguardSettingsActivity(this);
@@ -261,13 +264,27 @@ public class KeyguardSettingsActivity extends Activity {
     
     private void pickScreenLockWallpaper() {
 
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("image/*");
-        if (!isSecure()) {
-            KeyguardViewHostManager.getInstance().showBouncerOrKeyguardDone();
-        }
-        Intent wrapperIntent = Intent.createChooser(intent, null);
-        startActivityForResult(wrapperIntent, REQUEST_CODE);
+    	
+    	finish();
+    	 if (UIController.getInstance().isSecure()) {
+
+             KeyguardViewHostManager.getInstance().dismissWithDismissAction(new OnDismissAction() {
+                 @Override
+                 public boolean onDismiss() {
+ 
+                	 Intent intent = new Intent(KeyguardSettingsActivity.this, BlankActivity.class);
+                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+                     startActivity(intent);
+                     return true;
+                 }
+             }, true);
+         } else {
+        	 Intent intent = new Intent(KeyguardSettingsActivity.this, BlankActivity.class);
+             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+             startActivity(intent);
+             KeyguardViewHostManager.getInstance().showBouncerOrKeyguardDone();
+		}
+ 
     }
     
    
@@ -357,10 +374,24 @@ public class KeyguardSettingsActivity extends Activity {
 	        		
 	        		HKAgent.onEventWallpaperUpdate(getApplicationContext(),Event.SETTING_UPDATE, KeyguardSettings.SWITCH_WALLPAPER_UPDATE_ON);
 					RequestNicePicturesFromInternet.getInstance(getApplicationContext()).registerData(false);
+					if(NetWorkUtils.isNetworkAvailable(getApplicationContext()) ){
+						if(KeyguardSettings.getOnlyWlanState(getApplicationContext()) && NetWorkUtils.isWifi(getApplicationContext())){
+							NetWorkUtils.setInterruptDownload(false);
+						}
+						
+						if(!KeyguardSettings.getOnlyWlanState(getApplicationContext())){
+							NetWorkUtils.setInterruptDownload(false);
+						}
+						
+						if(KeyguardSettings.getOnlyWlanState(getApplicationContext()) && !NetWorkUtils.isWifi(getApplicationContext())){
+							NetWorkUtils.setInterruptDownload(true);
+						}
+					}
 				}else{
 	        		saveConnectState(false);
 	        		HKAgent.onEventWallpaperUpdate(getApplicationContext(),Event.SETTING_UPDATE, KeyguardSettings.SWITCH_WALLPAPER_UPDATE_OFF);
 					RequestNicePicturesFromInternet.getInstance(getApplicationContext()).registerData(true);
+					NetWorkUtils.setInterruptDownload(true);
 				}
 				
 			}});
@@ -373,8 +404,14 @@ public class KeyguardSettingsActivity extends Activity {
         mOnlyWlanSwitch.setChecked(isopen);
         if (isopen){
         	HKAgent.onEventOnlyWlan(getApplicationContext(),Event.SETTING_DOWNLOAD, KeyguardSettings.SWITCH_ONLY_WLAN_ON);
+        	if(NetWorkUtils.isNetworkAvailable(getApplicationContext()) && NetWorkUtils.isWifi(getApplicationContext()) ){
+        		NetWorkUtils.setInterruptDownload(false);
+        	}else{
+        		NetWorkUtils.setInterruptDownload(true);
+        	}
         }else{
         	HKAgent.onEventOnlyWlan(getApplicationContext(),Event.SETTING_DOWNLOAD, KeyguardSettings.SWITCH_ONLY_WLAN_OFF);
+        	NetWorkUtils.setInterruptDownload(false);	
         }
         mOnlyWlanSwitch.setEnabled(connectNet);
         

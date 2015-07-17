@@ -60,6 +60,7 @@ import com.amigo.navi.keyguard.util.VibatorUtil;
 import com.android.keyguard.KeyguardHostView.OnDismissAction;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.keyguard.R;
+import com.android.keyguard.ViewMediatorCallback;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -139,8 +140,17 @@ public class UIController implements OnTouchlListener{
     private RelativeLayout toastView;
     
     private AmigoKeyguardBouncer mKeyguardBouncer;
+    private ViewMediatorCallback mViewMediatorCallback;
     
-    public RelativeLayout getmArcMenu() {
+    
+    
+    public ViewMediatorCallback getmViewMediatorCallback() {
+		return mViewMediatorCallback;
+	}
+	public void setmViewMediatorCallback(ViewMediatorCallback mViewMediatorCallback) {
+		this.mViewMediatorCallback = mViewMediatorCallback;
+	}
+	public RelativeLayout getmArcMenu() {
         return mArcMenu;
     }
     public void setmArcMenu(RelativeLayout mArcMenu) {
@@ -158,7 +168,17 @@ public class UIController implements OnTouchlListener{
         return getAmigoKeyguardHostView().isSecure();
     }
     
-    public void startCategoryActivity(final Context context) {
+    BlankActivity blankActivity;
+    
+    
+    
+    public BlankActivity getBlankActivity() {
+		return blankActivity;
+	}
+	public void setBlankActivity(BlankActivity blankActivity) {
+		this.blankActivity = blankActivity;
+	}
+	public void startCategoryActivity(final Context context) {
 
         Intent intent = new Intent(context, CategoryActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
@@ -168,25 +188,25 @@ public class UIController implements OnTouchlListener{
 
     public void startSettingsActivity(final Context context) {
  
-        if (UIController.getInstance().isSecure()) {
-
-            KeyguardViewHostManager.getInstance().dismissWithDismissAction(new OnDismissAction() {
-                @Override
-                public boolean onDismiss() {
-                    Intent intent = new Intent(context, KeyguardSettingsActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-                    context.startActivity(intent);
-                    
-                    return true;
-                }
-            }, true);
-        } else {
+//        if (UIController.getInstance().isSecure()) {
+//
+//            KeyguardViewHostManager.getInstance().dismissWithDismissAction(new OnDismissAction() {
+//                @Override
+//                public boolean onDismiss() {
+//                    Intent intent = new Intent(context, KeyguardSettingsActivity.class);
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+//                    context.startActivity(intent);
+//                    
+//                    return true;
+//                }
+//            }, true);
+//        } else {
 
             Intent intent = new Intent(context, KeyguardSettingsActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-            KeyguardViewHostManager.getInstance().showBouncerOrKeyguardDone();
+//            KeyguardViewHostManager.getInstance().showBouncerOrKeyguardDone();
             context.startActivity(intent);
-        }
+//        }
 
     }
 
@@ -476,12 +496,24 @@ public class UIController implements OnTouchlListener{
             }
         }
         
+        if (getBlankActivity() != null) {
+            if (!getBlankActivity().isDestroyed()) {
+                DebugLog.d(TAG, "getBlankActivity is not destroyed()");
+                getBlankActivity().finish();
+                setBlankActivity(null);
+            }
+        }
+        
         if (Guide.needGuideScrollUp() && Guide.isIdle() && !getKeyguardBouncer().isSimSecure()) {
             getAmigoKeyguardPage().addGuideScrollUpView();
         }
         
 
     }
+    
+    public void lockKeyguardByOther() {
+    	getmViewMediatorCallback().lockKeyguardByOtherApp();
+	}
     
     
     public void refreshWallpaperInfo() {
