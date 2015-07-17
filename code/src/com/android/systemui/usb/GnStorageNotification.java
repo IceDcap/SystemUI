@@ -47,6 +47,7 @@ import com.android.systemui.SystemUI;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.hardware.usb.UsbManager;
+import android.os.SystemProperties;
 
 import com.android.systemui.R;
 
@@ -136,18 +137,7 @@ public class GnStorageNotification extends SystemUI {
 		onStorageStateChangedAsync(ICS_STORAGE_PATH_SD2, null, Environment.getStorageState(new File(ICS_STORAGE_PATH_SD2)));
 		onStorageStateChangedAsync(STORAGE_PATH_SD1, null, Environment.getStorageState(new File(STORAGE_PATH_SD1)));
 		onStorageStateChangedAsync(STORAGE_PATH_SD2, null, Environment.getStorageState(new File(STORAGE_PATH_SD2)));*/
-		String st = "";
-        String path = "";
         StorageVolume[] volumes = mStorageManager.getVolumeList();
-
-        if (volumes != null) {
-            for (int i = 0; i < volumes.length; i++) {
-                if (volumes[i].allowMassStorage() && !volumes[i].isEmulated()) {
-                    path = volumes[i].getPath();
-                    st = mStorageManager.getVolumeState(path);
-                }
-            }
-        }
 		for (int i=0; i<volumes.length; i++) {
             String sharePath = volumes[i].getPath();
             String shareState = mStorageManager.getVolumeState(sharePath);
@@ -162,6 +152,14 @@ public class GnStorageNotification extends SystemUI {
 		//CR01476963 fj end
     }
 
+	private boolean isUsbCDRomSupport() {
+		String buildVersion = SystemProperties.get("ro.gn.gnprojectid", null);
+		if ("CBL8609".equals(buildVersion) || "CBL8605".equals(buildVersion)) {
+			return false;
+		}
+		return true;
+	}
+    
 	private boolean isFirstBoot() {
 		if(isInvalidIMEI(mContext)) {
 			return false;
@@ -203,8 +201,10 @@ public class GnStorageNotification extends SystemUI {
 		UsbManager usbManager = (UsbManager) mContext.getSystemService(Context.USB_SERVICE);
 		StringBuilder builder = new StringBuilder();
 		builder.append(UsbManager.USB_FUNCTION_MTP);
-		builder.append(",");
-		builder.append(UsbManager.USB_FUNCTION_MASS_STORAGE);
+		if (isUsbCDRomSupport()) {
+			builder.append(",");
+			builder.append(UsbManager.USB_FUNCTION_MASS_STORAGE);
+		}
 		String targetFunction = builder.toString();
 		usbManager.setCurrentFunction(targetFunction, true);
 	}

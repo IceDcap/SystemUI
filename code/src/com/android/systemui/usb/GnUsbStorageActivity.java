@@ -580,7 +580,11 @@ public class GnUsbStorageActivity extends AmigoActivity implements View.OnClickL
                 mStorageManager.disableUsbMassStorage();
                 mSettingUMS = false;
             } else {
-                setUmsFunction();
+            	if (isUsbCDRomSupport()) {
+            		setUmsFunction();
+            	} else {
+            		mUsbManager.setCurrentFunction("charging", true);
+            	}
             }
             mUsbButton.setBackgroundResource(R.drawable.gn_ic_usb_storage_unpress);
             mChargeButton.setBackgroundResource(R.drawable.gn_ic_usb_charge_sel_unpress);
@@ -701,7 +705,11 @@ public class GnUsbStorageActivity extends AmigoActivity implements View.OnClickL
     // In GBL8609 OTA project, CDRom is not support, so need to disable mass_storage function.
     // see init.qcom.usb.rc, there is no configuration for mtp,mass_storage
 	private void setUmsFunction() {
-		mUsbManager.setCurrentFunction(UsbManager.USB_FUNCTION_MASS_STORAGE,true);
+		if (isUsbCDRomSupport()) {
+			mUsbManager.setCurrentFunction(UsbManager.USB_FUNCTION_MASS_STORAGE,true);
+		} else {
+			mUsbManager.setCurrentFunction("none", true);
+		}
 	}
 
 	private boolean checkUmsEnabled() {
