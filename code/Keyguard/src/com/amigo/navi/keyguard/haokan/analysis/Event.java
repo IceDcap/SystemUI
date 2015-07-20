@@ -85,16 +85,21 @@ public class Event {
      * 图片设定为亮屏固定显示（count=1）,锁定一次+1
      */
     public static final int IMG_LOCK = 23;
+    
+    /**
+     * 图片停留时间
+     */
+    public static final int IMG_GAZING = 24;
   
     /**
      * 自动更新（2开启 1关闭）
      */
-    public static final int SETTING_UPDATE = 31;
+    public static final int SETTING_AUTO_UPDATE = 31;
     
     /**
      * 下载网络方式（1 仅wifi  2 任意）
      */
-    public static final int SETTING_DOWNLOAD = 32;
+    public static final int SETTING_ONLY_WIFI = 32;
     
     /**
      * 锁屏停留时间；单位毫秒
@@ -106,5 +111,81 @@ public class Event {
      */
 //    public static final int TIME_SRCEEN_OFF = 34;
     
+    /*
+     * 锁屏开关
+     */
+    
+    public static final int SETTING_KEYGUARD_SWITCHER = 35;
+    
+    public static final int SETTING_IMAGE_TEXT = 36;
+    
+    public static final int NETWORK_REQUEST_WEEKLY_TOTAL_COUNT_2G = 41;
+    
+    public static final int NETWORK_REQUEST_WEEKLY_SUCCESS_COUNT_2G = 42;
+    
+    public static final int NETWORK_REQUEST_WEEKLY_MILLIS_COST_2G = 43;
+    
+    public static final int NETWORK_REQUEST_WEEKLY_THROUGHPUT_2G = 44;
+    
+    public static final int NETWORK_REQUEST_WEEKLY_TOTAL_COUNT_3G = 45;
+    
+    public static final int NETWORK_REQUEST_WEEKLY_SUCCESS_COUNT_3G = 46;
+    
+    public static final int NETWORK_REQUEST_WEEKLY_MILLIS_COST_3G = 47;
+    
+    public static final int NETWORK_REQUEST_WEEKLY_THROUGHPUT_3G = 48;
+    
+    public static final int NETWORK_REQUEST_WEEKLY_TOTAL_COUNT_4G = 49;
+    
+    public static final int NETWORK_REQUEST_WEEKLY_SUCCESS_COUNT_4G = 50;
+    
+    public static final int NETWORK_REQUEST_WEEKLY_MILLIS_COST_4G = 51;
+    
+    public static final int NETWORK_REQUEST_WEEKLY_THROUGHPUT_4G = 52;
+    
+    public static final int NETWORK_REQUEST_WEEKLY_TOTAL_COUNT_WIFI = 53;
+    
+    public static final int NETWORK_REQUEST_WEEKLY_SUCCESS_COUNT_WIFI = 54;
+    
+    public static final int NETWORK_REQUEST_WEEKLY_MILLIS_COST_WIFI = 55;
+    
+    public static final int NETWORK_REQUEST_WEEKLY_THROUGHPUT_WIFI = 56;
+    
+    public static final int NETWORK_REQUEST_WEEKLY_TOTAL_COUNT = 57;
+    
+    public static final int NETWORK_REQUEST_WEEKLY_SUCCESS_COUNT = 58;
+    
+    public static final int NETWORK_REQUEST_WEEKLY_MILLIS_COST = 59;
+    
+    public static final int NETWORK_REQUEST_WEEKLY_THROUGHPUT = 60;
+    
+    
+    
+    public static boolean isOneTimeEvent(int eventId) {
+    	if(eventId == SETTING_AUTO_UPDATE) return true;
+    	if(eventId == SETTING_ONLY_WIFI) return true;
+    	if(eventId == SETTING_KEYGUARD_SWITCHER) return true;
+    	if(eventId == SETTING_IMAGE_TEXT) return true;
+    	
+    	return false;
+    }
+    
+    public static boolean isAccumulatedEvent(int eventId) {
+    	return !isOneTimeEvent(eventId);
+    }
+    
+    public static boolean isHourlyAccumulatedEvent(int eventId) {
+    	return false;
+    }
+    
+    public static boolean isDailyAccumulatedEvent(int eventId) {
+    	return false;
+    }
+    
+    public static boolean isWeeklyAccumulatedEvent(int eventId) {
+    	if(eventId >= 41 && eventId <= 60) return true;
+    	
+    	return false;
+    }
    
 }

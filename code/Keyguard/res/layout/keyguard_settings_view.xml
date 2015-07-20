@@ -35,7 +35,7 @@
         android:layout_height="@dimen/settings_title_height"
         android:layout_below="@id/setting_title"
         android:gravity="bottom"
-        android:text="@string/preference_wallpaper_update"
+        android:text="@string/preference_wallpaper_update_title"
         android:textColor="@color/keyguard_setting_title_color"
         android:textSize="@dimen/settings_title_textsize"
         android:visibility="invisible" />
@@ -61,7 +61,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/settings_body_firstline_height"
                 android:gravity="bottom"
-                android:text="@string/preference_wallpaper_update"
+                android:text="@string/preference_wallpaper_update_small_title"
                 android:textColor="@color/keyguard_setting_firstline_color"
                 android:textSize="@dimen/settings_body_firstline_textsize"
                 android:visibility="invisible" />
@@ -169,13 +169,85 @@
             android:textSize="@dimen/settings_body_secondline_textsize"
             android:visibility="invisible" />
     </LinearLayout>
+    
+    <View
+        android:layout_marginLeft="@dimen/settings_paddingleft"
+        android:id="@+id/settings_divider_third"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/settings_line_height"
+        android:layout_below="@id/set_keyguard_wallpaper_layout"
+        android:layout_gravity="right"
+        android:layout_marginTop="16dp"
+        android:background="@color/keyguard_setting_line_color"
+        android:visibility="invisible" />
+    
+    
+    <TextView
+        android:paddingLeft="@dimen/settings_paddingleft"
+        android:id="@+id/keyguard_style_title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/settings_title_height"
+        android:layout_below="@id/settings_divider_third"
+        android:gravity="bottom"
+        android:text="@string/keyguard_style_title"
+        android:textColor="@color/keyguard_setting_title_color"
+        android:textSize="@dimen/settings_title_textsize"
+        android:visibility="invisible" />
+
+    <LinearLayout
+        android:paddingLeft="@dimen/settings_paddingleft"
+        android:id="@+id/keyguard_style_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/keyguard_style_title"
+        android:clipChildren="false"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clipChildren="false"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/keyguard_style_text"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/settings_body_firstline_height"
+                android:gravity="bottom"
+                android:text="@string/keyguard_style_small_title"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textColor="@color/keyguard_setting_firstline_color"
+                android:textSize="@dimen/settings_body_firstline_textsize"
+                android:visibility="invisible" />
+
+            <TextView
+                android:id="@+id/keyguard_style_describe"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/settings_body_secondline_height"
+                android:gravity="center_vertical"
+                android:textColor="@color/keyguard_setting_secondline_color"
+                android:textSize="@dimen/settings_body_secondline_textsize"
+                android:visibility="invisible" />
+        </LinearLayout>
+
+        <Switch
+            android:id="@+id/switch_keyguardstyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical|right"
+            android:layout_marginRight="@dimen/settings_switch_marginright"
+            android:layout_weight="4"
+            android:visibility="invisible" />
+    </LinearLayout>
 
     <View
         android:layout_marginLeft="@dimen/settings_paddingleft"
         android:id="@+id/settings_divider"
         android:layout_width="match_parent"
         android:layout_height="@dimen/settings_line_height"
-        android:layout_below="@id/set_keyguard_wallpaper_layout"
+        android:layout_below="@id/keyguard_style_layout"
         android:layout_gravity="right"
         android:layout_marginTop="16dp"
         android:background="@color/keyguard_setting_line_color"

@@ -563,6 +563,16 @@ public class WallpaperDB extends BaseDB{
         return count >= 0;
     }
     
+    public void unLockWallpaper() {
+    	 
+        ContentValues valueUpdate = new ContentValues();
+        final SQLiteDatabase db = mWritableDatabase;
+        valueUpdate.put(DataConstant.WallpaperColumns.LOCK, DataConstant.WALLPAPER_NOT_LOCK);
+        db.update(TABLE_NAME, valueUpdate, DataConstant.WallpaperColumns.LOCK + " = ?", new String[] {
+                String.valueOf(DataConstant.WALLPAPER_LOCK)
+        });
+	}
     
+
     
 }

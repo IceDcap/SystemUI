@@ -48,6 +48,99 @@ public class NetWorkUtils {
 //        }
 //        return true;
 //    }
+    
+    public static final int NETWORK_TYPE_NULL = 0;
+    public static final int NETWORK_TYPE_2G = 1;
+    public static final int NETWORK_TYPE_3G = 2;
+    public static final int NETWORK_TYPE_4G = 3;
+    public static final int NETWORK_TYPE_WIFI = 4;
+    public static final int NETWORK_TYPE_OTHER = 5;
+    
+    
+    private static ConnectivityManager getConnMgr(Context context) {
+    	ConnectivityManager connMgr = null;
+    	if(context != null) {
+    		connMgr = (ConnectivityManager) context
+    				.getSystemService(Context.CONNECTIVITY_SERVICE);
+    	}
+    	
+    	return connMgr;
+    }
+    
+    private static NetworkInfo getActiveNetworkInfo(Context context) {
+    	NetworkInfo ni = null;
+    	ConnectivityManager connMgr = getConnMgr(context);
+    	if(connMgr != null) {
+    		ni = connMgr.getActiveNetworkInfo();
+    	}
+    	
+    	return ni;
+    }
+    
+    private static boolean isWifiNetwork(int type) {
+    	return type == ConnectivityManager.TYPE_WIFI;
+    }
+    
+    private static boolean isMobileNetwork(int type) {
+    	return type == ConnectivityManager.TYPE_MOBILE
+    			|| type == ConnectivityManager.TYPE_MOBILE_MMS
+    			|| type == ConnectivityManager.TYPE_MOBILE_SUPL
+    			|| type == ConnectivityManager.TYPE_MOBILE_DUN
+    			|| type == ConnectivityManager.TYPE_MOBILE_HIPRI;
+    }
+    
+	private static int distingushMobileNetworkSubType(int subType) {
+		int generalSubType = NETWORK_TYPE_NULL;
+
+		switch (subType) {
+		case TelephonyManager.NETWORK_TYPE_GPRS:
+		case TelephonyManager.NETWORK_TYPE_EDGE:
+		case TelephonyManager.NETWORK_TYPE_CDMA:
+		case TelephonyManager.NETWORK_TYPE_1xRTT:
+		case TelephonyManager.NETWORK_TYPE_IDEN:
+		case 16: // TelephonyManager.NETWORK_TYPE_GSM @hide
+			generalSubType = NETWORK_TYPE_2G;
+			break;
+		case TelephonyManager.NETWORK_TYPE_UMTS:
+		case TelephonyManager.NETWORK_TYPE_EVDO_0:
+		case TelephonyManager.NETWORK_TYPE_EVDO_A:
+		case TelephonyManager.NETWORK_TYPE_HSDPA:
+		case TelephonyManager.NETWORK_TYPE_HSUPA:
+		case TelephonyManager.NETWORK_TYPE_HSPA:
+		case TelephonyManager.NETWORK_TYPE_EVDO_B:
+		case TelephonyManager.NETWORK_TYPE_EHRPD:
+		case TelephonyManager.NETWORK_TYPE_HSPAP:
+			generalSubType = NETWORK_TYPE_3G;
+			break;
+		case TelephonyManager.NETWORK_TYPE_LTE:
+			generalSubType = NETWORK_TYPE_4G;
+			break;
+		default:
+			generalSubType = NETWORK_TYPE_OTHER;
+			break;
+		}
+
+		return generalSubType;
+	}
+    
+    public static int getNetworkType(Context context) {
+    	int generalType = NETWORK_TYPE_NULL;
+    	
+    	NetworkInfo ni = getActiveNetworkInfo(context);
+    	if(ni != null && ni.isConnected()) {
+    		int type = ni.getType();
+    		if(isWifiNetwork(type)) {
+    			generalType = NETWORK_TYPE_WIFI;
+    		} else if(isMobileNetwork(type)) {
+    			generalType = distingushMobileNetworkSubType(ni.getSubtype());
+    		} else {
+    			generalType = NETWORK_TYPE_OTHER;
+    		}
+    	}
+    	
+    	return generalType;
+    }
+    
 
     public static boolean isMobileDataNetwork(Context context) {
         ConnectivityManager connectivityMgr = (ConnectivityManager) context

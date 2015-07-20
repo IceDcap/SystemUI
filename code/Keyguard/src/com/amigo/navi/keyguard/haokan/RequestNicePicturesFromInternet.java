@@ -14,6 +14,7 @@ import com.amigo.navi.keyguard.KWDataCache;
 import com.amigo.navi.keyguard.KeyguardViewHostManager;
 import com.amigo.navi.keyguard.KeyguardWallpaperManager;
 import com.amigo.navi.keyguard.haokan.analysis.HKAgent;
+import com.amigo.navi.keyguard.haokan.analysis.NetworkStatisticsPolicy;
 import com.amigo.navi.keyguard.haokan.db.CategoryDB;
 import com.amigo.navi.keyguard.haokan.db.WallpaperDB;
 import com.amigo.navi.keyguard.haokan.entity.Category;
@@ -74,17 +75,21 @@ public class RequestNicePicturesFromInternet {
 //    }
     
     public void registerData(final boolean isCheckFromOnToOff){
+    	NetworkStatisticsPolicy.onNetworkAccessBegin(mContext);
     		boolean isUpdate = KeyguardSettings.getWallpaperUpadteState(mContext);
             DebugLog.d(TAG,"registerUserID isUpdate:" + isUpdate);
     		if(!isUpdate){
     			if(isCheckFromOnToOff){
     				HKAgent.uploadAllLog(mContext, false);
     			}
+    			
+    			NetworkStatisticsPolicy.onNetworkAccessEnd(mContext, false);
     			return;
     		}
 
     		if (mLockPatternUtils.isLockScreenDisabled()){
                 DebugLog.d(TAG,"registerUserID isLockScreenDisabled, return");
+                NetworkStatisticsPolicy.onNetworkAccessEnd(mContext, false);
     			return;
     		}
     		boolean isUpdateOnWifi = KeyguardSettings.getOnlyWlanState(mContext);
@@ -93,6 +98,7 @@ public class RequestNicePicturesFromInternet {
         		boolean isWifi = NetWorkUtils.isWifi(mContext);
                 DebugLog.d(TAG,"registerUserID isWifi:" + isWifi);
         		if(!isWifi){
+        			NetworkStatisticsPolicy.onNetworkAccessEnd(mContext, false);
         			return;
         		}
     		}
@@ -109,6 +115,8 @@ public class RequestNicePicturesFromInternet {
                       HKAgent.uploadAllLog(mContext, true);
                       requestPictureCategory(isStop);
                       requestPictureList(isStop);
+                      
+                      NetworkStatisticsPolicy.onNetworkAccessEnd(mContext, true);
                   }
                 }
                 

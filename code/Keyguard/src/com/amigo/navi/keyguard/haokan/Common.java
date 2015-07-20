@@ -28,6 +28,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+
 
 public class Common {
 
@@ -44,7 +46,10 @@ public class Common {
     
     private static Client client = null;
     
-    private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH");
+    private static SimpleDateFormat formatDate     = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+    private static SimpleDateFormat formatDateHour = new SimpleDateFormat("yyyy-MM-dd HH", Locale.US);
+    private static SimpleDateFormat formatDateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+    private static SimpleDateFormat formatYearWeek = new SimpleDateFormat("yyyy-w", Locale.US);
     
     private static boolean isPowerSaverMode = false;
     
@@ -218,10 +223,6 @@ public class Common {
         return SCREEN_SIZE;
     }
     
-    public static String currentTimeHour() {
-        return format.format(new Date());
-    }
-    
     public static Client getClientInfo(Context context) {
 
         if (client == null) {
@@ -277,14 +278,20 @@ public class Common {
         return bitmap;
     }
     
-    private static SimpleDateFormat formatTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//YYYY-MM-DD HH:mm:ss
-    public static String currentTimeTime() {
-        return formatTime.format(new Date());
+    public static String currentTimeDate() {
+        return formatDate.format(new Date());
     }
     
-    private static SimpleDateFormat formatTimeDate = new SimpleDateFormat("yyyy-MM-dd");//YYYY-MM-DD
-    public static String currentTimeDate() {
-        return formatTimeDate.format(new Date());
+    public static String currentTimeHour() {
+        return formatDateHour.format(new Date());
+    }
+    
+    public static String currentTimeDateTime() {
+        return formatDateTime.format(new Date());
+    }
+    
+    public static String curentTimeYearWeek() {
+    	return formatYearWeek.format(new Date());
     }
     
     private static final int INVALID_VALUE = -1;
@@ -500,4 +507,28 @@ public class Common {
         return false;
     }
     private static long mLastClickTime = 0;
+    
+    
+    public static int[] splitYearWeek(String yearWeekString, int[] result) {
+    	if(result == null) {
+    		result = new int[2];
+    	}
+    	
+    	String[] split = yearWeekString.split("-");
+    	
+    	result[0] = Integer.parseInt(split[0]);
+    	result[1] = Integer.parseInt(split[1]);
+    	
+    	return result;
+    }
+    
+    public static boolean yearWeekLaterThanCurrent(int[] currentYearWeek, int[] logYearWeek) {
+    	if(logYearWeek[0] > currentYearWeek[0]) {
+    		return true;
+    	} else if(logYearWeek[0] == currentYearWeek[0]) {
+    		return logYearWeek[1] > currentYearWeek[1];
+    	}
+    	return false;
+    }
+    
 }

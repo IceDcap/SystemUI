@@ -14,6 +14,12 @@ public class KeyguardSettings {
     public static final String PF_KEYGUARD_WALLPAPER_UPDATE = "keyguard_wallpaper_update";
     public static final String PF_ONLY_WLAN = "only_wlan";
     
+    /**
+     * 锁屏样式开关
+     */
+    public static final String PF_KEYGUARD_STYLE_SWITCH = "keyguard_style_switch";
+    public static final boolean DEFAULT_KEYGUARD_STYLE_STATUS = true;
+    
     public static final String PF_KEYGUARD_ALERT = "keyguard_isAlert";
     public static final String PF_KEYGUARD_CONNECT = "keyguard_connectNet";
     
@@ -88,6 +94,24 @@ public class KeyguardSettings {
                 Context.MODE_PRIVATE);
         return sp.getBoolean(PF_ONLY_WLAN,
         		SWITCH_WALLPAPER_WIFI);
+    }
+    
+    //锁屏样式开关
+    public static void setKeyguardStyleSwitch(Context context,boolean enabled){
+        SharedPreferences sp = context.getSharedPreferences(PREFERENCE_NAME,
+                Context.MODE_PRIVATE);
+        Editor editor = sp.edit();
+        editor.putBoolean(PF_KEYGUARD_STYLE_SWITCH, enabled);
+		editor.commit();
+		
+//		notifyKeyguardEnabledStateChanged(enabled);
+    }
+    
+    public static boolean getKeyguardStyleSwitch(Context context){
+        SharedPreferences sp = context.getSharedPreferences(PREFERENCE_NAME,
+                Context.MODE_PRIVATE);
+        return sp.getBoolean(PF_KEYGUARD_STYLE_SWITCH,
+        		DEFAULT_KEYGUARD_STYLE_STATUS);
     }
     
     public static void setWallpaperUpadteState(Context context,boolean value){

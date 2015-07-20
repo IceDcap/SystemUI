@@ -52,6 +52,7 @@ import android.widget.TextView;
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.KWDataCache;
 import com.amigo.navi.keyguard.KeyguardViewHostManager;
+import com.amigo.navi.keyguard.haokan.CaptionsView;
 import com.amigo.navi.keyguard.haokan.BlankActivity;
 import com.amigo.navi.keyguard.haokan.Common;
 import com.amigo.navi.keyguard.haokan.RequestNicePicturesFromInternet;
@@ -59,6 +60,7 @@ import com.amigo.navi.keyguard.haokan.UIController;
 import com.amigo.navi.keyguard.haokan.WallpaperCutActivity;
 import com.amigo.navi.keyguard.haokan.analysis.Event;
 import com.amigo.navi.keyguard.haokan.analysis.HKAgent;
+import com.amigo.navi.keyguard.haokan.analysis.SettingStatisticsPolicy;
 import com.amigo.navi.keyguard.haokan.db.DataConstant;
 import com.amigo.navi.keyguard.haokan.db.WallpaperDB;
 import com.amigo.navi.keyguard.haokan.entity.Category;
@@ -89,6 +91,10 @@ public class KeyguardSettingsActivity extends Activity {
     private TextView mWallpaperUpdateSecondline;
     private TextView mOnlyWlanSwitchFirstLine;
     private View mDivider;
+    
+	private Switch mKeyguardStyleSwitch;
+	private TextView mKeyguardStyleDescribe;
+    
     private TextView mDoubleDesktopLockTitle;
     private TextView mDoubleDesktopLockFirstline;
     private TextView mDoubleDesktopLockSecondline;
@@ -165,6 +171,9 @@ public class KeyguardSettingsActivity extends Activity {
 				finish();				
 			}
 		});
+		
+		mKeyguardStyleSwitch = (Switch)findViewById(R.id.switch_keyguardstyle);
+		mKeyguardStyleDescribe = (TextView)findViewById(R.id.keyguard_style_describe);
 
 	}
 	
@@ -185,6 +194,12 @@ public class KeyguardSettingsActivity extends Activity {
 		viewGroup.add(findViewById(R.id.set_keyguard_wallpaper_title));
 		viewGroup.add(findViewById(R.id.set_keyguard_wallpaper));
 		viewGroup.add(findViewById(R.id.set_keyguard_wallpaper_text));
+		
+		viewGroup.add(findViewById(R.id.settings_divider_third));
+		viewGroup.add(findViewById(R.id.keyguard_style_title));
+		viewGroup.add(findViewById(R.id.keyguard_style_text));
+		viewGroup.add(mKeyguardStyleSwitch);
+		viewGroup.add(mKeyguardStyleDescribe);
 
 		viewGroup.add(mDoubleDesktopLockTitle);
 		viewGroup.add(mDoubleDesktopLockFirstline);
@@ -239,6 +254,7 @@ public class KeyguardSettingsActivity extends Activity {
 		setContentView(view);
 		findView();
 		initWallpaperUpdate();
+		initKeyguardStyle();
 		initDoubleDesktopLock();
 		
 		view.postDelayed(new Runnable() {
@@ -355,11 +371,12 @@ public class KeyguardSettingsActivity extends Activity {
     private void initKeyguardWallpaperUpdate(){
     	
         mKeyguardWallpaperUpdate.setChecked(connectNet);
-        if (connectNet){
-        	HKAgent.onEventWallpaperUpdate(getApplicationContext(),Event.SETTING_UPDATE, KeyguardSettings.SWITCH_WALLPAPER_UPDATE_ON);
-        }else{
-        	HKAgent.onEventWallpaperUpdate(getApplicationContext(),Event.SETTING_UPDATE, KeyguardSettings.SWITCH_WALLPAPER_UPDATE_OFF);
-        }
+//        if (connectNet){
+//        	HKAgent.onEventWallpaperUpdate(getApplicationContext(),Event.SETTING_UPDATE, KeyguardSettings.SWITCH_WALLPAPER_UPDATE_ON);
+//        }else{
+//        	HKAgent.onEventWallpaperUpdate(getApplicationContext(),Event.SETTING_UPDATE, KeyguardSettings.SWITCH_WALLPAPER_UPDATE_OFF);
+//        }
+        SettingStatisticsPolicy.onAutoUpdateChanged(connectNet);
         mKeyguardWallpaperUpdate.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
@@ -370,50 +387,61 @@ public class KeyguardSettingsActivity extends Activity {
 	        			alertDialog();
 	        		}else{
 	    				saveConnectState(true);
+	    				updateInterruptDownloadState();
+	    				RequestNicePicturesFromInternet.getInstance(getApplicationContext()).registerData(false);
 	        		}
 	        		
-	        		HKAgent.onEventWallpaperUpdate(getApplicationContext(),Event.SETTING_UPDATE, KeyguardSettings.SWITCH_WALLPAPER_UPDATE_ON);
-					RequestNicePicturesFromInternet.getInstance(getApplicationContext()).registerData(false);
-					if(NetWorkUtils.isNetworkAvailable(getApplicationContext()) ){
-						if(KeyguardSettings.getOnlyWlanState(getApplicationContext()) && NetWorkUtils.isWifi(getApplicationContext())){
-							NetWorkUtils.setInterruptDownload(false);
-						}
-						
-						if(!KeyguardSettings.getOnlyWlanState(getApplicationContext())){
-							NetWorkUtils.setInterruptDownload(false);
-						}
-						
-						if(KeyguardSettings.getOnlyWlanState(getApplicationContext()) && !NetWorkUtils.isWifi(getApplicationContext())){
-							NetWorkUtils.setInterruptDownload(true);
-						}
-					}
+//	        		HKAgent.onEventWallpaperUpdate(getApplicationContext(),Event.SETTING_UPDATE, KeyguardSettings.SWITCH_WALLPAPER_UPDATE_ON);
+					
+					
 				}else{
 	        		saveConnectState(false);
-	        		HKAgent.onEventWallpaperUpdate(getApplicationContext(),Event.SETTING_UPDATE, KeyguardSettings.SWITCH_WALLPAPER_UPDATE_OFF);
+//	        		HKAgent.onEventWallpaperUpdate(getApplicationContext(),Event.SETTING_UPDATE, KeyguardSettings.SWITCH_WALLPAPER_UPDATE_OFF);
 					RequestNicePicturesFromInternet.getInstance(getApplicationContext()).registerData(true);
 					NetWorkUtils.setInterruptDownload(true);
 				}
 				
-			}});
+				SettingStatisticsPolicy.onAutoUpdateChanged(isChecked);
+				
+			}
+
+		});
 
     }
+    
+	private void updateInterruptDownloadState() {
+		if(NetWorkUtils.isNetworkAvailable(getApplicationContext()) ){
+			if(KeyguardSettings.getOnlyWlanState(getApplicationContext()) && NetWorkUtils.isWifi(getApplicationContext())){
+				NetWorkUtils.setInterruptDownload(false);
+			}
+			
+			if(!KeyguardSettings.getOnlyWlanState(getApplicationContext())){
+				NetWorkUtils.setInterruptDownload(false);
+			}
+			
+			if(KeyguardSettings.getOnlyWlanState(getApplicationContext()) && !NetWorkUtils.isWifi(getApplicationContext())){
+				NetWorkUtils.setInterruptDownload(true);
+			}
+		}
+	}
     
     public void initOnlyWlan(){
     	
         boolean isopen = KeyguardSettings.getOnlyWlanState(this.getApplicationContext());
         mOnlyWlanSwitch.setChecked(isopen);
         if (isopen){
-        	HKAgent.onEventOnlyWlan(getApplicationContext(),Event.SETTING_DOWNLOAD, KeyguardSettings.SWITCH_ONLY_WLAN_ON);
+//        	HKAgent.onEventOnlyWlan(getApplicationContext(),Event.SETTING_DOWNLOAD, KeyguardSettings.SWITCH_ONLY_WLAN_ON);
         	if(NetWorkUtils.isNetworkAvailable(getApplicationContext()) && NetWorkUtils.isWifi(getApplicationContext()) ){
         		NetWorkUtils.setInterruptDownload(false);
         	}else{
         		NetWorkUtils.setInterruptDownload(true);
         	}
         }else{
-        	HKAgent.onEventOnlyWlan(getApplicationContext(),Event.SETTING_DOWNLOAD, KeyguardSettings.SWITCH_ONLY_WLAN_OFF);
+//        	HKAgent.onEventOnlyWlan(getApplicationContext(),Event.SETTING_DOWNLOAD, KeyguardSettings.SWITCH_ONLY_WLAN_OFF);
         	NetWorkUtils.setInterruptDownload(false);	
         }
         mOnlyWlanSwitch.setEnabled(connectNet);
+        SettingStatisticsPolicy.onOnlyWifiChanged(isopen);
         
         if (connectNet) {
             mOnlyWlanSwitchFirstLine.setTextColor(getResources().getColor(R.color.keyguard_setting_firstline_color));
@@ -426,14 +454,47 @@ public class KeyguardSettingsActivity extends Activity {
 			@Override
 			public void onCheckedChanged(CompoundButton btnView, boolean isChecked) {
 				KeyguardSettings.setOnlyWlanState(getApplicationContext(), isChecked);	
-				if (isChecked){
-	        		HKAgent.onEventOnlyWlan(getApplicationContext(),Event.SETTING_DOWNLOAD, KeyguardSettings.SWITCH_ONLY_WLAN_ON);
-				}else{
-	        		HKAgent.onEventOnlyWlan(getApplicationContext(),Event.SETTING_DOWNLOAD, KeyguardSettings.SWITCH_ONLY_WLAN_OFF);
-				}
+//				if (isChecked){
+//	        		HKAgent.onEventOnlyWlan(getApplicationContext(),Event.SETTING_DOWNLOAD, KeyguardSettings.SWITCH_ONLY_WLAN_ON);
+//				}else{
+//	        		HKAgent.onEventOnlyWlan(getApplicationContext(),Event.SETTING_DOWNLOAD, KeyguardSettings.SWITCH_ONLY_WLAN_OFF);
+//				}
+				SettingStatisticsPolicy.onOnlyWifiChanged(isChecked);
 				RequestNicePicturesFromInternet.getInstance(getApplicationContext()).registerData(false);
 			}});
 
+    }
+    
+    private void initKeyguardStyle() {
+		boolean keyguardStyleStatus = KeyguardSettings.getKeyguardStyleSwitch(this);
+		mKeyguardStyleSwitch.setChecked(keyguardStyleStatus);
+		
+		mKeyguardStyleDescribe.setText(keyguardStyleStatus ? 
+				R.string.keyguard_style_on_describe : R.string.keyguard_style_off_describe);
+		
+		mKeyguardStyleSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+				// TODO Auto-generated method stub
+				KeyguardSettings.setKeyguardStyleSwitch(KeyguardSettingsActivity.this, isChecked);
+				CaptionsView captionsView = UIController.getInstance().getmCaptionsView();
+				if(isChecked) {
+					mKeyguardStyleDescribe.setText(R.string.keyguard_style_on_describe);
+					if(captionsView != null) {
+						captionsView.setKeyguardStyleIsChecked(true);
+						captionsView.setVisibility(View.VISIBLE);				
+					}
+				} else {
+					mKeyguardStyleDescribe.setText(R.string.keyguard_style_off_describe);
+					if(captionsView != null) {
+						captionsView.setKeyguardStyleIsChecked(false);
+						captionsView.setVisibility(View.GONE);				
+					}
+				}
+				SettingStatisticsPolicy.onWallpaperTextChanged(isChecked);
+			}
+		});
     }
    
     private void initDoubleDesktopLock() {
@@ -492,6 +553,9 @@ public class KeyguardSettingsActivity extends Activity {
 				guideExitAnimation();
 				saveConnectState(true);
 				dialog.dismiss();
+				updateInterruptDownloadState();
+				RequestNicePicturesFromInternet.getInstance(getApplicationContext()).registerData(false);
+			
 			}
 		}).setNegativeButton(R.string.dialog_cancle, new DialogInterface.OnClickListener() {
 			@Override

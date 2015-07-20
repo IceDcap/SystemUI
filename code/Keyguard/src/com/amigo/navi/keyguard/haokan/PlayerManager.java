@@ -259,13 +259,19 @@ public class PlayerManager  implements ClickContinueCallback{
     public void pauseOrPlayer(Music music) {
  
         if (music == null) return;
-        State state = music.getmState();
+        final boolean musicIsPlaying = musicIsPlaying(music);
+        if (musicIsPlaying) {
+        	music.setProgress(getPlayingMusic().getProgress());
+        	music.setmState(getPlayingMusic().getmState());
+        	setPlayingMusic(music);
+		}
         
+        State state = music.getmState();
         DebugLog.d(TAG, "state = " + state);
         if (state == State.PAUSE) {
             DebugLog.d(TAG, "pauseOrPlayer  start");
             
-            if (musicIsPlaying(music)) {
+            if (musicIsPlaying) {
                 start();
             }else {
                 player(music);

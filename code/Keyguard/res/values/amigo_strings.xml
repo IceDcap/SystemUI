@@ -95,7 +95,8 @@
     
     
     <string name="settings">Screenlock settings</string>
-    <string name="preference_wallpaper_update">WALLPAPER UPDATES</string>
+    <string name="preference_wallpaper_update_title">WALLPAPER UPDATES</string>
+    <string name="preference_wallpaper_update_small_title">Wallpaper updates</string>
    	<string name="preference_wallpaper_update_summary">Update wallpaper every day</string>
    	
     <string name="preference_only_wlan">Only WLAN auto update</string>
@@ -106,6 +107,10 @@
     <string name="preference_screenlock_wallpaper">SCREENLOCK WALLPAPER</string>
     <string name="preference_set_screenlock_wallpaper">Set screenlock wallpaper</string>
     <string name="preference_set_screenlock_wallpaper_text">Select a picture to show when screen on</string>
+    <string name="keyguard_style_title">KEYGUARD STYLE</string>
+    <string name="keyguard_style_small_title">Keyguard style</string>
+    <string name="keyguard_style_on_describe">Switch off to hide copywriter</string>
+    <string name="keyguard_style_off_describe">Switch on to diplay copywriter</string>
     
     <string name="dialog_ok">Continue</string>
     <string name="dialog_cancle">Cancle</string>

@@ -9,13 +9,27 @@ import com.amigo.navi.keyguard.settings.KeyguardSettings;
 
 public class HKAgent {
     
-    private static LoggerThread mLog;
-    private static HKAgent mHkAgent = new HKAgent();
-
-    private HKAgent() {
-        mLog = LoggerThread.getInstance();
+    private static LoggerThread mLog = null;
+//    private static HKAgent mHkAgent = new HKAgent();
+//
+//    private HKAgent() {
+//        mLog = LoggerThread.getInstance();
+//    }
+    
+    public static void startStatisticThread(Context context) {
+    	if(mLog == null && context != null) {
+    		mLog = LoggerThread.getInstance(context);
+    	}
     }
     
+    public static void stopStatisticThread() {
+    	LoggerThread.releaseInstance();
+    	mLog = null;
+    }
+    
+    public static void onEvent(EventLogger log) {
+    	mLog.onEvent(log);
+    }
     
     public static void onEvent(final Context context, final EventLogger userLog) {
         mLog.onEvent(context, userLog);
@@ -56,7 +70,7 @@ public class HKAgent {
     }
     
     public static void onEventTimeOnKeyguard(final Context context, final int value) {
-        onEvent(context,new EventLogger(Common.currentTimeTime(), Event.TIME_ONKEYGUARD, value));
+        onEvent(context,new EventLogger(Common.currentTimeDateTime(), Event.TIME_ONKEYGUARD, value));
     }
     
 //    public static void onEventTimeSceenOff(final Context context, final int value) {
@@ -91,12 +105,30 @@ public class HKAgent {
         }
     }
     
-    public static void onEventIMGShow(final Context context, final Wallpaper wallpaper) {
-//        onEvent(context, wallpaper.getImgId(), wallpaper.getCategory().getTypeId(), Event.IMG_SHOW);
-    	
-        onEvent(context, new EventLogger(Common.currentTimeHour(), wallpaper.getImgId(), wallpaper
-                .getCategory().getTypeId(), Event.IMG_SHOW, 1, wallpaper.getUrlPv()));
- }
+	public static void onEventIMGSwitchedManually(final Context context, final Wallpaper wallpaper) {
+		if (wallpaper != null) {
+			onEvent(context, new EventLogger(Common.currentTimeHour(),
+					wallpaper.getImgId(), wallpaper.getCategory().getTypeId(),
+					Event.IMG_SWITCH, 1, wallpaper.getUrlPv()));
+		}
+	}
+	
+	public static void onEventIMGShow(final Context context, final Wallpaper wallpaper) {
+		if (wallpaper != null) {
+			onEvent(context, new EventLogger(Common.currentTimeHour(),
+					wallpaper.getImgId(), wallpaper.getCategory().getTypeId(),
+					Event.IMG_SHOW, 1, wallpaper.getUrlPv()));
+		}
+	}
+	
+	// event id 24
+	public static void onEventImageGazingDuration(Wallpaper wallpaper, long gazingDuration) {
+		if(wallpaper != null) {
+			EventLogger log = new EventLogger(Common.currentTimeHour(), wallpaper.getImgId(),
+					wallpaper.getCategory().getTypeId(), Event.IMG_GAZING, (int) gazingDuration, wallpaper.getUrlPv());
+			onEvent(log);
+		}
+	}
     
     public static void onEventIMGSwitch(final Context context, final Wallpaper wallpaper) {
         onEvent(context, wallpaper.getImgId(), wallpaper.getCategory().getTypeId(), Event.IMG_SWITCH);
@@ -116,6 +148,16 @@ public class HKAgent {
 
     	KeyguardSettings.setLogsUploadTime(context, currentTime);
         mLog.sendLogMsg();
+    }
+    
+    public static void onEventSwitcherStateChanged(int eventId, int switcherState) {
+    	EventLogger log = new EventLogger(Common.currentTimeDateTime(), eventId, switcherState);
+    	onEvent(log);
+    }
+    
+    public static void onEventNetworkAccess(int eventId, int value) {
+    	EventLogger log = new EventLogger(Common.curentTimeYearWeek(), eventId, value);
+    	onEvent(log);
     }
     
     

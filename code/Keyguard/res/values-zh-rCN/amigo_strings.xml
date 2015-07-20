@@ -73,7 +73,8 @@
     <!-- mobile operator strings -->
     <string name="settings">锁屏设置</string>
     <string name="preference_only_wlan">仅在WLAN下自动更新</string>
-    <string name="preference_wallpaper_update">壁纸更新</string>
+    <string name="preference_wallpaper_update_title">壁纸更新</string>
+    <string name="preference_wallpaper_update_small_title">壁纸更新</string>
     <string name="preference_wallpaper_update_summary">每天自动更新订阅的壁纸</string>
     <string name="preference_double_desktop_lock">锁屏双击快捷熄屏</string>
     <string name="preference_double_desktop_lock_title">快捷熄屏</string>
@@ -82,6 +83,11 @@
     <string name="preference_screenlock_wallpaper">锁定壁纸</string>
     <string name="preference_set_screenlock_wallpaper">选择锁定壁纸</string>
     <string name="preference_set_screenlock_wallpaper_text">从本地选择图片亮屏时固定显示</string>
+    
+    <string name="keyguard_style_title">锁屏样式</string>
+    <string name="keyguard_style_small_title">锁屏样式</string>
+    <string name="keyguard_style_on_describe">关闭后文案不显示</string>
+    <string name="keyguard_style_off_describe">打开后文案显示</string>
     
     <string name="dialog_ok">继续</string>
     <string name="dialog_cancle">取消</string>

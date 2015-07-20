@@ -9,6 +9,7 @@ import org.apache.http.message.BasicNameValuePair;
 
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.haokan.Common;
+import com.amigo.navi.keyguard.haokan.CommonUtils;
 import com.amigo.navi.keyguard.haokan.JsonUtil;
 import com.amigo.navi.keyguard.haokan.analysis.MessageModel;
 import com.amigo.navi.keyguard.haokan.entity.Client;
@@ -38,6 +39,8 @@ public class DownLoadJsonManager {
     private static final String DATE_TO = "dt"; 
     private static final String TYPE_ID_LIST = "tids"; 
     private static final String SCREEN_SIZE = "ss"; 
+    private static final String LANGUAGE = "lan";
+    private static final String MCC = "mcc"; 
     
     private static final String DEVICE_NAME = "dn";
     private static final String DEVICE_IMEI = "imei";
@@ -77,6 +80,8 @@ public class DownLoadJsonManager {
         params.add(new BasicNameValuePair(CLIENT_VERSION, Common.getVersionName()));
         params.add(new BasicNameValuePair(TIMESTAMP,String.valueOf(currentTimeMillis)));
         params.add(new BasicNameValuePair(REQUEST_FROM,String.valueOf(ConnectionParameters.REQUEST_SOURCE)));
+        params.add(new BasicNameValuePair(LANGUAGE, CommonUtils.getLanguageParam()));
+        params.add(new BasicNameValuePair(MCC, CommonUtils.getMCC(context)));
         String md5Secret = Common.getMD5String(Common.getVersionName() + "&" + currentTimeMillis + "&" + Common.SECRET);
         params.add(new BasicNameValuePair(SIGN, md5Secret.toUpperCase()));
         String result = "";
@@ -119,7 +124,10 @@ public class DownLoadJsonManager {
         params.add(new BasicNameValuePair(REQUEST_FROM,String.valueOf(ConnectionParameters.REQUEST_SOURCE)));
         String md5Secret = Common.getMD5String(versionName + SIGN_DIVIDE
                 + userID + SIGN_DIVIDE + currentTimeMillis + SIGN_DIVIDE + Common.SECRET);     
-        params.add(new BasicNameValuePair(SIGN, md5Secret.toUpperCase()));      
+        params.add(new BasicNameValuePair(SIGN, md5Secret.toUpperCase()));
+        params.add(new BasicNameValuePair(LANGUAGE, CommonUtils.getLanguageParam()));
+        params.add(new BasicNameValuePair(MCC, CommonUtils.getMCC(context)));
+
         String result = "";
         String method = ConnectionParameters.HTTP_GET;
         result = connectMethod(context, params, method,REQUEST_PICTURES_CATEGORY,null,false);
@@ -152,6 +160,8 @@ public class DownLoadJsonManager {
         params.add(new BasicNameValuePair(TYPE_ID_LIST, category));
         params.add(new BasicNameValuePair(SCREEN_SIZE, screenSize));
         params.add(new BasicNameValuePair(REQUEST_FROM,String.valueOf(ConnectionParameters.REQUEST_SOURCE)));
+        params.add(new BasicNameValuePair(LANGUAGE, CommonUtils.getLanguageParam()));
+        params.add(new BasicNameValuePair(MCC, CommonUtils.getMCC(context)));
         params.add(new BasicNameValuePair(TIMESTAMP,String.valueOf(currentTimeMillis)));
         String secretStr = versionName + SIGN_DIVIDE
                 + userID + SIGN_DIVIDE + currentDate + SIGN_DIVIDE + 
@@ -177,6 +187,8 @@ public class DownLoadJsonManager {
         String md5Secret = Common.getMD5String(Common.getVersionName() + "&" + currentTimeMillis + "&" + Common.SECRET);
         params.add(new BasicNameValuePair(SIGN, md5Secret.toUpperCase()));    
         params.add(new BasicNameValuePair(REQUEST_FROM,String.valueOf(ConnectionParameters.REQUEST_SOURCE)));
+        params.add(new BasicNameValuePair(LANGUAGE, CommonUtils.getLanguageParam()));
+        params.add(new BasicNameValuePair(MCC, CommonUtils.getMCC(context)));
         String result = "";
         String method = ConnectionParameters.HTTP_GET;
         result = connectMethod(context, params, method,REQUEST_UPLOAD_LOG,messageModel.jsonData,true);

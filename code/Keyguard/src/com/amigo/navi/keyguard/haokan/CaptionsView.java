@@ -28,6 +28,7 @@ import com.amigo.navi.keyguard.Guide.GuideState;
 import com.amigo.navi.keyguard.haokan.analysis.HKAgent;
 import com.amigo.navi.keyguard.haokan.entity.Caption;
 import com.amigo.navi.keyguard.infozone.AmigoKeyguardInfoZone;
+import com.amigo.navi.keyguard.settings.KeyguardSettings;
 import com.android.keyguard.R;
  
 
@@ -65,6 +66,8 @@ public class CaptionsView extends RelativeLayout {
     
     private GuideClickView mGuideClickView;
     
+    private boolean mKeyguardStyleIsChecked = true;
+    
 //    private boolean mGuideClickViewShowing = false;
     
     public void setContentVisible(boolean visible) {
@@ -101,6 +104,8 @@ public class CaptionsView extends RelativeLayout {
 
         mLinkDrawablebounds.set(left, top, right, bottom);
         initUI();
+        
+        mKeyguardStyleIsChecked = KeyguardSettings.getKeyguardStyleSwitch(getContext());
     }
     
     public void onScreenTurnedOff() {
@@ -118,6 +123,9 @@ public class CaptionsView extends RelativeLayout {
     }
     
 
+    public void setKeyguardStyleIsChecked(boolean isChecked) {
+    	mKeyguardStyleIsChecked = isChecked;
+    }
     
     
     private void initUI() {
@@ -132,8 +140,10 @@ public class CaptionsView extends RelativeLayout {
         	return;
         }
         
-        if (getVisibility() != VISIBLE) {
+        if (mKeyguardStyleIsChecked) {
             setVisibility(VISIBLE);
+        } else {
+        	setVisibility(GONE);
         }
         
         CaptionSpannableString string = new CaptionSpannableString(getContext()

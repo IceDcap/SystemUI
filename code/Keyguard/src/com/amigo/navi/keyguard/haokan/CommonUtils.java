@@ -11,6 +11,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
@@ -313,5 +314,20 @@ public class CommonUtils {
         return true;
     }
 
-     
+    public static String getMCC(Context context) {
+        TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);  
+        
+        String operator = manager.getNetworkOperator();
+        String mcc = "";
+        if(operator != null && operator.length() >= 3) {
+        	mcc = operator.substring(0, 3);
+        }
+        
+        return mcc;
+    }
+    
+    public static String getLanguageParam() {
+    	String defaultLan = Locale.getDefault().getLanguage();
+    	return defaultLan;
+    }
 }

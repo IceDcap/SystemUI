@@ -39,6 +39,11 @@ public class LoggerThread extends HandlerThread implements Callback{
         start();
         handler = new Handler(this.getLooper(), this);
     }
+    
+    private LoggerThread(Context context) {
+    	this();
+    	mContext = context.getApplicationContext();
+    }
 
     public static synchronized LoggerThread getInstance() {
         if (loggerThread == null) {
@@ -47,16 +52,34 @@ public class LoggerThread extends HandlerThread implements Callback{
         return loggerThread;
     }
     
+    public static LoggerThread getInstance(Context context) {
+    	if(loggerThread == null) {
+    		synchronized (LoggerThread.class) {
+    			if(loggerThread == null) {
+    				loggerThread = new LoggerThread(context);
+    			}
+    		}
+    	}
+    	
+    	return loggerThread;
+    }
     
+    public static void releaseInstance() {
+    	if(loggerThread != null) {
+    		loggerThread.quit();
+    		loggerThread = null;
+    	}
+    }
+    
+    public void onEvent(EventLogger userLog) {
+    	saveLogMsg(userLog);
+    }
     
     public void onEvent(final Context context, final EventLogger userLog) {
-        mContext = context;
         saveLogMsg(userLog);
     }
     
-    
     public void onEvent(final Context context, final String dateHour, final int imgId, final int typeId, final int event, final int count) {
-        mContext = context;
         saveLogMsg(new EventLogger(dateHour, imgId, typeId, event, count));
     }
     
@@ -69,7 +92,9 @@ public class LoggerThread extends HandlerThread implements Callback{
                 case SAVE_LOG:
                     if (msg.obj != null) {
                         EventLogger userLog = (EventLogger) msg.obj;
-                        StatisticsDB.getInstance(mContext).insertLog(userLog);
+                        Log.d("DEBUG_STATISTICS", "save log: " + userLog.getEvent());
+                        // StatisticsDB.getInstance(mContext).insertLog(userLog);
+                        StatisticsDB.getInstance(mContext).saveLog(userLog);
                     }
                     break;
                 case SEND_LOG:

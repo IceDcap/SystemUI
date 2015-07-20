@@ -3,6 +3,7 @@ package com.amigo.navi.keyguard.picturepage.widget;
 
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.KWDataCache;
+import com.amigo.navi.keyguard.haokan.entity.Wallpaper;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -42,6 +43,10 @@ public class KeyguardListView extends HorizontalListView {
             return mAdapter.getItem(getPage());
         }
       return null;
+    }
+    
+    public Wallpaper getCurrentWallpaper() {
+    	return (Wallpaper) getCurrentItem();
     }
     
     public Object getCurrentItemWhenMove(){

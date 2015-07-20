@@ -62,8 +62,8 @@ public class StatisticsDB extends BaseDB{
         
         int insertId;
         if (cursor.moveToFirst()) {
-			if (event.getEvent() == Event.SETTING_UPDATE
-					|| event.getEvent() == Event.SETTING_DOWNLOAD) {
+			if (event.getEvent() == Event.SETTING_AUTO_UPDATE
+					|| event.getEvent() == Event.SETTING_ONLY_WIFI) {
 				values.put(StatisticsColumns.VALUE, event.getValue());
 				insertId = db.update(DataConstant.TABLE_STATISTICS, values,
 						"event = ?",
@@ -86,6 +86,73 @@ public class StatisticsDB extends BaseDB{
         return insertId;
     }
     
+    public int saveLog(EventLogger event) {
+    	int rowId = -1;
+    	
+    	if(Event.isAccumulatedEvent(event.getEvent())) {
+    		rowId = saveAccumulatedLog(event);
+    	} else {
+    		rowId = saveOneTimeLog(event);
+    	}
+    	
+    	return rowId;
+    }
+    
+    private int saveAccumulatedLog(EventLogger event) {
+    	int rowId = -1;
+    	
+    	String whereClause = "date_time=? AND event=? AND img_id=?";
+    	String[] whereArgs = {
+    			event.getDateTime(), 
+    			Integer.toString(event.getEvent()), 
+    			Integer.toString(event.getImgId())
+    			};
+    	String sql = "SELECT _id, count, event, value FROM statistics WHERE " + whereClause;
+        
+        final SQLiteDatabase db = mWritableDatabase;
+        Cursor cursor = db.rawQuery(sql.toString(), whereArgs);
+        
+        boolean updateExistedRow = cursor.moveToFirst();
+        int newCount = updateExistedRow ? cursor.getInt(1) + event.getCount() : event.getCount();
+        int newValue = updateExistedRow ? cursor.getInt(3) + event.getValue() : event.getValue();
+        
+        ContentValues values = createContentValues(event);
+        values.put(StatisticsColumns.COUNT, newCount);
+        values.put(StatisticsColumns.VALUE, newValue);
+        if(updateExistedRow) {
+        	rowId = db.update(DataConstant.TABLE_STATISTICS, values, whereClause, whereArgs);
+        } else {
+        	rowId = (int) db.insert(DataConstant.TABLE_STATISTICS, null, values);
+        }
+    	
+    	return rowId;
+    }
+    
+    private int saveOneTimeLog(EventLogger event) {
+    	int rowId = -1;
+    	
+    	final SQLiteDatabase db = mWritableDatabase;
+    	
+    	ContentValues values = createContentValues(event);
+        values.put(StatisticsColumns.VALUE, event.getValue());
+    	values.put(StatisticsColumns.COUNT, event.getCount());
+    	Log.d("DEBUG_STATISTICS", "saveOneTimeLog eventId=" + event.getEvent() + ", time=" + event.getDateTime());
+    	rowId = (int) db.insert(DataConstant.TABLE_STATISTICS, null, values);
+    	
+    	return rowId;
+    }
+    
+    private ContentValues createContentValues(EventLogger event) {
+    	ContentValues values = new ContentValues();
+        values.put(StatisticsColumns.DATE_TIME, event.getDateTime());
+        values.put(StatisticsColumns.IMG_ID, event.getImgId());
+        values.put(StatisticsColumns.TYPE_ID, event.getTypeId());
+        values.put(StatisticsColumns.EVENT, event.getEvent());
+        values.put(StatisticsColumns.VALUE, event.getValue());
+        values.put(StatisticsColumns.URL_PV, event.getUrlPv());
+        
+        return values;
+    }
     
     
     public int deleteById(List<Integer> ids) {
@@ -123,6 +190,10 @@ public class StatisticsDB extends BaseDB{
         ArrayList<EventLogger> sLogs = new ArrayList<EventLogger>();
         ArrayList<Integer> ids = new ArrayList<Integer>();
         
+        final int[] logYearWeek = new int[2];
+        final int[] currentYearWeek = new int[2];
+        Common.splitYearWeek(Common.curentTimeYearWeek(), currentYearWeek);
+        
         while (cursor != null && cursor.moveToNext()) {
             
             num++;
@@ -135,6 +206,16 @@ public class StatisticsDB extends BaseDB{
             int count = cursor.getInt(5);
             int value = cursor.getInt(6);
             String urlPv = cursor.getString(7);
+            
+            if(Event.isWeeklyAccumulatedEvent(event)) {
+            	Common.splitYearWeek(dateHour, logYearWeek);
+            	if(Common.yearWeekLaterThanCurrent(currentYearWeek, logYearWeek)) {
+            		continue;
+            	} else {
+            		// print logs for weekly events
+            		Log.d("DEBUG_STATISTICS_WEEKLY_EVENTS", String.format("eventId=%d, value=%d", event, value));
+            	}
+            }
             
             ids.add(id);
             
@@ -204,7 +285,5 @@ public class StatisticsDB extends BaseDB{
         
         return group;
     }
-    
-    
 
 }

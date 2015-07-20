@@ -38,6 +38,7 @@ import com.amigo.navi.keyguard.haokan.ShutdownBroadcastReceiver;
 import com.amigo.navi.keyguard.haokan.RequestNicePicturesFromInternet.DataChangedInterface;
 import com.amigo.navi.keyguard.haokan.UIController;
 import com.amigo.navi.keyguard.haokan.analysis.HKAgent;
+import com.amigo.navi.keyguard.haokan.analysis.WallpaperStatisticsPolicy;
 import com.amigo.navi.keyguard.haokan.db.WallpaperDB;
 import com.amigo.navi.keyguard.haokan.entity.Wallpaper;
 import com.amigo.navi.keyguard.haokan.entity.WallpaperList;
@@ -114,6 +115,7 @@ public class KeyguardViewHostManager {
         mKeyguardViewHost=host;
         mSkylightHost=skylight;
         mLockPatternUtils = lockPatternUtils;
+        HKAgent.startStatisticThread(context.getApplicationContext());
         DataStatistics.getInstance().onInit(context.getApplicationContext());
         registerReceivers();
         sInstance=this;
@@ -253,6 +255,8 @@ public class KeyguardViewHostManager {
         setSkylightHidden();
     	
         finishStatistics();
+        Wallpaper wallpaper = UIController.getInstance().getmCurrentWallpaper();
+        WallpaperStatisticsPolicy.onWallpaperNotShown(wallpaper);
         updateNotifiOnkeyguard(false);
         releaseCache();
         mContainer.reset();

@@ -17,6 +17,7 @@ import com.amigo.navi.keyguard.haokan.PlayerManager;
 import com.amigo.navi.keyguard.haokan.RequestNicePicturesFromInternet;
 import com.amigo.navi.keyguard.haokan.UIController;
 import com.amigo.navi.keyguard.haokan.analysis.HKAgent;
+import com.amigo.navi.keyguard.haokan.analysis.WallpaperStatisticsPolicy;
 import com.amigo.navi.keyguard.haokan.db.DataConstant;
 import com.amigo.navi.keyguard.haokan.db.WallpaperDB;
 import com.amigo.navi.keyguard.haokan.entity.Category;
@@ -113,32 +114,29 @@ public class KeyguardWallpaperManager {
     }
     
     
-    private void refreshKeyguardListView(final boolean first) {
+    private void refreshKeyguardListView(final boolean formDB) {
 
-        //isFirst = first;
         
-        if (first || isDownloading() || isDownloadComplete()) {
+        if (formDB || isDownloading() || isDownloadComplete()) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                 	WallpaperList wallpaperList = queryWallpaperList();
-                    
-                    Message msg = mHandler.obtainMessage(MSG_UPDATE_HAOKAN_LIST_SCREEN_OFF,wallpaperList);
-                    mHandler.sendMessage(msg);
-                    
+                	List<String> filePaths = null;
+                	if (isDownloadComplete()) {
+                		filePaths = wallpaperList.getfilePaths();
+					}
+                	Message msg = mHandler.obtainMessage(MSG_UPDATE_HAOKAN_LIST_SCREEN_OFF,wallpaperList);
+                	mHandler.sendMessage(msg);
                     
                     if (isDownloadComplete()) {
-						deleteOldWallpapers(wallpaperList);
+						deleteOldWallpapers(filePaths);
 						setDownloadComplete(false);
 					}
                     
                 }
             }).start();
-            
-//            if (isDownloadComplete()) {
-//                deleteOldWallpaper();
-//                setDownloadComplete(false);
-//            }
+ 
         }else {
             Message msg = mHandler.obtainMessage(MSG_UPDATE_HAOKAN_LIST_SCREEN_OFF);
             mHandler.sendMessage(msg);
@@ -154,6 +152,11 @@ public class KeyguardWallpaperManager {
     public void onScreenTurnedOff() {
         DebugLog.d(TAG, "onScreenTurnedOff");
         refreshKeyguardListView(false);
+        
+        Wallpaper wallpaper= UIController.getInstance().getmCurrentWallpaper();
+        if (wallpaper != null) {
+        	WallpaperStatisticsPolicy.onWallpaperNotShown(wallpaper);
+        }
     }
     
     public void onScreenTurnedOn(){
@@ -161,8 +164,9 @@ public class KeyguardWallpaperManager {
         if (wallpaper != null){
             HKAgent.onEventScreenOn(mAppContext, UIController.getInstance().getmCurrentWallpaper());
             HKAgent.onEventIMGShow(mAppContext, UIController.getInstance().getmCurrentWallpaper());
+            
+            WallpaperStatisticsPolicy.onWallpaperShown(wallpaper);
         }
-
     }
     
     private void refreshPage() {
@@ -215,46 +219,57 @@ public class KeyguardWallpaperManager {
     }
     
    
-    public void onClickLocked(final Wallpaper wallpaper) {
+    public void onClickLocked(final Wallpaper currentWallpaper) {
+        DebugLog.d(TAG, "onClickLocked ImgName = " + currentWallpaper.getImgName() + " isLocked = " + currentWallpaper.isLocked());
         
-        DebugLog.d(TAG, "onClickLocked ImgName = " + wallpaper.getImgName() + " isLocked = " + wallpaper.isLocked());
-        
+        Wallpaper wallpaper = null;
+        final boolean locked = currentWallpaper.isLocked();
+        if (locked) {
+        	mWallpaperList.resetOrder();
+		}else {
+
+			int indexOfLocked = mWallpaperList.indexOfLocked();
+			if (indexOfLocked != -1) {
+				wallpaper = mWallpaperList.get(indexOfLocked);
+				wallpaper.setLocked(false);
+			}
+			
+		}
+        currentWallpaper.setLocked(!locked);
+        final Wallpaper wallpaperLocked = wallpaper;
         new Thread(new Runnable() {
 
             @Override
             public void run() {
 
                 boolean success =  false;
-                final boolean locked = wallpaper.isLocked();
-                if(locked){
-                    mWallpaperList.resetOrder();
-                    success = unLockWallpaper(wallpaper);
-                }else{
-                    success = lockWallpaper(wallpaper);
-                    
+                if (wallpaperLocked != null && !locked) {
+                	mWallpaperDB.updateLocked(wallpaperLocked);
                 }
+                success = mWallpaperDB.updateLocked(currentWallpaper);
+                 
                 DebugLog.d(TAG, "onClickLocked success = " + success);
                 if (success) {
                     
-                    HKAgent.onEventWallpaperLock(mAppContext, wallpaper);
-                    int stringResId = wallpaper.isLocked() ? R.string.haokan_tip_screen_on_show : R.string.haokan_tip_no_lock_show;
+                    HKAgent.onEventWallpaperLock(mAppContext, currentWallpaper);
+                    int stringResId = currentWallpaper.isLocked() ? R.string.haokan_tip_screen_on_show : R.string.haokan_tip_no_lock_show;
                     postShowToast(stringResId, 500);
                      
                 }  
                 
                 if (!locked && Common.SDfree()) {
-                    boolean isLocalImage = wallpaper.getImgId() == Wallpaper.WALLPAPER_FROM_PHOTO_ID;
+                    boolean isLocalImage = currentWallpaper.getImgId() == Wallpaper.WALLPAPER_FROM_PHOTO_ID;
                     String imageFileName = new StringBuffer(FileUtil.getDirectoryFavorite())
                             .append("/").append(Common.currentTimeDate()).append("_")
-                            .append(isLocalImage ? wallpaper.getImgName() : wallpaper.getImgId())
+                            .append(isLocalImage ? currentWallpaper.getImgName() : currentWallpaper.getImgId())
                             .append(".png").toString();
-                    Bitmap currentWallpaper = getBitmap(wallpaper);
-                    if (currentWallpaper != null) {
-                        if (FileUtil.saveWallpaper(currentWallpaper, imageFileName)) {
-                            Common.insertMediaStore(mAppContext, currentWallpaper.getWidth(),
-                                    currentWallpaper.getHeight(), imageFileName);
+                    Bitmap currentBitmap = getBitmap(currentWallpaper);
+                    if (currentBitmap != null) {
+                        if (FileUtil.saveWallpaper(currentBitmap, imageFileName)) {
+                            Common.insertMediaStore(mAppContext, currentBitmap.getWidth(),
+                            		currentBitmap.getHeight(), imageFileName);
                         }
-                        BitmapUtil.recycleBitmap(currentWallpaper);
+                        BitmapUtil.recycleBitmap(currentBitmap);
                     }
                 }
                 
@@ -315,31 +330,7 @@ public class KeyguardWallpaperManager {
         }, delay);
     }
     
-    private boolean lockWallpaper(Wallpaper wallpaper) {
-        boolean success = false;
-        int indexOfLocked = mWallpaperList.indexOfLocked();
-        if (indexOfLocked != -1) {
-            Wallpaper wallpaperLocked = mWallpaperList.get(indexOfLocked);
-            wallpaperLocked.setLocked(false);
-            mWallpaperDB.updateLocked(wallpaperLocked);
-        }
-        wallpaper.setLocked(true);
-        success = mWallpaperDB.updateLocked(wallpaper);
-        return success;
-    }
     
-    private boolean unLockWallpaper(Wallpaper wallpaper) {
-
-        
-        boolean success = false;
-        wallpaper.setLocked(false);
-        success = mWallpaperDB.updateLocked(wallpaper);
-
-//        delNotTodayWallpaper(mAppContext);
-        
-        return success;
-        
-    }
     
     private void delNotTodayWallpaper(Context context){
         WallpaperDB wallpaperDB = WallpaperDB.getInstance(context.getApplicationContext());           
@@ -390,28 +381,29 @@ public class KeyguardWallpaperManager {
             wallpaper.setFavorite(false);
             wallpaper.setShowTimeBegin("NA");
             wallpaper.setShowTimeEnd("NA");
-            int indexOfLocked = mWallpaperList.indexOfLocked();
-            DebugLog.v(TAG, "indexOfLocked = " + indexOfLocked);
-            if (indexOfLocked != -1) {
-                Wallpaper lockedWallpaper = mWallpaperList.get(indexOfLocked);
-                DebugLog.v(TAG, lockedWallpaper.getImgName());
-                unLockWallpaper(lockedWallpaper);
-            }
+//            int indexOfLocked = mWallpaperList.indexOfLocked();
+//            DebugLog.v(TAG, "indexOfLocked = " + indexOfLocked);
+//            if (indexOfLocked != -1) {
+//                Wallpaper lockedWallpaper = mWallpaperList.get(indexOfLocked);
+//                DebugLog.v(TAG, lockedWallpaper.getImgName());
+//                unLockWallpaper(lockedWallpaper);
+//            }
             
             
             WallpaperDB wallpaperDB = WallpaperDB.getInstance(mAppContext);    
+            wallpaperDB.unLockWallpaper();
             
             int indexOfLocal = mWallpaperList.indexOfLocal();
             DebugLog.d(TAG, "indexOfLocal = " + indexOfLocal);
             if(indexOfLocal == -1){
                 wallpaperDB.insertWallpaper(0, wallpaper);
-                mWallpaperList.add(wallpaper);
+//                mWallpaperList.add(wallpaper);
             }else{
-                mWallpaperList.remove(indexOfLocal);
-                mWallpaperList.add(indexOfLocal, wallpaper);
+//                mWallpaperList.remove(indexOfLocal);
+//                mWallpaperList.add(indexOfLocal, wallpaper);
                 wallpaperDB.updateWallpaper(wallpaper);
             }
-            DebugLog.d(TAG, "mWallpaperList size = " + mWallpaperList.size());
+            
             mHandler.post(new Runnable() {
 				@Override
 				public void run() {
@@ -423,6 +415,8 @@ public class KeyguardWallpaperManager {
 					}
 				}
 			});
+            
+            refreshKeyguardListView(true);
         }
     }
     
@@ -473,7 +467,7 @@ public class KeyguardWallpaperManager {
                     break;*/
                     case MSG_UPDATE_HAOKAN_WHEN_DOWNLOAD_COMPLETE:
                         if (!mViewMediatorCallback.isScreenOn()) {
-                            refreshKeyguardListView(false);
+                            refreshKeyguardListView(true);
                         }
                     break;
                 default:
@@ -563,10 +557,16 @@ public class KeyguardWallpaperManager {
             HKAgent.onEventIMGSwitch(mAppContext, wallpaper);
             HKAgent.onEventIMGShow(mAppContext, wallpaper);
         }
+        
+        Wallpaper currentImage = mKeyguardListView.getCurrentWallpaper();
+        WallpaperStatisticsPolicy.onWallpaperScrollEnd(currentImage);
     }
     
     public void onScrollBegin() {
         mHorizontalAdapter.lock();
+        
+        Wallpaper currentImage = mKeyguardListView.getCurrentWallpaper();
+        WallpaperStatisticsPolicy.onWallpaperScrollBegin(currentImage);
     }
     
 
@@ -671,13 +671,12 @@ public class KeyguardWallpaperManager {
         }
     }
     
-    private void deleteOldWallpapers(WallpaperList wallpaperList) {
+    private void deleteOldWallpapers(List<String> filePaths) {
     	DebugLog.d(TAG, "deleteOldWallpapers");
     	File[] listFiles = FileUtil.getAllFileFormCache(mAppContext);
-    	if (listFiles == null) {
+    	if (listFiles == null || filePaths == null) {
 			return;
 		}
-    	List<String> filePaths = wallpaperList.getfilePaths();
     	
     	List<File> ls = new ArrayList<File>();
     	int len = listFiles.length;
