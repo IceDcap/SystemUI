@@ -125,22 +125,29 @@ public class Clock extends TextView implements DemoMode {
 
     private final BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
         @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (action.equals(Intent.ACTION_TIMEZONE_CHANGED)) {
-                String tz = intent.getStringExtra("time-zone");
-                mCalendar = Calendar.getInstance(TimeZone.getTimeZone(tz));
-                if (mClockFormat != null) {
-                    mClockFormat.setTimeZone(mCalendar.getTimeZone());
-                }
-            } else if (action.equals(Intent.ACTION_CONFIGURATION_CHANGED)) {
-                final Locale newLocale = getResources().getConfiguration().locale;
-                if (! newLocale.equals(mLocale)) {
-                    mLocale = newLocale;
-                    mClockFormatString = ""; // force refresh
-                }
-            }
-            updateClock();
+        public void onReceive(Context context, final Intent intent) {
+        	// GIONEE <wujj> <2015-07-20> modify for CR01518510 begin
+            post(new Runnable() {
+				@Override
+				public void run() {
+					String action = intent.getAction();
+					if (action.equals(Intent.ACTION_TIMEZONE_CHANGED)) {
+						String tz = intent.getStringExtra("time-zone");
+						mCalendar = Calendar.getInstance(TimeZone.getTimeZone(tz));
+						if (mClockFormat != null) {
+							mClockFormat.setTimeZone(mCalendar.getTimeZone());
+						}
+					} else if (action.equals(Intent.ACTION_CONFIGURATION_CHANGED)) {
+						final Locale newLocale = getResources().getConfiguration().locale;
+						if (! newLocale.equals(mLocale)) {
+							mLocale = newLocale;
+							mClockFormatString = ""; // force refresh
+						}
+					}
+					updateClock();
+				}
+			});
+            // GIONEE <wujj> <2015-07-20> modify for CR01518510 end
         }
     };
 

@@ -44,17 +44,25 @@ public class DateView extends TextView {
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
-            if (Intent.ACTION_TIME_TICK.equals(action)
-                    || Intent.ACTION_TIME_CHANGED.equals(action)
-                    || Intent.ACTION_TIMEZONE_CHANGED.equals(action)
-                    || Intent.ACTION_LOCALE_CHANGED.equals(action)) {
-                if (Intent.ACTION_LOCALE_CHANGED.equals(action)
-                        || Intent.ACTION_TIMEZONE_CHANGED.equals(action)) {
-                    // need to get a fresh date format
-                    mDateFormat = null;
-                }
-                updateClock();
-            }
+            // GIONEE <wujj> <2015-07-20> modify for CR01518510 begin
+			post(new Runnable() {
+				@Override
+				public void run() {
+					if (Intent.ACTION_TIME_TICK.equals(action)
+							|| Intent.ACTION_TIME_CHANGED.equals(action)
+							|| Intent.ACTION_TIMEZONE_CHANGED.equals(action)
+							|| Intent.ACTION_LOCALE_CHANGED.equals(action)) {
+						if (Intent.ACTION_LOCALE_CHANGED.equals(action)
+								|| Intent.ACTION_TIMEZONE_CHANGED
+										.equals(action)) {
+							// need to get a fresh date format
+							mDateFormat = null;
+						}
+						updateClock();
+					}
+				}
+			});
+			// GIONEE <wujj> <2015-07-20> modify for CR01518510 end
         }
     };
 
