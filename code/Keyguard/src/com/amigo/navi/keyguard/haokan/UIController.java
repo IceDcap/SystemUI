@@ -50,6 +50,7 @@ import com.amigo.navi.keyguard.haokan.entity.WallpaperList;
 import com.amigo.navi.keyguard.haokan.menu.ArcLayout;
 import com.amigo.navi.keyguard.infozone.AmigoKeyguardInfoZone;
 import com.amigo.navi.keyguard.network.ImageLoader;
+import com.amigo.navi.keyguard.network.NetworkRemind;
 import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
 import com.amigo.navi.keyguard.picturepage.adapter.HorizontalAdapter;
 import com.amigo.navi.keyguard.picturepage.widget.KeyguardListView;
@@ -465,7 +466,12 @@ public class UIController implements OnTouchlListener{
         onKeyguardLocked();
         
         onScreenTurnedOffAnimation();
-        
+        dismissNetworkDialog();
+    }
+    
+    public void dismissNetworkDialog() {
+        Context context=getAmigoKeyguardHostView().getContext();
+        NetworkRemind.getInstance(context).dismissDialog();
     }
     
     public void onKeyguardLocked() {
@@ -737,6 +743,7 @@ public class UIController implements OnTouchlListener{
     	mInfozone.setAlpha(alpha);
     }
     
+    ObjectAnimator mHideNotificationAnimator;
     public void hideKeyguardNotification() {
 
         final View view = getmKeyguardNotification();
@@ -744,33 +751,94 @@ public class UIController implements OnTouchlListener{
         if (view == null) {
             return;
         }
-        
-        if (view.getAlpha() == 0f) {
-            return;
+        DebugLog.d(TAG, "hideKeyguardNotification view.getAlpha() = " + view.getAlpha());
+//        if (view.getAlpha() == 0f) {
+//            return;
+//        }
+        if(mHideNotificationAnimator==null){
+            mHideNotificationAnimator = ObjectAnimator.ofFloat(view, "alpha", 1f, 0f).setDuration(400);
+            mHideNotificationAnimator.addListener(new AnimatorListener() {
+                
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    
+                }
+                
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+                    
+                }
+                
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    DebugLog.d(TAG, "hideKeyguardNotification onAnimationEnd");
+                    view.setAlpha(0f);
+                    view.setVisibility(View.GONE);
+                }
+                
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                    DebugLog.d(TAG, "hideKeyguardNotification onAnimationCancel");
+                    view.setAlpha(0f);
+                    view.setVisibility(View.GONE);
+                }
+            });
         }
-        
-        ObjectAnimator animator = ObjectAnimator.ofFloat(view, "alpha", 1f, 0f).setDuration(400);
- 
-        animator.start();
+        if(mShowNotificationAnimator!=null){
+            mShowNotificationAnimator.cancel();
+        }
+        mHideNotificationAnimator.start();
         
     }
     
-    
+    ObjectAnimator mShowNotificationAnimator;
     public void showKeyguardNotification() {
 
         final View view = getmKeyguardNotification();
+
         if (view == null || getmCaptionsView().isContentVisible()) {
             return;
         }
-        
-        DebugLog.d(TAG, "hideKeyguardNotification view.getAlpha() = " + view.getAlpha());
-        if (view.getAlpha() == 1.0f) {
-            return;
+
+        DebugLog.d(TAG, "showKeyguardNotification view.getAlpha() = " + view.getAlpha());
+        // if (view.getAlpha() == 1.0f) {
+        // return;
+        // }
+        if (mShowNotificationAnimator == null) {
+
+            mShowNotificationAnimator = ObjectAnimator.ofFloat(view, "alpha", 0f, 1f).setDuration(400);
+            mShowNotificationAnimator.addListener(new AnimatorListener() {
+
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    view.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    DebugLog.d(TAG, "showKeyguardNotification onAnimationEnd");
+                    view.setAlpha(1f);
+                    view.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                    DebugLog.d(TAG, "showKeyguardNotification onAnimationCancel");
+                    view.setAlpha(1f);
+                    view.setVisibility(View.VISIBLE);
+                }
+            });
+
         }
-        
-        ObjectAnimator animator = ObjectAnimator.ofFloat(view, "alpha", 0f, 1f).setDuration(400);
-    
-        animator.start();
+        if (mHideNotificationAnimator != null) {
+            mHideNotificationAnimator.cancel();
+        }
+        mShowNotificationAnimator.start();
     }
     
     

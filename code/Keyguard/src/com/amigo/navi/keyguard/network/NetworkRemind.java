@@ -94,6 +94,15 @@ public class NetworkRemind {
 		networkDialog.setCanceledOnTouchOutside(false);
 	}
 	
+    public void dismissDialog() {
+        if (networkDialog != null) {
+            if (networkDialog.isShowing()) {
+                networkDialog.dismiss();
+            }
+        }
+    }
+	    
+	
 	public boolean needShowDialog(){
 		return KeyguardSettings.getBooleanSharedConfig(mContext, NETWORK_IAALART, true);
 	}

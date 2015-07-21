@@ -384,9 +384,9 @@ public class SignalClusterView
         public boolean apply(boolean isSecondaryIcon) {
             if (mMobileVisible && !mIsAirplaneMode) {
                 mMobile.setImageResource(mMobileStrengthId);
-                mMobileType.setImageResource(getNetworkTypeIcon(mIsRoaming, mGnNetworkType));
+                mMobileType.setImageResource(getMobileTypeIcon(mIsRoaming, mGnNetworkType));
                 mSlotIndicator.setImageResource(getSlotIndicator(mSubId));
-                mNetworkType.setImageResource(mNetworkTypeId);
+                mNetworkType.setImageResource(mIsRoaming ? getNetworkTypeIcon(mGnNetworkType) : mNetworkTypeId);
                 mMobileInOut.setImageResource(mMobileInOutId);
                 mMobileGroup.setContentDescription(mMobileTypeDescription
                         + " " + mMobileDescription);
@@ -464,7 +464,7 @@ public class SignalClusterView
         state.mIsRoaming = isRoaming;
 	}
 	
-	private int getNetworkTypeIcon(boolean isRoaming, GnNetworkType networkType) {
+	private int getMobileTypeIcon(boolean isRoaming, GnNetworkType networkType) {
 		if(isRoaming) {
 			return R.drawable.gn_stat_sys_mobile_roam;
 		}
@@ -484,5 +484,25 @@ public class SignalClusterView
             return 0;
         }
     }
+	
+	private int getNetworkTypeIcon(GnNetworkType networkType) {
+		if (networkType == GnNetworkType.Type_G) {
+            return R.drawable.gn_stat_sys_network_type_g;
+        } else if (networkType == GnNetworkType.Type_E) {
+            return R.drawable.gn_stat_sys_network_type_e;
+        } else if (networkType == GnNetworkType.Type_3G) {
+            return R.drawable.gn_stat_sys_network_type_3g;
+        } else if (networkType == GnNetworkType.Type_4G) {
+            return R.drawable.gn_stat_sys_network_type_4g;
+        } else if (networkType == GnNetworkType.Type_1X) {
+            return R.drawable.gn_stat_sys_network_type_1x;
+        } else if (networkType == GnNetworkType.Type_1X3G) {
+            return R.drawable.gn_stat_sys_network_type_3g;
+        } else if (networkType == GnNetworkType.Type_H) {
+			return R.drawable.gn_stat_sys_network_type_h;
+		} else {
+            return 0;
+        }
+	}
 }
 

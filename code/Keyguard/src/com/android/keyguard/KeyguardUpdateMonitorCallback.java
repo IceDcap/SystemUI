@@ -57,6 +57,10 @@ public class KeyguardUpdateMonitorCallback {
      * Called when the carrier PLMN or SPN changes.
      */
     public void onRefreshCarrierInfo() { }
+    /**
+     * Called when the carrier PLMN or SPN changes.
+     */
+    public void onRefreshCarrierInfo(int subId,boolean showSpn,String spn,boolean showPlmn,String plmn) { }
 
     /**
      * Called when the ringer mode changes.

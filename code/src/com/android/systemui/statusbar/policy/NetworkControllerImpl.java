@@ -1530,7 +1530,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
                 case TelephonyManager.NETWORK_TYPE_HSUPA:
                 case TelephonyManager.NETWORK_TYPE_HSPA:
                 case TelephonyManager.NETWORK_TYPE_HSPAP:
-                    mNetworkType = GnNetworkType.Type_3G;
+                    mNetworkType = GnNetworkType.Type_H;
                     break;
                 case TelephonyManager.NETWORK_TYPE_CDMA:
                 case TelephonyManager.NETWORK_TYPE_1xRTT:

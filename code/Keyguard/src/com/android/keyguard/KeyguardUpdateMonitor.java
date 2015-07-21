@@ -542,6 +542,17 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
                 SimData args = SimData.fromIntent(intent);
                 DebugLog.d(TAG, "ACTION_UNLOCK_SIM_LOCK  state:" + args);
                 mHandler.sendMessage(mHandler.obtainMessage(MSG_UNLOCK_SIM_LOCK, args.subId, args.slotId, args.simState));
+            }else if(action.equals(TelephonyIntents.SPN_STRINGS_UPDATED_ACTION)){
+                int subId = intent.getIntExtra(PhoneConstants.SUBSCRIPTION_KEY,
+                        SubscriptionManager.INVALID_SUBSCRIPTION_ID);
+                if (SubscriptionManager.isValidSubscriptionId(subId)) {
+                    boolean showSpn=intent.getBooleanExtra(TelephonyIntents.EXTRA_SHOW_SPN, false);
+                    String spn=intent.getStringExtra(TelephonyIntents.EXTRA_SPN);
+                    boolean showPlmn=intent.getBooleanExtra(TelephonyIntents.EXTRA_SHOW_PLMN, false);
+                    String plmn=intent.getStringExtra(TelephonyIntents.EXTRA_PLMN);
+                    DebugLog.d(TAG, "showSpn: "+showSpn+"  spn: "+spn+"  showPlmn: "+showPlmn+"  plmn: "+plmn);
+                    refreshCarrierInfo(subId, showSpn, spn, showPlmn, plmn);
+                }
             }
         }
     };
@@ -778,6 +789,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         filter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
         filter.addAction(AudioManager.RINGER_MODE_CHANGED_ACTION);
         filter.addAction(Intent.ACTION_USER_REMOVED);
+        filter.addAction(TelephonyIntents.SPN_STRINGS_UPDATED_ACTION);
         context.registerReceiver(mBroadcastReceiver, filter);
 
         final IntentFilter bootCompleteFilter = new IntentFilter();
@@ -1423,7 +1435,6 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
             Log.w(TAG, "Unknown sim state: " + simState);
             state = State.UNKNOWN;
         }
-        
         SimData data = mSimDatas.get(subId);
         final boolean changed;
         if (data == null) {
@@ -1653,4 +1664,13 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
 
 		}    
     }    
+    
+    private void refreshCarrierInfo(int subId,boolean showSpn,String spn,boolean showPlmn,String plmn){
+        for (int i = 0; i < mCallbacks.size(); i++) {
+            KeyguardUpdateMonitorCallback cb = mCallbacks.get(i).get();
+            if (cb != null) {
+                cb.onRefreshCarrierInfo(subId,showSpn,spn,showPlmn,plmn);
+            }
+        }
+    }
 }

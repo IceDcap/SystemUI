@@ -84,6 +84,7 @@ import amigo.provider.AmigoSettings;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningTaskInfo;
 import android.content.ContentResolver;
+import java.lang.reflect.Field;
 import java.util.List;
 //Gionee <hanbj> <20150427> for amigo end
 
@@ -382,6 +383,20 @@ public class VolumePanel extends Handler implements DemoMode {
         return component.getClassName();
     }
     //Gionee <hanbj> <20150427> for amigo end
+    
+    // Gionee <hanbj> <20150707> add for CR01520707 begin
+	private int getInternalResIdByName(String resName) {
+		int id = 0;
+	    try {
+	        Class<?> c = Class.forName("com.android.internal.R$bool");
+	        Field field = c.getField(resName);
+	        id = field.getInt(null);
+	    } catch (Exception ex) {
+	        Log.i(TAG, " --- ex="+ex);
+	    }
+	    return id;
+	}
+    // Gionee <hanbj> <20150707> add for CR01520707 end
 
     public VolumePanel(Context context, ZenModeController zenController) {
         mTag = String.format("%s.%08x", TAG, hashCode());
@@ -395,7 +410,10 @@ public class VolumePanel extends Handler implements DemoMode {
 
         // For now, only show master volume if master volume is supported
         final Resources res = context.getResources();
-        final boolean useMasterVolume = res.getBoolean(R.bool.config_useMasterVolume);
+        // Gionee <hanbj> <20150707> modify for CR01520707 begin
+        //final boolean useMasterVolume = res.getBoolean(R.bool.config_useMasterVolume);
+        final boolean useMasterVolume = res.getBoolean(getInternalResIdByName("config_useMasterVolume"));
+        // Gionee <hanbj> <20150707> modify for CR01520707 end
         if (useMasterVolume) {
             for (int i = 0; i < STREAMS.length; i++) {
                 StreamResources streamRes = STREAMS[i];

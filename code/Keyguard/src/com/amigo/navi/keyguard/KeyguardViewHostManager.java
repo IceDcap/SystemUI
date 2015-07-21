@@ -261,7 +261,7 @@ public class KeyguardViewHostManager {
         releaseCache();
         mContainer.reset();
         UIController.getInstance().securityViewAlphaAnimationUpdating(1f);
-        
+        UIController.getInstance().dismissNetworkDialog();
         cancelFingerIdentify();
     }
 
