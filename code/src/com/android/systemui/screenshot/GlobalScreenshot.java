@@ -255,7 +255,7 @@ class SaveImageInBackgroundTask extends AsyncTask<SaveImageInBackgroundData, Voi
                     | Intent.FLAG_ACTIVITY_NEW_TASK);
 
             mNotificationBuilder.addAction(R.drawable.ic_menu_share,
-                     r.getString(com.android.internal.R.string.share),
+                     r.getString(R.string.share),
                      PendingIntent.getActivity(context, 0, chooserIntent,
                              PendingIntent.FLAG_CANCEL_CURRENT));
 

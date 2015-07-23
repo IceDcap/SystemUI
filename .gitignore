@@ -1,3 +1,8 @@
+.idea/
+code/build.gradle
+code/gradle/
+code/gradlew
+code/gradlew.bat
 .svn
 .classpath
 .project
