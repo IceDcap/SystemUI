@@ -30,6 +30,7 @@ import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.modules.KeyguardNotificationModule;
 import com.amigo.navi.keyguard.modules.KeyguardNotificationModule.NotificationCallback;
 import com.amigo.navi.keyguard.haokan.UIController;
+import com.amigo.navi.keyguard.haokan.analysis.WallpaperStatisticsPolicy;
 
 public class NotificationStackScrollLayout extends ViewGroup
         implements SwipeHelper.Callback, ExpandHelper.Callback, ScrollAdapter,
@@ -2231,6 +2232,8 @@ public class NotificationStackScrollLayout extends ViewGroup
                 addView(v,lp);
             }
         }
+        
+        WallpaperStatisticsPolicy.onKeyguardNotiCountChanged(getChildCount());
 
         // So after all this work notifications still aren't sorted correctly.
         // Let's do that now by advancing through toShow and mStackScroller in

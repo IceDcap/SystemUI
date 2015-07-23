@@ -53,6 +53,7 @@ import libcore.icu.LocaleData;
  * Digital clock for the status bar.
  */
 public class Clock extends TextView implements DemoMode {
+	private static final String TAG = "Clock";
     private boolean mAttached;
     private Calendar mCalendar;
     private String mClockFormatString;
@@ -155,6 +156,7 @@ public class Clock extends TextView implements DemoMode {
         if (mDemoMode) return;
         mCalendar.setTimeInMillis(System.currentTimeMillis());
         setText(getSmallTime());
+        Log.i(TAG, "updateClock.");
     }
 
     private final CharSequence getSmallTime() {

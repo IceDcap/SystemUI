@@ -129,6 +129,15 @@ public class HKAgent {
 			onEvent(log);
 		}
 	}
+	
+	// event id 25
+	public static void onEventImageCoveredByNotification(Wallpaper wallpaper, int coveredMillis) {
+		if(wallpaper != null) {
+			EventLogger log = new EventLogger(Common.currentTimeHour(), wallpaper.getImgId(),
+					wallpaper.getCategory().getTypeId(), Event.IMG_COVERED_BY_NOTI, coveredMillis, wallpaper.getUrlPv());
+			onEvent(log);
+		}
+	}
     
     public static void onEventIMGSwitch(final Context context, final Wallpaper wallpaper) {
         onEvent(context, wallpaper.getImgId(), wallpaper.getCategory().getTypeId(), Event.IMG_SWITCH);

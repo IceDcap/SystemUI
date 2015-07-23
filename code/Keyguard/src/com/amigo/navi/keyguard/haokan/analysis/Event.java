@@ -90,6 +90,8 @@ public class Event {
      * 图片停留时间
      */
     public static final int IMG_GAZING = 24;
+    
+    public static final int IMG_COVERED_BY_NOTI = 25;
   
     /**
      * 自动更新（2开启 1关闭）

@@ -19,6 +19,7 @@ import com.amigo.navi.keyguard.haokan.entity.WallpaperList;
 import com.amigo.navi.keyguard.network.local.ReadAndWriteFileFromSD;
 import com.amigo.navi.keyguard.network.local.LocalFileOperation;
 import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
+import com.amigo.navi.keyguard.settings.KeyguardSettings;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -107,6 +108,7 @@ public class KeyguardDataModelInit {
                 TimeControlManager.getInstance(context).startUpdateAlarm();
 //                RequestNicePicturesFromInternet.getInstance(mContext.getApplicationContext()).shutDownWorkPool();
                 RequestNicePicturesFromInternet.getInstance(mContext.getApplicationContext()).registerData(false);
+                reset();
             } 
         }
     }
@@ -189,6 +191,11 @@ public class KeyguardDataModelInit {
           		}
             }
           	return isNeedToDel;
+	}
+	
+	void reset(){
+		KeyguardSettings.setBooleanSharedConfig(mContext, KeyguardSettings.WALLPAPER_UPDATE_NOTIFICATION_SHOWED, false);
+        KeyguardSettings.setBooleanSharedConfig(mContext, KeyguardSettings.WALLPAPER_UPDATE_NOTIFICATION_FIRST, true);
 	}
     
 }

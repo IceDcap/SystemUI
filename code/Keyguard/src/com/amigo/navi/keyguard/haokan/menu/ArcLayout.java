@@ -123,6 +123,34 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
     
     private int infozoneHeight;
 
+    public ArcLayout(Menu menu, Context context) {
+    	super(context);
+    	
+    	mChildSize = menu.mChildSize;
+        mRadiusMax = menu.mRadiusMax;
+        mHomeButtonSize = menu.mHomeButtonSize;
+        mRadiusNormal = menu.mRadiusNormal;
+        WIDTH_PIXELS = Common.getScreenWidth(getContext());
+        HEIGHT_PIXELS = Common.getScreenHeight(getContext());
+        mEdgeDistance = menu.mEdgeDistance;
+        mTopDistance = menu.mTopDistance;
+        MainRect = menu.mainRect;
+        infozoneHeight = menu.infozoneHeight;
+        
+        initArcMenu();
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        
+        ArcHomeButton arcHomeButton =  (ArcHomeButton) inflater.inflate(R.layout.haokan_arc_home_button, null, true);
+        addArcHomeButton(arcHomeButton);
+        controller = UIController.getInstance();
+        controller.setmArcLayout(this);
+    	
+        
+        setRadiusAndDegrees(menu.mRadius, menu.mFromDegrees, menu.mToDegrees);
+        setTranslationX(menu.mTranslationX);
+        setTranslationY(menu.mTranslationY);
+    }
+    
     public ArcLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         mChildSize = getResources().getDimensionPixelSize(R.dimen.menuChildSize);
@@ -426,9 +454,12 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
         }
     
         animatorSet.start();
-        controller.addAnimator(animatorSet);
-        
+//        controller.addAnimator(animatorSet);
+        mExpandOrShrinkAnimator = animatorSet;
     }
+    
+    private AnimatorSet mExpandOrShrinkAnimator;
+    private AnimatorSet mClickAnimator;
 
     public boolean isExpanded() {
         return mExpanded;
@@ -515,7 +546,12 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
      * @param showAnimation
      */
     public void switchState() {
-        DebugLog.d(TAG, "switchState  mExpanded = " + mExpanded);
+        
+
+    	if (mArcItems == null) {
+			return;
+		}
+    	DebugLog.d(TAG, "switchState  mExpanded = " + mExpanded);
         final int childCount = mArcItems.size();
         for (int i = 0; i < childCount; i++) {
             ArcItemButton arcItemButton = mArcItems.get(i);
@@ -620,7 +656,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
         set.play(AnimatorSet).after(objectAnimatorMagnify);
  
         set.addListener(new AnimatorListener() {
-            
+        	private boolean cancel = false;
             @Override
             public void onAnimationStart(Animator arg0) {
                 arcItemButton.getmTextView().setVisibility(GONE);
@@ -635,94 +671,59 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
             @Override
             public void onAnimationEnd(Animator arg0) {
                 
-                if (listener != null) {
-                    listener.onAnimatorEnd();
-                }
+            	if (cancel) {
+            		cancel = false;
+					return;
+				}
+            	 
+				if (listener != null) {
+					listener.onAnimatorEnd();
+				}
 
-                if (!arcItemButton.isNeedFeekBack()) {
-                    postDelayed(new Runnable() {
-                        
-                        @Override
-                        public void run() {
-                            controller.hideArcMenu();
-                        }
-                    }, 1000);
-                }else {
-                    setVisibility(GONE);
-                }
+//				postDelayed(new Runnable() {
+//
+//					@Override
+//					public void run() {
+//					}
+//				}, 1000);
+				controller.hideArcMenu();
                 
-                mArcHomeButton.getmImageView().setScaleX(0.4f);
-                mArcHomeButton.getmImageView().setScaleY(0.4f);
-                mArcHomeButton.getmImageView().setVisibility(GONE);
-                
-                
-                int itemCount = mArcItems.size();
-                for (int i = 0; i < itemCount; i++) {
-                    ArcItemButton child = mArcItems.get(i);
-                    child.setTranslationX(0f);
-                    child.setTranslationY(0f);
-                    child.setRotation(-30f);
-                    child.setAlpha(1f);
-                    child.getmImageView().setClickable(true);
-                }
-
-                clickView.setTranslationX(0f);
-                clickView.setTranslationY(0f);
-                clickView.setScaleX(1f);
-                clickView.setScaleY(1f);
-                clickView.setAlpha(1f);
-                mExpanded = false;
-                
-                mArcHomeButton.setScaleX(1f);
-                mArcHomeButton.setScaleY(1f);
-                mArcHomeButton.setAlpha(1f);
-
-                
-//                arcItemButton.getmImageView().setSelected(false);
-
-                if (arcItemButton.isItemSelected()) {
-                    arcItemButton.setItemSelected(false);
-                }
-                
-                arcItemButton.setScaleX(0f);
-                arcItemButton.setScaleY(0f);
-                
-                mClicKItemAnimatorRunning = false;
-                controller.showKeyguardNotification();
+				mExpanded = false;
+				mClicKItemAnimatorRunning = false;
             }
             
             @Override
             public void onAnimationCancel(Animator arg0) {
-                
+            	cancel = true;
             }
         });
-        controller.addAnimator(set);
+        mClickAnimator = set;
         set.start();
     }
     
     
     public void reset() {
-        
-        UIController.getInstance().hideArcMenu();
-        mArcHomeButton.getmImageView().setScaleX(0.4f);
-        mArcHomeButton.getmImageView().setScaleY(0.4f);
-        mArcHomeButton.getmImageView().setVisibility(GONE);
-        mArcHomeButton.setScaleX(1f);
-        mArcHomeButton.setScaleY(1f);
-        mArcHomeButton.setAlpha(1f);
-        
-        
-        int itemCount = mArcItems.size();
-        for (int i = 0; i < itemCount; i++) {
-            ArcItemButton child = mArcItems.get(i);
-            child.setTranslationX(0f);
-            child.setTranslationY(0f);
-            child.setScaleX(0f);
-            child.setScaleY(0f);
-            child.setAlpha(0f);
-            child.getmImageView().setClickable(true);
-        }
         mExpanded = false;
+        UIController.getInstance().hideArcMenu();
+ 
+        if (mClickAnimator != null) {
+			if (mClickAnimator.isRunning()) {
+				mClickAnimator.cancel();
+			}
+			mClickAnimator = null;
+		}
+        
+        if (mExpandOrShrinkAnimator != null) {
+			if (mExpandOrShrinkAnimator.isRunning()) {
+				mExpandOrShrinkAnimator.cancel();
+			}
+			mExpandOrShrinkAnimator = null;
+		}
+        
+        if (mArcHomeButton != null) {
+        	mArcHomeButton.cancelAnimator();
+		}
+
     }
 
     
@@ -864,13 +865,10 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
             
             @Override
             public void onAnimationEnd(Animator arg0) {
-//                setVisibility(GONE);
-                UIController.getInstance().hideArcMenu();
-                arcItemButton.getmImageView().setClickable(true);
-                arcItemButton.setTranslationX(0);
-                arcItemButton.setTranslationY(0);
-                arcItemButton.setAlpha(1f);
-                mItemFeekbackAnimatorRunning = false;
+ 
+
+            	mItemFeekbackAnimatorRunning = false;
+            	UIController.getInstance().hideArcMenu();
             }
             
             @Override
@@ -879,7 +877,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
             }
         });
         mItemFeekbackAnimatorRunning = true;
-        controller.addAnimator(set);
+//        controller.addAnimator(set);
         set.start();
     }
     
@@ -904,6 +902,14 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
         return running;
     }
 
-    
+    public void destroy() {
+    	
+
+    	removeAllViews();
+    	if (mArcItems != null) {
+    		mArcItems.clear();
+    		mArcItems = null;
+    	}
+	}
     
 }

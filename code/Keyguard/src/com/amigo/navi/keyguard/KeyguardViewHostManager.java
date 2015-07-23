@@ -134,7 +134,6 @@ public class KeyguardViewHostManager {
         mKeyguardWallpaperManager.setViewMediatorCallback(callback);
         mKeyguardWallpaperManager.init(mContext);
         UIController.getInstance().setmViewMediatorCallback(callback);
-        addKeyguardArcMenu();
         
          
         mKeyguardViewHost.setConfigChangeCallback(mConfigChangeCallback);
@@ -159,7 +158,7 @@ public class KeyguardViewHostManager {
 		@Override
 		public void onConfigChange() {
 	        initHorizontalListView();
-	        addKeyguardArcMenu();
+	         
 	        UIController.getInstance().onConfigChange();
 		}
 	};
@@ -669,26 +668,8 @@ public class KeyguardViewHostManager {
     
     
     
-    
-    private void addKeyguardArcMenu() {
+ 
 
-        
-        RelativeLayout keyguardArcMenu = new RelativeLayout(mContext);
-        ArcLayout arcLayout = new ArcLayout(mContext);
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
-        keyguardArcMenu.addView(arcLayout, params);
-        
-        params = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-        mKeyguardViewHost.addView(keyguardArcMenu, params);
-        keyguardArcMenu.setVisibility(View.GONE);
-        keyguardArcMenu.setBackgroundResource(R.color.haokan_arc_menu_background);
-        UIController.getInstance().setmArcMenu(keyguardArcMenu);
-        
-        
-    }
     
     
     

@@ -50,6 +50,9 @@ public class KeyguardSettings {
 	
 	// 日志上传时间间隔控制
 	private static final String TIME_LOGSUPLOAD_LAST = "time_logs_upload_last";	
+	
+	public static final String WALLPAPER_UPDATE_NOTIFICATION_FIRST = "wallpaper_update_notification_first";
+	public static final String WALLPAPER_UPDATE_NOTIFICATION_SHOWED = "wallpaper_update_notification_showed";
 
 	public static void setLogsUploadTime(Context context, long time) {
         SharedPreferences sp = context.getSharedPreferences(PREFERENCE_NAME,

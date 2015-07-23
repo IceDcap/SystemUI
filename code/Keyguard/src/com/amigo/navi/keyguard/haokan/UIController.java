@@ -48,6 +48,7 @@ import com.amigo.navi.keyguard.haokan.entity.Music;
 import com.amigo.navi.keyguard.haokan.entity.Wallpaper;
 import com.amigo.navi.keyguard.haokan.entity.WallpaperList;
 import com.amigo.navi.keyguard.haokan.menu.ArcLayout;
+import com.amigo.navi.keyguard.haokan.menu.Menu;
 import com.amigo.navi.keyguard.infozone.AmigoKeyguardInfoZone;
 import com.amigo.navi.keyguard.network.ImageLoader;
 import com.amigo.navi.keyguard.network.NetworkRemind;
@@ -73,14 +74,6 @@ public class UIController implements OnTouchlListener{
     
     private static final String TAG = "haokan";
     
-    public List<Animator> mAnimators = new ArrayList<Animator>();
-    
-    public void addAnimator(Animator animator) {
-        mAnimators.add(animator);
-    }
-    public void clearAnimators() {
-        mAnimators.clear();
-    }
     
     private PlayerButton mPlayerButton;
     
@@ -143,7 +136,7 @@ public class UIController implements OnTouchlListener{
     private AmigoKeyguardBouncer mKeyguardBouncer;
     private ViewMediatorCallback mViewMediatorCallback;
     
-    
+    private Menu mMenu;
     
     public ViewMediatorCallback getmViewMediatorCallback() {
 		return mViewMediatorCallback;
@@ -404,15 +397,7 @@ public class UIController implements OnTouchlListener{
     
     
     
-    public void hideArcMenu() {
-        getmArcLayout().setVisibility(View.GONE);
-        getmArcMenu().setVisibility(View.GONE);
-    }
     
-    public void showArcMenu() {
-        getmArcLayout().setVisibility(View.VISIBLE);
-        getmArcMenu().setVisibility(View.VISIBLE);
-    }
     
     
     /** Screen Turned On */
@@ -444,6 +429,7 @@ public class UIController implements OnTouchlListener{
                 }
                 setNewWallpaperToDisplay(false);
             }
+            HKWallpaperNotification.getInstance(getmKeyguardNotification().getContext()).showWallpaperUpdateNotification();
         }
     }
     
@@ -458,7 +444,6 @@ public class UIController implements OnTouchlListener{
         if (mArcLayout != null) {
             if (mArcLayout.isExpanded() || isArcExpanding) {
                 DebugLog.d(TAG, "onScreenTurnedOff ArcLayout reset");
-                cancelRunningAnimators();
                 mArcLayout.reset();
             }
         }
@@ -583,32 +568,33 @@ public class UIController implements OnTouchlListener{
         this.isArcExpanding = isArcExpanding;
     }
     
-    private void cancelRunningAnimators() {
-        List<Animator> animators = mAnimators;
-        
-        for (Animator animator : animators) {
-            if (animator.isRunning()) {
-                animator.cancel();
-            }
-        }
-        animators.clear();
-    }
-    
+   
     public void onLongPress(float motionDowmX,float motionDowmY) {
         
+    	if (getmCurrentWallpaper() == null) {
+    		return;
+    	}
+    	
+    	if (getAmigoKeyguardHostView().getScrollY() != 0) {
+    		return;
+    	}
+    	
+    	if (mArcLayout != null) {
+			if (mArcLayout.animatorRunning() || mArcLayout.isExpanded()) {
+				return;
+			}
+		}
+    	 
         
-        if (mArcLayout.animatorRunning() || mArcLayout.isExpanded()
-                || getAmigoKeyguardHostView().getScrollY() != 0) {
-            return;
-        }
+        if (mMenu == null) {
+			mMenu = new Menu(getmKeyguardViewHost().getContext());
+		}
         
-        if (getmCurrentWallpaper() == null) {
-            return;
-        }
-        
-        if (!mArcLayout.requestLayout(motionDowmX, motionDowmY)) {
-            return;
-        }
+        if (!mMenu.requestLayout(motionDowmX, motionDowmY)) {
+        	 DebugLog.d(TAG, "requestLayout return");
+        	 return;
+		}
+        addKeyguardArcMenu(mMenu);
         
         if (getmCurrentWallpaper().isFavorite()) {
             String path = getmCurrentWallpaper().getFavoriteLocalPath();
@@ -627,7 +613,6 @@ public class UIController implements OnTouchlListener{
         VibatorUtil.amigoVibrate(mArcLayout.getContext().getApplicationContext(),
                 VibatorUtil.LOCKSCREEN_STORYMODE_DISPLAY, 100);
         
-        cancelRunningAnimators();
         KeyguardUpdateMonitor.getInstance(getmKeyguardNotification().getContext())
                 .getNotificationModule().removeAllNotifications();
         mArcLayout.setmWallpaper(getmCurrentWallpaper());
@@ -642,6 +627,52 @@ public class UIController implements OnTouchlListener{
         }
         
     }
+    
+    public void hideArcMenu() {
+    	if (mArcLayout == null || mArcMenu == null) {
+			return;
+		}
+    	DebugLog.d(TAG, "hideArcMenu");
+//        getmArcLayout().setVisibility(View.GONE);
+//        getmArcMenu().setVisibility(View.GONE);
+        
+        removeArcMenuView();
+    }
+    
+    public void showArcMenu() {
+        getmArcLayout().setVisibility(View.VISIBLE);
+        getmArcMenu().setVisibility(View.VISIBLE);
+    }
+
+    private void removeArcMenuView() {
+    	 
+    	mArcLayout.destroy();
+        mArcMenu.removeAllViews();
+        if (mKeyguardViewHost.indexOfChild(mArcMenu) != -1) {
+        	mKeyguardViewHost.removeView(mArcMenu);
+		}
+        mArcMenu = null;
+        mArcLayout = null;
+	}
+
+	private void addKeyguardArcMenu(Menu menu) {
+		
+		mArcMenu = new RelativeLayout(mKeyguardViewHost.getContext());
+		mArcLayout = new ArcLayout(menu, mKeyguardViewHost.getContext());
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+				RelativeLayout.LayoutParams.WRAP_CONTENT,
+				RelativeLayout.LayoutParams.WRAP_CONTENT);
+		params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+		mArcMenu.addView(mArcLayout, params);
+
+		params = new RelativeLayout.LayoutParams(
+				RelativeLayout.LayoutParams.MATCH_PARENT,
+				RelativeLayout.LayoutParams.MATCH_PARENT);
+		mKeyguardViewHost.addView(mArcMenu, params);
+		mArcMenu.setVisibility(View.GONE);
+		mArcMenu
+				.setBackgroundResource(R.color.haokan_arc_menu_background);
+	}
     
     public Bitmap getCurrentWallpaperBitmap(Wallpaper wallpaper, boolean thumb) {
     	if(wallpaper == null){

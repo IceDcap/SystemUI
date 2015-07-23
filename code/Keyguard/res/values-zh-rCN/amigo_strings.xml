@@ -178,4 +178,12 @@
    	<string name="lockscreen_plugged_in">"充电中 <xliff:g id="number">%d</xliff:g><xliff:g id="percent">%%"</xliff:g></string>
    	
    	<string name="network_dialog_Allinformation">播放锁屏音乐和访问详情过程中将会产生数据流量，流量费用请咨询当地运营商；</string>
+   	
+   	<!-- wallpaper update notification -->
+    <string name="wallpaper_update_notification_title">壁纸更新</string>
+    <string name="wallpaper_update_notification_content">锁屏有新的壁纸了</string>
+    <string name="wallpaper_update_notification_content_update">壁纸更新中...</string>
+    <string name="wallpaper_update_notification_content_pause">壁纸暂停更新</string>
+    <string name="wallpaper_update_notification_content_success">壁纸更新成功</string>
+    <string name="wallpaper_update_notification_content_fail">壁纸更新失败请重试</string>
 </resources>

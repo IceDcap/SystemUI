@@ -86,5 +86,8 @@
     
 
     <color name="amigo_unbind_acount_text_color">#cc000000</color>
+    
+	<color name="notification_progress_bg">#828282</color>
+    <color name="notification_progress">#464646</color>
  
 </resources>

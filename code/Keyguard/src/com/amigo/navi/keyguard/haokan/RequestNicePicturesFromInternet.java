@@ -75,6 +75,10 @@ public class RequestNicePicturesFromInternet {
 //    }
     
     public void registerData(final boolean isCheckFromOnToOff){
+        if (HKWallpaperNotification.getInstance(mContext).isUpdating()) {
+        	Common.setUpdateWallpaperDate(mContext, Integer.valueOf(Common.formatCurrentDate()));
+			return;
+		}
     	NetworkStatisticsPolicy.onNetworkAccessBegin(mContext);
     		boolean isUpdate = KeyguardSettings.getWallpaperUpadteState(mContext);
             DebugLog.d(TAG,"registerUserID isUpdate:" + isUpdate);
@@ -355,6 +359,10 @@ public class RequestNicePicturesFromInternet {
                         }
                         wallpaperDB.updateDownLoadFinish(wallpaper);
                         keyguardWallpaperManager.setDownloading(true);
+                        
+                        if (wallpaperList.size() == index+1) {
+							HKWallpaperNotification.getInstance(mContext).updateHandler.sendEmptyMessage(HKWallpaperNotification.SUCCESS);
+						}
                     }
             }
         }
@@ -435,5 +443,127 @@ public class RequestNicePicturesFromInternet {
 			delOldCategory(dealWithBitmap,savedSuccess,delList);
 		}
 	};
+	
+	public void registerDataInNotification() {
+		NetworkStatisticsPolicy.onNetworkAccessBegin(mContext);
+		String currentDate = Common.formatCurrentDate();
+		LoadDataPool.getInstance(mContext).stopTaskDiffUrl(currentDate);
+		DebugLog.d(TAG, "registerDataInNotification begin");
+		Job job = new Job() {
+			private boolean isStop = false;
+			@Override
+			public void runTask() {
+				String userID = registerUserID();
+				DebugLog.d(TAG, "registerData userID:" + userID);
+				if (!TextUtils.isEmpty(userID)) {
+
+					HKWallpaperNotification hkWallpaperNotification = HKWallpaperNotification.getInstance(mContext);
+					
+					LocalFileOperationInterface localFileOperationInterface = new LocalBitmapOperation(mContext);
+					ReadAndWriteFileFromSD dealWithBitmap = new ReadAndWriteFileFromSD(
+							mContext, DiskUtils.WALLPAPER_BITMAP_FOLDER, mPath, localFileOperationInterface);
+
+					List<Integer> categoryList = CategoryDB.getInstance(mContext).queryCategoryIDByFavorite();
+					if (categoryList.size() == 0) {
+						hkWallpaperNotification.updateHandler.sendEmptyMessage(HKWallpaperNotification.FAILED);
+						return;
+					}
+					WallpaperList wallpaperList = WallpaperDB.getInstance(mContext).queryPicturesNoDownLoad();
+					if (wallpaperList.size() == 0) {
+						String result = requestPictureJsonFromNet(categoryList);
+						if (DownLoadJsonManager.ERROR.equals(result)) {
+							hkWallpaperNotification.updateHandler.sendEmptyMessage(HKWallpaperNotification.FAILED);
+							NetworkStatisticsPolicy.onNetworkAccessEnd(mContext, false);
+							return;
+						}
+						wallpaperList = JsonUtil.parseJsonToWallpaperList(result);
+						hkWallpaperNotification.setmWallpaperTotal(wallpaperList.size());
+						wallpaperList.quickSort();
+					}
+
+					final WallpaperDB wallpaperDB = WallpaperDB.getInstance(mContext);
+					WallpaperList deleteList = null;
+					KeyguardWallpaperManager keyguardWallpaperManager = KeyguardViewHostManager.getInstance().getKeyguardWallpaperManager();
+					boolean isFirst = KeyguardSettings.getBooleanSharedConfig(mContext, KeyguardSettings.WALLPAPER_UPDATE_NOTIFICATION_FIRST, true);
+
+					for (int index = 0; index < wallpaperList.size(); index++) {
+						if (isStop) {
+							break;
+						}
+						if (!hkWallpaperNotification.isUpdating()) {
+							return;
+						}
+						Wallpaper wallpaper = wallpaperList.get(index);
+						String picUrl = wallpaper.getImgUrl();
+						if (!TextUtils.isEmpty(picUrl)) {
+							Bitmap bitmap = DownLoadBitmapManager.getInstance().downLoadBitmap(mContext, picUrl);
+							String key = DiskUtils.constructFileNameByUrl(picUrl);
+							boolean savedSuccess = false;
+							if (bitmap != null) {
+								Bitmap cutBitmap = BitmapUtil.getResizedBitmapForSingleScreen(bitmap, mScreenHei, mScreenWid);
+								DebugLog.d(TAG, "downloadWallpaperPicturesFromNet cutBitmap:" + cutBitmap);
+								savedSuccess = dealWithBitmap.writeToLocal(key, cutBitmap);
+								BitmapUtil.recycleBitmap(bitmap);
+								BitmapUtil.recycleBitmap(cutBitmap);
+								System.gc();
+							}
+							DebugLog.d(TAG, "downloadWallpaperPicturesFromNet savedSuccess:" + savedSuccess);
+							if (savedSuccess) {
+
+								if (isFirst) {
+									deleteList = wallpaperDB.queryExcludeFixedWallpaper();
+									wallpaperDB.insertAfterDeleteAll(wallpaperList);
+//									Common.setUpdateWallpaperDate(mContext, Integer.valueOf(Common.formatCurrentDate()));
+									keyguardWallpaperManager.displayHour = -1;
+									keyguardWallpaperManager.displayPostion = -1;
+									UIController.getInstance().setNewWallpaperToDisplay(true);
+									FileUtil.deleteMusic();
+									
+									isFirst = false;
+									KeyguardSettings.setBooleanSharedConfig(mContext, KeyguardSettings.WALLPAPER_UPDATE_NOTIFICATION_FIRST, false);
+								}
+								wallpaperDB.updateDownLoadFinish(wallpaper);
+								keyguardWallpaperManager.setDownloading(true);
+								
+								hkWallpaperNotification.setOffex(hkWallpaperNotification.getOffex() + 1);
+								hkWallpaperNotification.updateHandler.sendEmptyMessage(HKWallpaperNotification.UPDATING);
+								if (wallpaperList.size() == index + 1) {
+									hkWallpaperNotification.updateHandler.sendEmptyMessage(HKWallpaperNotification.SUCCESS);
+									Common.setUpdateWallpaperDate(mContext, Integer.valueOf(Common.formatCurrentDate()));
+								}
+								
+							} else {
+								hkWallpaperNotification.updateHandler.sendEmptyMessage(HKWallpaperNotification.FAILED);
+							}
+						}
+					}
+					NetworkStatisticsPolicy.onNetworkAccessEnd(mContext, true);
+					keyguardWallpaperManager.setDownloading(false);
+					keyguardWallpaperManager.setDownloadComplete(true);
+
+					if (!isFirst) {
+						DebugLog.d(TAG, "setDownloadComplete  setDeleteList");
+						keyguardWallpaperManager.setDeleteList(deleteList);
+						keyguardWallpaperManager.onDownLoadComplete();
+					}
+				}
+			}
+
+			@Override
+			public int getProgress() {
+				return 0;
+			}
+
+			@Override
+			public void cancelTask() {
+				isStop = true;
+			}
+		};
+		Vector<LoadImageThread> threadList = null;
+		threadList = LoadDataPool.getInstance(mContext).getDownLoadThreadList();
+		LoadImageThread runnable = new LoadImageThread(currentDate, job,
+				threadList);
+		LoadDataPool.getInstance(mContext).loadImage(runnable, currentDate);
+	}
 	
 }

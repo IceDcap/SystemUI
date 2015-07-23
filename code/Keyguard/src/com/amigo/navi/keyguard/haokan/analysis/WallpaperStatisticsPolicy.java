@@ -1,6 +1,8 @@
 package com.amigo.navi.keyguard.haokan.analysis;
 
+import com.amigo.navi.keyguard.haokan.UIController;
 import com.amigo.navi.keyguard.haokan.entity.Wallpaper;
+import com.amigo.navi.keyguard.modules.KeyguardNotificationModule;
 
 import android.os.SystemClock;
 import android.util.Log;
@@ -17,6 +19,11 @@ public class WallpaperStatisticsPolicy {
     private static Wallpaper sWallpaperScrollBegin = null;
     private static Wallpaper sWallpaperScrollEnd = null;
     
+    private static int sNotificationCount = 0;
+    private static long sNotificationShownMillis = -1;
+    private static long sNotificationNotShownMillis = -1;
+    private static Wallpaper sWallpaperWhenNotificationShown = null;
+    
     private static long getCurrentMillis() {
     	return SystemClock.elapsedRealtime();
     }
@@ -24,6 +31,11 @@ public class WallpaperStatisticsPolicy {
     public static void onWallpaperShown(Wallpaper wallpaper) {
     	sKeyguardShownMillis = getCurrentMillis();
     	sWallpaperShownMillis = sKeyguardShownMillis;
+    	
+    	KeyguardNotificationModule module = KeyguardNotificationModule.getInstance();
+    	if(module != null && module.hasNotification()) {
+    		onNotificationShown();
+    	}
     }
     
     public static void onWallpaperNotShown(Wallpaper wallpaper) {
@@ -46,6 +58,8 @@ public class WallpaperStatisticsPolicy {
     		Log.d("DEBUG_STATISTIC", "onWallpaperNotShown wallpaper " + wallpaper.getImgId() + ", gazingDuration=" + gazingDuration);
     		HKAgent.onEventImageGazingDuration(wallpaper, gazingDuration);
     	}
+    	
+    	onNotificationHide();
 
     	sWallpaperShownMillis = -1;
     }
@@ -74,6 +88,33 @@ public class WallpaperStatisticsPolicy {
     	sWallpaperScrollEnd = null;
     }
     
+    public static void onKeyguardNotiCountChanged(int notiCount) {
+    	if(notiCount > 0) {
+    		onNotificationShown();
+    	} else if(notiCount == 0) {
+    		onNotificationHide();
+    	}
+    }
+    
+    private static void onNotificationShown() {
+    	if(sWallpaperWhenNotificationShown == null) {
+    		sNotificationShownMillis = getCurrentMillis();
+    		sWallpaperWhenNotificationShown = UIController.getInstance().getmCurrentWallpaper();
+    	}
+    }
+    
+    private static void onNotificationHide() {
+    	if(sWallpaperWhenNotificationShown != null) {
+    		sNotificationNotShownMillis = getCurrentMillis();
+    		int coveredMillis = (int) (sNotificationNotShownMillis - sNotificationShownMillis);
+    		HKAgent.onEventImageCoveredByNotification(sWallpaperWhenNotificationShown, coveredMillis);
+    		
+    		sNotificationShownMillis = -1;
+    		sNotificationNotShownMillis = -1;
+    		sWallpaperWhenNotificationShown = null;
+    	}
+    }
+    
     private static long computeGazingDuration() {
     	long gazingDuration = 0;
     	
@@ -89,5 +130,5 @@ public class WallpaperStatisticsPolicy {
     	
     	return gazingDuration;
     }
-     
+    
 }

@@ -216,4 +216,12 @@
       
       <string name="network_dialog_Allinformation">Play  music and access network will use the data traffic during running , Please consult  local carriers for the date charges ;</string>
       
+    <!-- wallpaper update notification -->
+    <string name="wallpaper_update_notification_title">Wallpaper Updates</string>
+    <string name="wallpaper_update_notification_content">New wallpaper for keyguard updates</string>
+    <string name="wallpaper_update_notification_content_update">Wallpaper updating</string>
+    <string name="wallpaper_update_notification_content_pause">Wallpaper stopped updating</string>
+    <string name="wallpaper_update_notification_content_success">Wallpaper update successful</string>
+    <string name="wallpaper_update_notification_content_fail">Wallpaper update failed Please retry</string>
+      
 </resources>

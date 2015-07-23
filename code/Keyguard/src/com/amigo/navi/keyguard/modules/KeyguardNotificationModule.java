@@ -234,6 +234,11 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
 		}
 		return mInstance;
 	}
+	
+	// this method is used by WallpaperStatisticsPolicy
+	public static KeyguardNotificationModule getInstance() {
+		return mInstance;
+	}
 
 	private KeyguardNotificationModule(Context context, KeyguardUpdateMonitor updateMonitor) {
 		super(context, updateMonitor);

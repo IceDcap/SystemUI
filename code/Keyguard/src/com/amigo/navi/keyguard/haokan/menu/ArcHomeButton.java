@@ -166,11 +166,11 @@ public class ArcHomeButton extends RelativeLayout {
         
         animator.setStartDelay(200);
         animator2.setStartDelay(400);
-        AnimatorSet set = new AnimatorSet();
+        mCloseAnimator = new AnimatorSet();
         
-        set.play(objectAnimator).with(animator2).with(animator);
-        set.addListener(new AnimatorListener() {
-            
+        mCloseAnimator.play(objectAnimator).with(animator2).with(animator);
+        mCloseAnimator.addListener(new AnimatorListener() {
+            private boolean cancel = false;
             @Override
             public void onAnimationStart(Animator arg0) {
                 
@@ -183,19 +183,41 @@ public class ArcHomeButton extends RelativeLayout {
             
             @Override
             public void onAnimationEnd(Animator arg0) {
-                UIController.getInstance().hideArcMenu();
-                mImageView.setClickable(true);
+            	if (!cancel) {
+            		UIController.getInstance().hideArcMenu();
+				}
+            	cancel = false;
+//                mImageView.setClickable(true);
             }
             
             @Override
             public void onAnimationCancel(Animator arg0) {
-                
+            	cancel = true;
             }
         });
-        set.start();
-        UIController.getInstance().addAnimator(set);
+        mCloseAnimator.start();
+        
     }
     
+    private AnimatorSet mOpenAnimator;
+    private AnimatorSet mCloseAnimator;
+    
+    public void cancelAnimator() {
+    	if (mOpenAnimator != null) {
+			if (mOpenAnimator.isRunning()) {
+				mOpenAnimator.cancel();
+			}
+			mOpenAnimator = null;
+		}
+        
+        if (mCloseAnimator != null) {
+			if (mCloseAnimator.isRunning()) {
+				mCloseAnimator.cancel();
+			}
+			mCloseAnimator = null;
+		}
+
+	}
     
     public void rippleAnimRun( ){  
         
@@ -259,10 +281,9 @@ public class ArcHomeButton extends RelativeLayout {
         
         objectAnimator.setStartDelay(400);
         animator2.setStartDelay(200);
-        AnimatorSet set = new AnimatorSet();
-        set.play(animator).with(animator2).with(objectAnimator);
-        set.start();
-        UIController.getInstance().addAnimator(set);
+        mOpenAnimator = new AnimatorSet();
+        mOpenAnimator.play(animator).with(animator2).with(objectAnimator);
+        mOpenAnimator.start();
         
     }  
    
