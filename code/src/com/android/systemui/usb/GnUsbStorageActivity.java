@@ -580,11 +580,7 @@ public class GnUsbStorageActivity extends AmigoActivity implements View.OnClickL
                 mStorageManager.disableUsbMassStorage();
                 mSettingUMS = false;
             } else {
-            	if (isUsbCDRomSupport()) {
-            		setUmsFunction();
-            	} else {
-            		mUsbManager.setCurrentFunction("charging", true);
-            	}
+				setUmsFunction();
             }
             mUsbButton.setBackgroundResource(R.drawable.gn_ic_usb_storage_unpress);
             mChargeButton.setBackgroundResource(R.drawable.gn_ic_usb_charge_sel_unpress);
