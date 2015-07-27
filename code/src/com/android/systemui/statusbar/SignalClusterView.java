@@ -34,6 +34,8 @@ import com.android.systemui.statusbar.policy.SecurityController;
 
 import java.util.ArrayList;
 import java.util.List;
+import android.os.SystemProperties;
+import com.android.systemui.gionee.GnFeatureOption;
 
 // Intimately tied to the design of res/layout/signal_cluster_view.xml
 public class SignalClusterView
@@ -56,9 +58,11 @@ public class SignalClusterView
     private int mAirplaneContentDescription;
     private String mWifiDescription;
     private ArrayList<PhoneState> mPhoneStates = new ArrayList<PhoneState>();
+    
+    private boolean mIsEmergency = false;
 
     ViewGroup mWifiGroup;
-    ImageView mWifi, mAirplane,mVpn;//mNoSims;
+    ImageView mWifi, mAirplane, mNoSim1, mNoSim2, mVpn;
     View mWifiAirplaneSpacer;
     View mWifiSignalSpacer;
     LinearLayout mMobileSignalGroup;
@@ -68,7 +72,7 @@ public class SignalClusterView
     private int mEndPadding;
     private int mEndPaddingNothingVisible;
     private int mSlotCount;
-
+    
     public SignalClusterView(Context context) {
         this(context, null);
     }
@@ -115,7 +119,8 @@ public class SignalClusterView
         mWifiGroup      = (ViewGroup) findViewById(R.id.wifi_combo);
         mWifi           = (ImageView) findViewById(R.id.wifi_signal);
         mAirplane       = (ImageView) findViewById(R.id.airplane);
-        //mNoSims         = (ImageView) findViewById(R.id.no_sims);
+        mNoSim1         = (ImageView) findViewById(R.id.no_sims_1);
+        mNoSim2         = (ImageView) findViewById(R.id.no_sims_2);
         mWifiAirplaneSpacer =         findViewById(R.id.wifi_airplane_spacer);
         mWifiSignalSpacer =           findViewById(R.id.wifi_signal_spacer);
         mMobileSignalGroup = (LinearLayout) findViewById(R.id.mobile_signal_group);
@@ -329,13 +334,27 @@ public class SignalClusterView
             mWifiSignalSpacer.setVisibility(View.GONE);
         }
 
-        if (mNoSimsVisible) {
-            mWifiSignalSpacer.setVisibility(View.GONE);
+        if(GnFeatureOption.GN_CTCC_SUPPORT && (mNoSim1 != null && mNoSim2 != null)) {
+        	if(mNoSimsVisible) {
+        		mNoSim1.setImageResource(R.drawable.gn_stat_sys_no_sims);
+        		mNoSim2.setImageResource(R.drawable.gn_stat_sys_no_sims);
+        		mNoSim1.setVisibility(View.VISIBLE);
+        		mNoSim2.setVisibility(View.VISIBLE);
+        	}
+        	
+        	if(mIsAirplaneMode) {
+        		mNoSim1.setVisibility(View.GONE);
+        		mNoSim2.setVisibility(View.GONE);
+        	}
         }
         
-        if (mNoSimsVisible && !mWifiVisible && !mIsAirplaneMode) {
-            Log.i(TAG,"setVisibility:" + (mNoSimsVisible && !mWifiVisible && !mIsAirplaneMode));
-            setVisibility(View.GONE);
+        if (mNoSimsVisible) {
+        	mWifiSignalSpacer.setVisibility(View.GONE);
+        }
+        
+        if (!GnFeatureOption.GN_CTCC_SUPPORT && mNoSimsVisible && !mWifiVisible && !mIsAirplaneMode) {
+        	Log.i(TAG,"setVisibility:" + (mNoSimsVisible && !mWifiVisible && !mIsAirplaneMode));
+        	setVisibility(View.GONE);
         } else {
             setVisibility(View.VISIBLE);
         }
@@ -343,7 +362,9 @@ public class SignalClusterView
 
         boolean anythingVisible = mNoSimsVisible || mWifiVisible || mIsAirplaneMode
                 || anyMobileVisible || mVpnVisible;
-        setPaddingRelative(0, 0, anythingVisible ? mEndPadding : mEndPaddingNothingVisible, 0);
+        if(!GnFeatureOption.GN_CTCC_SUPPORT) {
+        	setPaddingRelative(0, 0, anythingVisible ? mEndPadding : mEndPaddingNothingVisible, 0);
+        }
     }
 
     private class PhoneState {
@@ -361,6 +382,10 @@ public class SignalClusterView
         private ImageView mMobile, mMobileType;
         private ImageView mNetworkType, mMobileInOut, mSlotIndicator;
         
+        private ViewGroup mNetworkSignalGroup;
+        private ViewGroup mNetworkSignalGroup_CT;
+        private ImageView mMobile_top_CT, mMobile_buttom_CT, mMobileType_CT;
+        private int mMobileStrengthIdCT = 0;
         private GnNetworkType mGnNetworkType;
         private boolean mIsRoaming;
 
@@ -379,17 +404,65 @@ public class SignalClusterView
             mMobileInOut	= (ImageView) root.findViewById(R.id.mobile_inout);
             mSlotIndicator	= (ImageView) root.findViewById(R.id.mobile_slot_indicator);
             mNetworkTypeGroup = (ViewGroup) root.findViewById(R.id.network_type_combo);
+            
+            mMobile_top_CT 			= (ImageView) root.findViewById(R.id.mobile_signal_top);
+            mMobile_buttom_CT 		= (ImageView) root.findViewById(R.id.mobile_signal_buttom);
+            mMobileType_CT 			= (ImageView) root.findViewById(R.id.mobile_type_ct);
+            mNetworkSignalGroup 	= (ViewGroup) root.findViewById(R.id.network_signal_combo);
+            mNetworkSignalGroup_CT 	= (ViewGroup) root.findViewById(R.id.network_signal_combo_ct);
         }
 
         public boolean apply(boolean isSecondaryIcon) {
-            if (mMobileVisible && !mIsAirplaneMode) {
-                mMobile.setImageResource(mMobileStrengthId);
-                mMobileType.setImageResource(getMobileTypeIcon(mIsRoaming, mGnNetworkType));
-                mSlotIndicator.setImageResource(getSlotIndicator(mSubId));
-                mNetworkType.setImageResource(mIsRoaming ? getNetworkTypeIcon(mGnNetworkType) : mNetworkTypeId);
-                mMobileInOut.setImageResource(mMobileInOutId);
-                mMobileGroup.setContentDescription(mMobileTypeDescription
-                        + " " + mMobileDescription);
+            if (DEBUG) Log.d(TAG,"apply(), mMobileVisible = " + mMobileVisible + ", mIsAirplaneMode = " + mIsAirplaneMode
+                            + ", mIsEmergency = " + mIsEmergency);
+            if (mMobileVisible && !mIsAirplaneMode && !mIsEmergency) {
+            	if (GnFeatureOption.GN_CTCC_SUPPORT) {
+            		mSlotIndicator.setVisibility(View.GONE);
+                    if (DEBUG) Log.d(TAG,"apply(), CTCC, mSubId = " + mSubId);
+            		if(mSubId == 0) {
+            			if(mMobileStrengthId != 0 && mMobileStrengthIdCT != 0) {
+            				mMobile_top_CT.setImageResource(mMobileStrengthIdCT);
+            				mMobile_buttom_CT.setImageResource(mMobileStrengthId);
+            				mMobileType_CT.setImageResource(mMobileTypeId);
+            				mNetworkSignalGroup_CT.setVisibility(View.VISIBLE);
+            				mNetworkSignalGroup.setVisibility(View.GONE);
+                            if (DEBUG) Log.d(TAG,"apply(), CTCC, mMobileStrengthIdCT = " + mMobileStrengthIdCT);
+            			} else {
+            				mMobile_top_CT.setImageResource(0);
+            				mMobile_buttom_CT.setImageResource(0);
+            				mMobileType_CT.setImageResource(0);
+            				mMobileType.setImageResource(mMobileTypeId);
+            				mMobile.setImageResource(mMobileStrengthId);
+            				mNetworkSignalGroup_CT.setVisibility(View.GONE);
+            				mNetworkSignalGroup.setVisibility(View.VISIBLE);
+                            if (DEBUG) Log.d(TAG,"apply(), CTCC, mMobileStrengthId = " + mMobileStrengthId);
+						}
+            		} else {
+                        if (DEBUG) Log.d(TAG,"apply(), CTCC, slot wrong : " + mSubId);
+            			mMobile.setImageResource(mMobileStrengthId);
+                        mMobileType.setImageResource(mMobileTypeId);
+                        mMobileGroup.setContentDescription(mMobileTypeDescription
+                                + " " + mMobileDescription);
+					}
+            		if(mNetworkTypeId != 0 && mMobileInOutId != 0) {
+            			if(mSubId == 0) {
+            				mNetworkType.setImageResource(gnGetNetworkTypeIconCT(0, mGnNetworkType));
+            			} else if(mSubId == 1) {
+            				mNetworkType.setImageResource(gnGetNetworkTypeIconCT(1, mGnNetworkType));
+						}
+            		} else {
+						mNetworkType.setImageResource(0);
+					}
+				} else {
+					mSlotIndicator.setImageResource(getSlotIndicator(mSubId));
+					mMobile.setImageResource(mMobileStrengthId);
+					mMobileType.setImageResource(gnGetMotileTypeIcon(mIsRoaming, mGnNetworkType));
+					mMobileGroup.setContentDescription(mMobileTypeDescription
+							+ " " + mMobileDescription);
+					mNetworkType.setImageResource(mIsRoaming ? getNetworkTypeIcon(mGnNetworkType) : mNetworkTypeId);
+				}
+            	//mNetworkType.setImageResource(mNetworkTypeId);
+            	mMobileInOut.setImageResource(mMobileInOutId);
                 mMobileGroup.setVisibility(View.VISIBLE);
             } else {
                 mMobileGroup.setVisibility(View.GONE);
@@ -457,14 +530,43 @@ public class SignalClusterView
 		apply();
 	}
 	@Override
-	public void GnsetNetworkType(GnNetworkType networkType, boolean isRoaming, int subId) {
-		Log.d(TAG, "setNetworkType(" + subId + "), NetworkType= " + networkType);
+	public void gnSetMobileSignalCT(boolean visible, int strengthIconCT, int strengthIcon, int typeIcon, int subId) {
+        Log.d(TAG, "gnSetMobileSignalCT(), visible= " + visible + ", strengthIconCT = " + strengthIconCT
+                    + ", strengthIcon = " + strengthIcon + ", typeIcon = " + typeIcon + ", subId = " + subId);
+		PhoneState state = getOrInflateState(subId);
+		state.mMobileStrengthIdCT = strengthIconCT;
+		state.mMobileStrengthId = strengthIcon;
+		state.mMobileVisible = visible;
+		state.mMobileTypeId = typeIcon;
+		apply();
+	}
+
+	@Override
+	public void gnSetSimUnavail(boolean visible, boolean isEmergency,
+			int unAvailResId, int subId) {
+        Log.d(TAG, "gnSetSimUnavail(), visible= " + visible + ", unAvailResId = " + unAvailResId);
+		mIsEmergency = isEmergency;
+		if(mNoSim1 == null && mNoSim2 == null)
+			return;
+		
+		if(subId == 1) {
+			mNoSim2.setImageResource(unAvailResId);
+			mNoSim2.setVisibility(visible ? View.VISIBLE : View.GONE);
+		} else if(subId == 0) {
+			mNoSim1.setImageResource(unAvailResId);
+			mNoSim1.setVisibility(visible ? View.VISIBLE : View.GONE);
+		}
+	}
+
+	@Override
+	public void gnSetNetworkType(GnNetworkType networkType, boolean isRoaming, int subId) {
+		Log.d(TAG, "gnSetNetworkType(" + subId + "), NetworkType= " + networkType);
         PhoneState state = getOrInflateState(subId);
         state.mGnNetworkType = networkType;
         state.mIsRoaming = isRoaming;
 	}
 	
-	private int getMobileTypeIcon(boolean isRoaming, GnNetworkType networkType) {
+	private int gnGetMotileTypeIcon(boolean isRoaming, GnNetworkType networkType) {
 		if(isRoaming) {
 			return R.drawable.gn_stat_sys_mobile_roam;
 		}
@@ -484,6 +586,24 @@ public class SignalClusterView
             return 0;
         }
     }
+	
+	private int gnGetNetworkTypeIconCT(int slotId, GnNetworkType networkType) {
+		if(slotId == 1) {
+			return R.drawable.gn_stat_sys_network_type_2g;
+		} else if (slotId == 0) {
+			if(networkType == GnNetworkType.Type_G 
+					|| networkType == GnNetworkType.Type_E 
+					|| networkType == GnNetworkType.Type_1X) {
+				return R.drawable.gn_stat_sys_network_type_2g;
+			} else if(networkType == GnNetworkType.Type_3G 
+					|| networkType == GnNetworkType.Type_1X3G) {
+				return R.drawable.gn_stat_sys_network_type_3g;
+			} else if (networkType == GnNetworkType.Type_4G) {
+				return R.drawable.gn_stat_sys_network_type_4g;
+			}
+		}
+		return 0;
+	}
 	
 	private int getNetworkTypeIcon(GnNetworkType networkType) {
 		if (networkType == GnNetworkType.Type_G) {

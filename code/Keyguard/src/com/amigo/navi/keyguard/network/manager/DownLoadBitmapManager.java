@@ -27,6 +27,18 @@ public class DownLoadBitmapManager {
         
     }
     
+    public Bitmap downLoadBitmapOld(Context context,String url){
+    	String method = ConnectionParameters.HTTP_GET;
+        int timeOut = ConnectionParameters.NET_TIMEOUT;
+        if (context != null
+                && NetWorkUtils.is2GDataNetworkType(context.getApplicationContext())) {
+            timeOut = ConnectionParameters.NET_2G_TIMEOUT;
+        }
+        BitmapHttpConnect download = new BitmapHttpConnect(timeOut,method);
+        URL bitmapUrl = NetWorkUtils.constructRequestURL(url,null);
+        return download.loadImageFromInternet(bitmapUrl);
+    }
+    
     public Bitmap downLoadBitmap(Context context,String url){
     	if(!NetWorkUtils.isDownloadingDataFromInternet(context)){
     		return null;

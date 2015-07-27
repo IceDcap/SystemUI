@@ -356,6 +356,7 @@ public class RequestNicePicturesFromInternet {
                             UIController.getInstance().setNewWallpaperToDisplay(true);
                             isFirst = false;
                             FileUtil.deleteMusic();
+                            KeyguardSettings.setBooleanSharedConfig(mContext, KeyguardSettings.WALLPAPER_UPDATE_NOTIFICATION_FIRST, false);
                         }
                         wallpaperDB.updateDownLoadFinish(wallpaper);
                         keyguardWallpaperManager.setDownloading(true);
@@ -458,6 +459,10 @@ public class RequestNicePicturesFromInternet {
 				if (!TextUtils.isEmpty(userID)) {
 
 					HKWallpaperNotification hkWallpaperNotification = HKWallpaperNotification.getInstance(mContext);
+					boolean isFirst = KeyguardSettings.getBooleanSharedConfig(mContext, KeyguardSettings.WALLPAPER_UPDATE_NOTIFICATION_FIRST, true);
+					final WallpaperDB wallpaperDB = WallpaperDB.getInstance(mContext);
+					WallpaperList deleteList = null;
+					KeyguardWallpaperManager keyguardWallpaperManager = KeyguardViewHostManager.getInstance().getKeyguardWallpaperManager();
 					
 					LocalFileOperationInterface localFileOperationInterface = new LocalBitmapOperation(mContext);
 					ReadAndWriteFileFromSD dealWithBitmap = new ReadAndWriteFileFromSD(
@@ -469,7 +474,7 @@ public class RequestNicePicturesFromInternet {
 						return;
 					}
 					WallpaperList wallpaperList = WallpaperDB.getInstance(mContext).queryPicturesNoDownLoad();
-					if (wallpaperList.size() == 0) {
+					if (isFirst || wallpaperList.size() == 0) {
 						String result = requestPictureJsonFromNet(categoryList);
 						if (DownLoadJsonManager.ERROR.equals(result)) {
 							hkWallpaperNotification.updateHandler.sendEmptyMessage(HKWallpaperNotification.FAILED);
@@ -481,11 +486,6 @@ public class RequestNicePicturesFromInternet {
 						wallpaperList.quickSort();
 					}
 
-					final WallpaperDB wallpaperDB = WallpaperDB.getInstance(mContext);
-					WallpaperList deleteList = null;
-					KeyguardWallpaperManager keyguardWallpaperManager = KeyguardViewHostManager.getInstance().getKeyguardWallpaperManager();
-					boolean isFirst = KeyguardSettings.getBooleanSharedConfig(mContext, KeyguardSettings.WALLPAPER_UPDATE_NOTIFICATION_FIRST, true);
-
 					for (int index = 0; index < wallpaperList.size(); index++) {
 						if (isStop) {
 							break;
@@ -496,7 +496,8 @@ public class RequestNicePicturesFromInternet {
 						Wallpaper wallpaper = wallpaperList.get(index);
 						String picUrl = wallpaper.getImgUrl();
 						if (!TextUtils.isEmpty(picUrl)) {
-							Bitmap bitmap = DownLoadBitmapManager.getInstance().downLoadBitmap(mContext, picUrl);
+							NetWorkUtils.setInterruptDownload(false);
+							Bitmap bitmap = DownLoadBitmapManager.getInstance().downLoadBitmapOld(mContext, picUrl);
 							String key = DiskUtils.constructFileNameByUrl(picUrl);
 							boolean savedSuccess = false;
 							if (bitmap != null) {

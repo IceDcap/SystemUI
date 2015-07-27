@@ -6,7 +6,9 @@ import java.util.Date;
 
 import com.android.keyguard.R;
 import com.amigo.navi.keyguard.DebugLog;
+import com.amigo.navi.keyguard.haokan.Common;
 import com.amigo.navi.keyguard.haokan.UIController;
+import com.amigo.navi.keyguard.haokan.entity.Wallpaper;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -447,6 +449,25 @@ public class AmigoKeyguardInfoZone extends FrameLayout{
 				+ Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
 		mweekdayText_US.setText(Utils.getWeekString_US(mContext, Calendar
 				.getInstance().get(Calendar.DAY_OF_WEEK)));
+		
+		setFestivalText();
+	}
+	
+	private void setFestivalText() {
+		if(mFestivalText == null || mFestivalText_US == null){
+			return;
+		}
+		Wallpaper wallpaper = UIController.getInstance().getCurrentWallpaperInfo();
+		String currentTimes = Common.formatCurrentDate();
+		if(wallpaper != null && currentTimes.equals(wallpaper.getDate())){
+			if(DebugLog.DEBUG)Log.d(TAG, "wallpaper.getDate()："+wallpaper.getDate());
+			String festival = wallpaper.getFestival();
+			mFestivalText.setText(festival);
+			mFestivalText_US.setText(festival);
+		}else{
+			mFestivalText.setText("");
+			mFestivalText_US.setText("");
+		}
 	}
 	
 	public void setFestivalText(CharSequence text) {

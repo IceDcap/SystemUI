@@ -26,6 +26,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
+import android.database.ContentObserver;
 import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
@@ -75,8 +76,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-
+import android.os.SystemProperties;
 import com.android.systemui.gionee.statusbar.GnNetworkType;
+import com.android.systemui.gionee.GnFeatureOption;
 
 /** Platform implementation of the network controller. **/
 public class NetworkControllerImpl extends BroadcastReceiver
@@ -146,7 +148,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
 
     // The current user ID.
     private int mCurrentUserId;
-
+    
     /**
      * Construct this controller object and register for updates.
      */
@@ -1102,6 +1104,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
         private int mLastSignalLevel;
         
         private GnNetworkType mNetworkType = null;
+        private int mFourGDataOnly = 0;
 
         // TODO: Reduce number of vars passed in, if we have the NetworkController, probably don't
         // need listener lists anymore.
@@ -1248,6 +1251,9 @@ public class NetworkControllerImpl extends BroadcastReceiver
                             | PhoneStateListener.LISTEN_CALL_STATE
                             | PhoneStateListener.LISTEN_DATA_CONNECTION_STATE
                             | PhoneStateListener.LISTEN_DATA_ACTIVITY);
+            if(GnFeatureOption.GN_CTCC_SUPPORT) {
+            	mContext.getContentResolver().registerContentObserver(Settings.Global.getUriFor("lte_on_cdma_rat_mode"), false, FourGDataOnlyObserver);
+            }
         }
 
         /**
@@ -1255,6 +1261,9 @@ public class NetworkControllerImpl extends BroadcastReceiver
          */
         public void unregisterListener() {
             mPhone.listen(mPhoneStateListener, 0);
+            if(GnFeatureOption.GN_CTCC_SUPPORT) {
+            	mContext.getContentResolver().unregisterContentObserver(FourGDataOnlyObserver);
+            }
         }
 
         /**
@@ -1264,46 +1273,65 @@ public class NetworkControllerImpl extends BroadcastReceiver
         private void mapIconSets() {
             mNetworkToIconLookup.clear();
 
-            mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_EVDO_0, TelephonyIcons.THREE_G);
-            mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_EVDO_A, TelephonyIcons.THREE_G);
-            mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_EVDO_B, TelephonyIcons.THREE_G);
-            mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_EHRPD, TelephonyIcons.THREE_G);
-            mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_UMTS, TelephonyIcons.THREE_G);
-
-            if (!mConfig.showAtLeast3G) {
-                mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_UNKNOWN,
-                        TelephonyIcons.UNKNOWN);//while we cannot getDataNetworkType from ServiceState, take G as default
-                mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_EDGE, TelephonyIcons.E);
-                mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_CDMA, TelephonyIcons.ONE_X);
-                mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_1xRTT, TelephonyIcons.ONE_X);
-
-                mDefaultIcons = TelephonyIcons.G;
+            if(GnFeatureOption.GN_CTCC_SUPPORT) {
+            	mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_EVDO_0, TelephonyIcons.THREE_G_CT);
+            	mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_EVDO_A, TelephonyIcons.THREE_G_CT);
+            	mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_EVDO_B, TelephonyIcons.THREE_G_CT);
+            	mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_EHRPD, TelephonyIcons.THREE_G_CT);
+            	mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_UMTS, TelephonyIcons.THREE_G_CT);
+                mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_LTE, TelephonyIcons.FOUR_G_CT);
+                
+            	mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_UNKNOWN,TelephonyIcons.TWO_G_CT
+            			/*TelephonyIcons.UNKNOWN*/);//while we cannot getDataNetworkType from ServiceState, take G as default
+            	mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_EDGE, TelephonyIcons.TWO_G_CT);
+            	mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_CDMA, TelephonyIcons.TWO_G_CT);
+            	mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_1xRTT, TelephonyIcons.TWO_G_CT);
+            	
+            	mDefaultIcons = TelephonyIcons.TWO_G_CT;
+                
+                MobileIconGroup hGroup = TelephonyIcons.TWO_G_CT;
+                mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_HSDPA, hGroup);
+                mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_HSUPA, hGroup);
+                mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_HSPA, hGroup);
+                mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_HSPAP, hGroup);
             } else {
-                mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_UNKNOWN,
-                        TelephonyIcons.THREE_G);
-                mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_EDGE,
-                        TelephonyIcons.THREE_G);
-                mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_CDMA,
-                        TelephonyIcons.THREE_G);
-                mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_1xRTT,
-                        TelephonyIcons.THREE_G);
-                mDefaultIcons = TelephonyIcons.THREE_G;
-            }
-
-            MobileIconGroup hGroup = TelephonyIcons.THREE_G;
-            if (mConfig.hspaDataDistinguishable) {
-                hGroup = TelephonyIcons.H;
-            }
-            mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_HSDPA, hGroup);
-            mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_HSUPA, hGroup);
-            mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_HSPA, hGroup);
-            mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_HSPAP, hGroup);
-
-            if (mConfig.show4gForLte) {
-                mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_LTE, TelephonyIcons.FOUR_G);
-            } else {
-                mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_LTE, TelephonyIcons.LTE);
-            }
+            	mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_EVDO_0, TelephonyIcons.THREE_G);
+                mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_EVDO_A, TelephonyIcons.THREE_G);
+                mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_EVDO_B, TelephonyIcons.THREE_G);
+                mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_EHRPD, TelephonyIcons.THREE_G);
+                mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_UMTS, TelephonyIcons.THREE_G);
+                
+            	if (!mConfig.showAtLeast3G) {
+            		mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_UNKNOWN,
+            				TelephonyIcons.UNKNOWN);//while we cannot getDataNetworkType from ServiceState, take G as default
+            		mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_EDGE, TelephonyIcons.E);
+            		mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_CDMA, TelephonyIcons.ONE_X);
+            		mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_1xRTT, TelephonyIcons.ONE_X);
+            		
+            		mDefaultIcons = TelephonyIcons.G;
+            	} else {
+            		mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_EVDO_0, TelephonyIcons.THREE_G);
+            		mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_EVDO_A, TelephonyIcons.THREE_G);
+            		mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_EVDO_B, TelephonyIcons.THREE_G);
+            		mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_EHRPD, TelephonyIcons.THREE_G);
+            		mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_UMTS, TelephonyIcons.THREE_G);
+            	}
+            	
+            	MobileIconGroup hGroup = TelephonyIcons.THREE_G;
+            	if (mConfig.hspaDataDistinguishable) {
+            		hGroup = TelephonyIcons.H;
+            	}
+            	mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_HSDPA, hGroup);
+            	mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_HSUPA, hGroup);
+            	mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_HSPA, hGroup);
+            	mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_HSPAP, hGroup);
+            	
+            	if (mConfig.show4gForLte) {
+            		mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_LTE, TelephonyIcons.FOUR_G);
+            	} else {
+            		mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_LTE, TelephonyIcons.LTE);
+            	}
+			}
         }
 
         @Override
@@ -1313,23 +1341,77 @@ public class NetworkControllerImpl extends BroadcastReceiver
             String contentDescription = getStringIfExists(getContentDescription());
             String dataContentDescription = getStringIfExists(icons.mDataContentDescription);
 
-            boolean showDataIcon = mCurrentState.dataConnected && mCurrentState.inetForNetwork != 0
-                    || mCurrentState.iconGroup == TelephonyIcons.ROAMING;
+            boolean showDataIcon = mCurrentState.dataConnected && mCurrentState.inetForNetwork != 0;
+                    //|| mCurrentState.iconGroup == TelephonyIcons.ROAMING;
+
 
             int signalClustersLength = mSignalClusters.size();
-            for (int i = 0; i < signalClustersLength; i++) {
-				mSignalClusters.get(i).GnsetNetworkType(mNetworkType, isRoaming(),
-	                        mSubscriptionInfo.getSimSlotIndex());
-                mSignalClusters.get(i).setMobileDataIndicators(
-                        mCurrentState.enabled && !mCurrentState.airplaneMode,
-                        getCurrentIconId(),
-                        typeIcon,
-                        contentDescription,
-                        dataContentDescription,
-                        // Only wide if actually showing something.
-                        icons.mIsWide && typeIcon != 0,
-                        mSubscriptionInfo.getSimSlotIndex());
-            }
+			if (GnFeatureOption.GN_CTCC_SUPPORT && signalClustersLength != 0) {
+                if (DEBUG) Log.d(TAG,"notifyListeners(), CTCC");
+				for(int i = 0; i < 2; i++) {
+					int state = mPhone.getSimState(i);
+					if(state == TelephonyManager.SIM_STATE_ABSENT || state == TelephonyManager.SIM_STATE_UNKNOWN) {
+						mSignalClusters.get(0).gnSetSimUnavail(true, false, R.drawable.gn_stat_sys_no_sims, i);
+					} else {
+						mSignalClusters.get(0).gnSetSimUnavail(false, false, R.drawable.gn_stat_sys_no_sims, i);
+					}
+					if(isEmergencyOnly() && mFourGDataOnly != 2) {
+						mSignalClusters.get(0).gnSetSimUnavail(true, true, R.drawable.gn_stat_sys_emergency, i);
+					}
+				}
+				for (int i = 0; i < signalClustersLength; i++) {
+					mSignalClusters.get(i).gnSetNetworkType(mNetworkType, isRoaming(), mSubscriptionInfo.getSimSlotIndex());
+					if (mSubscriptionInfo.getSimSlotIndex() == 0
+							&& ("46003".equals(mPhone.getSimOperatorNumericForPhone(0))
+							|| "46011".equals(mPhone.getSimOperatorNumericForPhone(0)))) {
+                        //slot 0 is CTCC
+						if(mPhone.getNetworkClass(mDataNetType) != TelephonyManager.NETWORK_CLASS_2_G && mFourGDataOnly != 2) {
+                            if (DEBUG) Log.d(TAG,"notifyListeners(), CTCC, slot 0, not 2G");
+                            mSignalClusters.get(0).gnSetMobileSignalCT(
+									mCurrentState.enabled && !mCurrentState.airplaneMode,
+									gnGetCurrentIconIdCT(),
+									gnGetCurrentIconId(),
+									mCurrentState.connected ? typeIcon : 0,
+									0);
+						} else {
+                            if (DEBUG) Log.d(TAG,"notifyListeners(), CTCC, slot 0, 2G");
+							mSignalClusters.get(0).gnSetMobileSignalCT(
+									mCurrentState.enabled && !mCurrentState.airplaneMode,
+									0,
+									getCurrentIconId(),
+									mCurrentState.connected ? typeIcon : 0,
+									0);
+						}
+					} else {
+                        if (DEBUG) Log.d(TAG,"notifyListeners(), CTCC, slot =" + mSubscriptionInfo.getSimSlotIndex()
+                                + ", setMobileState, mCurrentState.airplaneMode = " + mCurrentState.airplaneMode
+                                + ", network type = " + mNetworkType);
+						mSignalClusters.get(i).setMobileDataIndicators(
+								mCurrentState.enabled && !mCurrentState.airplaneMode,
+								getCurrentIconId(), 
+								mCurrentState.connected ? typeIcon : 0,
+								contentDescription, 
+								dataContentDescription,
+								// Only wide if actually showing something.
+								icons.mIsWide && typeIcon != 0,
+								mSubscriptionInfo.getSimSlotIndex());
+					}
+				}
+			} else {
+				for (int i = 0; i < signalClustersLength; i++) {
+                    if (DEBUG) Log.d(TAG,"notifyListeners(), slot =" + mSubscriptionInfo.getSimSlotIndex()
+                            + ", setMobileState, mCurrentState.airplaneMode = " + mCurrentState.airplaneMode
+                            + ", network type = " + mNetworkType);
+                    mSignalClusters.get(i).gnSetNetworkType(mNetworkType, isRoaming(), mSubscriptionInfo.getSimSlotIndex());
+					mSignalClusters.get(i).setMobileDataIndicators(
+							mCurrentState.enabled && !mCurrentState.airplaneMode,
+							getCurrentIconId(), typeIcon, contentDescription,
+							dataContentDescription,
+							// Only wide if actually showing something.
+							icons.mIsWide && typeIcon != 0,
+							mSubscriptionInfo.getSimSlotIndex());
+				}
+			}
             // Only send data sim callbacks to QS.
             if (mCurrentState.dataSim) {
                 int qsTypeIcon = showDataIcon ? icons.mQsDataType[mCurrentState.inetForNetwork] : 0;
@@ -1359,13 +1441,40 @@ public class NetworkControllerImpl extends BroadcastReceiver
 						} else {
 							mobileInOutIcon = R.drawable.gn_stat_sys_signal_inout_null;
 						}
+                		mSignalClusters.get(i).setMobileInout(mCurrentState.dataConnected, mobileInOutIcon, mSubscriptionInfo.getSimSlotIndex());
                 	} else {
 						mobileInOutIcon = 0;
+						if(GnFeatureOption.GN_CTCC_SUPPORT && isRoaming()) {
+							mobileInOutIcon = gnGetNetworkTypeIconCT(mSubscriptionInfo.getSimSlotIndex(), mNetworkType);
+						}
+                		mSignalClusters.get(i).setMobileInout(true, mobileInOutIcon, mSubscriptionInfo.getSimSlotIndex());
 					}
-                	mSignalClusters.get(i).setMobileInout(mCurrentState.dataConnected, mobileInOutIcon, mSubscriptionInfo.getSimSlotIndex());
                 }
-            }
+            } else if(GnFeatureOption.GN_CTCC_SUPPORT && isRoaming()) {
+				for(int i = 0; i < signalClustersLength; i++) {
+					mSignalClusters.get(i).setNetworkType(0, mSubscriptionInfo.getSimSlotIndex());
+					mSignalClusters.get(i).setMobileInout(true, gnGetNetworkTypeIconCT(mSubscriptionInfo.getSimSlotIndex(), mNetworkType), mSubscriptionInfo.getSimSlotIndex());
+				}
+			}
         }
+        
+        private int gnGetNetworkTypeIconCT(int slotId, GnNetworkType networkType) {
+    		if(slotId == 1) {
+    			return R.drawable.gn_stat_sys_network_type_2g_ct;
+    		} else if (slotId == 0) {
+    			if(networkType == GnNetworkType.Type_G 
+    					|| networkType == GnNetworkType.Type_E 
+    					|| networkType == GnNetworkType.Type_1X) {
+    				return R.drawable.gn_stat_sys_network_type_2g_ct;
+    			} else if(networkType == GnNetworkType.Type_3G 
+    					|| networkType == GnNetworkType.Type_1X3G) {
+    				return R.drawable.gn_stat_sys_network_type_3g_ct;
+    			} else if (networkType == GnNetworkType.Type_4G) {
+    				return R.drawable.gn_stat_sys_network_type_4g_ct;
+    			}
+    		}
+    		return 0;
+    	}
 
         @Override
         protected MobileState cleanState() {
@@ -1380,7 +1489,9 @@ public class NetworkControllerImpl extends BroadcastReceiver
                 // want to show signal bars for data service as well as the "no
                 // service" or "emergency calls only" text that indicates that voice
                 // is not available.
-                switch (mServiceState.getVoiceRegState()) {
+                int voiceState = mServiceState.getVoiceRegState();
+                if (DEBUG) Log.d(TAG,"hasService(): voice state = " + voiceState);
+                switch (voiceState) {
                     case ServiceState.STATE_POWER_OFF:
                         return false;
                     case ServiceState.STATE_OUT_OF_SERVICE:
@@ -1599,14 +1710,23 @@ public class NetworkControllerImpl extends BroadcastReceiver
             }
             mCurrentState.connected = hasService() && mSignalStrength != null;
             if (mCurrentState.connected) {
-                if (!mSignalStrength.isGsm() && mConfig.alwaysShowCdmaRssi) {
-                    mLastSignalLevel = mCurrentState.level = mSignalStrength.getCdmaLevel();
+                if (!mSignalStrength.isGsm() 
+                		&& GnFeatureOption.GN_CTCC_SUPPORT
+                		&& (mSubscriptionInfo.getSimSlotIndex() == 0)
+                		&& ("46003".equals(mPhone.getSimOperatorNumericForPhone(0))
+                		|| "46011".equals(mPhone.getSimOperatorNumericForPhone(0)))
+                		&& mFourGDataOnly != 2/* && mConfig.alwaysShowCdmaRssi*/) {
+                	gnGetSignalStrengthCT();
                 } else {
                     mLastSignalLevel = mCurrentState.level = mSignalStrength.getLevel();
                 }
             }
             if (mNetworkToIconLookup.indexOfKey(mDataNetType) >= 0) {
-                mCurrentState.iconGroup = mNetworkToIconLookup.get(mDataNetType);
+            	if(mFourGDataOnly != 2) {
+            		mCurrentState.iconGroup = mNetworkToIconLookup.get(mDataNetType);
+            	} else {
+					mCurrentState.iconGroup = TelephonyIcons.FOUR_G;
+				}
             } else {
                 mCurrentState.iconGroup = mDefaultIcons;
             }
@@ -1638,6 +1758,25 @@ public class NetworkControllerImpl extends BroadcastReceiver
             notifyListenersIfNecessary();
         }
 
+		private void gnGetSignalStrengthCT() {
+			int networkType = TelephonyManager.getNetworkClass(mDataNetType);
+			switch (networkType) {
+			case TelephonyManager.NETWORK_CLASS_2_G:
+				mCurrentState.level = mSignalStrength.getCdmaLevel();
+				break;
+			case TelephonyManager.NETWORK_CLASS_3_G:
+				mCurrentState.level = mSignalStrength.getCdmaLevel();
+				mCurrentState.level_CT = mSignalStrength.getEvdoLevel();
+				break;
+			case TelephonyManager.NETWORK_CLASS_4_G:
+				mCurrentState.level = mSignalStrength.getCdmaLevel();
+				mCurrentState.level_CT = mSignalStrength.getLteLevel();
+				break;
+			default:
+				break;
+			}
+		}
+		
         private void resetPhoneState() {
         	// onSignalStrengthsChanged
         	mSignalStrength = null;
@@ -1650,6 +1789,14 @@ public class NetworkControllerImpl extends BroadcastReceiver
             //mDataActivity = TelephonyManager.DATA_ACTIVITY_NONE;
         }
 		
+	    private int getSubIdBySubIndex(int subIndex){
+	        int[] subId=SubscriptionManager.getSubId(subIndex);
+	        if(subId!=null){
+	           return  subId[0];
+	        }
+	        return SubscriptionManager.INVALID_SUBSCRIPTION_ID;
+	    }
+
         @VisibleForTesting
         void setActivity(int activity) {
             mCurrentState.activityIn = activity == TelephonyManager.DATA_ACTIVITY_INOUT
@@ -1699,9 +1846,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
                 mDataNetType = mServiceState.getDataNetworkType(); 
                 mDataNetType = getDataNetworkTypeFromService(); 
                 updateNetworkType(); 
-                updateTelephony(); 
-                
-                mServiceState = state;
+                updateTelephony();
             }
 
             @Override
@@ -1827,6 +1972,17 @@ public class NetworkControllerImpl extends BroadcastReceiver
             mSignalStrength = mLastSignalStrength;
             updateTelephony();
         }
+        
+        private ContentObserver FourGDataOnlyObserver = new ContentObserver(new Handler()) {
+
+    		@Override
+    		public void onChange(boolean selfChange) {
+    			Log.d(TAG, " lte_on_cdma_rat_mode changed!");
+    			mFourGDataOnly = Settings.Global.getInt(
+    	                mContext.getContentResolver(),
+    	                "lte_on_cdma_rat_mode",0);
+    		}
+    	};
     }
 
     /**
@@ -1951,6 +2107,26 @@ public class NetworkControllerImpl extends BroadcastReceiver
                 return getIcons().mSbNullState;
             }
         }
+        
+        public int gnGetCurrentIconIdCT() {
+			if(mCurrentState.connected) {
+				return getIcons().mSbIcons[0][mCurrentState.level_CT];					
+			} else if (mCurrentState.enabled) {
+				return getIcons().mSbDiscState;
+			} else {
+				return getIcons().mSbNullState;
+			}
+		}
+        
+        public int gnGetCurrentIconId() {
+			if(mCurrentState.connected) {
+				return getIcons().mSbIcons[1][mCurrentState.level];					
+			} else if (mCurrentState.enabled) {
+				return getIcons().mSbDiscState;
+			} else {
+				return getIcons().mSbNullState;
+			}
+		}
         
         public int getCurrentWifiIconId() {
 			if(mCurrentState.connected) {
@@ -2097,6 +2273,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
             IconGroup iconGroup;
             int inetCondition;
             int rssi; // Only for logging.
+            int level_CT;
 
             // Not used for comparison, just used for logging.
             long time;
@@ -2111,6 +2288,8 @@ public class NetworkControllerImpl extends BroadcastReceiver
                 activityOut = state.activityOut;
                 rssi = state.rssi;
                 time = state.time;
+                
+                level_CT = state.level_CT;
             }
 
             @Override
@@ -2166,7 +2345,10 @@ public class NetworkControllerImpl extends BroadcastReceiver
         void setIsAirplaneMode(boolean is, int airplaneIcon, int contentDescription);
         void setNetworkType(int networkType, int subId);
         void setMobileInout(boolean visible, int mobileInOut, int subId);
-        void GnsetNetworkType(GnNetworkType networkType, boolean isRoaming, int subId);
+        
+        void gnSetMobileSignalCT(boolean visible, int strengthIconCT, int strengthIcon, int typeIcon, int subId);
+        void gnSetSimUnavail(boolean visible, boolean isEmergency, int unAvailResId, int subId);
+        void gnSetNetworkType(GnNetworkType networkType, boolean isRoaming, int subId);
     }
 
     public interface EmergencyListener {

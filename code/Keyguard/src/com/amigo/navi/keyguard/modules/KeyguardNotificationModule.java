@@ -1,5 +1,6 @@
 package com.amigo.navi.keyguard.modules;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -844,10 +845,24 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
 		return contextForUser.getPackageManager();
 	}
 
+    // Gionee <jiating> <20150724> add for 8611 notification background  begin
+	private int getLatestEventContentId() {
+		int id = 0;
+	    try {
+	        Class<?> c = Class.forName("com.android.internal.R$id");
+	        Field field = c.getField("status_bar_latest_event_content");
+	        id = field.getInt(null);
+	    } catch (Exception ex) {
+	    }
+	    return id;
+	}
+    // Gionee <jiating> <20150724> add for 8611 notification background  end
+	
 	private void applyColorsAndBackgrounds(StatusBarNotification sbn,
 			NotificationData.Entry entry) {
 
-		if (entry.expanded.getId() != com.android.internal.R.id.status_bar_latest_event_content) {
+        //if (entry.expanded.getId() != com.android.internal.R.id.status_bar_latest_event_content) {
+        if (entry.expanded.getId() != getLatestEventContentId()) {
 			// Using custom RemoteViews
 			if (entry.targetSdk >= Build.VERSION_CODES.GINGERBREAD
 					&& entry.targetSdk < Build.VERSION_CODES.L) {

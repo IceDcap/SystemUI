@@ -497,7 +497,6 @@ public class AmigoMSimCarrierLayout extends LinearLayout {
         case PUK_REQUIRED:
             return StatusMode.SimPukLocked;
         case READY:
-        case CARD_IO_ERROR:
             return StatusMode.Normal;
         case PERM_DISABLED:
             return StatusMode.SimPermDisabled;
@@ -534,6 +533,7 @@ public class AmigoMSimCarrierLayout extends LinearLayout {
                     break;
                 case ELSE:
                     if(mPlmnText!=null){
+                        mStatusMode[slotId] = StatusMode.Normal;
                         operatorName = mPlmnText[slotId];
                     }
                     break;

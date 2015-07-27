@@ -1282,7 +1282,12 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
     private OnViewTouchListener mOnViewTouchListener;
 	public void dismissWithAction(OnDismissAction r){
 		mOnDisMissAction = r;
+		if(!isSecure() && KeyguardViewHostManager.getInstance().isShowing() && KeyguardViewHostManager.getInstance().ismOccluded()){
+			finish();
+			return ;
+		}
 		scrollToUnlockByOther();	
+		mKeyguardBouncer.setOnDismissAction(mOnDisMissAction);
 	}
 	
 	

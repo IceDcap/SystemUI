@@ -429,17 +429,7 @@ public class KeyguardSettingsActivity extends Activity {
     	
         boolean isopen = KeyguardSettings.getOnlyWlanState(this.getApplicationContext());
         mOnlyWlanSwitch.setChecked(isopen);
-        if (isopen){
-//        	HKAgent.onEventOnlyWlan(getApplicationContext(),Event.SETTING_DOWNLOAD, KeyguardSettings.SWITCH_ONLY_WLAN_ON);
-        	if(NetWorkUtils.isNetworkAvailable(getApplicationContext()) && NetWorkUtils.isWifi(getApplicationContext()) ){
-        		NetWorkUtils.setInterruptDownload(false);
-        	}else{
-        		NetWorkUtils.setInterruptDownload(true);
-        	}
-        }else{
-//        	HKAgent.onEventOnlyWlan(getApplicationContext(),Event.SETTING_DOWNLOAD, KeyguardSettings.SWITCH_ONLY_WLAN_OFF);
-        	NetWorkUtils.setInterruptDownload(false);	
-        }
+ 
         mOnlyWlanSwitch.setEnabled(connectNet);
         SettingStatisticsPolicy.onOnlyWifiChanged(isopen);
         
@@ -454,11 +444,15 @@ public class KeyguardSettingsActivity extends Activity {
 			@Override
 			public void onCheckedChanged(CompoundButton btnView, boolean isChecked) {
 				KeyguardSettings.setOnlyWlanState(getApplicationContext(), isChecked);	
-//				if (isChecked){
-//	        		HKAgent.onEventOnlyWlan(getApplicationContext(),Event.SETTING_DOWNLOAD, KeyguardSettings.SWITCH_ONLY_WLAN_ON);
-//				}else{
-//	        		HKAgent.onEventOnlyWlan(getApplicationContext(),Event.SETTING_DOWNLOAD, KeyguardSettings.SWITCH_ONLY_WLAN_OFF);
-//				}
+			       if (isChecked){
+			        	if(NetWorkUtils.isNetworkAvailable(getApplicationContext()) && NetWorkUtils.isWifi(getApplicationContext()) ){
+			        		NetWorkUtils.setInterruptDownload(false);
+			        	}else{
+			        		NetWorkUtils.setInterruptDownload(true);
+			        	}
+			        }else{
+			        	NetWorkUtils.setInterruptDownload(false);	
+			        }
 				SettingStatisticsPolicy.onOnlyWifiChanged(isChecked);
 				RequestNicePicturesFromInternet.getInstance(getApplicationContext()).registerData(false);
 			}});

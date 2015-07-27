@@ -118,7 +118,7 @@ public class JsonUtil {
             int len = jsonArray.length();
             for (int i = 0; i < len; i++) {
                 JSONObject jsonObject2 = jsonArray.optJSONObject(i);
-                String date = jsonObject2.optString("d");
+                String date = jsonObject2.optString("date");
                 String festival = jsonObject2.optString("f");
                 JSONArray jsonArray3 = jsonObject2.optJSONArray("ts");
                 for (int j = 0; j < jsonArray3.length(); j++) {

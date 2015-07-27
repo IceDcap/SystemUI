@@ -457,7 +457,7 @@ public class KeyguardWallpaperManager {
                     if(msg.obj!=null){
                     	mWallpaperList=(WallpaperList) msg.obj;                    	
                     }
-                    updateListView();
+                    updateListView(mWallpaperList);
 
                     break;
 /*                case MSG_UPDATE_HAOKAN_LIST_SCREEN_OFF_CLEARCACHE:
@@ -477,15 +477,16 @@ public class KeyguardWallpaperManager {
         }
     };
 
-    public void updateListView() {
+    public void updateListView(WallpaperList wallpapers) {
         if (isFirst || !mViewMediatorCallback.isScreenOn())
         {
             isFirst = false;
-            final WallpaperList wallpapers = mWallpaperList;
+
             DebugLog.d(TAG, "updateListView wallpapers size = " + wallpapers.size());
             if (wallpapers.size() == 0) {
                 showSystemWallpaper();
             } else {
+            	showKeyguardWallpaper();
                 refreshPage();
                 notifyDataSetChanged(wallpapers, mShowPage);
                 UIController.getInstance().refreshWallpaperInfo();
@@ -494,6 +495,13 @@ public class KeyguardWallpaperManager {
             }
         }
     }
+    
+    public void onKeyguardLockedWhenScreenOn() {
+
+    	if (mWallpaperList != null && mWallpaperList.size() > 0) {
+    		updateListView(mWallpaperList);
+		}
+	}
 
 
     private void notifyDataSetChanged(WallpaperList wallpapers, int postion) {
@@ -517,6 +525,20 @@ public class KeyguardWallpaperManager {
         
     }
     
+    private void showKeyguardWallpaper() {
+
+    	if (mKeyguardListView.getVisibility() != View.VISIBLE) {
+    		mKeyguardListView.setVisibility(View.VISIBLE);
+		}
+    	if (mContainer.getVisibility() != View.VISIBLE) {
+    		mContainer.setVisibility(View.VISIBLE);
+		}
+    	View haokanLayout = UIController.getInstance().getHaoKanLayout();
+    	if (haokanLayout != null && haokanLayout.getVisibility() != View.VISIBLE) {
+    		haokanLayout.setVisibility(View.VISIBLE);
+		}
+    	
+	}
     
     
     public void releaseCache() {

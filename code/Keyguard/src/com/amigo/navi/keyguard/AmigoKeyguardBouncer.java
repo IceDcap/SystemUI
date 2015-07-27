@@ -105,7 +105,7 @@ public class AmigoKeyguardBouncer {
 
 	    public void hide(boolean destroyView) {
 	         if (mKeyguardView != null) {
-	            mKeyguardView.setOnDismissAction(null);
+	        	 setOnDismissAction(null);
 	            mKeyguardView.cleanUp();
 	        }
 	        if (destroyView) {
@@ -150,9 +150,12 @@ public class AmigoKeyguardBouncer {
  
 	    public void showWithDismissAction(OnDismissAction r) {
 	        show(false);
-	        mKeyguardView.setOnDismissAction(r);
+	        setOnDismissAction(r);
 	    }
 	 
+	    public void setOnDismissAction(OnDismissAction r){
+	    	 mKeyguardView.setOnDismissAction(r);
+	    }
 	    
 		 public void onScreenTurnedOff() {
 			   if (mKeyguardView != null && mRoot != null && mRoot.getVisibility() == View.VISIBLE) {

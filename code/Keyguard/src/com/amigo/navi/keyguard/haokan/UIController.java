@@ -29,6 +29,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
+import android.widget.ListAdapter;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.amigo.navi.keyguard.AmigoKeyguardBouncer;
@@ -508,14 +509,7 @@ public class UIController implements OnTouchlListener{
     
     
     public void refreshWallpaperInfo() {
-        int pos = getmKeyguardListView().getNextPage();
-         
-        HorizontalAdapter mWallpaperAdapter = (HorizontalAdapter) getmKeyguardListView().getAdapter(); 
-        WallpaperList list = mWallpaperAdapter.getWallpaperList();
-        Wallpaper wallpaper = null;
-        if (list.size() > pos) {
-            wallpaper = list.get(pos);
-        }
+        Wallpaper wallpaper = getCurrentWallpaperInfo();
         
         if (getDetailActivity() != null) {
             if (!getDetailActivity().isDestroyed()) {
@@ -544,12 +538,34 @@ public class UIController implements OnTouchlListener{
      
 
      
-            mInfozone.setFestivalText(wallpaper.getFestival());
+//            mInfozone.setFestivalText(wallpaper.getFestival());
             mCaptionsView.setContentText(wallpaper.getCaption());
         }
         
 
     }
+    
+public Wallpaper getCurrentWallpaperInfo() {
+		
+		KeyguardListView listview = getmKeyguardListView();
+		if(listview == null ){
+			return null;
+		}
+		
+		ListAdapter adapter = listview.getAdapter();
+		if(adapter == null){
+			return null;
+		}
+         
+        HorizontalAdapter mWallpaperAdapter = (HorizontalAdapter) adapter; 
+        int pos = listview.getNextPage();
+        WallpaperList list = mWallpaperAdapter.getWallpaperList();
+        Wallpaper wallpaper = null;
+        if (list.size() > pos) {
+            wallpaper = list.get(pos);
+        }
+		return wallpaper;
+	}
     
     
     public void onDown(MotionEvent e) {
@@ -688,9 +704,9 @@ public class UIController implements OnTouchlListener{
     
     public Bitmap getCurrentWallpaperBitmap(Context context, boolean thumb) {
     	Bitmap bitmap = getCurrentWallpaperBitmap(mCurrentWallpaper, thumb);
-    	if(bitmap == null){
+    	if(bitmap == null || bitmap.isRecycled()){
     		bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.loading);
-    	}
+    	} 
         return bitmap;
     }
     

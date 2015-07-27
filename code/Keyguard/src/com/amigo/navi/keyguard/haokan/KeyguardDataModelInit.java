@@ -196,6 +196,6 @@ public class KeyguardDataModelInit {
 	void reset(){
 		KeyguardSettings.setBooleanSharedConfig(mContext, KeyguardSettings.WALLPAPER_UPDATE_NOTIFICATION_SHOWED, false);
         KeyguardSettings.setBooleanSharedConfig(mContext, KeyguardSettings.WALLPAPER_UPDATE_NOTIFICATION_FIRST, true);
-	}
-    
+        DebugLog.d(TAG, "alarm is coming, values are reset");
+	}    
 }

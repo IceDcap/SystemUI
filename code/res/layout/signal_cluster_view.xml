@@ -50,18 +50,24 @@
         android:layout_height="3dp"
         android:visibility="gone"
         />
+    <ImageView
+        android:id="@+id/no_sims_1"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        />
+
     <LinearLayout
         android:id="@+id/mobile_signal_group"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         >
     </LinearLayout>
-    <!-- <ImageView
-        android:id="@+id/no_sims"
+    <ImageView
+        android:id="@+id/no_sims_2"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:src="@drawable/stat_sys_no_sims"
-        /> -->
+        />
+
     <View
         android:id="@+id/wifi_airplane_spacer"
         android:layout_width="3dp"

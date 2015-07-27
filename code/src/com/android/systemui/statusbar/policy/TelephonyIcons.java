@@ -26,6 +26,7 @@ class TelephonyIcons {
 
     //GSM/UMTS
     static final int TELEPHONY_NO_NETWORK = R.drawable.gn_stat_sys_signal_null;
+    static final int TELEPHONY_NO_NETWORK_CT = R.drawable.gn_stat_sys_signal_null_ct;
 
     static final int[][] TELEPHONY_SIGNAL_STRENGTH = {
         { R.drawable.gn_stat_sys_signal_0,
@@ -37,7 +38,22 @@ class TelephonyIcons {
           R.drawable.gn_stat_sys_signal_1,
           R.drawable.gn_stat_sys_signal_2,
           R.drawable.gn_stat_sys_signal_3,
-          R.drawable.gn_stat_sys_signal_4  }
+          R.drawable.gn_stat_sys_signal_4 }
+    };
+    
+    static final int[][] TELEPHONY_SIGNAL_STRENGTH_CT = {
+    	{
+    		R.drawable.gn_sta_sys_signal_ct_0,
+    		R.drawable.gn_sta_sys_signal_ct_1,
+    		R.drawable.gn_sta_sys_signal_ct_2,
+    		R.drawable.gn_sta_sys_signal_ct_3,
+    		R.drawable.gn_sta_sys_signal_ct_4 },
+    	{
+			R.drawable.gn_stat_sys_signal_ct2g_0,
+			R.drawable.gn_stat_sys_signal_ct2g_1,
+			R.drawable.gn_stat_sys_signal_ct2g_2,
+			R.drawable.gn_stat_sys_signal_ct2g_3,
+    		R.drawable.gn_stat_sys_signal_ct2g_4 }
     };
 
     static final int QS_TELEPHONY_NO_NETWORK = R.drawable.ic_qs_signal_no_signal;
@@ -202,6 +218,10 @@ class TelephonyIcons {
     static final int ICON_3G = R.drawable.gn_stat_sys_mobile_type_3g;
     static final int ICON_4G = R.drawable.gn_stat_sys_mobile_type_4g;
     static final int ICON_1X = R.drawable.gn_stat_sys_mobile_type_1x;
+    
+    static final int ICON_4G_CT = R.drawable.gn_stat_sys_network_type_ct_4g;
+    static final int ICON_3G_CT = R.drawable.gn_stat_sys_network_type_ct_3g;
+    static final int ICON_2G_CT = R.drawable.gn_stat_sys_network_type_ct_2g;
 
     static final int QS_ICON_LTE = R.drawable.ic_qs_signal_lte;
     static final int QS_ICON_3G = R.drawable.ic_qs_signal_3g;
@@ -211,6 +231,7 @@ class TelephonyIcons {
     static final int NETWORK_TYPE_G = R.drawable.gn_stat_sys_network_type_g;
     static final int NETWORK_TYPE_E = R.drawable.gn_stat_sys_network_type_e;
     static final int NETWORK_TYPE_H = R.drawable.gn_stat_sys_network_type_h;
+    static final int NETWORK_TYPE_2G = R.drawable.gn_stat_sys_network_type_2g;
     static final int NETWORK_TYPE_3G = R.drawable.gn_stat_sys_network_type_3g;
     static final int NETWORK_TYPE_4G = R.drawable.gn_stat_sys_network_type_4g;
     static final int NETWORK_TYPE_1X = R.drawable.gn_stat_sys_network_type_1x;
@@ -271,7 +292,7 @@ class TelephonyIcons {
             R.string.accessibility_data_connection_cdma,
             TelephonyIcons.ICON_1X,
             true,
-            TelephonyIcons.NETWORK_TYPE_1X,
+            TelephonyIcons.NETWORK_TYPE_G,
             TelephonyIcons.QS_DATA_1X
             );
 
@@ -353,6 +374,54 @@ class TelephonyIcons {
             false,
             TelephonyIcons.NETWORK_TYPE_G,
             TelephonyIcons.QS_DATA_R
+            );
+    
+    static final MobileIconGroup FOUR_G_CT = new MobileIconGroup(
+            "4G",
+            TelephonyIcons.TELEPHONY_SIGNAL_STRENGTH_CT,
+            TelephonyIcons.QS_TELEPHONY_SIGNAL_STRENGTH,
+            AccessibilityContentDescriptions.PHONE_SIGNAL_STRENGTH,
+            0, 0,
+            TelephonyIcons.TELEPHONY_NO_NETWORK_CT,
+            TelephonyIcons.QS_TELEPHONY_NO_NETWORK,
+            AccessibilityContentDescriptions.PHONE_SIGNAL_STRENGTH[0],
+            R.string.accessibility_data_connection_roaming,
+            TelephonyIcons.ICON_4G_CT,
+            false,
+            TelephonyIcons.NETWORK_TYPE_4G,
+            TelephonyIcons.QS_DATA_4G
+            );
+    
+    static final MobileIconGroup THREE_G_CT = new MobileIconGroup(
+            "3G",
+            TelephonyIcons.TELEPHONY_SIGNAL_STRENGTH_CT,
+            TelephonyIcons.QS_TELEPHONY_SIGNAL_STRENGTH,
+            AccessibilityContentDescriptions.PHONE_SIGNAL_STRENGTH,
+            0, 0,
+            TelephonyIcons.TELEPHONY_NO_NETWORK_CT,
+            TelephonyIcons.QS_TELEPHONY_NO_NETWORK,
+            AccessibilityContentDescriptions.PHONE_SIGNAL_STRENGTH[0],
+            R.string.accessibility_data_connection_roaming,
+            TelephonyIcons.ICON_3G_CT,
+            false,
+            TelephonyIcons.NETWORK_TYPE_3G,
+            TelephonyIcons.QS_DATA_3G
+            );
+    
+    static final MobileIconGroup TWO_G_CT = new MobileIconGroup(
+            "2G",
+            TelephonyIcons.TELEPHONY_SIGNAL_STRENGTH,
+            TelephonyIcons.QS_TELEPHONY_SIGNAL_STRENGTH,
+            AccessibilityContentDescriptions.PHONE_SIGNAL_STRENGTH,
+            0, 0,
+            TelephonyIcons.TELEPHONY_NO_NETWORK_CT,
+            TelephonyIcons.QS_TELEPHONY_NO_NETWORK,
+            AccessibilityContentDescriptions.PHONE_SIGNAL_STRENGTH[0],
+            R.string.accessibility_data_connection_roaming,
+            TelephonyIcons.ICON_2G_CT,
+            false,
+            TelephonyIcons.NETWORK_TYPE_2G,
+            TelephonyIcons.QS_DATA_G
             );
 }
 

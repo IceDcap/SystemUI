@@ -22,6 +22,7 @@ import android.os.Message;
 import android.util.Log;
 import android.widget.RemoteViews;
 
+import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.KeyguardViewHostManager;
 import com.amigo.navi.keyguard.KeyguardWallpaperManager;
 import com.amigo.navi.keyguard.network.connect.NetWorkUtils;
@@ -97,29 +98,33 @@ public class HKWallpaperNotification {
 		
 		boolean isShowed = KeyguardSettings.getBooleanSharedConfig(mContext, KeyguardSettings.WALLPAPER_UPDATE_NOTIFICATION_SHOWED, false);
 		if (isShowed) {
-			Log.d(TAG, "wallpaper update notification show has showed");
+			DebugLog.d(TAG, "wallpaper update notification : has showed");
 			return;
 		}
 		
-		boolean hasTodayWallpaper = keyguardWallpaperManager.isDownloadComplete();
+		boolean hasTodayWallpaper = !KeyguardSettings.getBooleanSharedConfig(mContext, KeyguardSettings.WALLPAPER_UPDATE_NOTIFICATION_FIRST, false);
 		if (hasTodayWallpaper) {
+			DebugLog.d(TAG, "wallpaper update notification : has today wallpaper");
 			return;
 		}
 		
 		boolean isUpdate = KeyguardSettings.getWallpaperUpadteState(mContext);
 		boolean isOnlyWifi = KeyguardSettings.getOnlyWlanState(mContext);
 		if (!isUpdate || !isOnlyWifi) {
+			DebugLog.d(TAG, "wallpaper update notification : update switch is off");
 			return;
 		}
 		
 		boolean isNetWorkAvailable = NetWorkUtils.isNetworkAvailable(mContext);
 		boolean isWifi = NetWorkUtils.isWifi(mContext);
 		if (!isNetWorkAvailable || isWifi) {
+			DebugLog.d(TAG, "wallpaper update notification : net error");
 			return;
 		}
 		
 		boolean isUpdating = keyguardWallpaperManager.isDownloading();
 		if (isUpdating) {
+			DebugLog.d(TAG, "wallpaper update notification : downing");
 			return;
 		}
 		
@@ -127,7 +132,7 @@ public class HKWallpaperNotification {
 	}
 	
 	public void createWallpaperNotification() {
-		
+		DebugLog.d(TAG, "wallpaper update notification : create ok");
 		clearNotify(notifyId);
 		offex = 0;
 	    mWallpaperTotal = 10;
@@ -137,6 +142,11 @@ public class HKWallpaperNotification {
 
 		if (mNotification == null) {
 			mNotification = new Notification();
+			mNotification.icon = R.drawable.amigologo;
+			mNotification.when = System.currentTimeMillis();
+			mNotification.flags = Notification.FLAG_NO_CLEAR;
+			mNotification.priority = Notification.PRIORITY_MAX;
+			mNotification.tickerText = mContext.getText(R.string.wallpaper_update_notification_content);
 		}
 		mRemoteViews = new RemoteViews(mContext.getPackageName(), R.layout.wallpaper_update_notification);
 
@@ -157,9 +167,6 @@ public class HKWallpaperNotification {
 		mRemoteViews.setOnClickPendingIntent(R.id.wallpaper_update_notification_cancel, intent_next);
 
 		mNotification.contentView = mRemoteViews;
-		mNotification.tickerText = mContext.getText(R.string.wallpaper_update_notification_content);
-		mNotification.priority = Notification.PRIORITY_HIGH;
-//		mNotification.icon = R.drawable.haokan_notification_settings;
 		
 		mNotificationManager.notify(notifyId, mNotification);
 	}

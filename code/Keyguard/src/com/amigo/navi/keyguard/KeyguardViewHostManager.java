@@ -102,6 +102,7 @@ public class KeyguardViewHostManager {
   
     private boolean isInitRefreshKeyguardListView = true;
     public static final String KEYGUARD_LOCK_BY_OTHERAPP="lockByOtherApp";
+    private boolean mOccluded;
     
  
 
@@ -227,7 +228,7 @@ public class KeyguardViewHostManager {
         beginStatics();
 		if (mViewMediatorCallback.isScreenOn()) {
 			DebugLog.d(TAG, "show  isScreenOn  updateListView");
-			mKeyguardWallpaperManager.updateListView();
+			mKeyguardWallpaperManager.onKeyguardLockedWhenScreenOn();
 		}
         refreshCacheScreenOn();
 		UIController.getInstance().onKeyguardLocked();
@@ -827,6 +828,7 @@ public class KeyguardViewHostManager {
 	
 	
 	public void setOccluded(boolean occluded){
+		 mOccluded=occluded;
     	 if (occluded) {   		 
   	        mKeyguardViewHost.setVisibility(View.GONE);      
   	        cancelFingerIdentify();
@@ -835,8 +837,18 @@ public class KeyguardViewHostManager {
          	startFingerIdentify();
          }    	
     }
+	
+	
     
-    public void reset(boolean occluded){
+    public boolean ismOccluded() {
+		return mOccluded;
+	}
+
+	public void setmOccluded(boolean mOccluded) {
+		this.mOccluded = mOccluded;
+	}
+
+	public void reset(boolean occluded){
         showBouncerOrKeyguard();
 		if(occluded){
        		mKeyguardViewHost.setVisibility(View.GONE); 

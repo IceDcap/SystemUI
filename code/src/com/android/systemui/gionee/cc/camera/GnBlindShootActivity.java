@@ -151,11 +151,44 @@ public class GnBlindShootActivity extends Activity {
                     }
                 }
 
+                // select supportedPictureSizes
+                List<Size> supportedPictureSizes = mParameters.getSupportedPictureSizes();
+            	Size targetPicSize = mCamera.new Size(targetSize.width, targetSize.height);
+                int indexPicSize = supportedPictureSizes.size();
+                for (int i=0; i < indexPicSize; i++){
+                    Size size = supportedPictureSizes.get(i);
+                    if (size.width >= targetPicSize.width && size.height >= targetPicSize.height) {
+                    	//It is necessary that picture.width >=preview.width && picture.height >= preview.height
+                    	targetPicSize.width = size.width;
+                    	targetPicSize.height = size.height;
+                        Log.d(TAG, "targetPicSize width: " + targetPicSize.width + "  height: " + targetPicSize.height);
+                    }
+                }
+
                 mParameters.setPreviewSize(targetSize.width, targetSize.height);
-                mParameters.setPictureSize(targetSize.width, targetSize.height);
+                mParameters.setPictureSize(targetPicSize.width, targetPicSize.height);
                 mParameters.setFlashMode(Parameters.FLASH_MODE_OFF);
                 mParameters.setPictureFormat(ImageFormat.JPEG);
-                mParameters.setFocusMode("manual");
+                
+                List <String> focusMode = mParameters.getSupportedFocusModes();
+/*
+                // only for debug begin
+                int indexFocusSize = focusMode.size();
+                for (int i=0; i<indexFocusSize; i++){
+                	 Log.d(TAG, "focusMode: " + focusMode.get(i));
+                }
+                // only for debug end
+*/                
+                if(focusMode.contains("manual")){
+                	Log.d(TAG, "setFocusMode manual");
+                    mParameters.setFocusMode("manual");
+                }else if (focusMode.contains(Parameters.FOCUS_MODE_AUTO)){
+                	Log.d(TAG, "setFocusMode FOCUS_MODE_AUTO");
+                	mParameters.setFocusMode(Parameters.FOCUS_MODE_AUTO);
+                }else{
+                	//  no special treatment
+                	Log.d(TAG, "do not setFocusMode");
+                }
                 mParameters.set("afeng-pos", "110");
                 mCamera.setParameters(mParameters);
             }

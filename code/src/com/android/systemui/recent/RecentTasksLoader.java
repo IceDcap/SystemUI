@@ -298,6 +298,7 @@ public class RecentTasksLoader implements View.OnTouchListener {
 
 
     private void cancelLoadingThumbnailsAndIcons() {
+    	mState = State.CANCELLED;
         if (mRecentsPanel != null && mRecentsPanel.isShowing()) {
             return;
         }
@@ -315,7 +316,6 @@ public class RecentTasksLoader implements View.OnTouchListener {
             mRecentsPanel.onTaskLoadingCancelled();
         }
         mFirstScreenful = false;
-        mState = State.CANCELLED;
     }
 
     private void clearFirstTask() {
