@@ -24,6 +24,7 @@ import java.util.List;
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.KeyguardViewHostManager;
 import com.amigo.navi.keyguard.fingerprint.FingerIdentifyManager;
+import com.amigo.navi.keyguard.haokan.Common;
 import com.amigo.navi.keyguard.util.TimeUtils;
 import com.amigo.navi.keyguard.util.VibatorUtil;
 import com.android.keyguard.AppearAnimationUtils;
@@ -222,7 +223,7 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
     private void setForgetPasswordButton() {
 	   	 mForgetButton = (TextView) this.findViewById(R.id.forget_password);
 	     if(mForgetButton == null) return;
-	     if(getTimeOutSize()>=5 && AmigoSecurityPasswordUtil.getInstance().getSecurityPasswordSupport()){
+	     if(getTimeOutSize()>=5 && AmigoSecurityPasswordUtil.getInstance().getSecurityPasswordSupport() && !Common.isPowerSaverMode()){
 	    	 mForgetButton.setVisibility(View.VISIBLE);
 	     }
          mForgetButton.setOnClickListener(new View.OnClickListener() {
@@ -370,6 +371,10 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
     }
 
 	private void unLockDone() {
+		if(mSimpleNumViewCountdownTimer!=null){
+			mSimpleNumViewCountdownTimer.cancel();
+			mSimpleNumViewCountdownTimer = null;
+		}
 		if(AmigoSecurityPasswordUtil.getInstance().getSecurityPasswordSupport()){
 			mForgetButton.setVisibility(View.INVISIBLE);
 		}
@@ -386,7 +391,7 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
 		if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "onUnlockFail failReason :"+failReason);
 		failShake(failReason);
 		if(failReason == UNLOCK_FAIL_REASON_TIMEOUT) {
-			if(AmigoSecurityPasswordUtil.getInstance().getSecurityPasswordSupport()){
+			if(AmigoSecurityPasswordUtil.getInstance().getSecurityPasswordSupport() && !Common.isPowerSaverMode()){
 				mForgetButton.setVisibility(View.VISIBLE);
 			}
 			 

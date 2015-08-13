@@ -48,6 +48,9 @@
          showing.  [CHAR LIMIT=40]-->
     <string name="status_bar_no_notifications_title">No notifications</string>
 
+    <!-- Text displayed when the user selects the check box for setting default application.  See the "Use by default for this action" check box. -->
+    <string name="clearDefaultHintMsg">Clear default in System settings &gt; Apps &gt; Downloaded.</string>
+    
     <!-- The label for the group of notifications for ongoing events in the opened version of
          the status bar.  An ongoing call is the prime example of this.  The MP3 music player
          might be another example.   [CHAR LIMIT=40] -->

@@ -226,7 +226,12 @@ public class UIController implements OnTouchlListener{
     }
     
     public void onBackPress() {
-
+        if (mArcLayout != null) {
+            if (mArcLayout.isExpanded() || isArcExpanding) {
+                DebugLog.d(TAG, "onBackPress ArcLayout reset");
+                mArcLayout.startHide();
+            }
+        }
     }
     
     
@@ -287,9 +292,9 @@ public class UIController implements OnTouchlListener{
     @Override
     public void OnTouchMove(int x, int dx) {
         
-        if (Common.isPowerSaverMode()) {
+       /* if (Common.isPowerSaverMode()) {
             return;
-        }
+        }*/
         
         final float infozoneMaxTranslationX = mInfozone.getMaxTranslationX();
         final float playerMaxTranslationX = mPlayerButton.getMaxTranslationX();
@@ -361,9 +366,9 @@ public class UIController implements OnTouchlListener{
     
     @Override
     public void OnTouchUp(boolean change) {
-        if (Common.isPowerSaverMode()) {
+        /*if (Common.isPowerSaverMode()) {
             return;
-        }
+        }*/
  
         mInfozoneTranslationX = 0f;
         refreshWallpaperInfo();
@@ -462,7 +467,25 @@ public class UIController implements OnTouchlListener{
     
     public void onKeyguardLocked() {
      
-        if (categoryActivity != null) {
+        finishShowWhenLockedActivity();
+        
+        if (getBlankActivity() != null) {
+            if (getBlankActivity().isLcokApplyWallpaper() && !getBlankActivity().isDestroyed()) {
+                DebugLog.d(TAG, "getBlankActivity is not destroyed()");
+//                getBlankActivity().finish();
+//                setBlankActivity(null);
+            }
+        }
+        
+        if (Guide.needGuideScrollUp() && Guide.isIdle() && !getKeyguardBouncer().isSimSecure()) {
+            getAmigoKeyguardPage().addGuideScrollUpView();
+        }
+        if(mCaptionsView!=null){
+        	 mCaptionsView.onKeyguardShown();
+        }
+    }
+	public void finishShowWhenLockedActivity() {
+		if (categoryActivity != null) {
             if (!categoryActivity.isDestroyed()) {
                 DebugLog.d(TAG, "categoryActivity is not destroyed()");
                 categoryActivity.finish();
@@ -487,21 +510,7 @@ public class UIController implements OnTouchlListener{
                 setDetailActivity(null);
             }
         }
-        
-        if (getBlankActivity() != null) {
-            if (!getBlankActivity().isDestroyed()) {
-                DebugLog.d(TAG, "getBlankActivity is not destroyed()");
-                getBlankActivity().finish();
-                setBlankActivity(null);
-            }
-        }
-        
-        if (Guide.needGuideScrollUp() && Guide.isIdle() && !getKeyguardBouncer().isSimSecure()) {
-            getAmigoKeyguardPage().addGuideScrollUpView();
-        }
-        
-
-    }
+	}
     
     public void lockKeyguardByOther() {
     	getmViewMediatorCallback().lockKeyguardByOtherApp();
@@ -617,7 +626,9 @@ public Wallpaper getCurrentWallpaperInfo() {
             boolean isNotFavorite = TextUtils.isEmpty(path);
             
             if (!isNotFavorite) {
-                isNotFavorite = !new File(getmCurrentWallpaper().getFavoriteLocalPath()).exists();
+                boolean isMount=Common.isExistSdCard();
+                boolean isFileExist=new File(getmCurrentWallpaper().getFavoriteLocalPath()).exists();
+                isNotFavorite = !isFileExist&&isMount;
             }
             if (isNotFavorite) {
                 getmCurrentWallpaper().setFavorite(false);

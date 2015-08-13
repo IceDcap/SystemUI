@@ -169,5 +169,17 @@ public class HKAgent {
     	onEvent(log);
     }
     
-    
+	// event id 26
+	public static void onEventDetialActivityShowDuriation(int coveredMillis) {
+		EventLogger log = new EventLogger(Common.currentTimeHour(),
+				Event.TIME_ON_DETIALACTIVITY, coveredMillis);
+		onEvent(log);
+	}
+
+	// event id 37
+	public static void onEventSetLocalImgAsWallpaper() {
+		EventLogger log = new EventLogger(Common.currentTimeDateTime(),
+				Event.SETTING_LOCALIMG_AS_WALLPAPER, 1);
+		onEvent(log);
+	}
 }

@@ -956,23 +956,20 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 			    finish();
 			    	
 			 }else{
-			    	mKeyguardBouncer.bouncerShowing();
-                    mBouncerIsShowing=true;
+		
 			    /**
 			     * do it for insure the skylight will be hide
 			     */
 //			    mKeyguardViewManager.hideSkylightWhenKeyguardDone();
 				if(mKeyguardBouncer!=null){
+			    	mKeyguardBouncer.bouncerShowing();
+                    mBouncerIsShowing=true;
 					mKeyguardBouncer.onResumeSecurityView(KeyguardSecurityView.KEYGUARD_HOSTVIEW_SCROLL_AT_UNLOCKH_EIGHT);
 				}
 			}
 			missCountShow = false;
 			mKeyguardBouncer.showWithDismissAction(mOnDisMissAction);
-//			mKeyguardViewManager.resetUnlockWithWindowAnimFlag();
-//			else{
-//				mKeyguardPage.hideIndicator();
-//				changeBackground(mBackgroundChangeMode,-top,1-(float)top/mMaxBoundY/1.5f);
-//			}
+
 		}else if(top <= 0){
 			if(DebugLog.DEBUG){
 				DebugLog.d(LOG_TAG, "onScrollChanged--top <= 0");
@@ -1052,20 +1049,11 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 	
 	public void show(Bundle options) {
 		// TODO Auto-generated method stub
-		if(mKeyguardPage!=null){
-			if(DebugLog.DEBUG){
-				DebugLog.d(LOG_TAG, "show()");
-			}
-			mKeyguardPage.show();
-			
-		}
+	
 		DebugLog.d(LOG_TAG, "show()....options="+(options!=null? options.getBoolean(KeyguardViewHostManager.KEYGUARD_LOCK_BY_OTHERAPP) : false ));
-		
-//		resetHostYToHomePosition();
 		if(mKeyguardBouncer!=null){
 			mKeyguardBouncer.show(true);
 		}
-		
 		mBouncerIsShowing=false;
 	}
 	
@@ -1282,10 +1270,16 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
     private OnViewTouchListener mOnViewTouchListener;
 	public void dismissWithAction(OnDismissAction r){
 		mOnDisMissAction = r;
-		if(!isSecure() && KeyguardViewHostManager.getInstance().isShowing() && KeyguardViewHostManager.getInstance().ismOccluded()){
+		if(KeyguardViewHostManager.getInstance().isShowing() && KeyguardViewHostManager.getInstance().ismOccluded()){
+		if(!isSecure()){
 			finish();
 			return ;
-		}
+		}else{
+			mUIController.finishShowWhenLockedActivity();
+		} 
+	 }
+		
+		
 		scrollToUnlockByOther();	
 		mKeyguardBouncer.setOnDismissAction(mOnDisMissAction);
 	}
@@ -1372,9 +1366,9 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
             
             @Override
             public boolean onTouchEvent(MotionEvent ev) {
-                if (Common.isPowerSaverMode()) {
+               /* if (Common.isPowerSaverMode()) {
                     return false;
-                }
+                }*/
                 return super.onTouchEvent(ev);
             }
         };
@@ -1440,6 +1434,13 @@ public class AmigoKeyguardHostView extends LinearLayout implements SecurityViewR
 		}else{
 			return true;
 		}
+	}
+
+	public void setOccluded(boolean occluded) {
+		if(!occluded && isHostYAtTopPostion() && isSecure()){
+			mKeyguardBouncer.onResumeSecurityView(KeyguardSecurityView.KEYGUARD_HOSTVIEW_SCROLL_AT_UNLOCKH_EIGHT);
+		}
+		
 	}
 
 }

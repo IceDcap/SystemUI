@@ -107,7 +107,7 @@ public class ArcHomeButton extends RelativeLayout {
     
    
     public void closeAnimRun() {
-        
+        cancelOpenAnimator();
         mImageView.setClickable(false);
         ValueAnimator animator = ValueAnimator.ofFloat(mFromRadius, mMaxRadius).setDuration(400);  
         animator.setInterpolator(new DecelerateInterpolator());
@@ -136,8 +136,10 @@ public class ArcHomeButton extends RelativeLayout {
             }  
         });  
         
-        PropertyValuesHolder pvhscaleX = PropertyValuesHolder.ofFloat("scaleX", 1f,0.4f);  
-        PropertyValuesHolder pvhscaleY = PropertyValuesHolder.ofFloat("scaleY", 1f,0.4f);  
+//        PropertyValuesHolder pvhscaleX = PropertyValuesHolder.ofFloat("scaleX", 1f,0.4f);  
+//        PropertyValuesHolder pvhscaleY = PropertyValuesHolder.ofFloat("scaleY", 1f,0.4f);  
+        PropertyValuesHolder pvhscaleX = PropertyValuesHolder.ofFloat("scaleX", 0.4f);  
+        PropertyValuesHolder pvhscaleY = PropertyValuesHolder.ofFloat("scaleY", 0.4f);  
         ObjectAnimator objectAnimator = ObjectAnimator.ofPropertyValuesHolder(mImageView, pvhscaleX, pvhscaleY).setDuration(200);
         
         objectAnimator.addListener(new AnimatorListener() {
@@ -202,21 +204,31 @@ public class ArcHomeButton extends RelativeLayout {
     private AnimatorSet mOpenAnimator;
     private AnimatorSet mCloseAnimator;
     
-    public void cancelAnimator() {
-    	if (mOpenAnimator != null) {
-			if (mOpenAnimator.isRunning()) {
-				mOpenAnimator.cancel();
-			}
-			mOpenAnimator = null;
-		}
+    
+    private void cancelOpenAnimator() {
+        
+        if (mOpenAnimator != null) {
+            if (mOpenAnimator.isRunning()) {
+                mOpenAnimator.cancel();
+            }
+            mOpenAnimator = null;
+        }
+    }
+    
+    
+    private void cancelCloseAnimator() {
         
         if (mCloseAnimator != null) {
-			if (mCloseAnimator.isRunning()) {
-				mCloseAnimator.cancel();
-			}
-			mCloseAnimator = null;
-		}
-
+            if (mCloseAnimator.isRunning()) {
+                mCloseAnimator.cancel();
+            }
+            mCloseAnimator = null;
+        }
+    }
+    
+    public void cancelAnimator() {
+        cancelOpenAnimator();
+        cancelCloseAnimator();
 	}
     
     public void rippleAnimRun( ){  

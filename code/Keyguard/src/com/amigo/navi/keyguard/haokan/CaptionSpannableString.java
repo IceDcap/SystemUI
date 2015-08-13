@@ -70,7 +70,7 @@ public class CaptionSpannableString extends SpannableStringBuilder{
  
         }
         
-        if (!isEmptyLink) {
+       /* if (!isEmptyLink) {
             append(SPACE_LINK);
             
             end = length();
@@ -86,9 +86,9 @@ public class CaptionSpannableString extends SpannableStringBuilder{
                   Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
  
             
-        }
+        }*/
         
-        if (!isEmptyImgSource || !isEmptyLink) {
+        if (!isEmptyImgSource) {
             end = length();
             start = caption.getContent().length();
             TextAppearanceSpan textAppearanceSpan = new TextAppearanceSpan(mContext, R.style.LinkTextAppearance);

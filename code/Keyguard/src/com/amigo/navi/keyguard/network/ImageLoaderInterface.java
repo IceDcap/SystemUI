@@ -15,7 +15,7 @@ public interface ImageLoaderInterface {
     public void addImage2Cache(String url, Bitmap value);
     public Bitmap getBitmapFromCache(String url);
 	public void loadImageToView(ImageViewWithLoadBitmap imageViewWithLoadBitmap/*, int posOfListener*/);
-	public void addBmpToImageRemoved(Bitmap loadedImage);
+	public void addBmpToImageRemoved(Bitmap loadedImage, boolean isImage);
 	public String getmCurrentUrl();
 	
 	public void loadPageToCache(final Wallpaper wallpaper, final boolean isImage);

@@ -10,6 +10,7 @@ import android.text.TextUtils;
 
 
 import com.amigo.navi.keyguard.DebugLog;
+import com.amigo.navi.keyguard.Guide;
 import com.amigo.navi.keyguard.KWDataCache;
 import com.amigo.navi.keyguard.KeyguardViewHostManager;
 import com.amigo.navi.keyguard.KeyguardWallpaperManager;
@@ -23,8 +24,6 @@ import com.amigo.navi.keyguard.haokan.entity.WallpaperList;
 import com.amigo.navi.keyguard.network.connect.NetWorkUtils;
 import com.amigo.navi.keyguard.network.local.DealWithByteFile;
 import com.amigo.navi.keyguard.network.local.ReadAndWriteFileFromSD;
-import com.amigo.navi.keyguard.network.local.LocalBitmapOperation;
-import com.amigo.navi.keyguard.network.local.LocalFileOperationInterface;
 import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
 import com.amigo.navi.keyguard.network.manager.DownLoadBitmapManager;
 import com.amigo.navi.keyguard.network.manager.DownLoadJsonManager;
@@ -61,18 +60,6 @@ public class RequestNicePicturesFromInternet {
 
     }
     
-//    private int mScreenWid = 0;
-//    private int mScreenHei = 0;
-//    public void init(){
-//    	mScreenWid = KWDataCache.getScreenWidth(mContext.getResources());
-//    	mScreenHei = KWDataCache.getAllScreenHeigt(mContext);
-//        mDealWithCategory = new DealWithByteFile(mContext
-//                ,DiskUtils.CATEGORY_BITMAP_FOLDER,mPath);
-//        LocalFileOperationInterface localFileOperationInterface = new LocalBitmapOperation(mContext);
-//        mDealWithWallpaper = new ReadAndWriteFileFromSD(mContext
-//                ,DiskUtils.WALLPAPER_BITMAP_FOLDER,mPath,localFileOperationInterface);
-////        registerData();
-//    }
     
     public void registerData(final boolean isCheckFromOnToOff){
         if (HKWallpaperNotification.getInstance(mContext).isUpdating()) {
@@ -133,6 +120,12 @@ public class RequestNicePicturesFromInternet {
                 public void cancelTask() {
                     isStop = true;
                 }
+
+				@Override
+				public boolean isCanceled() {
+					// TODO Auto-generated method stub
+					return false;
+				}
             };
         	Vector<LoadImageThread> threadList = null;
             threadList = LoadDataPool.getInstance(mContext.getApplicationContext())
@@ -267,11 +260,11 @@ public class RequestNicePicturesFromInternet {
 
                 DebugLog.d(TAG,"requestPictureList date == updateDate:" + (date == updateDate));  
                 
-                LocalFileOperationInterface localFileOperationInterface = new LocalBitmapOperation(mContext);
                 ReadAndWriteFileFromSD dealWithWallpaper = new ReadAndWriteFileFromSD(mContext
-                        ,DiskUtils.WALLPAPER_BITMAP_FOLDER,mPath,localFileOperationInterface);
+                        ,DiskUtils.WALLPAPER_BITMAP_FOLDER,mPath);
                 if(updateDate != date){
                     downloadWallpaperPicturesFromNet(dealWithWallpaper,isStop);
+                    Guide.increaseDownloadTimes(mContext);
                 }else{
                     downloadWallpaperPicturesFromDB(dealWithWallpaper,isStop);
                 }
@@ -335,7 +328,7 @@ public class RequestNicePicturesFromInternet {
                     String key = DiskUtils.constructFileNameByUrl(picUrl);
                     boolean savedSuccess = false;
                     if(bitmap != null){
-                    	Bitmap cutBitmap = BitmapUtil.getResizedBitmapForSingleScreen(bitmap, mScreenHei, mScreenWid);
+                    	Bitmap cutBitmap = bitmap;//BitmapUtil.getResizedBitmapForSingleScreen(bitmap, mScreenHei, mScreenWid);
                         DebugLog.d(TAG,"downloadWallpaperPicturesFromNet cutBitmap:" + cutBitmap);
                     	savedSuccess = dealWithBitmap.writeToLocal(key,cutBitmap);
                     	BitmapUtil.recycleBitmap(bitmap);
@@ -464,9 +457,8 @@ public class RequestNicePicturesFromInternet {
 					WallpaperList deleteList = null;
 					KeyguardWallpaperManager keyguardWallpaperManager = KeyguardViewHostManager.getInstance().getKeyguardWallpaperManager();
 					
-					LocalFileOperationInterface localFileOperationInterface = new LocalBitmapOperation(mContext);
 					ReadAndWriteFileFromSD dealWithBitmap = new ReadAndWriteFileFromSD(
-							mContext, DiskUtils.WALLPAPER_BITMAP_FOLDER, mPath, localFileOperationInterface);
+							mContext, DiskUtils.WALLPAPER_BITMAP_FOLDER, mPath);
 
 					List<Integer> categoryList = CategoryDB.getInstance(mContext).queryCategoryIDByFavorite();
 					if (categoryList.size() == 0) {
@@ -501,7 +493,7 @@ public class RequestNicePicturesFromInternet {
 							String key = DiskUtils.constructFileNameByUrl(picUrl);
 							boolean savedSuccess = false;
 							if (bitmap != null) {
-								Bitmap cutBitmap = BitmapUtil.getResizedBitmapForSingleScreen(bitmap, mScreenHei, mScreenWid);
+								Bitmap cutBitmap = bitmap;//BitmapUtil.getResizedBitmapForSingleScreen(bitmap, mScreenHei, mScreenWid);
 								DebugLog.d(TAG, "downloadWallpaperPicturesFromNet cutBitmap:" + cutBitmap);
 								savedSuccess = dealWithBitmap.writeToLocal(key, cutBitmap);
 								BitmapUtil.recycleBitmap(bitmap);
@@ -558,6 +550,12 @@ public class RequestNicePicturesFromInternet {
 			@Override
 			public void cancelTask() {
 				isStop = true;
+			}
+
+			@Override
+			public boolean isCanceled() {
+				// TODO Auto-generated method stub
+				return false;
 			}
 		};
 		Vector<LoadImageThread> threadList = null;

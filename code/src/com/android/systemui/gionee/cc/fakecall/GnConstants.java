@@ -7,7 +7,7 @@ package com.android.systemui.gionee.cc.fakecall;
 */
 
 public class GnConstants {
-    public static final int CALL_PHONE_TIME = 15;
+    public static final int CALL_PHONE_TIME = 15000;// ms
     
     public static final String START_TASK_OPTR = "optr";
     

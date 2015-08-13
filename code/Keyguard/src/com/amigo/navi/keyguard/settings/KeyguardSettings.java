@@ -52,7 +52,9 @@ public class KeyguardSettings {
 	private static final String TIME_LOGSUPLOAD_LAST = "time_logs_upload_last";	
 	
 	public static final String WALLPAPER_UPDATE_NOTIFICATION_FIRST = "wallpaper_update_notification_first";
-	public static final String WALLPAPER_UPDATE_NOTIFICATION_SHOWED = "wallpaper_update_notification_showed";
+    public static final String WALLPAPER_UPDATE_NOTIFICATION_SHOWED = "wallpaper_update_notification_showed";
+	public static final String NUMBER_POINT_UPDATE_WALLPAPER = "number_of_point_update_wallpaper";
+	public static final String TIME_POINT_UPDATE_WALLPAPER = "time_of_point_update_wallpaper";
 
 	public static void setLogsUploadTime(Context context, long time) {
         SharedPreferences sp = context.getSharedPreferences(PREFERENCE_NAME,
@@ -200,5 +202,28 @@ public class KeyguardSettings {
         editor.putBoolean(key, value);
         return editor.commit();
     }
+    
+    public static SharedPreferences getPrefs(Context context) {
+    	return context.getSharedPreferences(
+                PREFERENCE_NAME, Context.MODE_PRIVATE);
+    }
 
+    public static void saveNumberPointUpdateWallpaper(Context context,int count){
+        SharedPreferences preferences = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_MULTI_PROCESS);
+        preferences.edit().putInt(NUMBER_POINT_UPDATE_WALLPAPER, count).commit();
+    }
+    public static int getNumberPointUpdateWallpaper(Context context){
+        SharedPreferences preferences = context.getSharedPreferences(KeyguardSettings.PREFERENCE_NAME, Context.MODE_MULTI_PROCESS);
+        return preferences.getInt(NUMBER_POINT_UPDATE_WALLPAPER, 0);
+    }
+    
+    
+    public static void saveTimePointUpdateWallpaper(Context context,String time){
+        SharedPreferences preferences = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_MULTI_PROCESS);
+        preferences.edit().putString(TIME_POINT_UPDATE_WALLPAPER, time).commit();
+    }
+    public static String getTimePointUpdateWallpaper(Context context){
+        SharedPreferences preferences = context.getSharedPreferences(KeyguardSettings.PREFERENCE_NAME, Context.MODE_MULTI_PROCESS);
+        return preferences.getString(TIME_POINT_UPDATE_WALLPAPER, "");
+    }
 }

@@ -5,10 +5,7 @@
     android:width="16dp" >
 
     <path
-        android:fillColor="#FFFFFFFF"
-        android:pathData="M 0 0 h 24 v 24 h -24 Z" />
-    <path
-        android:fillColor="#FFFFFFFF"
-        android:pathData="M 7 4 v 2 H 4 V 4 H 3 v 5 h 1 V 7 h 3 v 2 h 1 V 4 H 7 Z" />
+        android:fillColor="#FFFFFF"
+        android:pathData="M7,4v2H4V4H3v5h1V7h3v2h1V4H7z" />
 
 </vector>

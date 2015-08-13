@@ -20,7 +20,7 @@
         xmlns:androidprv="http://schemas.android.com/apk/prv/res/android"
         package="com.android.systemui"
         android:sharedUserId="android.uid.systemui"
-		android:versionName="6.1.0.bu"
+		android:versionName="6.1.0.ch"
         coreApp="true">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -481,18 +481,25 @@
             android:theme="@amigo:style/Theme.Amigo.Light"
             android:excludeFromRecents="true" >
         </activity>
+<!--             android:launchMode="singleInstance" -->
          <activity
             android:name="com.amigo.navi.keyguard.haokan.BlankActivity"
-            android:launchMode="singleInstance"
             android:excludeFromRecents="true"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent.NoTitleBar">
+              <intent-filter>
+                <action android:name="com.amigo.navi.keyguard.SettingWallPaper"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
 
         <receiver android:name="com.amigo.navi.keyguard.settings.KeyguardSettingsSetupwizardReceiver">
             <intent-filter>
                 <action android:name="com.gionee.setupwizard.SECURE_SERVICE"/>
             </intent-filter>
+        </receiver>
+        
+        <receiver android:name="com.android.systemui.gionee.cc.fakecall.GnFakeCallAlarmReceiver">
         </receiver>
         <service
             android:name="com.android.systemui.gionee.cc.camera.service.GnShortCutServices"

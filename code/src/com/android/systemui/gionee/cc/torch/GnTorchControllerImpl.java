@@ -67,11 +67,13 @@ public final class GnTorchControllerImpl implements GnTorchController {
 
     @Override
     public void addStateChangedCallback(Callback cb) {
-        mCallbacks.add(cb);        
+        Log.d(TAG, "addStateChangedCallback: " + cb);
+    	mCallbacks.add(cb);   
     }
 
     @Override
     public void removeStateChangedCallback(Callback cb) {
+        Log.d(TAG, "removeStateChangedCallback: " + cb);
         mCallbacks.remove(cb);        
     }
 
@@ -190,7 +192,10 @@ public final class GnTorchControllerImpl implements GnTorchController {
                     boolean isTorchOn = mTorch.getTorchState();
                     Log.d(TAG, "updateUiState  isTorchOn: " + isTorchOn);
                     for (Callback callback : mCallbacks) {
-                        callback.onTorchStateChange(isTorchOn);
+						Log.d(TAG, "updateUiState callback: " + callback);
+						if (callback != null) {
+							callback.onTorchStateChange(isTorchOn);
+						}
                     }
                 }
             });

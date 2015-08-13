@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.android.systemui.R;
@@ -65,8 +66,12 @@ public class GnMobileDataTile extends GnQSTile<GnQSTile.BooleanState> {
 
     @Override
     protected void handleLongClick() {
-        Intent intent = new Intent("com.android.settings.sim.SIM_SUB_INFO_SETTINGS");
-        mHost.startSettingsActivity(intent);
+    	int simCount = TelephonyManager.getDefault().getPhoneCount();
+        Log.d(TAG, "handleLongClick " + simCount);
+		if (simCount > 1) {// dual sim
+			Intent intent = new Intent("com.android.settings.sim.SIM_SUB_INFO_SETTINGS");
+			mHost.startSettingsActivity(intent);
+		}
     }
 
     @Override

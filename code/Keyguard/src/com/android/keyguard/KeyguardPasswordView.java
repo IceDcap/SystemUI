@@ -32,6 +32,8 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 import android.view.inputmethod.EditorInfo;
@@ -46,10 +48,12 @@ import java.util.List;
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.KeyguardViewHostManager;
 import com.amigo.navi.keyguard.fingerprint.FingerIdentifyManager;
+import com.amigo.navi.keyguard.haokan.Common;
 import com.amigo.navi.keyguard.security.AmigoAccount;
 import com.amigo.navi.keyguard.security.AmigoSecurityPasswordUtil;
 import com.amigo.navi.keyguard.security.AmigoUnBindAcountActivity;
 import com.amigo.navi.keyguard.skylight.SkylightActivity;
+import com.amigo.navi.keyguard.util.AmigoKeyguardUtils;
 import com.amigo.navi.keyguard.util.TimeUtils;
 import com.amigo.navi.keyguard.util.VibatorUtil;
 import com.android.internal.widget.LockPatternUtils;
@@ -149,6 +153,17 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
             }
         });
         }
+        
+        if(mKeyguardSecurityViewFlipper != null){
+        	mKeyguardSecurityViewFlipper.setFliperVisibleHeihgtChangedListener(new FliperVisibleHeihgtChangedListener() {
+				
+				@Override
+				public void fliperVisibleHeihgtChanged(int fliperVisibleHeihgt) {
+					// TODO Auto-generated method stub
+					resetGapViewHeight(fliperVisibleHeihgt);
+				}
+			});
+        }
     }
   
     private void showInput(){
@@ -172,7 +187,14 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
         	mPasswordViewCountdownTimer = null;
         }*/
 //        setVisibility(INVISIBLE);
+        removeFliperVisibleHeihgtChangedListener();
     }
+
+	private void removeFliperVisibleHeihgtChangedListener() {
+		if(mKeyguardSecurityViewFlipper != null){
+        	mKeyguardSecurityViewFlipper.removeFliperVisibleHeihgtChangedListener();
+        }
+	}
 
 	private void hiddenInput() {
 		mPasswordEntry.clearFocus();
@@ -191,6 +213,7 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
     	// TODO Auto-generated method stub
     	super.onDetachedFromWindow();
     	hiddenInput();
+    	removeFliperVisibleHeihgtChangedListener();
     }
 
     @Override
@@ -271,13 +294,14 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
         setForgetPasswordButton();
         gioneeAccount = GioneeAccount.getInstance(mContext);
 //        setVisibility(INVISIBLE);
+        mGapView = findViewById(R.id.gap_view);
+        mEmergencyAreaRelHeight = mContext.getResources().getDimensionPixelOffset(R.dimen.complex_password_emergency_button_rel_height);
     }
     
-
     private void setForgetPasswordButton() {
    	    forgetButton = (TextView) this.findViewById(R.id.forget_password);
         if(forgetButton == null) return;
-        if(getTimeOutSize()>=5 && AmigoSecurityPasswordUtil.getInstance().getSecurityPasswordSupport()){
+        if(getTimeOutSize()>=5 && AmigoSecurityPasswordUtil.getInstance().getSecurityPasswordSupport() && !Common.isPowerSaverMode()){
        	 	forgetButton.setVisibility(View.VISIBLE);
         }
         forgetButton.setOnClickListener(new View.OnClickListener() {
@@ -516,11 +540,16 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
 	}
 
 	private void unLockDone() {
+		if(mPasswordViewCountdownTimer!=null){
+			mPasswordViewCountdownTimer.cancel();
+	    	mPasswordViewCountdownTimer = null;
+		}
 		mCallback.reportUnlockAttempt(true);
 		if(mCallback.getFingerPrintResult()!=KeyguardSecurityContainer.FINGERPRINT_SUCCESS){
 	        mCallback.dismiss(true);
 		}
         hiddenInput();
+        removeFliperVisibleHeihgtChangedListener();
 		mCallback.reset();
 		if(AmigoSecurityPasswordUtil.getInstance().getSecurityPasswordSupport()){			
 			forgetButton.setVisibility(View.INVISIBLE);
@@ -531,7 +560,7 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
 		if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "onUnlockFail failReason :"+failReason);
 		
 		if(failReason == UNLOCK_FAIL_REASON_TIMEOUT) {
-			if(AmigoSecurityPasswordUtil.getInstance().getSecurityPasswordSupport()){
+			if(AmigoSecurityPasswordUtil.getInstance().getSecurityPasswordSupport() && !Common.isPowerSaverMode()){
 				forgetButton.setVisibility(View.VISIBLE);
 			}
 			long deadline = mKeyguardUpdateMonitor.getDeadline();
@@ -634,6 +663,76 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
     public boolean isFrozen() {
     	// TODO Auto-generated method stub
     	return isFrozen;
+    }
+    
+    private View mGapView = null;
+    private KeyguardSecurityViewFlipper mKeyguardSecurityViewFlipper = null;
+    private int mViewFlipperPasswordAboveHeight = -1;
+    private int mEmergencyAreaRelHeight = 0;
+    
+    @Override
+    protected void onAttachedToWindow() {
+    	// TODO Auto-generated method stub
+    	super.onAttachedToWindow();
+    	if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "onAttachedToWindow");
+    	
+    	mKeyguardSecurityViewFlipper= getKeyguardSecurityViewFlipper(this);
+    }
+    
+        @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+    	// TODO Auto-generated method stub
+    	super.onLayout(changed, l, t, r, b);
+    	if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "onLayout");
+    	getmViewFlipperPasswordAboveHeight();
+
+    }
+
+		private void getmViewFlipperPasswordAboveHeight() {
+			if(mViewFlipperPasswordAboveHeight != -1 ){
+				return;
+			}
+			
+			Rect passwordEntryRect = new Rect();
+			mPasswordEntry.getGlobalVisibleRect(passwordEntryRect);
+			if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "passwordEntryRect:"+passwordEntryRect.toString());
+			Rect viewFlipperRect = new Rect();
+			getGlobalVisibleRect(viewFlipperRect);
+			if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "passWordLayoutRect:"+viewFlipperRect.toString());
+			if(viewFlipperRect.bottom == AmigoKeyguardUtils.getDisplayHeight(mContext)){
+				mViewFlipperPasswordAboveHeight = passwordEntryRect.bottom - viewFlipperRect.top;
+				if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "mViewFlipperPasswordAboveHeight:"+mViewFlipperPasswordAboveHeight);
+			}
+		}
+    
+    private void resetGapViewHeight(int fliperVisibleHeihgt) {
+    	if(mGapView == null) return;
+    	ViewGroup.LayoutParams mlaLayoutParams = mGapView.getLayoutParams();
+    	int viewHeight = (fliperVisibleHeihgt - mViewFlipperPasswordAboveHeight - mEmergencyAreaRelHeight)/2;
+    	if(DebugLog.DEBUG) DebugLog.d(LOG_TAG,"set the gapView height:"+viewHeight);
+    	if(viewHeight < 0){
+    		viewHeight = 0;
+    	}
+//    	mGapViewHeight = viewHeight;
+    	mlaLayoutParams.height = viewHeight;
+    	updateViewLayout(mGapView, mlaLayoutParams);
+    }
+    
+	public interface FliperVisibleHeihgtChangedListener {
+		public void fliperVisibleHeihgtChanged(int fliperVisibleHeihgt);
+	}
+    
+	private KeyguardSecurityViewFlipper getKeyguardSecurityViewFlipper(View v){
+	    if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "getKeyguardSecurityViewFlipper");
+	    v = (View)v.getParent();
+	    if(v == null){
+	    	return null;
+	    }
+	    if(v instanceof KeyguardSecurityViewFlipper){
+	    	return (KeyguardSecurityViewFlipper)v;
+	    }else{
+	    	return getKeyguardSecurityViewFlipper(v);
+	    }
     }
     
 }

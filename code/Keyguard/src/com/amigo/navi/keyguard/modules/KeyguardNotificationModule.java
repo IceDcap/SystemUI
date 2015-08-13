@@ -35,6 +35,7 @@ import android.provider.Settings;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.NotificationListenerService.RankingMap;
 import android.service.notification.StatusBarNotification;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.IWindowManager;
 import android.view.LayoutInflater;
@@ -846,13 +847,15 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
 	}
 
     // Gionee <jiating> <20150724> add for 8611 notification background  begin
-	private int getLatestEventContentId() {
+
+	private int getInternalResIdByName(String resName) {
 		int id = 0;
 	    try {
 	        Class<?> c = Class.forName("com.android.internal.R$id");
-	        Field field = c.getField("status_bar_latest_event_content");
+	        Field field = c.getField(resName);
 	        id = field.getInt(null);
 	    } catch (Exception ex) {
+	        Log.i(TAG, " --- ex="+ex);
 	    }
 	    return id;
 	}
@@ -862,7 +865,7 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
 			NotificationData.Entry entry) {
 
         //if (entry.expanded.getId() != com.android.internal.R.id.status_bar_latest_event_content) {
-        if (entry.expanded.getId() != getLatestEventContentId()) {
+        if (entry.expanded.getId() != getInternalResIdByName("status_bar_latest_event_content")) {
 			// Using custom RemoteViews
 			if (entry.targetSdk >= Build.VERSION_CODES.GINGERBREAD
 					&& entry.targetSdk < Build.VERSION_CODES.L) {
@@ -895,7 +898,7 @@ public class KeyguardNotificationModule extends KeyguardModuleBase
 	private boolean isMediaNotification(NotificationData.Entry entry) {
 		return entry.expandedBig != null
 				&& entry.expandedBig
-						.findViewById(com.android.internal.R.id.media_actions) != null;
+						.findViewById(getInternalResIdByName("media_actions")) != null;
 	}
 
 	private void addNotificationViews(Entry entry, RankingMap ranking) {

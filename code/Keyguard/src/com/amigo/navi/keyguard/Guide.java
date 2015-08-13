@@ -25,6 +25,10 @@ public class Guide {
     public static final String GUIDE_SCROLL_UP = "guide_scroll_up";
     public static final String GUIDE_NEW_WALLPAPER = "guide_new_wallpaper";
     public static final String GUIDE_SLIDE_FEEDBACK = "guide_slide_feedback";
+    
+    private static final String PICS_DOWNLOAD_TIMES = "pics_dl_times";
+    private static final String REGUIDE_CLICK_TITLE_TIMES = "re-guide_click_title";
+    
 
     private static boolean NEED_GUIDE_LONG_PRESS = true;
     private static boolean NEED_GUIDE_CLICK_TITLE = true;
@@ -33,6 +37,10 @@ public class Guide {
     
     private static boolean NEED_NEW_WALLPAPER = true;
     private static boolean NEED_SLIDE_FEEDBACK = true;
+    
+    private static final int[] REGUIDE_CLICK_TITLE_DOWNLOAD_TIMES = {3, 5};
+    private static final int PRESET_REGUIDE_TIMES = REGUIDE_CLICK_TITLE_DOWNLOAD_TIMES.length;
+    private static int sClickTextReguideTimes = 0;
 
     public static boolean needGuideScrollUp() {
         return NEED_GUIDE_SCROLL_UP;
@@ -96,6 +104,58 @@ public class Guide {
         editor.putBoolean(key, value);
         return editor.commit();
     }
+    
+    public static void increaseDownloadTimes(Context context) {
+    	if(isClickTextReguideTimesExpired(context)) return;
+    	
+    	SharedPreferences sp = context.getSharedPreferences(
+                PREFERENCE_NAME, Context.MODE_PRIVATE);
+    	boolean isClickTitleGuideOn = sp.getBoolean(GUIDE_CLICK_TITLE, true);
+    	if(!isClickTitleGuideOn) {
+    		int times = sp.getInt(PICS_DOWNLOAD_TIMES, 0) + 1;
+    		sp.edit().putInt(PICS_DOWNLOAD_TIMES, times).apply();
+    		
+    		onDonwloadTimesIncreased(context, times);
+    	}
+    }
+    
+    public static void cleanDownloadTimes(Context context) {
+    	if(isClickTextReguideTimesExpired(context)) return;
+    	
+    	SharedPreferences sp = context.getSharedPreferences(
+                PREFERENCE_NAME, Context.MODE_PRIVATE);
+    	int times = sp.getInt(PICS_DOWNLOAD_TIMES, 0);
+    	if(times > 0) {
+    		sp.edit().putInt(PICS_DOWNLOAD_TIMES, 0).apply();
+    	}
+    }
+    
+    private static void onDonwloadTimesIncreased(Context context, int times) {
+    	int presetTimes = REGUIDE_CLICK_TITLE_DOWNLOAD_TIMES[sClickTextReguideTimes];
+    	if(times >= presetTimes) {
+    		setNeedGuideClickTitle(true);
+    		
+    		sClickTextReguideTimes++;
+    		SharedPreferences sp = context.getSharedPreferences(
+    				PREFERENCE_NAME, Context.MODE_PRIVATE);
+    		sp.edit()
+    			.putBoolean(GUIDE_CLICK_TITLE, true)
+    			.putInt(REGUIDE_CLICK_TITLE_TIMES, sClickTextReguideTimes)
+    			.putInt(PICS_DOWNLOAD_TIMES, 0)
+    			.apply();
+    	}
+    }
+    
+    private static boolean isClickTextReguideTimesExpired(Context context) {
+    	if(sClickTextReguideTimes < PRESET_REGUIDE_TIMES) {
+    		SharedPreferences sp = context.getSharedPreferences(
+                    PREFERENCE_NAME, Context.MODE_PRIVATE);
+    		sClickTextReguideTimes = sp.getInt(REGUIDE_CLICK_TITLE_TIMES, 0);
+    	}
+    	
+    	boolean isExpired = sClickTextReguideTimes >= PRESET_REGUIDE_TIMES;
+    	return isExpired;
+    }
 
     public static void init(Context context) {
 
@@ -112,14 +172,14 @@ public class Guide {
                 + needGuideNewWallpaper() + " needGuideSlideAround=" + needGuideSlideAround()
                 + " needGuideSlideFeedBack=" + needGuideSlideFeedBack());
         
-        if (Common.isPowerSaverMode()) {
+    /*    if (Common.isPowerSaverMode()) {
             NEED_GUIDE_LONG_PRESS = false;
             NEED_GUIDE_CLICK_TITLE = false;
             NEED_GUIDE_SLIDE_AROUND = false;
             NEED_GUIDE_SCROLL_UP = false;
             NEED_NEW_WALLPAPER = false;
             NEED_SLIDE_FEEDBACK = false;
-        }
+        }*/
         
 
         if (TEST) {

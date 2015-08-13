@@ -97,7 +97,7 @@ public class DownLoadTask extends AsyncTask<Void, Void, Boolean>{
         } catch (Exception e) { 
             success = false;
             FileUtil.deleteFile(localPath);
-            DebugLog.e(TAG, "Exception deleteFile " + localPath);
+            DebugLog.e(TAG, "Exception deleteFile " + localPath+"e="+e.getMessage()+e.toString());
         }  finally {
             try {
                 if (in != null){

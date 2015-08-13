@@ -50,6 +50,7 @@ import com.amigo.navi.keyguard.picturepage.widget.KeyguardListView;
 import com.amigo.navi.keyguard.picturepage.widget.HorizontalListView.OnScrollListener;
 import com.amigo.navi.keyguard.picturepage.widget.LoadCacheManager;
 import com.amigo.navi.keyguard.picturepage.widget.OnViewTouchListener;
+import com.amigo.navi.keyguard.everydayphoto.NavilSettings;
 import com.amigo.navi.keyguard.fingerprint.FingerIdentifyManager;
 import com.amigo.navi.keyguard.settings.KeyguardSettings;
 import com.amigo.navi.keyguard.skylight.SkylightActivity;
@@ -57,6 +58,7 @@ import com.amigo.navi.keyguard.skylight.SkylightHost;
 import com.amigo.navi.keyguard.skylight.SkylightUtil;
 import com.amigo.navi.keyguard.util.AmigoKeyguardUtils;
 import com.amigo.navi.keyguard.util.DataStatistics;
+import com.amigo.navi.keyguard.util.OtaUtils;
 import com.amigo.navi.keyguard.util.QuickSleepUtil;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.keyguard.R;
@@ -110,7 +112,10 @@ public class KeyguardViewHostManager {
     private KeyguardWallpaperManager mKeyguardWallpaperManager;
     
 	public KeyguardViewHostManager(Context context,KeyguardViewHost host,SkylightHost skylight,LockPatternUtils lockPatternUtils,ViewMediatorCallback callback){
-      	initVersionName(context);
+      	
+		OtaUtils.checkRomOta(context);
+		
+		initVersionName(context);
  
         mContext=context;
         mKeyguardViewHost=host;
@@ -144,7 +149,7 @@ public class KeyguardViewHostManager {
         }
 
 		//GIONEE <Amigo_Keyguard> gexiufeng <2015-06-18> modify [2/2] begin: show haokan in power saver mode.
-		//initPowerSaverObserver();
+		initPowerSaverObserver();
 		//GIONEE <Amigo_Keyguard> gexiufeng <2015-06-18> modify [2/2] end: show haokan in power saver mode.
 
         DebugLog.d(TAG,"isSuppotFinger....isSuppotFinger="+isSuppotFinger);
@@ -226,10 +231,8 @@ public class KeyguardViewHostManager {
         
         updateNotifiOnkeyguard(true);
         beginStatics();
-		if (mViewMediatorCallback.isScreenOn()) {
-			DebugLog.d(TAG, "show  isScreenOn  updateListView");
-			mKeyguardWallpaperManager.onKeyguardLockedWhenScreenOn();
-		}
+		DebugLog.d(TAG, "show  isScreenOn  updateListView");
+		mKeyguardWallpaperManager.onKeyguardLockedWhenScreenOn();
         refreshCacheScreenOn();
 		UIController.getInstance().onKeyguardLocked();
         
@@ -283,6 +286,8 @@ public class KeyguardViewHostManager {
         finishStatistics();
  
         cancelFingerIdentify();
+        
+        DebugLog.d(TAG, "KeyguardViewHostManager systemui versionName:" + NavilSettings.getVersionName());
     }
     
     public void onScreenTurnedOn(){
@@ -657,11 +662,11 @@ public class KeyguardViewHostManager {
         mKeyguardListView.setTouchlListener(controller);
         controller.setmKeyguardListView(mKeyguardListView);
 
-        if (Common.isPowerSaverMode()) {
+      /*  if (Common.isPowerSaverMode()) {
             mKeyguardListView.setVisibility(View.GONE);
             mContainer.setVisibility(View.GONE);
             mViewMediatorCallback.setKeyguardWallpaperShow(true);
-        }
+        }*/
  
     }
     
@@ -835,7 +840,8 @@ public class KeyguardViewHostManager {
          } else {
          	mKeyguardViewHost.setVisibility(View.VISIBLE);
          	startFingerIdentify();
-         }    	
+         } 
+    	 mKeyguardViewHost.setOccluded(occluded);
     }
 	
 	
@@ -849,6 +855,9 @@ public class KeyguardViewHostManager {
 	}
 
 	public void reset(boolean occluded){
+		if(!mViewMediatorCallback.isScreenOn()){
+			mKeyguardWallpaperManager.onKeyguardLockedWhenScreenOn();
+		}
         showBouncerOrKeyguard();
 		if(occluded){
        		mKeyguardViewHost.setVisibility(View.GONE); 
@@ -873,14 +882,13 @@ public class KeyguardViewHostManager {
 				public void onChange(boolean selfChange) {
 				    boolean saverMode = getPowerSaverMode() == 2;
 				    Common.setPowerSaverMode(saverMode);
-				    UIController.getInstance().onChangePowerSaverMode(saverMode);
-				    mViewMediatorCallback.setKeyguardWallpaperShow(saverMode);
-				    Guide.setGuideEnable(mContext, !saverMode);
 				}
 			};
 			final ContentResolver resolver = mContext.getContentResolver();
 			resolver.registerContentObserver(
 					Settings.Global.getUriFor(POWERSAVERSETTING), false, obs);
+			 boolean saverMode = getPowerSaverMode() == 2;
+			 Common.setPowerSaverMode(saverMode);
 		}
 		
 	    private int getPowerSaverMode() {

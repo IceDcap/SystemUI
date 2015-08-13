@@ -85,6 +85,7 @@ public class JsonUtil {
                 wallpaperType.setTypeName(jsonObject2.optString("n"));
                 wallpaperType.setTypeIconUrl(jsonObject2.optString("u"));
                 wallpaperType.setTypeNameEn(jsonObject2.optString("en"));
+                wallpaperType.setFavorite(true);
                 wallpaperType.setSort(i);
                 list.add(wallpaperType);
             }
@@ -170,7 +171,7 @@ public class JsonUtil {
                         }
                         
                         wallpaper.setSort(jsonObject5.optInt("st"));
-                        
+                        wallpaper.setDetailLinkText(jsonObject5.optString("ud"));
                         Music music = new Music();
  
                         music.setmMusicName(jsonObject5.optString("mn"));

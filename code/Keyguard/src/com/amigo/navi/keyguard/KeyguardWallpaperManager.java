@@ -11,6 +11,7 @@ import android.view.View;
 import com.amigo.navi.keyguard.haokan.BitmapUtil;
 import com.amigo.navi.keyguard.haokan.Common;
 import com.amigo.navi.keyguard.haokan.FileUtil;
+import com.amigo.navi.keyguard.haokan.HKWallpaperNotification;
 import com.amigo.navi.keyguard.haokan.KeyguardDataModelInit;
 import com.amigo.navi.keyguard.haokan.KeyguardWallpaperContainer;
 import com.amigo.navi.keyguard.haokan.PlayerManager;
@@ -151,7 +152,7 @@ public class KeyguardWallpaperManager {
     
     public void onScreenTurnedOff() {
         DebugLog.d(TAG, "onScreenTurnedOff");
-        refreshKeyguardListView(false);
+//        refreshKeyguardListView(false);
         
         Wallpaper wallpaper= UIController.getInstance().getmCurrentWallpaper();
         if (wallpaper != null) {
@@ -160,6 +161,7 @@ public class KeyguardWallpaperManager {
     }
     
     public void onScreenTurnedOn(){
+        HKWallpaperNotification.getInstance(mAppContext).showUpdateNotificationWithWlan();
         Wallpaper wallpaper= UIController.getInstance().getmCurrentWallpaper();
         if (wallpaper != null){
             HKAgent.onEventScreenOn(mAppContext, UIController.getInstance().getmCurrentWallpaper());
@@ -478,10 +480,6 @@ public class KeyguardWallpaperManager {
     };
 
     public void updateListView(WallpaperList wallpapers) {
-        if (isFirst || !mViewMediatorCallback.isScreenOn())
-        {
-            isFirst = false;
-
             DebugLog.d(TAG, "updateListView wallpapers size = " + wallpapers.size());
             if (wallpapers.size() == 0) {
                 showSystemWallpaper();
@@ -492,25 +490,27 @@ public class KeyguardWallpaperManager {
                 UIController.getInstance().refreshWallpaperInfo();
                 // load the images to cache, which is to be shown after ScreenTurnedOn
                 refreshCache(false);
-            }
-        }
+            } 
     }
     
     public void onKeyguardLockedWhenScreenOn() {
-
-    	if (mWallpaperList != null && mWallpaperList.size() > 0) {
-    		updateListView(mWallpaperList);
-		}
+    	if (mViewMediatorCallback.isScreenOn()) {
+    		if(mWallpaperList!=null){
+    			updateListView(mWallpaperList);
+    		}
+    	}else{
+    		refreshKeyguardListView(false);	
+    	}
 	}
 
 
-    private void notifyDataSetChanged(WallpaperList wallpapers, int postion) {
+    private void notifyDataSetChanged(WallpaperList wallpapers, int position) {
 
         updateHorizontalListLoopState(wallpapers);
         mHorizontalAdapter.updateDataList(wallpapers);
-        mKeyguardListView.setPosition(postion);
-        mHorizontalAdapter.notifyDataSetChanged();
-        
+        mKeyguardListView.setPosition(position);
+//        mHorizontalAdapter.notifyDataSetChanged();
+        mKeyguardListView.smoothScrollTo(position);
     }
     
     
@@ -654,7 +654,7 @@ public class KeyguardWallpaperManager {
             filePath = DiskUtils.getAbsolutePath(mAppContext, imgUrl);
             File fileLocal = new File(filePath);
             if (fileLocal.exists()) {
-                bitmap = DiskUtils.readFile(filePath, KWDataCache.getScreenWidth(mAppContext.getResources()));
+                bitmap = DiskUtils.decodeFileDescriptor(filePath, KWDataCache.getScreenWidth(mAppContext.getResources()));
             } 
         }else if (type == Wallpaper.WALLPAPER_FROM_FIXED_FOLDER) {
             filePath = FileUtil.SCREENLOCK_WALLPAPER_LOCATION + File.separator + imgUrl;

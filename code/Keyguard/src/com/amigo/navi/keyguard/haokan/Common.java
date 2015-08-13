@@ -232,6 +232,10 @@ public class Common {
         return client;
     }
     
+    public static String getDeviceId(Context context) {
+    	return getClientInfo(context).getImei();
+    }
+    
     
     
 

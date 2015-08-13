@@ -48,6 +48,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.KWDataCache;
@@ -78,6 +79,7 @@ public class KeyguardSettingsActivity extends Activity {
 	
 	
 	private static final int REQUEST_CODE = 1001;
+	private final int IS_CLOSE_WALLPAPER_UPDATE = 10001;
 	
 	private Bitmap wallpaper;
 
@@ -90,6 +92,7 @@ public class KeyguardSettingsActivity extends Activity {
     private TextView mWallpaperUpdateFirstline;
     private TextView mWallpaperUpdateSecondline;
     private TextView mOnlyWlanSwitchFirstLine;
+    private TextView mOnlyWlanSwitchSecondLine;
     private View mDivider;
     
 	private Switch mKeyguardStyleSwitch;
@@ -155,6 +158,7 @@ public class KeyguardSettingsActivity extends Activity {
 	    mWallpaperUpdateSecondline = (TextView)findViewById(R.id.wallpaper_update_secondline);
 	    mKeyguardWallpaperUpdate = (Switch) findViewById(R.id.settings_switch_wallpaper_update);
 	    mOnlyWlanSwitchFirstLine = (TextView)findViewById(R.id.only_wlan_firstline);
+	    mOnlyWlanSwitchSecondLine = (TextView)findViewById(R.id.only_wlan_secondline);
 	    mOnlyWlanSwitch = (Switch) findViewById(R.id.settings_switch_only_wlan);
 	    mDivider = (View)findViewById(R.id.settings_divider);
 	    mDoubleDesktopLockTitle = (TextView)findViewById(R.id.double_desktop_lock_title);
@@ -188,6 +192,7 @@ public class KeyguardSettingsActivity extends Activity {
 		viewGroup.add(mWallpaperUpdateSecondline);
 		viewGroup.add(mOnlyWlanSwitchFirstLine);
 		viewGroup.add(mOnlyWlanSwitch);
+		viewGroup.add(mOnlyWlanSwitchSecondLine);
 		viewGroup.add(mDivider);
 		
 		viewGroup.add(findViewById(R.id.settings_divider_second));
@@ -266,6 +271,11 @@ public class KeyguardSettingsActivity extends Activity {
         }, 50);
 		
 		LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.set_keyguard_wallpaper_layout);
+		if(Common.isPowerSaverMode()){
+			linearLayout.setClickable(false);
+			linearLayout.setEnabled(false);
+			
+		}
 		linearLayout.setOnClickListener(new View.OnClickListener() {
             
             @Override
@@ -282,26 +292,32 @@ public class KeyguardSettingsActivity extends Activity {
 
     	
     	finish();
-    	 if (UIController.getInstance().isSecure()) {
-
-             KeyguardViewHostManager.getInstance().dismissWithDismissAction(new OnDismissAction() {
-                 @Override
-                 public boolean onDismiss() {
- 
-                	 Intent intent = new Intent(KeyguardSettingsActivity.this, BlankActivity.class);
-                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-                     startActivity(intent);
-                     return true;
-                 }
-             }, true);
-         } else {
-        	 Intent intent = new Intent(KeyguardSettingsActivity.this, BlankActivity.class);
-             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-             startActivity(intent);
-             KeyguardViewHostManager.getInstance().showBouncerOrKeyguardDone();
-		}
+    	 if(KeyguardViewHostManager.getInstance().isShowing()){
+	    	 if (UIController.getInstance().isSecure()) {
+	
+	             KeyguardViewHostManager.getInstance().dismissWithDismissAction(new OnDismissAction() {
+	                 @Override
+	                 public boolean onDismiss() {
+	                	 startWallpaperChooseActivity();
+	                     return true;
+	                 }
+	             }, true);
+	         } else {
+	        	 startWallpaperChooseActivity();
+	             KeyguardViewHostManager.getInstance().showBouncerOrKeyguardDone();
+			}
+    	 }else{
+    		 startWallpaperChooseActivity();
+    	 }
  
     }
+
+
+	private void startWallpaperChooseActivity() {
+		 Intent intent = new Intent(KeyguardSettingsActivity.this, BlankActivity.class);
+		 intent.addFlags(/*Intent.FLAG_ACTIVITY_NEW_TASK | */Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+		 startActivity(intent);
+	}
     
    
     
@@ -399,6 +415,7 @@ public class KeyguardSettingsActivity extends Activity {
 //	        		HKAgent.onEventWallpaperUpdate(getApplicationContext(),Event.SETTING_UPDATE, KeyguardSettings.SWITCH_WALLPAPER_UPDATE_OFF);
 					RequestNicePicturesFromInternet.getInstance(getApplicationContext()).registerData(true);
 					NetWorkUtils.setInterruptDownload(true);
+					KeyguardSettings.saveNumberPointUpdateWallpaper(getApplicationContext(), 0);
 				}
 				
 				SettingStatisticsPolicy.onAutoUpdateChanged(isChecked);
@@ -429,6 +446,8 @@ public class KeyguardSettingsActivity extends Activity {
     	
         boolean isopen = KeyguardSettings.getOnlyWlanState(this.getApplicationContext());
         mOnlyWlanSwitch.setChecked(isopen);
+		mOnlyWlanSwitchSecondLine.setText(isopen ? R.string.wlan_default_point
+				: R.string.wlan_close_point);
  
         mOnlyWlanSwitch.setEnabled(connectNet);
         SettingStatisticsPolicy.onOnlyWifiChanged(isopen);
@@ -445,12 +464,15 @@ public class KeyguardSettingsActivity extends Activity {
 			public void onCheckedChanged(CompoundButton btnView, boolean isChecked) {
 				KeyguardSettings.setOnlyWlanState(getApplicationContext(), isChecked);	
 			       if (isChecked){
+				   		mOnlyWlanSwitchSecondLine.setText(R.string.wlan_default_point);
 			        	if(NetWorkUtils.isNetworkAvailable(getApplicationContext()) && NetWorkUtils.isWifi(getApplicationContext()) ){
 			        		NetWorkUtils.setInterruptDownload(false);
 			        	}else{
 			        		NetWorkUtils.setInterruptDownload(true);
 			        	}
 			        }else{
+						mOnlyWlanSwitchSecondLine.setText(R.string.wlan_close_point);
+						Toast.makeText(getApplicationContext(), R.string.wlan_close_point, Toast.LENGTH_SHORT).show(); 
 			        	NetWorkUtils.setInterruptDownload(false);	
 			        }
 				SettingStatisticsPolicy.onOnlyWifiChanged(isChecked);
@@ -655,5 +677,12 @@ public class KeyguardSettingsActivity extends Activity {
 	        mGuideView.startAnimation(set);
 
 		}
+	}
+	
+	@Override
+	public void onBackPressed() {
+		UIController.getInstance().lockKeyguardByOther();
+		finish();
+		super.onBackPressed();
 	}
 }

@@ -92,7 +92,8 @@ public class Event {
     public static final int IMG_GAZING = 24;
     
     public static final int IMG_COVERED_BY_NOTI = 25;
-  
+    
+    public static final int TIME_ON_DETIALACTIVITY = 26;
     /**
      * 自动更新（2开启 1关闭）
      */
@@ -120,6 +121,8 @@ public class Event {
     public static final int SETTING_KEYGUARD_SWITCHER = 35;
     
     public static final int SETTING_IMAGE_TEXT = 36;
+    
+    public static final int SETTING_LOCALIMG_AS_WALLPAPER = 37;
     
     public static final int NETWORK_REQUEST_WEEKLY_TOTAL_COUNT_2G = 41;
     
@@ -168,6 +171,7 @@ public class Event {
     	if(eventId == SETTING_ONLY_WIFI) return true;
     	if(eventId == SETTING_KEYGUARD_SWITCHER) return true;
     	if(eventId == SETTING_IMAGE_TEXT) return true;
+    	if(eventId == SETTING_LOCALIMG_AS_WALLPAPER) return true;
     	
     	return false;
     }

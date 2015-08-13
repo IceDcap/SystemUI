@@ -105,6 +105,7 @@ public class WallpaperDB extends BaseDB{
 		values.put(DataConstant.WallpaperColumns.DOWNLOAD_PICTURE, wallpaper.getDownloadFinish());
 		
 		values.put(DataConstant.WallpaperColumns.SORT, wallpaper.getSort());
+		values.put(DataConstant.WallpaperColumns.DETAIL_LINK, wallpaper.getDetailLinkText());
 		
 		return values;
 	}
@@ -282,6 +283,9 @@ public class WallpaperDB extends BaseDB{
             wallpaper.setShowTimeBegin(begin);
             wallpaper.setShowTimeEnd(end);
         }
+        
+        String detailLinkText=cursor.getString(cursor.getColumnIndex(WallpaperColumns.DETAIL_LINK));
+        wallpaper.setDetailLinkText(detailLinkText);
         
         return wallpaper;
     }

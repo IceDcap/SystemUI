@@ -32,14 +32,17 @@ public abstract class GnTorch {
             int size = mUiStateCallbacks.size();
             for (int i = size - 1; i >= 0; i--) {
                 if (mUiStateCallbacks.get(i) == callback) {
+                    Log.d(TAG, "registerUiStateCallback remove: "+callback);
                     mUiStateCallbacks.remove(i);
                 }
             }
+            Log.d(TAG, "registerUiStateCallback add: "+callback);
             mUiStateCallbacks.add(callback);
         }
     };
 
     public void unregisterUiStateCallback(GnUpdateUiStateCallback callback) {
+        Log.d(TAG, "unregisterUiStateCallback: "+callback);
         mUiStateCallbacks.remove(callback);
     };
 }

@@ -83,13 +83,22 @@ public class CategoryDB extends BaseDB{
             values.put(TYPE_ICON_URL, category.getTypeIconUrl());
             values.put(CategoryColumns.EN_NAME, category.getTypeNameEn());
             
+            values.put(FAVORITE, category.isFavorite() ? DataConstant.CATEGORY_FAVORITE_TRUE : DataConstant.CATEGORY_FAVORITE_FALSE);
+            
         	DebugLog.d(TAG,"updateCategorysNoTransaction category.getTypeId():" + category.getTypeId());
             Category categoryInDB = queryCategoryByTypeID(category.getTypeId());
         	DebugLog.d(TAG,"updateCategorysNoTransaction categoryInDB:" + categoryInDB);
             if(categoryInDB != null && categoryInDB.getTypeId() != 0){
             	DebugLog.d(TAG,"updateCategorysNoTransaction categoryInDB.getTypeId():" + categoryInDB.getTypeId());
             	DebugLog.d(TAG,"updateCategorysNoTransaction categoryInDB.isFavorite():" + categoryInDB.isFavorite());
-            	values.put(FAVORITE, categoryInDB.isFavorite());
+            	
+            	if (categoryInDB.isFavorite()) {
+            	    values.put(FAVORITE, DataConstant.CATEGORY_FAVORITE_TRUE);
+                }else {
+                    values.put(FAVORITE, DataConstant.CATEGORY_FAVORITE_FALSE);
+                }
+            	
+//            	values.put(FAVORITE, categoryInDB.isFavorite());
             }
             if(categoryInDB != null){
             	values.put(IS_FINISH, categoryInDB.getIsPicDownLod());

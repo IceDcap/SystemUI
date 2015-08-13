@@ -6,7 +6,7 @@
 
     <com.amigo.navi.keyguard.haokan.PlayerLayout
         android:id="@+id/haokan_page_layout_player"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="35dp"
         android:layout_marginTop="@dimen/haokan_music_player_button_margintop"
         android:gravity="center_vertical"
@@ -69,11 +69,11 @@
         <LinearLayout
             android:id="@+id/haokan_captions_title_container"
             android:layout_width="wrap_content"
-            android:paddingTop="10dp"
-            android:layout_marginTop="5dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingBottom="@dimen/haokan_caption_layout_content_margintop" >
+            android:layout_marginTop="@dimen/captions_container_marginTop"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/haokan_caption_layout_content_margintop"
+            android:paddingTop="@dimen/captions_title_container_paddingTop" >
 
             <TextView
                 android:id="@+id/haokan_captions_title"
@@ -84,6 +84,39 @@
                 android:singleLine="true"
                 android:textColor="#ffffff"
                 android:textSize="@dimen/haokan_caption_layout_title_textsize" />
+
+            <LinearLayout
+                android:id="@+id/haokan_captions_link_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/haokan_caption_layout_title_height"
+                android:layout_marginLeft="@dimen/haokan_caption_layout_link_margin_left"
+                android:background="@drawable/bg_caption_link"
+                android:gravity="center"
+                android:orientation="horizontal" >
+
+
+                <TextView
+                    android:id="@+id/haokan_captions_link"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/haokan_caption_layout_title_height"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:paddingLeft="@dimen/haokan_caption_layout_link_padding"
+                    android:paddingRight="@dimen/haokan_caption_layout_link_padding"
+                    android:paddingTop="2dp"
+                    android:singleLine="true"
+                    android:textColor="#ffffff"
+                    android:textSize="@dimen/haokan_caption_layout_link_textsize" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/haokan_caption_layout_title_height"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="@dimen/haokan_caption_layout_link_margin_right"
+                    android:src="@drawable/ic_detail_link_arrow"
+                    android:gravity="center" />
+            </LinearLayout>
+            
         </LinearLayout>
 
 
@@ -94,7 +127,7 @@
             android:layout_below="@id/haokan_captions_title_container"
             android:gravity="top"
             android:includeFontPadding="false"
-            android:lineSpacingExtra="1dp"
+            android:lineSpacingExtra="@dimen/captions_content_lineSpacing"
             android:textColor="#ffffff"
             android:textSize="@dimen/haokan_caption_layout_content_textsize"
             android:visibility="visible" />
@@ -105,6 +138,21 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:visibility="invisible"
+            />
+        <TextView
+            android:id="@+id/guid_click_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/guid_click"
+            android:background="@drawable/guide_click_txt_bg"
+            android:textSize="14sp"
+            android:textColor="@android:color/white"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="12dp"
+            android:visibility="invisible"
+            android:layout_alignParentLeft="true"
             />
         
     </com.amigo.navi.keyguard.haokan.CaptionsView>

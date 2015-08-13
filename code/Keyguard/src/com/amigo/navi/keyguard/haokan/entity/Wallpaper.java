@@ -68,6 +68,7 @@ public class Wallpaper implements Serializable{
     
     private int sort;
     
+    private String detailLinkText="";
     
     public boolean isLocked() {
         return locked;
@@ -228,7 +229,7 @@ public class Wallpaper implements Serializable{
                 int fortyPercent = ((((color & 0xff000000) >> 24) & 0x0000ff) / 10 * 4) << 24;
                 contentColor = (color & 0x00ffffff) | fortyPercent;
             }
-            caption = new Caption(getImgName(), getImgContent(), getUrlClick(), color,
+            caption = new Caption(getImgName(), getImgContent(), getUrlClick(),getDetailLinkText(), color,
                     contentColor, getImgSource());
         }
         return caption;
@@ -356,6 +357,14 @@ public class Wallpaper implements Serializable{
 
     public void setSort(int sort) {
         this.sort = sort;
+    }
+
+    public String getDetailLinkText() {
+        return detailLinkText;
+    }
+
+    public void setDetailLinkText(String detialLinkText) {
+        this.detailLinkText = detialLinkText;
     }
     
     

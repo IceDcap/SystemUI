@@ -11,8 +11,11 @@ import java.net.URL;
 import org.apache.http.HttpStatus;
 
 import com.amigo.navi.keyguard.DebugLog;
+import com.amigo.navi.keyguard.KWDataCache;
+import com.amigo.navi.keyguard.haokan.BitmapUtil;
 
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
@@ -22,10 +25,18 @@ public class BitmapHttpConnect {
     private static final String TAG = "HttpConnect";
     private String mRequestType = null;
     private int mTimeOut = 0;
+    Context mContext;
     
-    public BitmapHttpConnect(int timeOut,String method){
+    private int mScreenWidth;
+    private int mScreenHeight;
+    
+    
+    public BitmapHttpConnect(Context context, int timeOut,String method){
         mTimeOut = timeOut;
         mRequestType = method;
+        
+        mScreenWidth = KWDataCache.getScreenWidth(context.getResources());
+        mScreenHeight = KWDataCache.getScreenHeight(context.getResources());
     }
     
     public Bitmap loadImageFromInternet(URL conUrl) {
@@ -48,7 +59,8 @@ public class BitmapHttpConnect {
                 result = readInputStream(inputStream);
                 if(result != null && result.length == contentLength){
                 	DebugLog.d(TAG,"loadImageFromInternet success");
-                	bitmap = createBitmap(bitmap, result);
+//                	bitmap = createBitmap(bitmap, result);
+                	bitmap = BitmapUtil.resizedBitmap(result, mScreenWidth, mScreenHeight);
                 }
             }
         } catch (Exception e) {

@@ -25,11 +25,15 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewDebug;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ViewFlipper;
 
+import com.amigo.navi.keyguard.DebugLog;
+import com.amigo.navi.keyguard.util.AmigoKeyguardUtils;
 import com.android.internal.widget.LockPatternUtils;
+import com.android.keyguard.KeyguardPasswordView.FliperVisibleHeihgtChangedListener;
 
 /**
  * Subclass of the current view flipper that allows us to overload dispatchTouchEvent() so
@@ -41,7 +45,66 @@ public class KeyguardSecurityViewFlipper extends ViewFlipper implements Keyguard
     private static final boolean DEBUG = KeyguardConstants.DEBUG;
 
     private Rect mTempRect = new Rect();
+    
+    
+    
+    private int mViewFlipperVisibleHeihgt = 0;
+    private int mViewFlipperTotalHeight = -1;
+    private static boolean mRegist = false;
+    
+    private static void setmRegist(boolean regist){
+    	mRegist = regist;
+    }
+    
+    private static boolean getmRegist(){
+    	return mRegist;
+    }
+    
+    private FliperVisibleHeihgtChangedListener mFliperVisibleHeihgtChangedListener = null;
+	
+	public void setFliperVisibleHeihgtChangedListener(FliperVisibleHeihgtChangedListener fliperVisibleHeihgtChangedListener){
+		getViewTreeObserver().addOnGlobalLayoutListener(mGlobalListener);
+		setmRegist(true);
+		this.mFliperVisibleHeihgtChangedListener = fliperVisibleHeihgtChangedListener;
+	}
+	
+	public void removeFliperVisibleHeihgtChangedListener(){
+		if(!getmRegist()){
+			return;
+		}
+		getViewTreeObserver().removeGlobalOnLayoutListener(mGlobalListener);
+		setmRegist(false);
+		this.mFliperVisibleHeihgtChangedListener = null;
+	}
+	
+	ViewTreeObserver.OnGlobalLayoutListener mGlobalListener = new ViewTreeObserver.OnGlobalLayoutListener() {
 
+		@Override
+		public void onGlobalLayout() {
+			// TODO Auto-generated method stub
+			int viewFliperVisibleHeihgt = getHeight();
+			DebugLog.d(TAG, "viewFliperVisibleHeihgt:"+viewFliperVisibleHeihgt);
+			if(mViewFlipperTotalHeight != viewFliperVisibleHeihgt && mViewFlipperVisibleHeihgt != viewFliperVisibleHeihgt){
+				if(mFliperVisibleHeihgtChangedListener != null){
+				    mViewFlipperVisibleHeihgt = viewFliperVisibleHeihgt;
+				    mFliperVisibleHeihgtChangedListener.fliperVisibleHeihgtChanged(viewFliperVisibleHeihgt);
+				}
+			}
+			
+		}
+		
+	};
+	
+	@Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+    	// TODO Auto-generated method stub
+    	super.onLayout(changed, l, t, r, b);
+    	if(mViewFlipperTotalHeight == -1){
+    		mViewFlipperTotalHeight = getHeight();
+    		if(DebugLog.DEBUG) DebugLog.d(TAG, "mViewFlipperTotalHeight:"+mViewFlipperTotalHeight);
+    	}
+	}
+	
     public KeyguardSecurityViewFlipper(Context context) {
         this(context, null);
     }

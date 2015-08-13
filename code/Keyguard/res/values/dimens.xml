@@ -315,6 +315,10 @@
 	<dimen name="haokan_caption_layout_marginbottom">93dp</dimen>
 	<dimen name="haokan_caption_layout_title_height">20dp</dimen>
 	<dimen name="haokan_caption_layout_title_textsize">16dp</dimen>
+	<dimen name="haokan_caption_layout_link_textsize">13dp</dimen>
+	<dimen name="haokan_caption_layout_link_margin_left">4dp</dimen>
+	<dimen name="haokan_caption_layout_link_padding">6dp</dimen>
+	<dimen name="haokan_caption_layout_link_margin_right">5dp</dimen>
 	<dimen name="haokan_caption_layout_title_padding">3dp</dimen>
 	<dimen name="haokan_caption_layout_content_margintop">8dp</dimen>
 	<dimen name="haokan_caption_layout_content_textsize">13dp</dimen>
@@ -440,7 +444,8 @@
 	<dimen name="amigo_keyguard_sim_pin_view_num_keyguard_bouncer_frame_padding_h">42dp</dimen>
 	<dimen name="amigo_keyguard_sim_pin_view_num_above_keyguard_bouncer_frame">10dp</dimen>
 	
-	<dimen name="amigo_keyguard_pin_view_num_marginleft">37dp</dimen>
+	<dimen name="amigo_keyguard_pin_view_num_marginleft">43dp</dimen>
+	<dimen name="amigo_keyguard_pin_view_num_bouncer_frame_padding_left_right">36dp</dimen>
 	<dimen name="amigo_keyguard_pin_view_num_row0_top">24dp</dimen>
 	<dimen name="amigo_keyguard_pin_view_num_linegap">14dp</dimen>
 	<dimen name="amigo_keyguard_pin_view_num_forget_paddingbottom">12dp</dimen>
@@ -448,5 +453,21 @@
 	<dimen name="amigo_keyguard_pin_view_num_above_keyguard_bouncer_frame">40dp</dimen>
 	
 	<dimen name="amigo_keyguard_pattern_view_row5_height">72dp</dimen>
+	
+		
+	<dimen name="action_bar_title_text_size">18dp</dimen>
+	
+	<dimen name="close_wallpaper_update_itemPic_size">154dp</dimen>
+        <dimen name="close_wallpaper_update_itemFlag_size">32dp</dimen>
+       
+	    <!-- 锁屏文案 -->
+       	<dimen name="captions_title_container_paddingTop">20dp</dimen>
+    	<dimen name="captions_title_container_paddingRight">10dp</dimen>
+    	<dimen name="captions_content_lineSpacing">1dp</dimen>
+   	<dimen name="captions_container_marginTop">25dp</dimen>
+    
+   	<dimen name="progress_height">1dp</dimen>
+   	<dimen name="guide_click_margin_bottom">5dp</dimen>
+    
 
 </resources>

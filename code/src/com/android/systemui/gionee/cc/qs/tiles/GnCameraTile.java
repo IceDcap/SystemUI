@@ -1,5 +1,7 @@
 package com.android.systemui.gionee.cc.qs.tiles;
 
+import java.lang.reflect.Method;
+
 import android.content.Intent;
 import android.util.Log;
 
@@ -13,13 +15,9 @@ public class GnCameraTile extends GnQSTile<GnQSTile.BooleanState> {
     
     private final static String CAMERA_PKG = "com.android.camera";
     private final static String CAMERA_CLS = "com.android.camera.CameraLauncher";
-    
-    private GnCameraController mGnTorchController;
 
     public GnCameraTile(Host host, String spec) {
         super(host, spec);
-        
-        mGnTorchController = new GnCameraController(mContext);
     }
 
     @Override
@@ -48,13 +46,15 @@ public class GnCameraTile extends GnQSTile<GnQSTile.BooleanState> {
 
     @Override
     protected void handleLongClick() {
-        if (mGnTorchController.isCameraAvailable()) {
-            Log.d(TAG, "handleLongClick");
-            GnYouJu.onEvent(mContext, "Amigo_SystemUI_CC", "mCamera_longClicked");
-            Intent intent = new Intent(mContext, GnBlindShootActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            mContext.startActivity(intent);
+        if (isCameraRunning()) {
+            return;
         }
+        
+        Log.d(TAG, "handleLongClick");
+        GnYouJu.onEvent(mContext, "Amigo_SystemUI_CC", "mCamera_longClicked");
+        Intent intent = new Intent(mContext, GnBlindShootActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mContext.startActivity(intent);
     }
 
     @Override
@@ -66,4 +66,16 @@ public class GnCameraTile extends GnQSTile<GnQSTile.BooleanState> {
         state.contentDescription = mContext.getString(R.string.gn_qs_camera);
     }
 
+    private boolean isCameraRunning() { 
+        try { 
+            Class c = Class.forName("android.hardware.Camera"); 
+            Method m = c.getMethod("isCameraRunning"); 
+            boolean isRunning = (Boolean) m.invoke(null); 
+            Log.i(TAG, "isCameraRunning = " + isRunning); 
+            return isRunning; 
+        } catch (Exception e) { 
+            Log.i(TAG, "isCameraRunning = " + e); 
+            return false; 
+        } 
+    }
 }

@@ -179,6 +179,7 @@
     <string name="cmcc_4g">中國移動4G</string>
     <string name="no_sim_card">未插卡</string>
     <string name="no_service">無服務</string>
+    <string name="invalid_card">無效卡</string>
     <!-- mobile operator strings -->
     
     <!-- NaviKeyguard -->

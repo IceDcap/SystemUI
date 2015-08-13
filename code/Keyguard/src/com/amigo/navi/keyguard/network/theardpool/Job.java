@@ -5,4 +5,6 @@ public interface Job {
     public void cancelTask();
 
     public int getProgress();
+    
+    public boolean isCanceled();
 }

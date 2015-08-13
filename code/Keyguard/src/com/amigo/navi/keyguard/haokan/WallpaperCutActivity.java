@@ -44,6 +44,8 @@ import com.amigo.navi.keyguard.KeyguardViewHostManager;
  
 import com.amigo.navi.keyguard.haokan.CropImageView;
 import com.amigo.navi.keyguard.haokan.CutImageView;
+import com.amigo.navi.keyguard.haokan.analysis.HKAgent;
+import com.amigo.navi.keyguard.settings.KeyguardSettingsActivity;
 import com.android.keyguard.R;
 
 public class WallpaperCutActivity extends Activity {
@@ -78,6 +80,8 @@ public class WallpaperCutActivity extends Activity {
     private static final int PROGRESS_DIALOG = 1;
     private boolean mDestroyed = false;
     protected boolean mInit = false;
+    private boolean isLcokApplyWallpaper=true;
+    private boolean isShowToast=false;
 
     private Handler mHandler = new Handler();
     
@@ -87,8 +91,16 @@ public class WallpaperCutActivity extends Activity {
         @Override
         public void run() {
             cancelProgressDialog();
+            if(isShowToast){
+            	Toast toast=Toast.makeText(WallpaperCutActivity.this, R.string.set_wallpaper_success_toast_message, Toast.LENGTH_SHORT);
+            	toast.show();
+            }
+            
+            if(isLcokApplyWallpaper){
+            	UIController.getInstance().lockKeyguardByOther();
+            }
             finish();
-            UIController.getInstance().lockKeyguardByOther();
+            
         }
     };
 
@@ -111,6 +123,8 @@ public class WallpaperCutActivity extends Activity {
         Intent intent = getIntent();
         if (Intent.ACTION_ATTACH_DATA.equals(intent.getAction())) {
             filePath = intent.getDataString();
+            isLcokApplyWallpaper=intent.getBooleanExtra(BlankActivity.APPLY_WALLPAPER_LOCK_OR_NOT, true);
+            isShowToast=intent.getBooleanExtra(BlankActivity.NEED_SHOW_TOAST_OR_NOT, false);
         }  
         Bitmap bmp = decodeBitmap(filePath, mScreenWidth, mScreenHeight);
         if (bmp == null) {
@@ -286,6 +300,7 @@ public class WallpaperCutActivity extends Activity {
  
         if (bitmap != null) {
             KeyguardViewHostManager.getInstance().getKeyguardWallpaperManager().setSrceenLockWallpaper(bitmap);
+            HKAgent.onEventSetLocalImgAsWallpaper();
         }
     }
 
@@ -312,7 +327,10 @@ public class WallpaperCutActivity extends Activity {
                         KWDataCache.getScreenHeight(getResources()),
                         KWDataCache.getScreenWidth(getResources()));
             }
-            BitmapUtil.recycleBitmap(newBitmap);
+            
+            if(newBitmap != singleScreen){
+            	 BitmapUtil.recycleBitmap(newBitmap);
+            }
 //            BitmapUtil.recycleBitmap(source);
         } catch (OutOfMemoryError e) {
             Log.d(TAG, "", e);
@@ -404,12 +422,21 @@ public class WallpaperCutActivity extends Activity {
         @Override
         public void onClick(View v) {
             cancelProgressDialog();
+            backWallpaperChooseActivity();
             finish();
-            UIController.getInstance().lockKeyguardByOther();
+//            UIController.getInstance().lockKeyguardByOther();
         }
+
+	
     };
 
-
+	private void backWallpaperChooseActivity() {
+		 Intent intent = new Intent("com.amigo.navi.keyguard.SettingWallPaper");
+         intent.addFlags(/*Intent.FLAG_ACTIVITY_NEW_TASK |*/ Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+         intent.putExtra(BlankActivity.APPLY_WALLPAPER_LOCK_OR_NOT, isLcokApplyWallpaper);
+         intent.putExtra(BlankActivity.NEED_SHOW_TOAST_OR_NOT, isShowToast);
+         startActivity(intent);
+	}
     private void initCutView(Bitmap bitmap) {
         if (mCutType.equals(CUT_DESK_MUTI)) {
         	DebugLog.d(TAG, "initCutView=" + "if");
@@ -501,9 +528,26 @@ public class WallpaperCutActivity extends Activity {
     @Override
     protected void onDestroy() {
         mDestroyed = true;
+        isLcokApplyWallpaper=true;
+        isShowToast=false;
         super.onDestroy();
     }
-
+    
+    @Override
+    public void onBackPressed() {
+    	backWallpaperChooseActivity();
+    	finish();
+    	super.onBackPressed();
+    }
+    
+	@Override
+	protected void onPause() {
+//		if(!isLcokApplyWallpaper){
+//			backWallpaperChooseActivity();
+//		}
+//		finish();
+			super.onPause();
+	}
    
 }
 

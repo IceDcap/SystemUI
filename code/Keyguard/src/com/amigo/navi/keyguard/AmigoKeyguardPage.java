@@ -196,9 +196,9 @@ public class AmigoKeyguardPage extends RelativeLayout {
         playerManager.setPlayerLayout(playerLayout);
         addView(mHaoKanLayout, params);
         
-        if (Common.isPowerSaverMode()) {
+        /*if (Common.isPowerSaverMode()) {
             mHaoKanLayout.setVisibility(GONE);
-        }
+        }*/
         
     }
 	

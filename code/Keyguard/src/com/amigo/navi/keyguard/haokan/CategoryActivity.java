@@ -37,7 +37,6 @@ import com.amigo.navi.keyguard.haokan.db.CategoryDB;
 import com.amigo.navi.keyguard.haokan.entity.Category;
 import com.amigo.navi.keyguard.network.local.DealWithByteFile;
 import com.amigo.navi.keyguard.network.local.ReadAndWriteFileFromSD;
-import com.amigo.navi.keyguard.network.local.LocalBitmapOperation;
 import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
 import com.amigo.navi.keyguard.network.manager.DownLoadBitmapManager;
 import com.amigo.navi.keyguard.network.theardpool.DownLoadJsonThreadPool;
@@ -103,9 +102,8 @@ public class CategoryActivity extends Activity{
         
         onInitUI();
         setBlurBackground();
-       LocalBitmapOperation localFileOperation = new LocalBitmapOperation(this);
        final ReadAndWriteFileFromSD dealWithFileFromLocal = new ReadAndWriteFileFromSD(this, DiskUtils.CATEGORY_BITMAP_FOLDER,
-                DiskUtils.getCachePath(this), localFileOperation);
+                DiskUtils.getCachePath(this));
         new Thread(new Runnable(){
 
             @Override
@@ -365,6 +363,12 @@ public class CategoryActivity extends Activity{
 			public void cancelTask() {
 				// TODO Auto-generated method stub
 
+			}
+
+			@Override
+			public boolean isCanceled() {
+				// TODO Auto-generated method stub
+				return false;
 			}
 		};
 		DownLoadWorker worker = new DownLoadWorker(job);

@@ -2,32 +2,26 @@
 Build Notes
 ==================
 1.版本目的:
-r7000
-CR01524395 解决在锁屏界面来电话后，在来接界面下拉状态栏后点击状态栏里的通知没有打开通知
+r7402
+CR01533827 修改8611电信定制机上锁屏上显示运营商问题
 ---------------------
-r6991
-CR01374919 更新日期时需要将节假日信息也更新 修改代码
+r7400
+update release note and version number of Amigo_SystemUI.
 ---------------------
-r6989
-CR01374919 更新日期时需要将节假日信息也更新
+r7399
+CR01533827 修改8611电信定制机上锁屏上显示运营商问题
 ---------------------
-r6983
-CR01459185 锁屏报错重启后显示系统壁纸一直不恢复问题。
+r7396
+CR01532480 【工厂】声音和振动，来电与通知铃声设为自定义铃声后，删除该铃声，虚拟来电与通知铃声变钟声【必现】
 ---------------------
-r6975
-CR01523841 解决：在密码锁界面上拉控制中心后，点击控制中心的相机等，解锁后没有打开相机的问题
+r7391
+CR01528590 黑屏手势：随机，添加虚拟来电为任意手势，在黑屏状态下，画虚拟来电对应手势，等待15秒，仍未有虚拟来电，点击power键才来虚拟来电；
 ---------------------
-r6972
-CR01510809 修改国际漫游运营商显示问题
+r7390
+CR01536773 手电筒相关的log添加； 手电筒callback防空处理。
 ---------------------
-r6969
-CR01408122 解决：8611平台下 qq 微信等通知在锁屏上显示的背景为黑色的问题
----------------------
-r6961
-CR01408122 解决：8611平台下 qq 微信等通知在锁屏上显示的背景为黑色的问题
----------------------
-r6960
-CR01525051 状态栏：设置里面搜索完可用的网络后，出现”系统界面“停止运行的提示(1/10) 
+r7389
+CR01530854 【CT official test】国漫：卡1注册到W网，数据连接图标没有3G显示，只有上下行图标显示 
 ---------------------
 
 2.功能变更:
@@ -40,15 +34,14 @@ No
 ==================
 Release Location
 ==================
-/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bu.zip
+/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ch.zip
 
 ==================
 CR List
 ==================
 [Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
-svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.1.am' non-existent in revision 7001
-
-svn: E200009: Could not display info for all targets because some targets don't exist
-svn: E205000: Syntax error in revision argument '7000:'
-File does not exist:  at getAppChangeSet.pl line 48
+CR01533827      Opened     jiating    【CT Pre-test】插双卡，开机注册到网络后，锁屏界面显示中国电信/无服务（下拉状态栏显示正常）
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ch
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.cg
+Code difference: svn diff -r 7402:7401 http://192.168.110.97/svn/Amigo_SystemUI/trunk
 

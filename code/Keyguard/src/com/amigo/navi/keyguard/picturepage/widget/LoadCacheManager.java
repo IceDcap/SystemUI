@@ -9,14 +9,13 @@ import android.util.Log;
 
 
 import com.amigo.navi.keyguard.DebugLog;
+import com.amigo.navi.keyguard.haokan.BitmapUtil;
 import com.amigo.navi.keyguard.haokan.entity.Wallpaper;
 import com.amigo.navi.keyguard.haokan.entity.WallpaperList;
 import com.amigo.navi.keyguard.network.FailReason;
 import com.amigo.navi.keyguard.network.ImageLoader;
 import com.amigo.navi.keyguard.network.FailReason.FailType;
 import com.amigo.navi.keyguard.network.local.DealWithFromLocalInterface;
-import com.amigo.navi.keyguard.network.local.LocalBitmapOperation;
-import com.amigo.navi.keyguard.network.local.LocalFileOperationInterface;
 import com.amigo.navi.keyguard.network.local.ReadAndWriteFileFromSD;
 import com.amigo.navi.keyguard.network.local.ReadFileFromAssets;
 import com.amigo.navi.keyguard.network.local.ReuseImage;
@@ -87,8 +86,8 @@ public class LoadCacheManager {
 			getLoadImageToList(currentPos, false);
 			getLoadImageToList(currentPos + 1, false);
 			getLoadImageToList(currentPos - 1, false);
-			getLoadImageToList(currentPos + 2, false);
-			getLoadImageToList(currentPos - 2, false);
+//			getLoadImageToList(currentPos + 2, false);
+//			getLoadImageToList(currentPos - 2, false);
 			//getLoadImageToList(currentPos + 3, false);
 			//getLoadImageToList(currentPos - 3, false);
 		}
@@ -220,26 +219,24 @@ public class LoadCacheManager {
 						 
 					} else {
 						ReadAndWriteFileFromSD dealWithFromLocalInterface = null;
-						LocalFileOperationInterface localFileOperationInterface = new LocalBitmapOperation(
-								mContext);
+						 
 						dealWithFromLocalInterface = new ReadAndWriteFileFromSD(
 								mContext.getApplicationContext(),
 								DiskUtils.WALLPAPER_BITMAP_FOLDER,
-								DiskUtils.getCachePath(mContext.getApplicationContext()),
-								localFileOperationInterface);
+								DiskUtils.getCachePath(mContext.getApplicationContext()));
 						readImageFromLocal = dealWithFromLocalInterface;
 						 
 					}
 					
 					if (isImage) {
-					    bmp = mImageLoader.getBmpFromImageRemoved();
+					    bmp = mImageLoader.getBmpFromImageRemoved(this);
                     }else {
                         bmp = mImageLoader.getBmpFromThumbRemoved();
                     }
 			        
 					
 			        if (isStop){
-			            mImageLoader.addBmpToImageRemoved(bmp);
+			            mImageLoader.addBmpToImageRemoved(bmp, isImage);
 			            return;
                     } 
 			        ReuseImage reuseImage = new ReuseImage(bmp);
@@ -249,15 +246,17 @@ public class LoadCacheManager {
                             needLoadingUrl);
                     boolean isUsed = reuseImage.isUsed();
                     DebugLog.d(LOG_TAG, " isUsed:" + isUsed + " Url = " + needLoadingUrl);
-                    if (!isUsed) {
-                        mImageLoader.addBmpToImageRemoved(reuseImage.getBitmap());
-                    }
+//                    if (!isUsed) {
+//                        mImageLoader.addBmpToImageRemoved(reuseImage.getBitmap());
+//                    } 
 
                     if (null != bitmap) {
                         mImageLoader.LoadingComplete(needLoadingUrl, bitmap);
-                        
+                        if (!isUsed) {
+                            BitmapUtil.recycleBitmap(reuseImage.getBitmap());
+                        }
                     } else {
-                        
+                        mImageLoader.addBmpToImageRemoved(reuseImage.getBitmap(), isImage);
                         if (!reload) {
                             FailReason failReason = new FailReason(
                                     FailType.UNKNOWN, null);
@@ -284,6 +283,12 @@ public class LoadCacheManager {
 				@Override
 				public void cancelTask() {
 					isStop = true;
+				}
+
+				@Override
+				public boolean isCanceled() {
+					// TODO Auto-generated method stub
+					return isStop;
 				}
 			};
 			Vector<LoadImageThread> threadList = null;

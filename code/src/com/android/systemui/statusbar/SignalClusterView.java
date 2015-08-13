@@ -388,6 +388,7 @@ public class SignalClusterView
         private int mMobileStrengthIdCT = 0;
         private GnNetworkType mGnNetworkType;
         private boolean mIsRoaming;
+        private boolean mIsDataConnect = false;
 
         public PhoneState(int subId, Context context) {
             ViewGroup root = (ViewGroup) LayoutInflater.from(context)
@@ -459,7 +460,7 @@ public class SignalClusterView
 					mMobileType.setImageResource(gnGetMotileTypeIcon(mIsRoaming, mGnNetworkType));
 					mMobileGroup.setContentDescription(mMobileTypeDescription
 							+ " " + mMobileDescription);
-					mNetworkType.setImageResource(mIsRoaming ? getNetworkTypeIcon(mGnNetworkType) : mNetworkTypeId);
+					mNetworkType.setImageResource(mIsDataConnect ? getNetworkTypeIcon(mGnNetworkType) : 0);
 				}
             	//mNetworkType.setImageResource(mNetworkTypeId);
             	mMobileInOut.setImageResource(mMobileInOutId);
@@ -477,8 +478,8 @@ public class SignalClusterView
             mMobile.setPaddingRelative(mWideTypeIconStartPadding,0,0,0);
             //Gionee <fangjian> <2015-07-07> modify for CR01503190 end
 
-            if (DEBUG) Log.d(TAG, String.format("mobile: %s sig=%d mIsAirPlaneMode=%s netType=%d mobileType=%d inout=%d mSubId=%d",
-                        (mMobileVisible ? "VISIBLE" : "GONE"), mMobileStrengthId, mIsAirplaneMode, mNetworkTypeId, mMobileTypeId, mMobileInOutId, mSubId));
+            if (DEBUG) Log.d(TAG, String.format("mobile: %s sig=%d mIsAirPlaneMode=%s netType=%d mobileType=%d inout=%d mIsDataConnect =%s mSubId=%d",
+                        (mMobileVisible ? "VISIBLE" : "GONE"), mMobileStrengthId, mIsAirplaneMode, mNetworkTypeId, mMobileTypeId, mMobileInOutId, mIsDataConnect, mSubId));
 
             mMobileType.setVisibility(mMobileTypeId != 0 ? View.VISIBLE : View.GONE);
             mNetworkTypeGroup.setVisibility(mWifiVisible ? View.GONE : View.VISIBLE);
@@ -559,11 +560,12 @@ public class SignalClusterView
 	}
 
 	@Override
-	public void gnSetNetworkType(GnNetworkType networkType, boolean isRoaming, int subId) {
+	public void gnSetNetworkType(GnNetworkType networkType, boolean isRoaming, boolean isDataConnect, int subId) {
 		Log.d(TAG, "gnSetNetworkType(" + subId + "), NetworkType= " + networkType);
         PhoneState state = getOrInflateState(subId);
         state.mGnNetworkType = networkType;
         state.mIsRoaming = isRoaming;
+        state.mIsDataConnect = isDataConnect;
 	}
 	
 	private int gnGetMotileTypeIcon(boolean isRoaming, GnNetworkType networkType) {
@@ -582,7 +584,9 @@ public class SignalClusterView
             return R.drawable.gn_stat_sys_mobile_type_1x;
         } else if (networkType == GnNetworkType.Type_1X3G) {
             return R.drawable.gn_stat_sys_mobile_type_3g;
-        } else {
+        } else if (networkType == GnNetworkType.Type_H) {
+			return R.drawable.gn_stat_sys_mobile_type_h;
+		} else {
             return 0;
         }
     }
@@ -596,7 +600,8 @@ public class SignalClusterView
 					|| networkType == GnNetworkType.Type_1X) {
 				return R.drawable.gn_stat_sys_network_type_2g;
 			} else if(networkType == GnNetworkType.Type_3G 
-					|| networkType == GnNetworkType.Type_1X3G) {
+					|| networkType == GnNetworkType.Type_1X3G
+					|| networkType == GnNetworkType.Type_H) {
 				return R.drawable.gn_stat_sys_network_type_3g;
 			} else if (networkType == GnNetworkType.Type_4G) {
 				return R.drawable.gn_stat_sys_network_type_4g;

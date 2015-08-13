@@ -160,7 +160,6 @@ public class KeyguardViewHost extends FrameLayout {
     public void hide() {
         setVisibility(View.GONE);
         mAmigoKeyguardView.hide();
-        updateNotifiOnkeyguard(false);
     }
     
     
@@ -198,15 +197,7 @@ public class KeyguardViewHost extends FrameLayout {
     public boolean needsFullscreenBouncer(){
        return mAmigoKeyguardView.needsFullscreenBouncer();
     }
-    private void updateNotifiOnkeyguard(boolean isShow) {
-//      if (isShow) {
-//          KeyguardUpdateMonitor.getInstance(mContext).getNotificationModule()
-//                  .setLastKeyguardShowTime(System.currentTimeMillis());
-//          KeyguardUpdateMonitor.getInstance(mContext).getNotificationModule().updateNotifications();
-//      } else {
-//          KeyguardUpdateMonitor.getInstance(mContext).getNotificationModule().removeAllNotifications();
-//      }
-  }
+
     
     public void unLockByOther(boolean animation){
         if(animation){
@@ -447,5 +438,10 @@ public class KeyguardViewHost extends FrameLayout {
     
 	public  boolean isTriggerMove(){
 		return mAmigoKeyguardView.isTriggerMove();
+	}
+
+	public void setOccluded(boolean occluded) {
+		
+		mAmigoKeyguardView.setOccluded(occluded);
 	}
 }

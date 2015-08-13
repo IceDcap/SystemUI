@@ -601,7 +601,7 @@ public class KeyguardViewMediator extends SystemUI {
 
         mLockPatternUtils = new LockPatternUtils(mContext);
         mLockPatternUtils.setCurrentUser(ActivityManager.getCurrentUser());
-
+        Log.d(TAG, "setupLocked......="+shouldWaitForProvisioning());
         // Assume keyguard is showing (unless it's disabled) until we know for sure...
         setShowingLocked(!shouldWaitForProvisioning() && !mLockPatternUtils.isLockScreenDisabled());
         mTrustManager.reportKeyguardShowingChanged();
@@ -1200,6 +1200,21 @@ public class KeyguardViewMediator extends SystemUI {
         mLockPatternUtils.setCurrentUser(newUserId);
     }
     
+	//<Amigo_Keyguard> gexiufeng <2015-0-30> add for CR01524934 begin
+	private void checkDisableSkylight() {
+		if (!mExternallyEnabled) {
+			if (mHallState == HallState.OPEN) {
+				if (DEBUG) Log.d(TAG, "keyguard disable: hall opened-->true");
+				mStatusBarKeyguardViewManager.checkSkylightKeyguardDisabled(false);
+
+			} else if (mHallState == HallState.CLOSE && !mOccluded) {
+				if (DEBUG) Log.d(TAG, "keyguard disable: hall opened-->false");
+				mStatusBarKeyguardViewManager.checkSkylightKeyguardDisabled(true);
+			}
+		}
+	}
+	//<Amigo_Keyguard> gexiufeng <2015-0-30> add for CR01524934 end
+
     BroadcastReceiver mHallStatusChangeReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             updateHallState();
@@ -1210,6 +1225,7 @@ public class KeyguardViewMediator extends SystemUI {
             } else if(mHallState == HallState.CLOSE&&!mOccluded){
                 showSkylight();
             }
+			checkDisableSkylight();
         };
     };
 
@@ -1716,6 +1732,7 @@ public class KeyguardViewMediator extends SystemUI {
     }
 
     private void setShowingLocked(boolean showing) {
+    	Log.d(TAG, "setShowingLocked ...showing="+showing);
         if (showing != mShowing) {
             mShowing = showing;
             try {
@@ -1743,8 +1760,6 @@ public class KeyguardViewMediator extends SystemUI {
             }
         }
     }
-    
-    
     
     private void showSkylightIfNeed() {
         if(!SkylightHost.isSkylightSizeExist()){return;}

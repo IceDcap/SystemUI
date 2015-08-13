@@ -35,7 +35,8 @@
 	<dimen name="amigo_keyguard_sim_pin_view_num_keyguard_bouncer_frame_padding_h">34dp</dimen>
 	<dimen name="amigo_keyguard_sim_pin_view_num_above_keyguard_bouncer_frame">10dp</dimen>
 	
-	<dimen name="amigo_keyguard_pin_view_num_marginleft">25dp</dimen>
+	<dimen name="amigo_keyguard_pin_view_num_marginleft">37dp</dimen>
+	<dimen name="amigo_keyguard_pin_view_num_bouncer_frame_padding_left_right">30dp</dimen>
 	<dimen name="amigo_keyguard_pin_view_num_row0_top">12dp</dimen>
 	<dimen name="amigo_keyguard_pin_view_num_linegap">11dp</dimen>
 	<dimen name="amigo_keyguard_pin_view_num_forget_paddingbottom">12dp</dimen>

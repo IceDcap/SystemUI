@@ -68,6 +68,7 @@
     <string name="cmcc_3g">China Mobile 3G</string>
     <string name="cmcc_4g">China Mobile 4G</string>
     <string name="no_sim_card">No SIM Card</string>
+    <string name="invalid_card">Invalid Card</string>
     <string name="no_service">No Service</string>
     <string name="carrier_devider_text">|</string>
 
@@ -223,5 +224,26 @@
     <string name="wallpaper_update_notification_content_pause">Wallpaper stopped updating</string>
     <string name="wallpaper_update_notification_content_success">Wallpaper update successful</string>
     <string name="wallpaper_update_notification_content_fail">Wallpaper update failed Please retry</string>
+     <string name="set_wallpaper_success_toast_message">Set wallpaper successed</string>
       
+    <!-- 关闭锁屏反馈 -->
+    <string name="close_wallpaper_update_point">Wallpaper will not be updated when switched off</string>
+    <string name="close_wallpaper_update_reason">May I know why you turn off the locker?</string>
+    <string name="close_wallpaper_reason_hint">Please tell us why you switch off the locker</string>
+    <string name="send_close_update_reason">Send</string>
+    <string name="friendly_point">Your feedback has been well received, we are sorry for not giving you every satisfaction.Please give us one more chance to do better for you.</string>
+    <string name="close_update">Still Turn off</string>
+    <string name="try_onetime">Try again</string>
+    <!-- wlan提示 -->
+    <string name="wlan_default_point">Update with WLAN connection</string>
+    <string name="wlan_close_point">Data traffic will be used when switch off</string>
+	   <!-- 详情加载 -->
+    <string name="loading_text">Loading</string>
+    <string name="fail_load_text">Load failed</string>
+    <string name="point_recharger">Touch screen update</string>
+    <string name="guid_click"> Click headline to read more</string>	
+    <!--手动更新提示 -->
+    <string name="cancel_update">Cancel</string>
+    <string name="update_wallpaper">Update</string>
+    <string name="checkBox_text">WLAN automatically updated</string>
 </resources>

@@ -158,9 +158,13 @@ public class BatteryController extends BroadcastReceiver {
             setPowerSave(intent.getBooleanExtra(PowerManager.EXTRA_POWER_SAVE_MODE, false));
         } else if (action.equals(ACTION_BATTERY_PERCENTAGE_SWITCH)) {
             mShowBatteryPercentageType = intent.getIntExtra("state", 0);
-            Log.d(TAG, " OnReceive from mediatek.intent.ACTION_BATTERY_PERCENTAGE_SWITCH  mShouldShowBatteryPercentage" +
+            Log.d(TAG, " OnReceive ACTION_BATTERY_PERCENTAGE_SWITCH  mShouldShowBatteryPercentage" +
                     " is " + mShowBatteryPercentageType);
-            updateBatteryPercentageView(mShowBatteryPercentageType);
+            if (mLevel <= 15 && mShowBatteryPercentageType == 0) {
+                updateBatteryPercentageView(2);
+            } else {
+                updateBatteryPercentageView(mShowBatteryPercentageType);
+            }
         }
     }
 

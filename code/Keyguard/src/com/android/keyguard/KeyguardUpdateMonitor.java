@@ -360,7 +360,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
     }
 
     /** @return List of SubscriptionInfo records, maybe empty but never null */
-    List<SubscriptionInfo> getSubscriptionInfo(boolean forceReload) {
+    public List<SubscriptionInfo> getSubscriptionInfo(boolean forceReload) {
         List<SubscriptionInfo> sil = mSubscriptionInfo;
         if (sil == null || forceReload) {
             sil = mSubscriptionManager.getActiveSubscriptionInfoList();
@@ -550,7 +550,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
                     String spn=intent.getStringExtra(TelephonyIntents.EXTRA_SPN);
                     boolean showPlmn=intent.getBooleanExtra(TelephonyIntents.EXTRA_SHOW_PLMN, false);
                     String plmn=intent.getStringExtra(TelephonyIntents.EXTRA_PLMN);
-                    DebugLog.d(TAG, "showSpn: "+showSpn+"  spn: "+spn+"  showPlmn: "+showPlmn+"  plmn: "+plmn);
+                    DebugLog.d(TAG, "subId："+subId+"showSpn: "+showSpn+"  spn: "+spn+"  showPlmn: "+showPlmn+"  plmn: "+plmn);
                     refreshCarrierInfo(subId, showSpn, spn, showPlmn, plmn);
                 }
             }
@@ -985,7 +985,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
      */
     protected void handleBootCompleted() {
         if (mBootCompleted) return;
-        createNotification();
+//        createNotification();
         mBootCompleted = true;
         for (int i = 0; i < mCallbacks.size(); i++) {
             KeyguardUpdateMonitorCallback cb = mCallbacks.get(i).get();
@@ -1283,10 +1283,15 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         callback.onPhoneStateChanged(mPhoneState);
         callback.onRefreshCarrierInfo();
         callback.onClockVisibilityChanged();
-        for (Entry<Integer, SimData> data : mSimDatas.entrySet()) {
-            final SimData state = data.getValue();
-            callback.onSimStateChanged(state.subId, state.slotId, state.simState);
-        }
+        try {
+            for (Entry<Integer, SimData> data : mSimDatas.entrySet()) {
+                final SimData state = data.getValue();
+                callback.onSimStateChanged(state.subId, state.slotId, state.simState);
+            }
+		} catch (Exception e) {
+			Log.e(TAG, "sendUpdates.....e="+e.getMessage()+"e"+e.toString());
+		}
+    
     }
 
     public void sendKeyguardVisibilityChanged(boolean showing) {

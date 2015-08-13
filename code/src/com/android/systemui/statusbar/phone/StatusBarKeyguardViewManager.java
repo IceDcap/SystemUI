@@ -587,4 +587,7 @@ public class StatusBarKeyguardViewManager implements KeyguardBouncerCallback ,Ke
     	mKeyguardViewHostManager.unlockKeyguardByOtherApp();
     }
 
+    public void checkSkylightKeyguardDisabled(boolean expanded){
+		mStatusBarWindowManager.setStatusBarExpanded(expanded);
+    }
 }

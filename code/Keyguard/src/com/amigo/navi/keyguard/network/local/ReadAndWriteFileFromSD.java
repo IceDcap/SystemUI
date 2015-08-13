@@ -23,13 +23,10 @@ public class ReadAndWriteFileFromSD implements DealWithFromLocalInterface{
         this.mReuseImage = reuseImage;
     }
 
-	private LocalFileOperationInterface mLocalFileOperationInterface = null;
-    public ReadAndWriteFileFromSD(Context context,String folderName,String path,
-            LocalFileOperationInterface localFileOperation){
+    public ReadAndWriteFileFromSD(Context context, String folderName, String path){
         mContext = context.getApplicationContext();
         mFolderName = folderName;
         mPath = path;
-        mLocalFileOperationInterface = localFileOperation;
         mScreenWid = KWDataCache.getScreenWidth(context.getResources());
     }
     
@@ -37,7 +34,8 @@ public class ReadAndWriteFileFromSD implements DealWithFromLocalInterface{
     public Bitmap readFromLocal(String key) {
         DebugLog.d(TAG,"readFromLocal url:" + key);
         String file = mPath + File.separator + mFolderName + File.separator + key;
-        Bitmap bitmap = DiskUtils.readFile(file,mScreenWid, mReuseImage);
+//        Bitmap bitmap = DiskUtils.readFile(file,mScreenWid, mReuseImage);
+        Bitmap bitmap = DiskUtils.getImageFromSystem(mContext,file, mReuseImage);
         return bitmap;
     }
 

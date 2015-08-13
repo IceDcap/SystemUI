@@ -56,6 +56,7 @@ public class PlayerManager  implements ClickContinueCallback{
     private PlayerButton mPlayerButton;
     
     private static final int NOTIFICATION_ID = 1005;
+    private static final long LARGEN_VOLUME_EVERY_TIME = 2000;
     
     
     private TelephonyManager mTelephonyManager;
@@ -71,7 +72,7 @@ public class PlayerManager  implements ClickContinueCallback{
     
     private int mDuration;
     private static final boolean VOLUME_SLOWLY = true;
-    private boolean isPausedByCalling = false;
+//    private boolean isPausedByCalling = false;
     private int mCurrentDuration = 0;
     
     private Timer mTimer = null; 
@@ -81,7 +82,7 @@ public class PlayerManager  implements ClickContinueCallback{
     
     private NotificationReceiver mNotificationReceiver;
     
-    private PhoneStateReceiver mPhoneStateReceiver;
+//    private PhoneStateReceiver mPhoneStateReceiver;
 
     private boolean isLocalMusic = false;
     
@@ -124,12 +125,12 @@ public class PlayerManager  implements ClickContinueCallback{
         applicationContext.registerReceiver(mNotificationReceiver, filter);
         
         
-        mPhoneStateReceiver = new PhoneStateReceiver();
-        IntentFilter filterPhoneState = new IntentFilter();
-        filterPhoneState.addAction("android.intent.action.PHONE_STATE");
-        filterPhoneState.addAction(Intent.ACTION_NEW_OUTGOING_CALL);
+//        mPhoneStateReceiver = new PhoneStateReceiver();
+//        IntentFilter filterPhoneState = new IntentFilter();
+//        filterPhoneState.addAction("android.intent.action.PHONE_STATE");
+//        filterPhoneState.addAction(Intent.ACTION_NEW_OUTGOING_CALL);
         
-        applicationContext.registerReceiver(mPhoneStateReceiver, filterPhoneState);
+//        applicationContext.registerReceiver(mPhoneStateReceiver, filterPhoneState);
         
         mNotificationManager = (NotificationManager) applicationContext.getSystemService("notification");
 
@@ -146,23 +147,24 @@ public class PlayerManager  implements ClickContinueCallback{
     
     public void player(Music music, boolean available, boolean local) {
 
-        initMediaPlayer();
-        getPlayerLayout().showMusicName(true, music);
-        if (mMediaPlayer.isPlaying()) {
-            mMediaPlayer.stop();
-        }
-        mMediaPlayer.reset();
-
-        String dataSource = music.getLocalPath();
-
-        if (!local && available) {
-            DebugLog.d(TAG, "is not Local music & download music");
-            dataSource = music.getPlayerUrl();
-            new DownLoadJob(mApplicationContext, music).start();
-        }
-        DebugLog.d(TAG, "musicName = " + music.getmMusicName() + "dataSource = " + dataSource);
+     
 
         if (requestAudioFocus()) {
+        	   initMediaPlayer();
+               getPlayerLayout().showMusicName(true, music);
+               if (mMediaPlayer.isPlaying()) {
+                   mMediaPlayer.stop();
+               }
+               mMediaPlayer.reset();
+
+               String dataSource = music.getLocalPath();
+
+               if (!local && available) {
+                   DebugLog.d(TAG, "is not Local music & download music");
+                   dataSource = music.getPlayerUrl();
+                   new DownLoadJob(mApplicationContext, music).start();
+               }
+               DebugLog.d(TAG, "musicName = " + music.getmMusicName() + "dataSource = " + dataSource);
             
             setPlayingMusic(music);
             
@@ -190,6 +192,7 @@ public class PlayerManager  implements ClickContinueCallback{
         if (currentMusic == null) {
             return;
         }
+        DebugLog.d(TAG, "createNotification");
         Intent intent = new Intent(NotificationReceiver.ACTION_MUSIC_CLOSE);
         PendingIntent pendingIntentClose = PendingIntent.getBroadcast(mApplicationContext, 0, intent, 0);
 
@@ -213,6 +216,7 @@ public class PlayerManager  implements ClickContinueCallback{
         remoteViews.setTextViewText(R.id.haokan_main_layout_Artist, currentMusic.getmArtist());
         thumbBitmap = Common.compBitmap(UIController.getInstance().getCurrentWallpaperBitmap(mApplicationContext, true));
         if (thumbBitmap != null) {
+        	DebugLog.d(TAG, "createNotification.....thumbBitmap="+thumbBitmap);
             remoteViews.setImageViewBitmap(R.id.haokan_notification_image, thumbBitmap);
         }
         mNotification = builder.build();
@@ -222,23 +226,29 @@ public class PlayerManager  implements ClickContinueCallback{
  
     
     private void notifyNotification() {
-        if (mNotification != null && mNotification.contentView != null) {
-            mNotification.contentView.setImageViewResource(R.id.haokan_notification_player_or_pause,
-                    State.PLAYER == mState ? R.drawable.haokan_notification_music_player
-                            : R.drawable.haokan_notification_music_pause);
-            mNotificationManager.notify(NOTIFICATION_ID, mNotification);
+        if (mNotification != null && mNotification.contentView != null  ) {
+        	DebugLog.d(TAG, "notifyNotification");
+        	try {
+        		 mNotification.contentView.setImageViewResource(R.id.haokan_notification_player_or_pause,
+                         State.PLAYER == mState ? R.drawable.haokan_notification_music_player
+                                 : R.drawable.haokan_notification_music_pause);
+                 mNotificationManager.notify(NOTIFICATION_ID, mNotification);
+			} catch (IllegalStateException e) {
+				Log.e(TAG, "notifyNotification....e="+e.getMessage()+"e="+e.toString());
+			}
+           
         }
     }
     
     private void cancelNotification() {
-        DebugLog.d(TAG, "cancelNotification");
+        DebugLog.d(TAG, "cancelNotification....");
         mNotificationManager.cancel(NOTIFICATION_ID);
         BitmapUtil.recycleBitmap(thumbBitmap);
     }
     
     
     public void pause() {
-        
+        DebugLog.v(TAG, "pause");
         cancelTimeTask();
         mMediaPlayer.pause();
         abandonAudioFocusIfNeed();
@@ -247,6 +257,7 @@ public class PlayerManager  implements ClickContinueCallback{
     }
 
     private void cancelTimeTask() {
+        DebugLog.v(TAG, "cancelTimeTask");
         if (mTimer != null) {
             mTimer.cancel();
             mTimer.purge();
@@ -257,7 +268,7 @@ public class PlayerManager  implements ClickContinueCallback{
     }
     
     public void pauseOrPlayer(Music music) {
- 
+        DebugLog.v(TAG, "pauseOrPlayer music");
         if (music == null) return;
         final boolean musicIsPlaying = musicIsPlaying(music);
         if (musicIsPlaying) {
@@ -283,12 +294,13 @@ public class PlayerManager  implements ClickContinueCallback{
         }else if (state == State.NULL){
             player(music);
         }
-        isPausedByCalling = false;
+        pausedByAudiofocusLoss = false;
     }
     
     
     
     public void pauseOrPlayer() {
+        DebugLog.v(TAG, "pauseOrPlayer");
         if (getPlayingMusic() != null) {
             pauseOrPlayer(getPlayingMusic());
         }
@@ -325,16 +337,18 @@ public class PlayerManager  implements ClickContinueCallback{
     
     
     private void start() {
-        
-        requestAudioFocus();
-        mDuration = mMediaPlayer.getDuration();
-        if (getState() != State.PLAYER) {
-            initTimeTask();
+        DebugLog.d(TAG, "start");
+        if(requestAudioFocus()){
+	        mDuration = mMediaPlayer.getDuration();
+	        if (getState() != State.PLAYER) {
+	            initTimeTask();
+            	largenVolume();
+	        }
+	        
+	        mMediaPlayer.start();
+	        setState(State.PLAYER);
+	        notifyNotification();
         }
-        
-        mMediaPlayer.start();
-        setState(State.PLAYER);
-        notifyNotification();
     }
     
    
@@ -353,14 +367,16 @@ public class PlayerManager  implements ClickContinueCallback{
     }
     
     public void stopAndRelease() {
+        DebugLog.v(TAG, "stopAndRelease");
         cancelTimeTask();
 
         abandonAudioFocus();
         setState(State.NULL);
         cancelNotification();
-        getPlayingMusic().setProgress(0);
-        setPlayingMusic(null);
-
+        if(getPlayingMusic()!=null){
+            getPlayingMusic().setProgress(0);
+            setPlayingMusic(null);
+        }
         mBufferingPercent = 0;
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
@@ -420,6 +436,7 @@ public class PlayerManager  implements ClickContinueCallback{
         
         @Override
         public void onPrepared(MediaPlayer arg0) {
+            DebugLog.v(TAG, "onPrepared");
             createNotification();
             start();
         }
@@ -511,7 +528,7 @@ public class PlayerManager  implements ClickContinueCallback{
             
             switch (focusChange) {
                 case AudioManager.AUDIOFOCUS_LOSS:
-                	DebugLog.d(TAG, "AUDIOFOCUS_LOSS");
+                	DebugLog.d(TAG, "AUDIOFOCUS_LOSS  State : " + getState());
 
                     if (getState() == State.PLAYER) {
                         pausedByAudiofocusLoss = true;
@@ -520,7 +537,7 @@ public class PlayerManager  implements ClickContinueCallback{
                     
                     break;
                 case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
-                	DebugLog.d(TAG, "AUDIOFOCUS_LOSS_TRANSIENT");
+                	DebugLog.d(TAG, "AUDIOFOCUS_LOSS_TRANSIENT  State : " + getState());
                 	 if (getState() == State.PLAYER) {
                 	     pausedByAudiofocusLoss = true;
                          pause();
@@ -555,7 +572,9 @@ public class PlayerManager  implements ClickContinueCallback{
     }
 
     private int abandonAudioFocus() {
-        return mAudioManager.abandonAudioFocus(mAudioFocusListener);
+        int result = mAudioManager.abandonAudioFocus(mAudioFocusListener);
+        DebugLog.v(TAG, "abandonAudioFocus result = " + result);
+        return result;
     }
     
     private void abandonAudioFocusIfNeed() {
@@ -566,33 +585,33 @@ public class PlayerManager  implements ClickContinueCallback{
         
     }
     
-    private class PhoneStateReceiver extends BroadcastReceiver{
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-             
-            if (intent.getAction().equals(Intent.ACTION_NEW_OUTGOING_CALL)
-                    || mTelephonyManager.getCallState() == TelephonyManager.CALL_STATE_RINGING) {
-                if (mState == State.PLAYER) {
-                    
-                    pause();
-                    isPausedByCalling = true;
-                }
-
-            } else if (mTelephonyManager.getCallState() == TelephonyManager.CALL_STATE_IDLE) {
-                if (mState == State.PAUSE && isPausedByCalling) {
-                    mHandler.postDelayed(new Runnable() {
-                        
-                        @Override
-                        public void run() {
-                            start();
-                        }
-                    }, 2000);
-                }
-                isPausedByCalling = false;
-            }
-        }
-    }
+//    private class PhoneStateReceiver extends BroadcastReceiver{
+//
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//             
+//            if (intent.getAction().equals(Intent.ACTION_NEW_OUTGOING_CALL)
+//                    || mTelephonyManager.getCallState() == TelephonyManager.CALL_STATE_RINGING) {
+//                if (mState == State.PLAYER) {
+//                    
+//                    pause();
+//                    isPausedByCalling = true;
+//                }
+//
+//            } else if (mTelephonyManager.getCallState() == TelephonyManager.CALL_STATE_IDLE) {
+//                if (mState == State.PAUSE && isPausedByCalling) {
+//                    mHandler.postDelayed(new Runnable() {
+//                        
+//                        @Override
+//                        public void run() {
+//                            start();
+//                        }
+//                    }, 2000);
+//                }
+//                isPausedByCalling = false;
+//            }
+//        }
+//    }
     
     
 
@@ -710,5 +729,11 @@ public class PlayerManager  implements ClickContinueCallback{
 		
 	}
     
+	private void largenVolume() {
+		ValueAnimator mLargenVolumAnimator = ValueAnimator.ofFloat(0f,1f);
+		mLargenVolumAnimator.addUpdateListener(mAnimatorUpdateListener);
+		mLargenVolumAnimator.setDuration(LARGEN_VOLUME_EVERY_TIME);
+		mLargenVolumAnimator.start();
+	}
     
 }

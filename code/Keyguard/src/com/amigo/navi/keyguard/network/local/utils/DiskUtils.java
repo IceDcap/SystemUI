@@ -2,7 +2,6 @@
 package com.amigo.navi.keyguard.network.local.utils;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -12,7 +11,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.KWDataCache;
@@ -28,7 +26,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory.Options;
 import android.os.Environment;
-import android.text.TextUtils;
 import android.util.Log;
 
 public class DiskUtils {
@@ -42,47 +39,7 @@ public class DiskUtils {
     
     public static String THUMBNAIL = ImageLoader.THUMBNAIL_POSTFIX;
     
-   
-    public static boolean saveBitmap(byte[] bs,OutputStream outputStream){
-        BufferedOutputStream os = null;
-        ByteArrayInputStream bis = null;
-        boolean flag = false;
-        try {
-        	DebugLog.d(TAG,"saveBitmap bs:" + bs.length);
-             os = new BufferedOutputStream(outputStream, 8 * 1024);
-             bis = new ByteArrayInputStream(bs);
-             os.write(2);
-             byte[] bf = new byte[1024];
-             int len = 0;
-             while((len = bis.read(bf)) != -1){
-                 os.write(bf, 0, len);
-             }
-             bis.close();
-//             os.close();
-             flag = true;
-         	DebugLog.d(TAG,"saveBitmap bs success");
-        } catch (Exception e) {
-        	DebugLog.d(TAG,"saveBitmap error:" + e.getStackTrace());
-        	flag = false;
-            e.printStackTrace();
-        }finally{
-        	if(bis != null){
-        		try {
-					bis.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-        	}
-//            if(os != null){
-//                try {
-//                    os.close();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-        }
-         return flag;
-    }
+     
     public static Bitmap decodeBitmap(InputStream is,int screenWid){
     	return decodeBitmap(is, screenWid, null);
     }
@@ -106,9 +63,9 @@ public class DiskUtils {
          if(scale == 0){
         	 scale = 1;
          }
-         DebugLog.d("haokan","decodeBitmap decodeBitmap imageWidth:" + imageWidth);
-         DebugLog.d("haokan","decodeBitmap decodeBitmap scale:" + scale);
-         DebugLog.d("haokan","decodeBitmap decodeBitmap ss.length:" + ss.length);
+         DebugLog.d(TAG,"decodeBitmap decodeBitmap imageWidth:" + imageWidth);
+         DebugLog.d(TAG,"decodeBitmap decodeBitmap scale:" + scale);
+         DebugLog.d(TAG,"decodeBitmap decodeBitmap ss.length:" + ss.length);
          
           
          options.inJustDecodeBounds = false;
@@ -134,13 +91,103 @@ public class DiskUtils {
          Bitmap bitmap = null;
          try {
              bitmap = BitmapFactory.decodeByteArray(ss, 0, ss.length, options);
-             DebugLog.d("haokan","decodeBitmap decodeBitmap bitmap.getByteCount:" + bitmap.getByteCount());
+             DebugLog.d(TAG,"decodeBitmap decodeBitmap bitmap.getByteCount:" + bitmap.getByteCount());
          } catch (OutOfMemoryError e) {
-            Log.e("haokan", "", e);
+            Log.e(TAG, "", e);
          } catch (Exception e) {
-             Log.e("haokan", "", e);
+             Log.e(TAG, "", e);
           }
          return bitmap;
+    }
+    
+    
+    private static Bitmap decodeFileDescriptor(FileInputStream fis, int Width, ReuseImage reuseImage) {
+        Bitmap bitmap = null;
+        
+        try {
+            
+            FileDescriptor fd = fis.getFD();
+            
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            options.inJustDecodeBounds = true;
+            options.inSampleSize = 1;
+            BitmapFactory.decodeFileDescriptor(fd, null, options);
+            if (options.outWidth == -1 || options.outHeight == -1) {
+                return decodeBitmap(fis, Width, reuseImage);
+            }
+            
+            int imageWidth = options.outWidth;
+            int scale = 1;
+            if(imageWidth > Width){
+                scale = imageWidth / Width;
+            }
+            if(scale == 0){
+                scale = 1;
+            }
+            
+             
+            options.inJustDecodeBounds = false;
+            options.inSampleSize = scale;
+            options.inPreferredConfig = Config.ARGB_8888;
+            
+            
+           if (reuseImage != null) {
+               Bitmap reuseBitmap = reuseImage.getBitmap();
+
+               if (null != reuseBitmap) {
+                   DebugLog.d(TAG, "scale = " + scale + " options.outWidth = " + options.outWidth + " ; reuseBitmap.getWidth() = " + reuseBitmap.getWidth());
+                   if (options.outWidth == reuseBitmap.getWidth()
+                           && options.outHeight == reuseBitmap.getHeight()) {
+                       reuseImage.setUsed(true);
+                       options.inMutable = true;
+                       options.inBitmap = reuseBitmap;
+                   } else {
+                       reuseBitmap = null;
+                       reuseImage.setUsed(false);
+                   }
+               }
+           }
+            
+           bitmap = BitmapFactory.decodeFileDescriptor(fd, null, options);
+            
+        } catch (FileNotFoundException e) {
+            Log.e(TAG, "FileNotFoundException", e);
+            e.printStackTrace();
+        } catch (IOException e) {
+            Log.e(TAG, "IOException", e);
+            e.printStackTrace();
+        } 
+        
+        return bitmap;
+        
+    }
+    
+    public static Bitmap decodeFileDescriptor(String path, int Width) {
+        return decodeFileDescriptor(path, Width, null);
+    }
+    
+    public static Bitmap decodeFileDescriptor(String path, int Width, ReuseImage reuseImage) {
+
+        File file = new File(path);
+        return decodeFileDescriptor(file, Width, reuseImage);
+    }
+    
+    
+    public static Bitmap decodeFileDescriptor(File file, int Width, ReuseImage reuseImage) {
+
+        if (!file.exists()) {
+            return null;
+        }
+        Bitmap bitmap = null;
+        try {
+            bitmap = decodeFileDescriptor(new FileInputStream(file), Width, reuseImage);
+        } catch (FileNotFoundException e) {
+            Log.v(TAG, "FileNotFoundException", e);
+            e.printStackTrace();
+        }
+       
+        return bitmap;
     }
     
    
@@ -160,7 +207,7 @@ public class DiskUtils {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (OutOfMemoryError e) {
-            Log.e("haokan", "", e);
+            Log.e(TAG, "", e);
         } finally{
 
         	if(bos != null){
@@ -201,24 +248,7 @@ public class DiskUtils {
     		HAOKAN_DIR = context.getFilesDir().getPath() + "/haokan";
 		}
     	return HAOKAN_DIR;
-//        String cachePath = "";
-//        File file = null;
-//        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
-//            || !Environment.isExternalStorageRemovable()) {
-//        	  file = context.getExternalCacheDir();
-//        } 
-//        if(file != null){
-//        	cachePath = file.getPath();
-//            if(!TextUtils.isEmpty(cachePath))
-//            {
-//            	return cachePath;
-//            }
-//        }
-//        file = context.getCacheDir();
-//        if(file != null){
-//        	cachePath = file.getPath();
-//        }
-//        return cachePath;
+ 
     }
     
     public static String getSDPath(Context context){
@@ -319,31 +349,7 @@ public class DiskUtils {
     
     }  
  
-    public static Bitmap readFile(String path,int screenWid){
-		FileInputStream fis;
-		Bitmap bitmap = null;
-		try {
-			fis = new FileInputStream(path);
-			bitmap = decodeBitmap(fis, screenWid);
-			return bitmap;
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} 
-		return bitmap;
-    }
-    
-    public static Bitmap readFile(String path,int screenWid,ReuseImage reuseImage){
-		FileInputStream fis;
-		Bitmap bitmap = null;
-		try {
-			fis = new FileInputStream(path);
-			bitmap = decodeBitmap(fis, screenWid,reuseImage);
-			return bitmap;
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} 
-		return bitmap;
-    }
+ 
     
 	
 	public static boolean saveBitmap(byte[] bs, String fileName, String path){
@@ -358,14 +364,14 @@ public class DiskUtils {
 		 try {
 			 os = new FileOutputStream(imgPath);
 			 ByteArrayInputStream bis = new ByteArrayInputStream(bs);
-			 os.write(2);
+//			 os.write(2);
 			 byte[] bf = new byte[1024];
 			 int len = 0;
 			 while((len = bis.read(bf)) != -1){
 				 os.write(bf, 0, len);
 			 }
 			 bis.close();
-			 os.close();
+			 os.flush();
 			 return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -392,84 +398,14 @@ public class DiskUtils {
 		    return flag;   
 		}
 		
-		public static boolean deleteDirectory(String sPath) {   
-			boolean flag = false;
-		    if (!sPath.endsWith(File.separator)) {   
-		        sPath = sPath + File.separator;   
-		    }   
-		    File dirFile = new File(sPath);   
-		    if (!dirFile.exists() || !dirFile.isDirectory()) {   
-		        return false;   
-		    }   
-		    flag = true;   
-		    File[] files = dirFile.listFiles();   
-		    if(files == null)return false;
-		    for (int i = 0; i < files.length; i++) {   
-		        if (files[i].isFile()) {   
-		            flag = deleteFile(files[i].getAbsolutePath());   
-		            if (!flag) break;   
-		        } 
-		        else {   
-		            flag = deleteDirectory(files[i].getAbsolutePath());   
-		            if (!flag) break;   
-		        }   
-		    }   
-		    if (!flag) return false;   
-		    if (dirFile.delete()) {   
-		        return true;   
-		    } else {   
-		        return false;   
-		    }   
-		}  
+ 
+	
+	public static Bitmap getImageFromSystem(Context context,String path, ReuseImage reuseImage) {
+	    int screenWid = KWDataCache.getScreenWidth(context.getResources());
+	    return decodeFileDescriptor(path, screenWid, reuseImage);
+	}
 
-	    public static Bitmap getImageFromSystem(Context context,String path, ReuseImage reuseImage)  
-	    {  
-	        Bitmap image = null;  
-	        try  
-	        {   
-	        	int screenWid = KWDataCache.getScreenWidth(context.getResources());
-	            Options options = new Options();
-	            options.inJustDecodeBounds = true;
-	        	BitmapFactory.decodeFile(path, options);
-	            int imageWidth = options.outWidth;
-	            int scale = 1;
-	            if(imageWidth > screenWid){
-	                scale = imageWidth / screenWid;
-	            }
-	            if(scale == 0){
-	           	 	scale = 1;
-	            }
-	            options.inJustDecodeBounds = false;
-	            options.inSampleSize = scale;
-	            options.inPreferredConfig = Config.ARGB_8888;
-	            if (reuseImage != null) {
-                    
-	                Bitmap reuseBitmap = reuseImage.getBitmap();
-	                if (null != reuseBitmap) {
-	                    if (options.outWidth == reuseBitmap.getWidth() 
-	                            && options.outHeight == reuseBitmap.getHeight()){
-	                        options.inMutable = true;
-	                        reuseImage.setUsed(true);
-	                        options.inBitmap = reuseBitmap; 
-	                    }else{
-	                        reuseImage.setUsed(false);
-	                        reuseBitmap = null;
-	                    }
-	                }
-                }
-	            DebugLog.d(TAG,"getImageFromSystem path:" + path);
-	            image = BitmapFactory.decodeFile(path, options);
-	            DebugLog.d(TAG,"getImageFromSystem image:" + image);
-	        } catch (Exception e) {  
-	        	DebugLog.d(TAG,"getImageFromAssetsFile error:" + e.getStackTrace());
-	            e.printStackTrace();  
-	        } catch (OutOfMemoryError e) {
-                Log.e("haokan", "", e);
-            }
-	    
-	        return image;  
-	    
-	    }  
+ 
 		
 		public static boolean saveBitmap(Bitmap bt, String key,String path){
 			if(bt == null){
@@ -554,45 +490,16 @@ public class DiskUtils {
             saveThumbnail(bitmap, key, path);
             bitmap.recycle();
         } catch (Exception e) {
-        	Log.d("haokan", "", e);
+        	Log.d(TAG, "", e);
             e.printStackTrace();
         } catch (OutOfMemoryError e) {
-        	Log.d("haokan", "", e);
+        	Log.d(TAG, "", e);
         }
     }
     
 
   
-    public static Bitmap getSystemImageThumb(String path) {
-        Bitmap bitmap = null;
-
-        File file = new File(path);
-        FileInputStream is = null;
-        try {
-            is = new FileInputStream(file);
-
-            FileDescriptor fd = is.getFD();
-            final BitmapFactory.Options options = new BitmapFactory.Options();
-
-            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-            options.inJustDecodeBounds = false;
-            options.inSampleSize = 2;
-            bitmap = BitmapFactory.decodeFileDescriptor(fd, null, options);
-
-        } catch (Exception e) {
-        } catch (OutOfMemoryError e) {
-        } finally {
-            try {
-                if (is != null) {
-                    is.close();
-                }
-            } catch (IOException e) {
-                Log.v("haokan", "", e);
-            }
-        }
-        return bitmap;
-    }
-
+ 
     public static String constructThumbFileNameByUrl(String url) {
         return constructFileNameByUrl(url) + THUMBNAIL;
     }

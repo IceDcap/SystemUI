@@ -48,7 +48,8 @@ public class LoadImagePool {
     }
 
     static {
-        sThreadPool = Executors.newCachedThreadPool();
+//        sThreadPool = Executors.newCachedThreadPool();
+    	sThreadPool = Executors.newFixedThreadPool(2);
     }
 
     private static void gnDownLoadExecute(Runnable runnable) {

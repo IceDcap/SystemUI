@@ -121,8 +121,8 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="vertical"
-        android:paddingLeft="42dip"
-        android:paddingRight="42dip" >
+        android:paddingLeft="@dimen/amigo_keyguard_pin_view_num_bouncer_frame_padding_left_right"
+        android:paddingRight="@dimen/amigo_keyguard_pin_view_num_bouncer_frame_padding_left_right" >
 
         <LinearLayout
             android:id="@+id/row1"

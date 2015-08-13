@@ -28,6 +28,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.amigo.navi.keyguard.haokan.analysis.WallpaperStatisticsPolicy;
 import com.android.keyguard.R;
 
 public class DetailActivity extends Activity {
@@ -274,7 +275,8 @@ public class DetailActivity extends Activity {
             mWebView.destroy();
             mWebView = null;
         }
+        WallpaperStatisticsPolicy.onDetialActivityNotShown();
         
-       System.gc();
+       System.gc();//NOSONAR
     }
 }

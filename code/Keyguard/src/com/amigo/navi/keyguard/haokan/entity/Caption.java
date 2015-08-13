@@ -11,6 +11,8 @@ public class Caption implements Serializable{
     
     private String mLink;
     
+    private String mLinkText;
+    
     private int mTitleBackgroundColor;
     
     private String imgSource;
@@ -22,12 +24,13 @@ public class Caption implements Serializable{
         // TODO Auto-generated constructor stub
     }
 
-    public Caption(String mTitle, String mContent, String mLink, int mTitleBackgroundColor,
+    public Caption(String mTitle, String mContent, String mLink,String linkText, int mTitleBackgroundColor,
             int mContentBackgroundColor,String imgSource) {
         super();
         this.mTitle = mTitle;
         this.mContent = mContent;
         this.mLink = mLink;
+        this.mLinkText=linkText;
         this.mTitleBackgroundColor = mTitleBackgroundColor;
         this.mContentBackgroundColor = mContentBackgroundColor;
         this.imgSource = imgSource;
@@ -120,6 +123,14 @@ public class Caption implements Serializable{
 
     public void setContentBackgroundColor(int contentBackgroundColor) {
         this.mContentBackgroundColor = contentBackgroundColor;
+    }
+
+    public String getmLinkText() {
+        return mLinkText;
+    }
+
+    public void setmLinkText(String mLinkText) {
+        this.mLinkText = mLinkText;
     }
     
     

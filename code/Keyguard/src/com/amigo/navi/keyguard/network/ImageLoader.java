@@ -25,6 +25,7 @@ import com.amigo.navi.keyguard.network.FailReason.FailType;
 import com.amigo.navi.keyguard.network.local.DealWithFromLocalInterface;
 import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
 import com.amigo.navi.keyguard.network.manager.DownLoadBitmapManager;
+import com.amigo.navi.keyguard.network.theardpool.Job;
 import com.amigo.navi.keyguard.network.theardpool.LoadImagePool;
 import com.amigo.navi.keyguard.picturepage.adapter.HorizontalAdapter;
 import com.amigo.navi.keyguard.picturepage.widget.ImageViewWithLoadBitmap;
@@ -137,6 +138,7 @@ public class ImageLoader implements ImageLoaderInterface{
             }
 			ImageRemoved.clear();
 			mNeedInit = true;
+			ImageRemoved.notifyAll();
 		}	
 		synchronized (mImageViewWithLoadBitmapList) {
 
@@ -251,14 +253,14 @@ public class ImageLoader implements ImageLoaderInterface{
             return;
         }
        
-        
-			if (url.endsWith(THUMBNAIL_POSTFIX)){
+        boolean isThumbnail = url.endsWith(THUMBNAIL_POSTFIX);
+			if (isThumbnail){
 				addImage2Cache(url, bitmap);
 			} else {
 				if (url.equals(mCurrentUrl)) {
 					addImage2Cache(url, bitmap);
 				} else {
-					addBmpToImageRemoved(bitmap);
+					addBmpToImageRemoved(bitmap, !isThumbnail);
 					return;
 				}
 			}
@@ -356,7 +358,8 @@ public class ImageLoader implements ImageLoaderInterface{
 				String url = urlToBeRemove.get(i);
 				Bitmap bitmap = mFirstLevelCache.get(url);
 
-				if(url != null && !url.endsWith(THUMBNAIL_POSTFIX)) {
+				boolean isThumbnail = url.endsWith(THUMBNAIL_POSTFIX);
+				if(url != null && !isThumbnail) {
 
                     int size = mImageViewWithLoadBitmapList.size();
                     for (int j = size - 1; j >= 0; j--) {
@@ -368,7 +371,7 @@ public class ImageLoader implements ImageLoaderInterface{
                         }
                     }
                 }  
-				addBmpToImageRemoved(bitmap);
+				addBmpToImageRemoved(bitmap, !isThumbnail);
 				mFirstLevelCache.remove(urlToBeRemove.get(i));
 			}
 
@@ -380,12 +383,12 @@ public class ImageLoader implements ImageLoaderInterface{
 	private ArrayList<Bitmap> ThumbRemoved = new ArrayList<Bitmap>();
 	private Bitmap mImageReuseBmp = null;
 
-	public Bitmap getBmpFromImageRemoved() {
+	public Bitmap getBmpFromImageRemoved(Job job) {
 	     
 		Bitmap bmp = null;
 		synchronized (ImageRemoved) {
 			if (!mNeedInit) {
-				while (ImageRemoved.isEmpty()) {
+				while (ImageRemoved.isEmpty() && !job.isCanceled()) {
 					try {
 						if (DebugLog.DEBUGMAYBE){
 							DebugLog.d(LOG_TAG, "getBmpFromImageRemoved wait before");
@@ -399,8 +402,10 @@ public class ImageLoader implements ImageLoaderInterface{
 						e.printStackTrace();
 					}
 				}
+				if (!ImageRemoved.isEmpty()) {
 				bmp = ImageRemoved.get(0);
 				ImageRemoved.remove(0);
+				}
 			}else{
                 bmp = Bitmap.createBitmap(KWDataCache.getScreenWidth(mContext.getResources()),
                         KWDataCache.getScreenHeight(mContext.getResources()),
@@ -427,7 +432,8 @@ public class ImageLoader implements ImageLoaderInterface{
 		return bmp;
 	}
 	
-	public void addBmpToImageRemoved(Bitmap bmp) {
+	@Override
+	public void addBmpToImageRemoved(Bitmap bmp, boolean isImage) {
 	    
         if (mRelease) {
             BitmapUtil.recycleBitmap(bmp);
@@ -438,32 +444,13 @@ public class ImageLoader implements ImageLoaderInterface{
 
             return;
         }
-		int screenWid = KWDataCache.getScreenWidth(mContext.getResources());
-		int screenheight = KWDataCache.getScreenHeight(mContext.getResources());
+//		int screenWid = KWDataCache.getScreenWidth(mContext.getResources());
+//		int screenheight = KWDataCache.getScreenHeight(mContext.getResources());
 		 
-//		if (bmp.getWidth() == screenWid) {
-//			synchronized (ImageRemoved) {
-//			    if (ImageRemoved.size() <= 1) {
-//			        ImageRemoved.add(bmp);
-//			    } else {
-//			        BitmapUtil.recycleBitmap(bmp);
-//                }
-//			    
-//				ImageRemoved.notify();
-//				DebugLog.d(LOG_TAG, "getBmpFromImageRemoved notify");
-//			}
-//		} else {
-//		 
-//		    if (ThumbRemoved.size() <= 2) {
-//		        ThumbRemoved.add(bmp);
-//            }else {
-//                BitmapUtil.recycleBitmap(bmp);
-//            }
-//		}
-		
-        if (bmp.getWidth() == screenWid && bmp.getHeight() == screenheight) {
+        DebugLog.v(LOG_TAG, "addBmpToImageRemoved() isImage = " + isImage + "; ImageRemoved size = " + ImageRemoved.size() );
+		if (isImage) {
             synchronized (ImageRemoved) {
-                if (ImageRemoved.size() <= 1) {
+                if (ImageRemoved.size() < 1) {//<1
                     ImageRemoved.add(bmp);
                 } else {
                     BitmapUtil.recycleBitmap(bmp);
@@ -471,18 +458,39 @@ public class ImageLoader implements ImageLoaderInterface{
 
                 ImageRemoved.notify();
                 if (DebugLog.DEBUGMAYBE){
-                	DebugLog.d(LOG_TAG, "getBmpFromImageRemoved notify");
+                    DebugLog.d(LOG_TAG, "getBmpFromImageRemoved notify");
                 }
             }
-        } else if (bmp.getWidth() == screenWid / 2 && bmp.getHeight() == screenheight / 2) {
-            if (ThumbRemoved.size() <= 2) {
+        } else {
+            if (ThumbRemoved.size() < 1) {// <1
                 ThumbRemoved.add(bmp);
             } else {
                 BitmapUtil.recycleBitmap(bmp);
             }
-        }else {
-            BitmapUtil.recycleBitmap(bmp);
         }
+		
+//        if (bmp.getWidth() == screenWid && bmp.getHeight() == screenheight) {
+//            synchronized (ImageRemoved) {
+//                if (ImageRemoved.size() <= 1) {//<1
+//                    ImageRemoved.add(bmp);
+//                } else {
+//                    BitmapUtil.recycleBitmap(bmp);
+//                }
+//
+//                ImageRemoved.notify();
+//                if (DebugLog.DEBUGMAYBE){
+//                	DebugLog.d(LOG_TAG, "getBmpFromImageRemoved notify");
+//                }
+//            }
+//        } else if (bmp.getWidth() == screenWid / 2 && bmp.getHeight() == screenheight / 2) {
+//            if (ThumbRemoved.size() <= 2) {// <1
+//                ThumbRemoved.add(bmp);
+//            } else {
+//                BitmapUtil.recycleBitmap(bmp);
+//            }
+//        }else {
+//            BitmapUtil.recycleBitmap(bmp);
+//        }
 		
 	}
 
@@ -605,7 +613,8 @@ public class ImageLoader implements ImageLoaderInterface{
                 key = DiskUtils.constructFileNameByUrl(wallpaper.getImgUrl());
                 File fileLoad = new File(path + File.separator + key);
                 if (fileLoad.exists()) {
-                    Bitmap bitmap = DiskUtils.readFile(path + File.separator + key, KWDataCache.getScreenWidth(mContext.getResources()));
+                    Bitmap bitmap = DiskUtils.decodeFileDescriptor(fileLoad, KWDataCache.getScreenWidth(mContext.getResources()), null);
+                    
                     if (bitmap != null) {
                         DiskUtils.saveThumbnail(bitmap, key, path);
                         bitmap.recycle();
@@ -644,11 +653,11 @@ public class ImageLoader implements ImageLoaderInterface{
                 mContext, imageUri);
         String key = DiskUtils.constructFileNameByUrl(imageUri);
         if (bitmapTemp != null) {
-            int screenWid = KWDataCache.getScreenWidth(mContext
-                    .getResources());
-            int screenHei = KWDataCache.getAllScreenHeigt(mContext);
-            bitmap = BitmapUtil.getResizedBitmapForSingleScreen(bitmapTemp,
-                    screenHei, screenWid);
+//            int screenWid = KWDataCache.getScreenWidth(mContext
+//                    .getResources());
+//            int screenHei = KWDataCache.getAllScreenHeigt(mContext);
+            bitmap = bitmapTemp;//BitmapUtil.getResizedBitmapForSingleScreen(bitmapTemp,
+//                    screenHei, screenWid);
             String path = DiskUtils.getCachePath(mContext) + File.separator
                     + DiskUtils.WALLPAPER_BITMAP_FOLDER;
             

@@ -23,6 +23,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.os.SystemClock;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -80,6 +81,7 @@ public class GnScreenShotTile extends GnQSTile<GnQSTile.BooleanState> {
 
     @Override
 	protected void handleClick() {
+    	Log.d(TAG, "handleClick");
 		// modify by y3_gionee hangh for GNNCR00010562 start
 		if (mLongScreenShotSupport) {
 			showScreenShotSwitchDialog();
@@ -163,9 +165,11 @@ public class GnScreenShotTile extends GnQSTile<GnQSTile.BooleanState> {
 	};
 
 	private void normalScreenShot() {
+    	Log.d(TAG, "handleClick normalScreenShot");
 		mHandler.postDelayed(mNormalScreenshotRunnable, 200);
 	}
 	private void longScreenShot(){
+    	Log.d(TAG, "handleClick longScreenShot");
 		Intent intent = new Intent();
 		intent.setClassName("com.gionee.longscreenshot", "com.gionee.longscreenshot.ScreenShotService");
 		mContext.startService(intent);
@@ -179,6 +183,13 @@ public class GnScreenShotTile extends GnQSTile<GnQSTile.BooleanState> {
 	};
 
 	private void takeScreenshot() {
+		// add by hanjuan for CR01523804 begin
+		if (mScreenShotServiceConn != null){
+	    	Log.d(TAG, "takeScreenshot is running!");
+			return;
+		}
+		final long startTime = SystemClock.elapsedRealtime();
+		// add by hanjuan for CR01523804 end
 		ComponentName cn = new ComponentName("com.android.systemui",
 				"com.android.systemui.screenshot.TakeScreenshotService");
 		Intent intent = new Intent();
@@ -195,12 +206,22 @@ public class GnScreenShotTile extends GnQSTile<GnQSTile.BooleanState> {
 						@Override
 						public void handleMessage(Message msg) {
 							synchronized (mScreenshotLock) {
-								mContext.unbindService(mScreenShotServiceConn);
-								mScreenShotServiceConn = null;
+								// modify by hanjuan for CR01523804 begin
+								if (mScreenShotServiceConn != null) {
+							    	Log.d(TAG, "takeScreenshot time " + (SystemClock.elapsedRealtime()-startTime));
+									this.removeMessages(1);
+									mContext.unbindService(mScreenShotServiceConn);
+									mScreenShotServiceConn = null;
+								}
+								// modify by hanjuan for CR01523804 end
 							}
 						}
 					};
-					msg.replyTo = new Messenger(h);
+					// modify by hanjuan for CR01523804 begin
+					// we need unbindService manually if we can't obtain msg for some reason
+					h.sendEmptyMessageDelayed(1, 10000);
+					// modify by hanjuan for CR01523804 end
+					msg.replyTo = new Messenger(h);					
 					msg.arg1 = msg.arg2 = 0;
 					try {
 						messenger.send(msg);
@@ -218,6 +239,7 @@ public class GnScreenShotTile extends GnQSTile<GnQSTile.BooleanState> {
 	}
 
 	private void partScreenShot() {
+    	Log.d(TAG, "handleClick partScreenShot");
 		GnYouJu.onEvent(mContext, "Amigo_SystemUI_CC", "GnScreenShotTile");
 		mHandler.postDelayed(new Runnable() {
 			@Override

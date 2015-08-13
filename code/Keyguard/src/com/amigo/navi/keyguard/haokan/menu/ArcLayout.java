@@ -340,7 +340,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
             @Override
             public void onAnimationEnd(Animator arg0) {
                 if (isLast) {
-                    mExpanded = true;
+//                    mExpanded = true;
                     mExpandAnimatorRunning = false;
                     controller.setArcExpanding(false);
                 }
@@ -366,12 +366,19 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
     private  AnimatorSet createShrinkAnimator(final ArcItemButton child, float fromXDelta, float toXDelta, float fromYDelta, float toYDelta,
             long startOffset, long duration, Interpolator interpolator,final boolean isLast) {
         
-        PropertyValuesHolder pvhTranslationX = PropertyValuesHolder.ofFloat("translationX", fromXDelta, toXDelta);  
-        PropertyValuesHolder pvhTranslationY = PropertyValuesHolder.ofFloat("translationY", fromYDelta, toYDelta);  
+//        PropertyValuesHolder pvhTranslationX = PropertyValuesHolder.ofFloat("translationX", fromXDelta, toXDelta);  
+//        PropertyValuesHolder pvhTranslationY = PropertyValuesHolder.ofFloat("translationY", fromYDelta, toYDelta);  
         
-        PropertyValuesHolder pvhscaleX = PropertyValuesHolder.ofFloat("scaleX", 1.0f, 0f);
-        PropertyValuesHolder pvhscaleY = PropertyValuesHolder.ofFloat("scaleY", 1.0f, 0f);
-        PropertyValuesHolder pvhalpha = PropertyValuesHolder.ofFloat("alpha", 1.0f, 0f);
+        PropertyValuesHolder pvhTranslationX = PropertyValuesHolder.ofFloat("translationX", 0f);  
+        PropertyValuesHolder pvhTranslationY = PropertyValuesHolder.ofFloat("translationY", 0f);  
+        
+        
+//        PropertyValuesHolder pvhscaleX = PropertyValuesHolder.ofFloat("scaleX", 1.0f, 0f);
+//        PropertyValuesHolder pvhscaleY = PropertyValuesHolder.ofFloat("scaleY", 1.0f, 0f);
+//        PropertyValuesHolder pvhalpha = PropertyValuesHolder.ofFloat("alpha", 1.0f, 0f);
+        PropertyValuesHolder pvhscaleX = PropertyValuesHolder.ofFloat("scaleX", 0f);
+        PropertyValuesHolder pvhscaleY = PropertyValuesHolder.ofFloat("scaleY", 0f);
+        PropertyValuesHolder pvhalpha = PropertyValuesHolder.ofFloat("alpha", 0f);
         
         ObjectAnimator Alpha = ObjectAnimator.ofFloat(child.getmTextView(), "alpha", 0f).setDuration(10); 
         
@@ -404,7 +411,7 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
 //                child.getmTextView().setVisibility(GONE);
                 if (isLast) {
                     mShrinkAnimatorRunning = false;
-                    mExpanded = false;
+//                    mExpanded = false;
                     controller.showKeyguardNotification();
                 }
                 
@@ -432,7 +439,8 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
         final boolean isLast = index == childCount - 1;
         final boolean isFisrt = index == 0;
         AnimatorSet animatorSet;
-        if (!expanded) {
+//        if (!expanded) {
+        if (expanded) {
             final int radius = mRadius;
             final float perDegrees = Math.abs(mToDegrees - mFromDegrees) / (childCount - 1);
             Rect frame = computeChildFrame(centerX, centerY, radius, mFromDegrees + index * perDegrees, mChildSize);
@@ -552,6 +560,9 @@ public class ArcLayout extends ViewGroup implements View.OnClickListener{
 			return;
 		}
     	DebugLog.d(TAG, "switchState  mExpanded = " + mExpanded);
+    	
+    	mExpanded = !mExpanded;
+    	
         final int childCount = mArcItems.size();
         for (int i = 0; i < childCount; i++) {
             ArcItemButton arcItemButton = mArcItems.get(i);

@@ -11,18 +11,20 @@ import android.util.Log;
 public class WallpaperStatisticsPolicy {
     
     private static long sKeyguardShownMillis = -1;
-    private static long sKeyguardNotShownMillis = -1;
+//    private static long sKeyguardNotShownMillis = -1;
     
     private static long sWallpaperShownMillis = -1;
-    private static long sWallpaperNotShownMillis = -1;
+//    private static long sWallpaperNotShownMillis = -1;
     
     private static Wallpaper sWallpaperScrollBegin = null;
-    private static Wallpaper sWallpaperScrollEnd = null;
+//    private static Wallpaper sWallpaperScrollEnd = null;
     
-    private static int sNotificationCount = 0;
+//    private static int sNotificationCount = 0;
     private static long sNotificationShownMillis = -1;
     private static long sNotificationNotShownMillis = -1;
     private static Wallpaper sWallpaperWhenNotificationShown = null;
+    private static long sDetailShownMillis = -1;
+    private static long sDetailNotShownMillis = -1;
     
     private static long getCurrentMillis() {
     	return SystemClock.elapsedRealtime();
@@ -39,21 +41,9 @@ public class WallpaperStatisticsPolicy {
     }
     
     public static void onWallpaperNotShown(Wallpaper wallpaper) {
-//    	if(sKeyguardShownMillis > 0) {
-//    		sKeyguardNotShownMillis = getCurrentMillis();
-//    		int stayMillis = (int) (sKeyguardNotShownMillis - sKeyguardShownMillis);
-//    		HKAgent.onEventTimeOnKeyguard(null, stayMillis);
-//    		
-//    		sKeyguardNotShownMillis = -1;
-//    		sKeyguardShownMillis = -1;
-//    	}
-    	
     	if(sWallpaperShownMillis < 0) return;
     	
-    	sWallpaperNotShownMillis = getCurrentMillis();
-    	
-    	// compute gazing duration of current wallpaper before wallpaper disappear
-    	long gazingDuration = computeGazingDuration();
+    	long gazingDuration = getCurrentMillis() - sWallpaperShownMillis;
     	if(gazingDuration > 0) {
     		Log.d("DEBUG_STATISTIC", "onWallpaperNotShown wallpaper " + wallpaper.getImgId() + ", gazingDuration=" + gazingDuration);
     		HKAgent.onEventImageGazingDuration(wallpaper, gazingDuration);
@@ -73,9 +63,7 @@ public class WallpaperStatisticsPolicy {
     	
     	if(sWallpaperScrollBegin == null) return;
     	
-    	sWallpaperScrollEnd = wallpaper;
-    	
-    	long gazingDuration = computeGazingDuration();
+    	long gazingDuration = getCurrentMillis() - sWallpaperShownMillis;
     	if(gazingDuration > 0) {
     		Log.d("DEBUG_STATISTIC", "onWallpaperScrollBegin wallpaper " + wallpaper.getImgId() + ", gazingDuration=" + gazingDuration);
     		HKAgent.onEventImageGazingDuration(sWallpaperScrollBegin, gazingDuration);
@@ -85,7 +73,6 @@ public class WallpaperStatisticsPolicy {
     	sWallpaperShownMillis = getCurrentMillis();
     	
     	sWallpaperScrollBegin = null;
-    	sWallpaperScrollEnd = null;
     }
     
     public static void onKeyguardNotiCountChanged(int notiCount) {
@@ -115,20 +102,20 @@ public class WallpaperStatisticsPolicy {
     	}
     }
     
-    private static long computeGazingDuration() {
-    	long gazingDuration = 0;
-    	
-    	boolean validWallpapers = sWallpaperScrollBegin != null && sWallpaperScrollEnd != null;
-    	boolean validBeginMillis = sWallpaperShownMillis > 0;
-    	if(validWallpapers && validBeginMillis) {
-    		int beginImageId = sWallpaperScrollBegin.getImgId();
-        	int endImageId = sWallpaperScrollEnd.getImgId();
-        	if(beginImageId != endImageId) {
-        		gazingDuration = getCurrentMillis() - sWallpaperShownMillis;
-        	}
-    	}
-    	
-    	return gazingDuration;
+    public static void onDetialActivityShown() {
+        sDetailShownMillis = getCurrentMillis();
+    }
+    
+    public static void onDetialActivityNotShown() {
+        
+        if(sDetailShownMillis < 0) return;
+        
+        sDetailNotShownMillis = getCurrentMillis();
+        int sDetialShowDuration = (int) (sDetailNotShownMillis - sDetailShownMillis);
+        HKAgent.onEventDetialActivityShowDuriation(sDetialShowDuration);
+        
+        sDetailShownMillis = -1;
+        sDetailNotShownMillis = -1;
     }
     
 }

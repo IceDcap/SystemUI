@@ -38,7 +38,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 
     private static final int INVALID_POINTER = -1;
     private static final int MAX_VELOCITY = 4000;
-    private static final int MIN_SCROLL_TIME = 200;
+    private static final int MIN_SCROLL_TIME = 180;
 
     private static final float INFLEXION = 0.35f; // Tension lines cross at
     // (INFLEXION, 1)
@@ -185,7 +185,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         // TODO Auto-generated method stub
         // super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        mMinDistance = (int) (mChildWidth * 0.15);
+        mMinDistance = (int) (mChildWidth * 0.12);
         final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         final int widthSize = MeasureSpec.getSize(widthMeasureSpec);
         final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
@@ -258,7 +258,8 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
             if(mAdapter.getCount() == 1){
             	setSelection(0);
             }else{
-                setSelection(mFirstPosition);
+//                setSelection(mFirstPosition);
+            	setSelection(mCurrentPage-1);
             }
 //            setSelection(0);
         }
@@ -666,7 +667,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 //        }
         int finalPage = 0;
         int childCount = mAdapter.getCount();
-        if (deltaX > mMinDistance || velocityX > 3000) {
+        if (deltaX > mMinDistance || velocityX > 1000) {
             finalPage = returnToOriginalPage ? mCurrentPage : mCurrentPage - 1;
             if(!isCanLoop && mCurrentPage < 0){
             	finalPage = mCurrentPage;
@@ -676,7 +677,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
             }
             snapToPage(finalPage,motionX);
             mIsFling = true;
-        }else if (deltaX < -mMinDistance || velocityX < -3000) {
+        }else if (deltaX < -mMinDistance || velocityX < -1000) {
             finalPage = returnToOriginalPage ? mCurrentPage : mCurrentPage + 1;
             if(!isCanLoop && mCurrentPage > childCount - 1){
             	finalPage = mCurrentPage;
@@ -774,7 +775,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     	DebugLog.d(TAG, "setPosition mChildWidth:" + mChildWidth);
     	DebugLog.d(TAG, "setPosition position:" + position);
         mCurrentPage = position;
-        smoothScrollTo(mChildWidth * position, 0, 0);
+//        smoothScrollTo(mChildWidth * position, 0, 0);
     }
 
     public void smoothScrollTo(int x, int y) {
@@ -795,9 +796,18 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         mScroller.startScroll(scrollX, 0, x - scrollX, 0, MIN_SCROLL_TIME);
         postInvalidate();
     }
+    
+    public void smoothScrollTo(int position){
+    	int x=mChildWidth * position;
+    	smoothScrollTo(x,0,0);
+    }
 
     public void smoothScrollTo(int x, int y, int time) {
-        setSelection(mCurrentPage);
+    	 if(mAdapter.getCount() == 1){
+         	setSelection(0);
+         }else{
+         	setSelection(mCurrentPage-1);
+         }
         onLayout();
         int scrollX = getScrollX();
         x = getFinalScrollX(x);
@@ -824,10 +834,11 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
             x = getMaxScrollX();
             int count = mAdapter.getCount();
 //            mCurrentPage = Math.max(0, Math.min(mNextPage, count - 1));
-            mCurrentPage = count - 1;
+            mCurrentPage = Math.max(0, count - 1);
 //            scrollTo(x, y);
 //            return;
-            setSelection(mCurrentPage);
+//            setSelection(mCurrentPage - 1);
+            mFirstPosition = mCurrentPage-1;
             onLayout();
         }
         if (scrollOutLastPageBound(x)) {
@@ -836,7 +847,8 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 //            int count = mAdapter.getCount();
 //            mCurrentPage = Math.max(0, Math.min(mNextPage, count - 1));
               mCurrentPage = 0;
-              setSelection(mCurrentPage);
+//              setSelection(mCurrentPage - 1);
+            mFirstPosition = mCurrentPage-1;
               onLayout();
 //            scrollTo(x, y);
 //            return;

@@ -17,7 +17,6 @@ import com.amigo.navi.keyguard.haokan.db.CategoryDB;
 import com.amigo.navi.keyguard.haokan.db.WallpaperDB;
 import com.amigo.navi.keyguard.haokan.entity.WallpaperList;
 import com.amigo.navi.keyguard.network.local.ReadAndWriteFileFromSD;
-import com.amigo.navi.keyguard.network.local.LocalFileOperation;
 import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
 import com.amigo.navi.keyguard.settings.KeyguardSettings;
 

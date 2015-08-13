@@ -7,8 +7,6 @@ import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.haokan.UIController;
 import com.amigo.navi.keyguard.haokan.entity.WallpaperList;
 import com.amigo.navi.keyguard.network.ImageLoader;
-import com.amigo.navi.keyguard.network.local.LocalBitmapOperation;
-import com.amigo.navi.keyguard.network.local.LocalFileOperationInterface;
 import com.amigo.navi.keyguard.network.local.ReadAndWriteFileFromSD;
 import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
 import com.amigo.navi.keyguard.picturepage.interfacers.OnReloadListener;
@@ -41,10 +39,8 @@ public class HorizontalAdapter extends BaseAdapter {
        updateDataList(wallpaperList);
        this.mImageLoader = imageLoader;
        mImageLoader.setmHorizontalAdapter(this);
-       LocalFileOperationInterface localFileOperationInterface = new LocalBitmapOperation(context);
        mDealWithFromLocalInterface = new ReadAndWriteFileFromSD(context.getApplicationContext(), 
-                 DiskUtils.WALLPAPER_BITMAP_FOLDER, DiskUtils.getCachePath(context.getApplicationContext()),
-                 localFileOperationInterface);
+                 DiskUtils.WALLPAPER_BITMAP_FOLDER, DiskUtils.getCachePath(context.getApplicationContext()));
        mConfig = new ImageViewWithLoadBitmap.Config();
        mConfig.startBitmapID = R.drawable.loading;
        mConfig.failBitmapID = R.drawable.loading;

@@ -241,7 +241,14 @@ public class RecentsActivity extends Activity implements OnClickListener , OnLon
         mForeground = true;
         updateMemoryInfo();
         mRecentsPanel.updateRecentAppLockState();
-        if (mIsClearBtnLongPress) {
+        
+        if (mClearNotice == null) {
+            if (mRecentsPanel != null) {
+                mClearNotice = (TextView) mRecentsPanel.findViewById(R.id.recent_notice);
+            }
+        }
+        
+        if (mIsClearBtnLongPress && mClearNotice != null) {
 			mClearNotice.setVisibility(View.GONE);
 		}
         super.onResume();
@@ -454,6 +461,18 @@ public class RecentsActivity extends Activity implements OnClickListener , OnLon
         }
 
         private void scanView(int what) {
+			//CR01535224 gexiufeng <2015-8-11> begin
+			if (mGnScanView == null) {
+				if(mRecentsPanel != null) {
+					mGnScanView = (GnScanView) mRecentsPanel.findViewById(R.id.gn_san_view);
+				}
+				if (mGnScanView == null) {
+					Log.w(TAG, "mGnScanView is null !! scanView failed!");
+					return;
+				}
+			}
+			//CR01535224 gexiufeng <2015-8-11> end
+
             int currentAngel = mGnScanView.getAngle();
             int angel = currentAngel;
             Log.d(TAG, "angel = " + angel + " mAngle = " + mAngle);
@@ -542,16 +561,24 @@ public class RecentsActivity extends Activity implements OnClickListener , OnLon
         		mContext.getResources().getString(R.string.gn_memory_available), 
                 formatMemory(getMemoryAvailable()),
                 formatMemory(getPhoneRamMemory()));
-        if(mMemInfo == null) {
-        	if(mRecentsPanel != null) {
-        		mMemoryInfo = (TextView) mRecentsPanel.findViewById(R.id.memory_status);
-        	}
-        } else {
-        	mMemoryInfo.setText(memoryInfo);
-		}
+        if (mMemoryInfo == null) {
+            if(mRecentsPanel != null) {
+                mMemoryInfo = (TextView) mRecentsPanel.findViewById(R.id.memory_status);
+            }
+        }
+        if (mMemoryInfo != null) {
+            mMemoryInfo.setText(memoryInfo);
+        }
         
         mAngle = calculateAngle();
-        mHandler.sendEmptyMessage(MSG_SCAN);
+        if (mGnScanView == null) {
+            if(mRecentsPanel != null) {
+                mGnScanView = (GnScanView) mRecentsPanel.findViewById(R.id.gn_san_view);
+            }
+        }
+        if (mGnScanView != null) {
+            mHandler.sendEmptyMessage(MSG_SCAN);
+        }
     }
 	
 	public void showMemorySaved() {

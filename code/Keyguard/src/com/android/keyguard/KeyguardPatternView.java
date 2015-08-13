@@ -42,6 +42,7 @@ import android.widget.Toast;
 import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.KeyguardViewHostManager;
 import com.amigo.navi.keyguard.fingerprint.FingerIdentifyManager;
+import com.amigo.navi.keyguard.haokan.Common;
 import com.amigo.navi.keyguard.security.AmigoAccount;
 import com.amigo.navi.keyguard.security.AmigoSecurityPasswordUtil;
 import com.amigo.navi.keyguard.security.AmigoUnBindAcountActivity;
@@ -188,7 +189,7 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
     private void setForgetPasswordButton() {
     	 forgetButton = (TextView) this.findViewById(R.id.forget_password);
          if(forgetButton == null) return;
-         if(getTimeOutSize()>=5 && AmigoSecurityPasswordUtil.getInstance().getSecurityPasswordSupport()){
+         if(getTimeOutSize()>=5 && AmigoSecurityPasswordUtil.getInstance().getSecurityPasswordSupport() && !Common.isPowerSaverMode()){
         	 forgetButton.setVisibility(View.VISIBLE);
          }
         forgetButton.setOnClickListener(new View.OnClickListener() {
@@ -398,6 +399,10 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
 	}
 
 	private void unLockDone() {
+		if(mCountdownTimer!=null){
+			mCountdownTimer.cancel();
+			mCountdownTimer = null;
+		}
 		mCallback.reportUnlockAttempt(true);
 		mLockPatternView.setDisplayMode(LockPatternView.DisplayMode.Correct);
 		if(mCallback.getFingerPrintResult()!=KeyguardSecurityContainer.FINGERPRINT_SUCCESS){
@@ -415,7 +420,7 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
 		mLockPatternView.setDisplayMode(LockPatternView.DisplayMode.Wrong);	
 		if(DebugLog.DEBUG) DebugLog.d(TAG, "onUnlockFail failReason :"+failReason);
 		if(failReason == UNLOCK_FAIL_REASON_TIMEOUT) {
-			if(AmigoSecurityPasswordUtil.getInstance().getSecurityPasswordSupport()){				
+			if(AmigoSecurityPasswordUtil.getInstance().getSecurityPasswordSupport() && !Common.isPowerSaverMode()){				
 				forgetButton.setVisibility(View.VISIBLE);
 			}
 		    VibatorUtil.amigoVibrate(mContext, VibatorUtil.LOCKSCREEN_UNLOCK_CODE_ERROR, VibatorUtil.UNLOCK_ERROR_VIBRATE_TIME);

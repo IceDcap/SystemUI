@@ -26,7 +26,8 @@ public class DealWithByteFile{
     public Bitmap readFromLocal(String key) {
         DebugLog.d(TAG,"readFromLocal url:" + key);
         String file = mPath + File.separator + mFolderName + File.separator + key;
-        Bitmap bitmap = DiskUtils.readFile(file,mScreenWid);
+ 
+        Bitmap bitmap = DiskUtils.decodeFileDescriptor(file,mScreenWid);
         return bitmap;
     }
 

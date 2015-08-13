@@ -1202,3 +1202,136 @@ svn: E205000: Syntax error in revision argument '7000:'
 File does not exist:  at getAppChangeSet.pl line 48
 
 ==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01525194      Coded      wujj       驱动：必现 插入USB线设置为仅充电，PC端弹出QDSS DATA与QDSS CTRL驱动安装提示(无法安装)
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bv
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bu
+Code difference: svn diff -r 7011:7003 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01527721      Opened     jiating    MISC：锁屏界面低电提示背景为红色
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bw
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bv
+Code difference: svn diff -r 7014:7013 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01527721      Opened     jiating    MISC：锁屏界面低电提示背景为红色
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bx
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bw
+Code difference: svn diff -r 7019:7018 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01513574      Opened     lixian     手机重启后流量、电量 、时间 大小显示跟随系统显示变化,流量的显示还跟随字体的变化显示 必现
+CR01515157      Closed     jiating    NAVI锁屏：修改字体样式，锁屏界面，文本字体在文本框中偏上，应该居中【截图】
+CR01520887      Resolved   huangwt    【5.1MP】工厂：进入相机拍摄视频保存,上拉控制中心,长按相机图标,会拍照,重启手机恢复 3/10
+CR01522747      Opened     liushuang  MISC：随机 上下音量键调节通知音量无声  6/20
+CR01527355      Resolved   jiating    【品质压力】电量10%重启手机，重启后无图案锁界面，按power键亮屏点亮屏也无图案锁，重新设置图案锁也无显示，重启恢复 1/30
+CR01528195      Coded      liuwei     【5.1MP】数据开启卡2，更换一张卡到卡2，开机卡1数据为开启，无流量输出图标（卡1也是如此）卡1网络类型无法选择【必现】
+CR01528795      Opened     jiating    【工厂】故事锁屏界面，点锁屏设置，选择锁定的壁纸，进入图库选择系统自带的竖屏壁纸，无法设置成功【对比8611】【必现】
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.by
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bx
+Code difference: svn diff -r 7084:7021 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.1.ap' non-existent in revision 7122
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '7122:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01374919      Opened     guosb      4.4rom锁屏功能开发
+CR01408122      Opened     jiating    【NAVI锁屏2.0.0.y】打开小米锁屏后 ，从 navi桌面不能下拉上锁
+CR01523563      Opened     jiangxiao  [StoryKeyguard_ROM] 单张图片停留时间&网络访问统计
+CR01523732      Resolved   zhu_lin    状态栏：低电时，电量显示设为非默认值后再设为默认值，状态栏电量显示有误 必现
+CR01523804      Resolved   hanjuan    【工厂】：任意界面,拉出控制中心,超级截屏,截屏,多次操作提示“系统界面停止运行”点击确定恢复5/10
+CR01525128      Resolved   jiating    【ROM】NAVI锁屏：手机插入耳机，拨打电话，在屏幕自动灭屏的瞬间，通过耳机按键挂断电话后，屏幕亮起，出现壁纸透明。（100%）
+CR01526425      Opened     xiangw     【工厂】主题公园更换主题成功后》手机壁纸不变【无法恢复,附视频】
+CR01526578      Closed     jiating    【ROM】NAVI锁屏：锁屏界面不显示未接来电 必现
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ca
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bz
+Code difference: svn diff -r 7150:7124 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.1.au' non-existen[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+t in revision 7203
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '7201:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.1.aw' non-existent in revision 7220
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '7218:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.1.ay' non-existent in revision 7263
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '7263:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01374919      Opened     guosb      4.4rom锁屏功能开发
+CR01459185      Opened     zhaowei    {Navi锁屏}提交Navi锁屏代码
+CR01519948      Resolved   zhaowei    视频：随机 播放视频时系统界面停止运行  1/20
+CR01528086      Resolved   liushuang  【自动化测试_monkey】系统界面：进行Monkey测试，系统界面出现运行时异常
+CR01528319      Coded      zhaowei    【品质压力】横屏播视频自动暂停,来电接听挂断,自动播壁纸音乐,下拉菜单点播放定屏5s,手机竖屏自动锁屏,解锁退出,再操作恢复【1/50】
+CR01533198      Opened     lixian     SystemUI状态栏提交代码CR
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ce
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.cd
+Code difference: svn diff -r 7310:7265 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01296451      Opened     jingyn     解决rom锁屏bug
+CR01374919      Opened     guosb      4.4rom锁屏功能开发
+CR01521180      Opened     liushuai   提交新代码
+CR01531489      Coded      liushuang  MISC：开启极致省电，插USB，开启USB调试，弹出USB鉴权确认后，退出极省电，插USB，USB框口背景色异常【必现】
+CR01533827      Opened     jiating    【CT Pre-test】插双卡，开机注册到网络后，锁屏界面显示中国电信/无服务（下拉状态栏显示正常）
+CR01535224      Coded      gexiufeng  【品质压力】运行游戏的过程中按APP键退出，再按APP键进入游戏，进入游戏时定屏3秒提示系统界面停止运行点击确定后恢复【1/10】
+CR01535318      Resolved   liushuang  【ROM】【CTS测试】测试GMS-CTSVerfier.apk中的USB Accessory Test项，系统界面停止运行
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.cf
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ce
+Code difference: svn diff -r 7380:7312 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.1.bh' non-existent in revision 7399
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '7399:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01533827      Opened     jiating    【CT Pre-test】插双卡，开机注册到网络后，锁屏界面显示中国电信/无服务（下拉状态栏显示正常）
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ch
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.cg
+Code difference: svn diff -r 7402:7401 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================

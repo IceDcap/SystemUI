@@ -126,6 +126,7 @@ public class DataConstant {
         public static final String SHOW_TIME_END = "show_time_end";
         public static final String SAVE_TYPE = "save_type";
         public static final String SORT = "sort";
+        public static final String DETAIL_LINK = "detail_link";
     }
 
     public static final String CREATE_STATISTICS_SQL = "create table statistics (" +

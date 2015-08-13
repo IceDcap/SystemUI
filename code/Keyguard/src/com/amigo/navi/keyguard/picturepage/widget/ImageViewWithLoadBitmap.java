@@ -16,8 +16,6 @@ import com.amigo.navi.keyguard.network.ImageLoadingListener;
 import com.amigo.navi.keyguard.network.local.DealWithFromLocalInterface;
 import com.amigo.navi.keyguard.network.local.ReadFileFromAssets;
 import com.amigo.navi.keyguard.network.local.ReadAndWriteFileFromSD;
-import com.amigo.navi.keyguard.network.local.LocalBitmapOperation;
-import com.amigo.navi.keyguard.network.local.LocalFileOperationInterface;
 import com.amigo.navi.keyguard.network.local.utils.DiskUtils;
 import com.amigo.navi.keyguard.network.manager.DownLoadBitmapManager;
 import com.amigo.navi.keyguard.network.theardpool.Job;

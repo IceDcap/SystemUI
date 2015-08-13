@@ -23,6 +23,7 @@ public class GnTorchTile extends GnQSTile<BooleanState> {
 
     @Override
     public void setListening(boolean listening) {
+        Log.d(TAG, "this： " + this+"======mCallback"+mCallback);
         if (listening) {
             mController.addStateChangedCallback(mCallback);
             mGnTorchController.addListener(mListener);

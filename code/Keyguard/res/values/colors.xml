@@ -89,5 +89,10 @@
     
 	<color name="notification_progress_bg">#828282</color>
     <color name="notification_progress">#464646</color>
+    
+        <color name="haokan_caption_detal_select_color">#3350d7fe</color> 
  
+    <color name="amiLocker_actionbar_bc_color">#00000000</color>
+    <color name="amiLocker_actionbar_text_color">#ffffff</color>
+    <color name="close_wallpaper_update_txt_color">#ccffffff</color>
 </resources>

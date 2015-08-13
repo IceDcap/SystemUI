@@ -34,7 +34,7 @@ public class DownLoadBitmapManager {
                 && NetWorkUtils.is2GDataNetworkType(context.getApplicationContext())) {
             timeOut = ConnectionParameters.NET_2G_TIMEOUT;
         }
-        BitmapHttpConnect download = new BitmapHttpConnect(timeOut,method);
+        BitmapHttpConnect download = new BitmapHttpConnect(context,timeOut,method);
         URL bitmapUrl = NetWorkUtils.constructRequestURL(url,null);
         return download.loadImageFromInternet(bitmapUrl);
     }
@@ -49,7 +49,7 @@ public class DownLoadBitmapManager {
                 && NetWorkUtils.is2GDataNetworkType(context.getApplicationContext())) {
             timeOut = ConnectionParameters.NET_2G_TIMEOUT;
         }
-        BitmapHttpConnect download = new BitmapHttpConnect(timeOut,method);
+        BitmapHttpConnect download = new BitmapHttpConnect(context,timeOut,method);
         URL bitmapUrl = NetWorkUtils.constructRequestURL(url,null);
         return download.loadImageFromInternet(bitmapUrl);
     }
@@ -64,7 +64,7 @@ public class DownLoadBitmapManager {
                 && NetWorkUtils.is2GDataNetworkType(context.getApplicationContext())) {
             timeOut = ConnectionParameters.NET_2G_TIMEOUT;
         }
-        BitmapHttpConnect download = new BitmapHttpConnect(timeOut,method);
+        BitmapHttpConnect download = new BitmapHttpConnect(context,timeOut,method);
         URL bitmapUrl = NetWorkUtils.constructRequestURL(url,null);
         return download.loadImageFromInternetByByte(bitmapUrl);
     }

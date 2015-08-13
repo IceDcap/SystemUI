@@ -71,7 +71,7 @@ import amigo.widget.blur.AmigoBlur;
 public class ImageWallpaper extends WallpaperService {
     private static final String TAG = "ImageWallpaper";
     private static final String GL_LOG_TAG = "ImageWallpaperGL";
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true; //gexiufeng open for CR01526425
     private static final String PROPERTY_KERNEL_QEMU = "ro.kernel.qemu";
 
     static final boolean FIXED_SIZED_SURFACE = true;

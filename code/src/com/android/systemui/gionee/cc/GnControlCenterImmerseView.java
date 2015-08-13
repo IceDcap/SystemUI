@@ -39,6 +39,12 @@ public class GnControlCenterImmerseView extends FrameLayout {
                     Log.d(TAG, "handler msg push down out");
                     pushDownOut();
                     break;
+                // modify by hanjuan for CR01524340 begin
+                case 2:
+                    Log.d(TAG, "handleClick dismissPanel");
+                    pushDownOut();
+                    break;
+                // modify by hanjuan for CR01524340 end
                     
                 default:
                     break;
@@ -50,8 +56,11 @@ public class GnControlCenterImmerseView extends FrameLayout {
 
         @Override
         public void dismissPanel() {
-            setVisibility(View.GONE);
-            GnControlCenter.go(GnControlCenter.STATE_CLOSED);
+			// modify by hanjuan for CR01524340 begin
+			// setVisibility(View.GONE);
+			// GnControlCenter.go(GnControlCenter.STATE_CLOSED);
+			mHandler.sendEmptyMessage(2);
+			// modify by hanjuan for CR01524340 end
         }
         
     };

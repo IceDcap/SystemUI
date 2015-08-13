@@ -140,7 +140,7 @@ public class FileUtil {
     
     public static void copyDefaultWallpaperToGallery(Context context) {
 
-        File fileScreenLock = new File(SCREENLOCK_WALLPAPER_LOCATION);
+        File fileScreenLock = new File(SCREENLOCK_WALLPAPER_LOCATION);//NOSONAR
 
         String localfile = getSdCardPath() + DIRECTORY_FAVORITE;
         isExistDirectory(localfile);
@@ -149,32 +149,69 @@ public class FileUtil {
             DebugLog.d(TAG, "files.length = " + files.length);
             for (final File file : files) {
 
-                String absolutePath = file.getAbsolutePath();
-                if (file.isFile() && file.getAbsolutePath().endsWith(".jpg")) {
+                if (file.isFile()) {
+                	String absolutePath = file.getAbsolutePath();
+                	if(absolutePath.endsWith(".jpg") || absolutePath.endsWith(".png")){
+                		FileInputStream fis = null;
+                		FileOutputStream fos = null;
+                		FileChannel sourceCh = null;
+                		FileChannel destCh = null;
                     try {
-                        String destPath = localfile
-                                + file.getAbsolutePath().substring(absolutePath.lastIndexOf("/"));
+                        String destPath = localfile+ absolutePath.substring(absolutePath.lastIndexOf("/"));
                         DebugLog.d(TAG, "destPath = " + destPath);
                         File dest = new File(destPath);
                         if (!dest.exists()) {
-                            dest.createNewFile();
+                            boolean created = dest.createNewFile();
+                            DebugLog.d(TAG, "copyDefaultWallpaperToGallery dest.createNewFile()" + created);
                         }
 
-                        FileInputStream fis = new FileInputStream(file);
+                        fis = new FileInputStream(file);
 
 //                            DiskUtils.saveDefaultThumbnail(context, fis, file.getName());
                         
-                        FileOutputStream fos = new FileOutputStream(dest);
-                        FileChannel sourceCh = fis.getChannel();
-                        FileChannel destCh = fos.getChannel();
+                        fos = new FileOutputStream(dest);
+                        sourceCh = fis.getChannel();
+                        destCh = fos.getChannel();
                         long value = sourceCh.transferTo(0, sourceCh.size(), destCh); 
                         DebugLog.d(TAG, "value = " + value);
                         Common.insertMediaStore(context,0, 0, destPath);
-                        sourceCh.close();
-                        destCh.close();
                     } catch (Exception e) {
                     	Log.d(TAG, "", e);
+                    }finally{
+                    	if(sourceCh != null){
+                    		try {
+								sourceCh.close();
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+                    	}
+                    	if(destCh != null){
+                    		try {
+								destCh.close();
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+                    	}
+                    	if(fis != null){
+                    		try {
+								fis.close();
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+                    	}
+                    	if(fos != null){
+                    		try {
+								fos.close();
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+                    	}
                     }
+                	}
                 }
             }
         }
@@ -182,20 +219,32 @@ public class FileUtil {
     
     public static void saveDefaultWallpaperThumbnail(Context context) {
 
-        File fileScreenLock = new File(SCREENLOCK_WALLPAPER_LOCATION);
+        File fileScreenLock = new File(SCREENLOCK_WALLPAPER_LOCATION);//NOSONAR
         if (fileScreenLock.exists() && fileScreenLock.isDirectory()) {
             File[] files = fileScreenLock.listFiles();
             DebugLog.d(TAG, "files.length = " + files.length);
             for (final File file : files) {
-                if (file.isFile() && file.getAbsolutePath().endsWith(".jpg")) {
-                    try {
-                        FileInputStream fis = new FileInputStream(file);
-                        DiskUtils.saveDefaultThumbnail(context, fis, file.getName());
-                        fis.close();
-                    } catch (Exception e) {
-                    	Log.d(TAG, "", e);
-                    } 
-                }
+				if (file.isFile()) {
+					String absolutePath = file.getAbsolutePath();
+					if (absolutePath.endsWith(".jpg") || absolutePath.endsWith(".png")) {
+						FileInputStream fis = null;
+						try {
+							fis = new FileInputStream(file);
+							DiskUtils.saveDefaultThumbnail(context, fis,file.getName());
+						} catch (Exception e) {
+							Log.d(TAG, "", e);
+						}finally{
+							if(fis != null){
+								try {
+									fis.close();
+								} catch (IOException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							}
+						}
+					}
+				}
             }
         }
     }

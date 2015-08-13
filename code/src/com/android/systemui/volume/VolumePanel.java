@@ -186,7 +186,7 @@ public class VolumePanel extends Handler implements DemoMode {
 
     //Gionee <hanbj> <20150427> for amigo begin
     private boolean ISCTSTEST = false;
-    private String CTSACTIVITY = "com.android.cts.verifier.notifications.AttentionManagementVerifierActivity";
+    private String CTSACTIVITY[] ={ "com.android.cts.verifier.notifications.AttentionManagementVerifierActivity","com.android.cts.verifier.notifications.NotificationAttentionManagementVerifierActivity"};
     //Gionee <hanbj> <20150427> for amigo end
     
     /** Currently active stream that shows up at the top of the list of sliders */
@@ -1314,16 +1314,28 @@ public class VolumePanel extends Handler implements DemoMode {
         if (!isShowing()) {
             int stream = (streamType == STREAM_REMOTE_MUSIC) ? -1 : streamType;
             // when the stream is for remote playback, use -1 to reset the stream type evaluation
-            if (stream != STREAM_MASTER) {
-                mAudioManager.forceVolumeControlStream(stream);
-            ISCTSTEST = CTSACTIVITY.equals(getRunningActivity(mContext) );
-            if (ISCTSTEST) {
-            	mZenPanel.setVisibility(View.VISIBLE);
-            } else {
-            	mZenPanel.setVisibility(View.GONE);
-            }
-            }
-            mDialog.show();
+			if (stream != STREAM_MASTER) {
+				mAudioManager.forceVolumeControlStream(stream);
+
+				if (CTSACTIVITY[0].equals(getRunningActivity(mContext))
+						|| CTSACTIVITY[1].equals(getRunningActivity(mContext))) {
+					ISCTSTEST = true;
+				}else{
+					ISCTSTEST = false;
+				}
+
+				if (ISCTSTEST) {
+					mZenPanel.setVisibility(View.VISIBLE);
+				} else {
+					mZenPanel.setVisibility(View.GONE);
+				}
+			}
+			try {
+				mDialog.show();
+			} catch (Exception e) {
+				return;
+			}
+
             if (mCallback != null) {
                 mCallback.onVisible(true);
             }
@@ -1358,7 +1370,7 @@ public class VolumePanel extends Handler implements DemoMode {
     }
 
     protected void onPlaySound(int streamType, int flags) {
-
+    	if (LOGD) Log.d(mTag, "onPlaySound");
         if (hasMessages(MSG_STOP_SOUNDS)) {
             removeMessages(MSG_STOP_SOUNDS);
             // Force stop right now
@@ -1368,6 +1380,7 @@ public class VolumePanel extends Handler implements DemoMode {
         synchronized (this) {
             ToneGenerator toneGen = getOrCreateToneGenerator(streamType);
             if (toneGen != null) {
+            	if (LOGD) Log.d(mTag, "toneGen != null-----PlaySound");
                 toneGen.startTone(ToneGenerator.TONE_PROP_BEEP);
                 sendMessageDelayed(obtainMessage(MSG_STOP_SOUNDS), BEEP_DURATION);
             }

@@ -201,6 +201,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
     }
 
     private void registerListeners() {
+    	Log.d(TAG, "registerListeners");
         for (MobileSignalController mobileSignalController : mMobileSignalControllers.values()) {
             mobileSignalController.registerListener();
         }
@@ -228,6 +229,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
     }
 
     private void unregisterListeners() {
+    	Log.d(TAG, "unregisterListeners");
         mListening = false;
         for (MobileSignalController mobileSignalController : mMobileSignalControllers.values()) {
             mobileSignalController.unregisterListener();
@@ -381,6 +383,9 @@ public class NetworkControllerImpl extends BroadcastReceiver
 
     @Override
     public void onUserSwitched(int newUserId) {
+    	if (DEBUG) {
+    		Log.d(TAG, new StringBuffer().append("onUserSwitched: newUserId=").append(newUserId).toString());
+        }
         mCurrentUserId = newUserId;
         mAccessPoints.onUserSwitched(newUserId);
         updateConnectivity();
@@ -1245,6 +1250,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
          * Start listening for phone state changes.
          */
         public void registerListener() {
+        	Log.d(TAG, new StringBuffer().append("registerListener by MobileSignalController(").append(mSubscriptionInfo.getSubscriptionId()).append(")").toString());
             mPhone.listen(mPhoneStateListener,
                     PhoneStateListener.LISTEN_SERVICE_STATE
                             | PhoneStateListener.LISTEN_SIGNAL_STRENGTHS
@@ -1260,6 +1266,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
          * Stop listening for phone state changes.
          */
         public void unregisterListener() {
+        	Log.d(TAG, new StringBuffer().append("unregisterListener by MobileSignalController(").append(mSubscriptionInfo.getSubscriptionId()).append(")").toString());
             mPhone.listen(mPhoneStateListener, 0);
             if(GnFeatureOption.GN_CTCC_SUPPORT) {
             	mContext.getContentResolver().unregisterContentObserver(FourGDataOnlyObserver);
@@ -1360,7 +1367,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
 					}
 				}
 				for (int i = 0; i < signalClustersLength; i++) {
-					mSignalClusters.get(i).gnSetNetworkType(mNetworkType, isRoaming(), mSubscriptionInfo.getSimSlotIndex());
+					mSignalClusters.get(i).gnSetNetworkType(mNetworkType, isRoaming(), mCurrentState.dataConnected, mSubscriptionInfo.getSimSlotIndex());
 					if (mSubscriptionInfo.getSimSlotIndex() == 0
 							&& ("46003".equals(mPhone.getSimOperatorNumericForPhone(0))
 							|| "46011".equals(mPhone.getSimOperatorNumericForPhone(0)))) {
@@ -1402,7 +1409,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
                     if (DEBUG) Log.d(TAG,"notifyListeners(), slot =" + mSubscriptionInfo.getSimSlotIndex()
                             + ", setMobileState, mCurrentState.airplaneMode = " + mCurrentState.airplaneMode
                             + ", network type = " + mNetworkType);
-                    mSignalClusters.get(i).gnSetNetworkType(mNetworkType, isRoaming(), mSubscriptionInfo.getSimSlotIndex());
+                    mSignalClusters.get(i).gnSetNetworkType(mNetworkType, isRoaming(), mCurrentState.dataConnected, mSubscriptionInfo.getSimSlotIndex());
 					mSignalClusters.get(i).setMobileDataIndicators(
 							mCurrentState.enabled && !mCurrentState.airplaneMode,
 							getCurrentIconId(), typeIcon, contentDescription,
@@ -1539,10 +1546,12 @@ public class NetworkControllerImpl extends BroadcastReceiver
                         Settings.Global.AIRPLANE_MODE_ON, 0) == 1);
                 boolean isRadioOn = true;
                 try {
-                	 isRadioOn = ITelephony.Stub.asInterface(ServiceManager.checkService("phone")).isRadioOn();
+                	isRadioOn = ITelephony.Stub.asInterface(ServiceManager.checkService("phone")).isRadioOnForSubscriber(mSubscriptionInfo.getSubscriptionId());
 				} catch (Exception e) {
 					// TODO: handle exception
+					Log.e(TAG, new StringBuffer().append("Get isRadioOn have exception:").append(e.toString()).toString());
 				}
+                Log.d(TAG, new StringBuffer().append("handleBroadcast: isAirPlaneMode=").append(isAirPlaneMode).append(", isRadioOn=").append(isRadioOn).toString());
                 if(isAirPlaneMode || !isRadioOn) {
                 	resetPhoneState(); 
                 }
@@ -1553,6 +1562,10 @@ public class NetworkControllerImpl extends BroadcastReceiver
 
         private void updateDataSim() {
             int defaultDataSub = SubscriptionManager.getDefaultDataSubId();
+            Log.d(TAG, "updateDataSim defaultDataSub = " + defaultDataSub 
+            		+ " SubscriptionManager.isValidSubscriptionId(defaultDataSub) = " 
+            		+ SubscriptionManager.isValidSubscriptionId(defaultDataSub) 
+            		+" mSubscriptionInfo.getSubscriptionId() = " + mSubscriptionInfo.getSubscriptionId());
             if (SubscriptionManager.isValidSubscriptionId(defaultDataSub)) {
                 mCurrentState.dataSim = defaultDataSub == mSubscriptionInfo.getSubscriptionId();
             } else {
@@ -2348,7 +2361,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
         
         void gnSetMobileSignalCT(boolean visible, int strengthIconCT, int strengthIcon, int typeIcon, int subId);
         void gnSetSimUnavail(boolean visible, boolean isEmergency, int unAvailResId, int subId);
-        void gnSetNetworkType(GnNetworkType networkType, boolean isRoaming, int subId);
+        void gnSetNetworkType(GnNetworkType networkType, boolean isRoaming, boolean isDataConnect, int subId);
     }
 
     public interface EmergencyListener {

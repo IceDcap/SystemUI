@@ -10,9 +10,12 @@ import android.animation.ValueAnimator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.content.Context;
+import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -26,20 +29,28 @@ import com.amigo.navi.keyguard.DebugLog;
 import com.amigo.navi.keyguard.Guide;
 import com.amigo.navi.keyguard.Guide.GuideState;
 import com.amigo.navi.keyguard.haokan.analysis.HKAgent;
+import com.amigo.navi.keyguard.haokan.analysis.WallpaperStatisticsPolicy;
 import com.amigo.navi.keyguard.haokan.entity.Caption;
 import com.amigo.navi.keyguard.infozone.AmigoKeyguardInfoZone;
+import com.amigo.navi.keyguard.network.NetworkRemind;
+import com.amigo.navi.keyguard.network.NetworkRemind.ClickContinueCallback;
 import com.amigo.navi.keyguard.settings.KeyguardSettings;
 import com.android.keyguard.R;
  
 
 public class CaptionsView extends RelativeLayout {
 
+    private static final String LOG_TAG="CaptionsView";
     
     private ValueAnimator mValueAnimator = new ValueAnimator(); 
 
     private static final int ANIMATION_DURATION = 150;
 
+    private TextView mTextViewGuid;
     private TextView mTextViewTitle;
+    private LinearLayout mLinkLayout;
+    private TextView mTextViewLink;
+    private boolean mLinkVisible = false;
     
     private int mTitleHeight;
     
@@ -48,7 +59,7 @@ public class CaptionsView extends RelativeLayout {
     private boolean mContentVisible = false;
     private Drawable mContentLinkDrawable;
     
-    private GradientDrawable GradientDrawable;
+    private GradientDrawable mGradientDrawable;
     
     public boolean animRuning = false;
     
@@ -67,13 +78,18 @@ public class CaptionsView extends RelativeLayout {
     private GuideClickView mGuideClickView;
     
     private boolean mKeyguardStyleIsChecked = true;
+    private static long mLastClickTime = 0;
+    private boolean isEmptyLink;
+    private Caption mCaption;
+
+	private Context mContext;
     
 //    private boolean mGuideClickViewShowing = false;
     
-    public void setContentVisible(boolean visible) {
-        if (mContentVisible != visible) {
-            this.mContentVisible = visible;
-        }
+    public void setDetailLinkVisible(boolean visible) {
+        this.mLinkVisible = visible;
+        int visibility = visible ? VISIBLE : GONE;
+        mLinkLayout.setVisibility(visibility);
     }
     
     public CaptionsView(Context context) {
@@ -90,8 +106,8 @@ public class CaptionsView extends RelativeLayout {
     
     public CaptionsView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-
-        GradientDrawable = (GradientDrawable) getResources().getDrawable(
+        mContext = context;
+        mGradientDrawable = (GradientDrawable) getResources().getDrawable(
                 R.drawable.haokan_title_background);
 
         mInitialTranslationY = getResources().getDimensionPixelSize(
@@ -109,10 +125,18 @@ public class CaptionsView extends RelativeLayout {
     }
     
     public void onScreenTurnedOff() {
-        setContentVisible(false);
+    	mContentVisible = false;
+        setDetailLinkVisible(false);
         setTranslationY(mInitialTranslationY + mTitleHeight);
         getTitleView().setAlpha(0f);
         hideGuideIfNeed();
+        UIController.getInstance().showKeyguardNotification();
+    }
+    
+    public void onKeyguardShown(){
+    	 mContentVisible = false;
+    	 setTranslationY(mInitialTranslationY);
+    	 UIController.getInstance().showKeyguardNotification();
     }
     
     public int getInitialTranslationY() {
@@ -139,7 +163,7 @@ public class CaptionsView extends RelativeLayout {
             setVisibility(GONE);
         	return;
         }
-        
+        mCaption=caption;
         if (mKeyguardStyleIsChecked) {
             setVisibility(VISIBLE);
         } else {
@@ -151,15 +175,27 @@ public class CaptionsView extends RelativeLayout {
         
         mTextViewContent.setText(string);
         mTextViewContent.setMovementMethod(LinkMovementMethod.getInstance());
+        mTextViewContent.setHighlightColor(getResources().getColor(R.color.haokan_caption_detal_select_color));
         mTextViewTitle.setText(caption.getTitle());
         setTitleBackgroundColor(caption.getTitleBackgroundColor());
         string.setmCaptionsView(this);
+        isEmptyLink = TextUtils.isEmpty(caption.getLink());
+        if (!isEmptyLink) {
+            if (!TextUtils.isEmpty(caption.getmLinkText())) {
+                mTextViewLink.setText(caption.getmLinkText());
+            } else {
+                mTextViewLink.setText(mlinkString);
+            }
+            setDetailLinkVisible(mContentVisible);
+        }else{
+            setDetailLinkVisible(false);
+        }
     }
      
     
     public void setTitleBackgroundColor(int color) {
-        GradientDrawable.setColor(color);
-        mTextViewTitle.setBackground(GradientDrawable);
+        mGradientDrawable.setColor(color);
+        mTextViewTitle.setBackground(mGradientDrawable);
     }
     
  
@@ -168,7 +204,10 @@ public class CaptionsView extends RelativeLayout {
         super.onFinishInflate();
 
         mTextViewTitle = (TextView) findViewById(R.id.haokan_captions_title);
+        mLinkLayout = (LinearLayout) findViewById(R.id.haokan_captions_link_layout);
+        mTextViewLink = (TextView) findViewById(R.id.haokan_captions_link);
         mTextViewContent = (TextView) findViewById(R.id.haokan_captions_content);
+        mTextViewGuid = (TextView)findViewById(R.id.guid_click_tv);
         LinearLayout titleContainer = (LinearLayout) findViewById(R.id.haokan_captions_title_container);
         titleContainer.setOnClickListener(new OnClickListener() {
 
@@ -176,7 +215,7 @@ public class CaptionsView extends RelativeLayout {
             public void onClick(View v) {
 
                 setContentVisibilityAnimation(!mContentVisible);
-
+                setLinkVisibilityAnimation(!mLinkVisible);
                 if (mContentVisible) {
                     UIController.getInstance().hideKeyguardNotification();
                     
@@ -187,7 +226,7 @@ public class CaptionsView extends RelativeLayout {
                         Guide.setBooleanSharedConfig(getContext(), Guide.GUIDE_CLICK_TITLE, false);
                         Guide.setNeedGuideClickTitle(false);
                     }
-                    
+                    Guide.cleanDownloadTimes(getContext());
                 }else {
                     UIController.getInstance().showKeyguardNotification();
                 }
@@ -207,6 +246,7 @@ public class CaptionsView extends RelativeLayout {
                     return;
                 }
                 setContentVisibilityAnimation(!mContentVisible);
+                setLinkVisibilityAnimation(!mLinkVisible);
                 if (!mContentVisible) {
                     UIController.getInstance().showKeyguardNotification();
                 }
@@ -216,6 +256,36 @@ public class CaptionsView extends RelativeLayout {
         
         
         mGuideClickView = (GuideClickView) findViewById(R.id.guide_click_view);
+        mLinkLayout.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                if (isFastClick()) {
+                    return;
+                }
+                setClickLink(true);
+                if (isEmptyLink) {
+                    return;
+                }
+                if (Common.getNetIsAvailable(mContext)) {
+                    if(NetworkRemind.getInstance(mContext).needShowDialog()){
+                        NetworkRemind.getInstance(mContext).registeContinueCallback(new ClickContinueCallback() {
+                            
+                            @Override
+                            public void clickContinue() {
+                                startCaption();
+                            }
+                        });
+                        NetworkRemind.getInstance(mContext).alertDialog();
+                    }else{
+                        startCaption();                 
+                    }
+                } else {
+                    UIController.getInstance().showToast(R.string.haokan_tip_check_net);
+                }
+                
+            }
+        });
     
     }
  
@@ -223,6 +293,9 @@ public class CaptionsView extends RelativeLayout {
  
     public boolean isContentVisible() {
         return mContentVisible;
+    }
+    public boolean isLinkVisible() {
+        return mLinkVisible;
     }
 
     public void setContentVisibilityAnimation(boolean visible) {
@@ -232,7 +305,11 @@ public class CaptionsView extends RelativeLayout {
         }
     }
     
-    
+    public void setLinkVisibilityAnimation(boolean visible){
+        if(!isEmptyLink){
+            setDetailLinkVisible(visible);
+        }
+    }
     
     public void startTranslationAnimation(boolean visible) {
         
@@ -271,7 +348,7 @@ public class CaptionsView extends RelativeLayout {
      */
     public void onHorizontalMove(float translationX) {
          
-        float percent = translationX / (Common.getScreenWidth(getContext().getApplicationContext())/2);
+        float percent = translationX / (Common.getScreenWidth(getContext().getApplicationContext())/(float)2);
         float alpha = 1.0f - percent;
         if (alpha <= 1f && alpha >= 0f) {
             mAlpha = alpha;
@@ -417,14 +494,17 @@ public class CaptionsView extends RelativeLayout {
     }
     
     private void changeGuideViewPostion() {
-
+        Resources res = getResources();
+        int distance = (getTitleView().getMeasuredHeight() - getGuideClickView().getMeasuredHeight()) / 2;
         RelativeLayout.LayoutParams params = (LayoutParams) getGuideClickView().getLayoutParams();
         Log.e("guide", "mGuideClickView.getMeasuredWidth() = " + getGuideClickView().getMeasuredWidth());
-        params.leftMargin = getTitleView().getMeasuredWidth() - getGuideClickView().getMeasuredWidth() / 2;
+        params.leftMargin = getTitleView().getMeasuredWidth() / 2- getGuideClickView().getMeasuredWidth() / 2;
+        params.topMargin = (int)(distance + res.getDimension(R.dimen.captions_title_container_paddingTop) + res.getDimension(R.dimen.captions_container_marginTop));
         getGuideClickView().setLayoutParams(params);
     }
     
     public void setGuideVisibility(int visibility) {
+    	mTextViewGuid.setVisibility(visibility);
         getGuideClickView().setVisibility(visibility);
     }
 
@@ -450,5 +530,24 @@ public class CaptionsView extends RelativeLayout {
         return mGuideClickView;
     }
 
+    
+    private void startCaption() {
+        Intent intent = new Intent(mContext, DetailActivity.class);
+        intent.putExtra("link", mCaption.getLink());
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mContext.startActivity(intent);
+        WallpaperStatisticsPolicy.onDetialActivityShown();
+        HKAgent.onEventIMGLink(mContext, UIController.getInstance().getmCurrentWallpaper());
+    }
+    
+    public static boolean isFastClick() {
+        long time = System.currentTimeMillis();
+        long timeD = time - mLastClickTime;
+        mLastClickTime = time;
+        if (0 <= timeD && timeD < 1500) {
+            return true;
+        }
+        return false;
+    }
 
 }

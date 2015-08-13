@@ -127,6 +127,7 @@ public class GnQSPanel extends ViewGroup {
     public void setListening(boolean listening) {
         if (mListening == listening) return;
         mListening = listening;
+        Log.d(TAG, "mListening = " + mListening);
         for (TileRecord r : mRecords) {
             r.tile.setListening(mListening);
         }

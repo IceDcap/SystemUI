@@ -9,6 +9,7 @@ package com.android.systemui.gionee.cc.fakecall;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Method;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import android.content.res.AssetFileDescriptor;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 
 import com.android.systemui.R;
@@ -34,6 +36,8 @@ public class GnFakeCall {
     private static boolean isVibrate;
     private static boolean isPlayLoop = true;
     private static SharedPreferences mPref = null;
+    private static final String RINGTONE_MANAGER_CLASS_NAME = "android.media.RingtoneManager";
+    private static final String METHOD_GET_DEFAULT_RINGTONE_URI = "getDefaultRingtoneUri";
 
     public GnFakeCall(Context context) {
         mContext = context;
@@ -68,14 +72,35 @@ public class GnFakeCall {
     }
 
     private static Uri getRingtone() {
-        Uri acturlUri = RingtoneManager.getActualDefaultRingtoneUri(mContext,
-                RingtoneManager.TYPE_RINGTONE);
+		Uri acturlUri = RingtoneManager.getActualDefaultRingtoneUri(mContext,
+				RingtoneManager.TYPE_RINGTONE);
 
-        if (isRingtoneExist(acturlUri)) {
-            return acturlUri;
-        } else {
-            return null;
-        }
+		if (isRingtoneExist(acturlUri)) {
+			return acturlUri;
+		} else {
+			// modify by hanjuan for CR01532480 begin
+			// Uri defaultUri = RingtoneManager.getDefaultRingtoneUri(mContext,
+			// RingtoneManager.TYPE_RINGTONE);
+			try {
+				RingtoneManager manager = new RingtoneManager(mContext);
+				Class c = Class.forName(RINGTONE_MANAGER_CLASS_NAME);
+				Method method = c.getMethod(METHOD_GET_DEFAULT_RINGTONE_URI,
+						new Class[] { Context.class, int.class });
+				Uri uri = (Uri) method.invoke(manager, mContext,
+						RingtoneManager.TYPE_RINGTONE);
+				Log.i(LOG_TAG, "Get actual default ringtone uri= " + uri);
+				return uri;
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				String uriString = Settings.System.getString(
+						mContext.getContentResolver(),
+						"mtk_audioprofile_default_ringtone");
+				Log.i(LOG_TAG, "Exception: Get actual default ringtone uri= " + uriString);
+				return uriString != null ? Uri.parse(uriString) : null;
+			}
+			// modify by hanjuan for CR01532480 end
+		}
     }
 
     private static boolean isRingtoneExist(Uri uri) {

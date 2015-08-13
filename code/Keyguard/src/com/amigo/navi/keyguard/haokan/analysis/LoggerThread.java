@@ -92,7 +92,6 @@ public class LoggerThread extends HandlerThread implements Callback{
                 case SAVE_LOG:
                     if (msg.obj != null) {
                         EventLogger userLog = (EventLogger) msg.obj;
-                        Log.d("DEBUG_STATISTICS", "save log: " + userLog.getEvent());
                         // StatisticsDB.getInstance(mContext).insertLog(userLog);
                         StatisticsDB.getInstance(mContext).saveLog(userLog);
                     }
@@ -165,6 +164,12 @@ public class LoggerThread extends HandlerThread implements Callback{
 			public void cancelTask() {
 				// TODO Auto-generated method stub
 
+			}
+
+			@Override
+			public boolean isCanceled() {
+				// TODO Auto-generated method stub
+				return false;
 			}
 		};
 		DownLoadWorker worker = new DownLoadWorker(job);

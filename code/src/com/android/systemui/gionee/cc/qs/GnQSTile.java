@@ -144,6 +144,7 @@ public abstract class GnQSTile<TState extends State> implements Listenable {
 
     // call only on tile worker looper
     private void handleSetCallback(Callback callback) {
+    	Log.d(TAG, "handleSetCallback : "+ callback);
         mCallback.add(callback);
         handleRefreshState(null);
     }
@@ -182,6 +183,7 @@ public abstract class GnQSTile<TState extends State> implements Listenable {
     }
 
     protected void handleDestroy() {
+    	Log.d(TAG, "handleDestroy");
         setListening(false);
         mCallback.clear();
     }

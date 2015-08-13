@@ -54,9 +54,9 @@ public class GnSkyLightStatusBar {
 			int status = intent.getIntExtra("hall_status", 0);
 			if(status == 0) {
 				mPhoneStatusBar.getStatusBarWindow().setFitsSystemWindows(true);
-				mPhoneStatusBar.getStatusBarWindow().setPadding(mPadding, 0, mPadding, 0);
+				mPhoneStatusBar.getStatusBarView().setPadding(mPadding, 0, mPadding, 0);
 			} else {
-				mPhoneStatusBar.getStatusBarWindow().setPadding(0, 0, 0, 0);
+				mPhoneStatusBar.getStatusBarView().setPadding(0, 0, 0, 0);
 				mPhoneStatusBar.getStatusBarWindow().setFitsSystemWindows(true);
 			}
 			Log.d(TAG, " ACTION_HALL_STATUS received and Hall status == " + status);
@@ -91,7 +91,8 @@ public class GnSkyLightStatusBar {
 				case XmlPullParser.START_TAG:
 					if (XML_KEY_XAXIS.equals(parser.getName())) {
 						String xaxisStr = parser.nextText().trim();
-						mPadding = px2dip(mContext, Integer.parseInt(xaxisStr));
+//						mPadding = px2dip(mContext, Integer.parseInt(xaxisStr));
+						mPadding = Integer.parseInt(xaxisStr);
 					}
 					break;
 				case XmlPullParser.END_TAG:

@@ -51,6 +51,7 @@
     <string name="cmcc_4g">中国移动4G</string>
     <string name="no_sim_card">未插卡</string>
     <string name="no_service">无服务</string>
+    <string name="invalid_card">无效卡</string>
     <!-- mobile operator strings -->
 
 
@@ -127,7 +128,7 @@
    	<string name="haokan_tip_screen_on_show">每次亮屏时固定显示该壁纸</string>
     <string name="haokan_tip_no_lock_show">该壁纸不再固定显示</string>
    	
-   	<string name="haokan_detail">详情</string>
+   	<string name="haokan_detail">查看详情</string>
    	<string name="cancel">取消</string>
     <string name="apply">应用</string>
     <string name="setting">设置中</string>
@@ -159,7 +160,7 @@
     <string name="keyguard_password_enter_pin_code_message">"<xliff:g id="card">%s</xliff:g>,输入 PIN码,剩余<xliff:g id="number">%d</xliff:g>次"</string>
     <string name="keyguard_password_enter_puk_code_message">"<xliff:g id="card">%s</xliff:g>,请输入 PUK码,剩余<xliff:g id="number">%d</xliff:g>次"</string>
     <string name="keyguard_password_enter_pin_code_message_minus">"<xliff:g id="card">%s</xliff:g>,输入 PIN码</string>
-    <string name="keyguard_password_enter_puk_code_message_minus">"<xliff:g id="card">%s</xliff:g>,输入 PUN码</string>
+    <string name="keyguard_password_enter_puk_code_message_minus">"<xliff:g id="card">%s</xliff:g>,输入 PUK码</string>
 
    	<string name="lvyou">旅游</string>
    	<string name="shijue">视觉</string>
@@ -186,4 +187,30 @@
     <string name="wallpaper_update_notification_content_pause">壁纸暂停更新</string>
     <string name="wallpaper_update_notification_content_success">壁纸更新成功</string>
     <string name="wallpaper_update_notification_content_fail">壁纸更新失败请重试</string>
+    <string name="set_wallpaper_success_toast_message">设置壁纸成功</string>
+
+  
+    <!-- 关闭锁屏反馈 -->
+    <string name="close_wallpaper_update_point">如果关闭故事锁屏，您的锁屏将不会再更新精美的图文</string>
+    <string name="close_wallpaper_update_reason">您想关闭故事锁屏的原因是？</string>
+    <string name="close_wallpaper_reason_hint">请您输入关闭故事锁屏的原因</string>
+    <string name="send_close_update_reason">发送</string>
+    <string name="dialog_title">提示</string>
+    <string name="friendly_point">您的反馈我们已经收到，很抱歉没能让您满意。请再给一次机会，让我们为您做的更好！</string>
+    <string name="close_update">残忍关闭</string>
+    <string name="try_onetime">再试试看</string>
+    <!-- wlan提示 -->
+    <string name="wlan_default_point">在WLAN连接时进行更新</string>
+    <string name="wlan_close_point">关闭WLAN后会使用您的数据流量</string>
+    
+    <!-- 详情加载 -->
+    <string name="loading_text">正在加载...</string>
+    <string name="fail_load_text">加载失败</string>
+    <string name="point_recharger">轻触屏幕重新加载</string>
+    <string name="guid_click">点击文案阅读更多</string>
+
+    <!--手动更新提示 -->
+    <string name="cancel_update">取消</string>
+    <string name="update_wallpaper">更新</string>
+    <string name="checkBox_text">下次WlAN自动更新</string>
 </resources>
