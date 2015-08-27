@@ -67,9 +67,15 @@ public class JsonHttpConnect {
             DebugLog.d(TAG,"loadJsonFromInternet reqCode:" + reqCode);
             if (reqCode == HttpStatus.SC_OK) {
 				DebugLog.d(TAG, "loadJsonFromInternet ok -- isUploadLogs" + isUploadLogs);
+				
 				if (!isUploadLogs) {
 					inputStream = urlConn.getInputStream();
-					result = switchResult(isNeedCompress, byteOutputStream,
+					boolean  isDecompression=isNeedCompress;
+					if(urlConn.getContentEncoding()!=null&&urlConn.getContentEncoding().toLowerCase().indexOf("gzip")>-1){
+						isDecompression=true;
+					}
+					DebugLog.d(TAG, "loadJsonFromInternet ok -- isDecompression" + isDecompression);
+					result = switchResult(isDecompression, byteOutputStream,
 							inputStream);
 				} else {
 					result = "" + HttpStatus.SC_OK;

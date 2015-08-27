@@ -98,8 +98,8 @@ public class UsbPermissionActivity extends AlertActivity
         // add "always use" checkbox
         LayoutInflater inflater = (LayoutInflater)getSystemService(
                 Context.LAYOUT_INFLATER_SERVICE);
-        ap.mView = inflater.inflate(com.android.internal.R.layout.always_use_checkbox, null);
-        mAlwaysUse = (CheckBox)ap.mView.findViewById(com.android.internal.R.id.alwaysUse);
+        ap.mView = inflater.inflate(R.layout.always_use_checkbox, null);
+        mAlwaysUse = (CheckBox)ap.mView.findViewById(R.id.alwaysUse);
         if (mDevice == null) {
             mAlwaysUse.setText(R.string.always_use_accessory);
         } else {

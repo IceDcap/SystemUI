@@ -974,10 +974,12 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
                     for (TaskDescription ad : mTaskDescriptionList) {
                         if (am != null) {
                         	if((musicApps != null && musicApps.contains(ad.packageName))) {
+								if (DEBUG) Log.d(TAG, "ignore apps: " + ad.packageName);
                         		continue;
                         	}
                             am.removeTask(ad.persistentTaskId);
                             am.forceStopPackage(ad.packageName);
+							if (DEBUG) Log.d(TAG, "Jettison app: " + ad.packageName);
 
                             // Accessibility feedback
                             setContentDescription(getContext().getString(

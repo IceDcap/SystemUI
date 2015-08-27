@@ -14,6 +14,7 @@ import android.util.Log;
 import com.android.systemui.R;
 import com.android.systemui.gionee.cc.qs.GnQSTile;
 import com.android.systemui.gionee.cc.qs.policy.GnBluetoothController;
+import com.android.systemui.gionee.cc.util.GnVibrateUtil;
 import com.android.systemui.gionee.GnYouJu;
 
 /** Quick settings tile: Bluetooth **/
@@ -56,6 +57,7 @@ public class GnBluetoothTile extends GnQSTile<GnQSTile.BooleanState>  {
 
     @Override
     protected void handleLongClick() {
+    	GnVibrateUtil.amigoVibrate(mContext, GnVibrateUtil.CONTROL_CENTER_LONG_PRESS, GnVibrateUtil.CONTROL_CENTER_LONG_PRESS_TIME);
         mHost.startSettingsActivity(BLUETOOTH_SETTINGS);
     }
 

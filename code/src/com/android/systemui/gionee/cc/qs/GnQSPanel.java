@@ -125,9 +125,9 @@ public class GnQSPanel extends ViewGroup {
     }
 
     public void setListening(boolean listening) {
+        Log.d(TAG, "mListening = "+mListening+"; setListening = " + listening);
         if (mListening == listening) return;
         mListening = listening;
-        Log.d(TAG, "mListening = " + mListening);
         for (TileRecord r : mRecords) {
             r.tile.setListening(mListening);
         }
@@ -207,7 +207,7 @@ public class GnQSPanel extends ViewGroup {
             };
             r.tileView.setLongClickListener(longClick);
         }
-        
+        Log.d(TAG, "addTileView " + r.tile.TAG  + "; setListening =" + mListening);
         r.tile.setListening(mListening);
         callback.onStateChanged(r.tile.getState());
         r.tile.refreshState();

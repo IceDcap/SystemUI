@@ -19,6 +19,7 @@ import com.android.systemui.R;
 import com.android.systemui.gionee.cc.qs.GnQSTile;
 import com.android.systemui.gionee.cc.qs.policy.GnWifiController;
 import com.android.systemui.gionee.cc.qs.policy.GnWifiController.WifiStateChangedCallback;
+import com.android.systemui.gionee.cc.util.GnVibrateUtil;
 import com.android.systemui.gionee.GnYouJu;
 
 /** Quick settings tile: Wifi **/
@@ -64,6 +65,7 @@ public class GnWifiTile extends GnQSTile<GnQSTile.BooleanState> {
     @Override
     protected void handleLongClick() {
         // mHost.startSettingsActivity(WIFI_SETTINGS);
+    	GnVibrateUtil.amigoVibrate(mContext, GnVibrateUtil.CONTROL_CENTER_LONG_PRESS, GnVibrateUtil.CONTROL_CENTER_LONG_PRESS_TIME);
         Intent intent = new Intent();
         String packagename = "com.gionee.setting.adapter.wifi";
         String classname = "com.gionee.setting.adapter.wifi.wifiSettingsActivity";

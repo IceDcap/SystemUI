@@ -429,6 +429,7 @@ public class RecentsActivity extends Activity implements OnClickListener , OnLon
 
     @Override
     public void onClick(View v) {
+		Log.i(TAG, "onClick--->clear all recent apps");
     	if(isPlayMusic(mContext)) {
     		musicApps = getMusicApps(mContext);
     	}

@@ -45,12 +45,13 @@ import com.android.systemui.statusbar.phone.PhoneStatusBar;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
+import java.util.HashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 
 public class RecentTasksLoader implements View.OnTouchListener {
     static final String TAG = "RecentTasksLoader";
-    static final boolean DEBUG = true;//PhoneStatusBar.DEBUG || false;
+    static final boolean DEBUG = PhoneStatusBar.DEBUG || true;
 
     private static final int DISPLAY_TASKS = 20;
     private static final int MAX_TASKS = DISPLAY_TASKS + 1; // allow extra for non-apps
@@ -64,6 +65,14 @@ public class RecentTasksLoader implements View.OnTouchListener {
 
     private AsyncTask<Void, ArrayList<TaskDescription>, Void> mTaskLoader;
     private AsyncTask<Void, TaskDescription, Void> mThumbnailLoader;
+
+	// Gionee <gexiufeng> <20150814> modify for CR01535169 start[1/3]
+    private static HashMap <String, String> mReplaceApps = new HashMap <String, String>();
+	static {
+		mReplaceApps.put("gn.intent.action.doubleclick.OpenCamera", "android.media.action.STILL_IMAGE_CAMERA"); //Camera
+	}
+	// Gionee <gexiufeng> <20150814> modify for CR01535169 end[1/3]
+
     private Handler mHandler;
 
     private int mIconDpi;
@@ -161,6 +170,21 @@ public class RecentTasksLoader implements View.OnTouchListener {
             && homeInfo.name.equals(component.getClassName());
     }
 
+	// Gionee <gexiufeng> <20150814> modify for CR01535169 start[2/3]
+	private Intent getReplaceIntent(Intent intent) {
+		Intent i = intent;
+		String action = i.getAction();
+		if (action != null && mReplaceApps.containsKey(action)) {
+			i.setAction(mReplaceApps.get(action));
+			if (DEBUG) Log.d(TAG, new StringBuilder("replace app action: ")
+							 .append(action).append("--->")
+							 .append(mReplaceApps.get(action))
+							 .toString());
+		}
+		return i;
+	}
+	// Gionee <gexiufeng> <20150814> modify for CR01535169 end[2/3]
+
     // Create an TaskDescription, returning null if the title or icon is null
     TaskDescription createTaskDescription(int taskId, int persistentTaskId, Intent baseIntent,
             ComponentName origActivity, CharSequence description, int userId) {
@@ -185,6 +209,10 @@ public class RecentTasksLoader implements View.OnTouchListener {
                 if (DEBUG) Log.v(TAG, "creating activity desc for id="
                         + persistentTaskId + ", label=" + title);
 
+				// Gionee <gexiufeng> <20150814> modify for CR01535169 start[3/3]
+				baseIntent = getReplaceIntent(baseIntent);
+				// Gionee <gexiufeng> <20150814> modify for CR01535169 end[3/3]
+
                 TaskDescription item = new TaskDescription(taskId,
                         persistentTaskId, resolveInfo, baseIntent, info.packageName,
                         description, userId);
@@ -194,7 +222,9 @@ public class RecentTasksLoader implements View.OnTouchListener {
             } else {
                 if (DEBUG) Log.v(TAG, "SKIPPING item " + persistentTaskId);
             }
-        }
+        } else {
+			if (DEBUG) Log.w(TAG, "createTaskDescription resolveInfo is null !!");
+		}
         return null;
     }
 

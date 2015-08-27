@@ -1653,8 +1653,10 @@ public class NetworkControllerImpl extends BroadcastReceiver
                 case TelephonyManager.NETWORK_TYPE_HSDPA:
                 case TelephonyManager.NETWORK_TYPE_HSUPA:
                 case TelephonyManager.NETWORK_TYPE_HSPA:
+                	mNetworkType = GnNetworkType.Type_H;
+                	break;
                 case TelephonyManager.NETWORK_TYPE_HSPAP:
-                    mNetworkType = GnNetworkType.Type_H;
+                    mNetworkType = GnNetworkType.Type_HP;
                     break;
                 case TelephonyManager.NETWORK_TYPE_CDMA:
                 case TelephonyManager.NETWORK_TYPE_1xRTT:
@@ -1722,18 +1724,24 @@ public class NetworkControllerImpl extends BroadcastReceiver
                         + " ss=" + mSignalStrength + " mDataNetType = " + mDataNetType);
             }
             mCurrentState.connected = hasService() && mSignalStrength != null;
-            if (mCurrentState.connected) {
-                if (!mSignalStrength.isGsm() 
-                		&& GnFeatureOption.GN_CTCC_SUPPORT
-                		&& (mSubscriptionInfo.getSimSlotIndex() == 0)
-                		&& ("46003".equals(mPhone.getSimOperatorNumericForPhone(0))
-                		|| "46011".equals(mPhone.getSimOperatorNumericForPhone(0)))
-                		&& mFourGDataOnly != 2/* && mConfig.alwaysShowCdmaRssi*/) {
-                	gnGetSignalStrengthCT();
-                } else {
-                    mLastSignalLevel = mCurrentState.level = mSignalStrength.getLevel();
-                }
-            }
+            
+            if (GnFeatureOption.GN_CTCC_SUPPORT && mSignalStrength != null) {
+				if (!mSignalStrength.isGsm()
+						&& (mSubscriptionInfo.getSimSlotIndex() == 0)
+						&& ("46003".equals(mPhone.getSimOperatorNumericForPhone(0)) 
+						|| "46011".equals(mPhone.getSimOperatorNumericForPhone(0)))
+						&& mFourGDataOnly != 2
+						&& mCurrentState.enabled) {
+					gnGetSignalStrengthCT();
+				} else {
+					mLastSignalLevel = mCurrentState.level = mSignalStrength.getLevel();
+				}
+			} else {
+				if (mCurrentState.connected) {
+					mLastSignalLevel = mCurrentState.level = mSignalStrength.getLevel();
+				}
+			}
+            
             if (mNetworkToIconLookup.indexOfKey(mDataNetType) >= 0) {
             	if(mFourGDataOnly != 2) {
             		mCurrentState.iconGroup = mNetworkToIconLookup.get(mDataNetType);

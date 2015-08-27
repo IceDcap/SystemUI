@@ -333,11 +333,11 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
     }
     
     
-    
+    int mUnLockFailReason=UNLOCK_FAIL_UNKNOW_REASON;
     public void checkPasswordResult(boolean isLockDone, int unLockFailReason) {
         if (DebugLog.DEBUG)
             DebugLog.d(LOG_TAG, "unLockPatternLock UNLOCK_FAIL_REASON_TOO_SHORT..");
-        int mUnLockFailReason = unLockFailReason;
+        mUnLockFailReason = unLockFailReason;
 
         if (isLockDone) {
             // unLockDone
@@ -389,7 +389,7 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
 
 	public void onUnlockFail(int failReason) {
 		if(DebugLog.DEBUG) DebugLog.d(LOG_TAG, "onUnlockFail failReason :"+failReason);
-		failShake(failReason);
+		failShake();
 		if(failReason == UNLOCK_FAIL_REASON_TIMEOUT) {
 			if(AmigoSecurityPasswordUtil.getInstance().getSecurityPasswordSupport() && !Common.isPowerSaverMode()){
 				mForgetButton.setVisibility(View.VISIBLE);
@@ -491,7 +491,7 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
         }
     }
     
-    private void failShake(final int unLockFailReason) {
+    private void failShake() {
 //        VibatorUtil.vibator(mContext, 100);
     	//VibatorUtil.amigoVibrate(mContext, VibatorUtil.LOCKSCREEN_UNLOCK_CODE_ERROR, VibatorUtil.UNLOCK_ERROR_VIBRATE_TIME);
     	
@@ -509,7 +509,7 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
             
             @Override
             public void onAnimationEnd(Animator animation) {
-                buttonIsNeedEnable(unLockFailReason);
+                buttonIsNeedEnable();
             }
 
             @Override
@@ -519,8 +519,9 @@ public class AmigoKeyguardSimpleNumView extends KeyguardPinBasedInputView {
         oan.start();        
     }
     
-    private void buttonIsNeedEnable(int mUnLockFailReason) {
+    private void buttonIsNeedEnable() {
         // TODO Auto-generated method stub
+    	 DebugLog.d(LOG_TAG, "buttonIsNeedEnable  mUnLockFailReason: "+mUnLockFailReason);
         if (mUnLockFailReason != UNLOCK_FAIL_REASON_TIMEOUT) {
             setKeyButtonClickEnable(true);
         }else{

@@ -191,6 +191,7 @@ public class GnPowerNotificationWarnings implements PowerUI.WarningsUI {
 
         if (getPowerSaverMode() == 0) {
         	Intent intent = new Intent();
+        	intent.putExtra("powerWarning", "powerSaveMode");
         	intent.setClassName(GN_POWERSAVER_PACKAGE, GN_POWERSAVER_CLASS);
             nb.addAction(0,
                     mContext.getString(R.string.gn_powersaver),

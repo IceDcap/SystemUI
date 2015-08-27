@@ -10,6 +10,7 @@ import com.android.systemui.gionee.GnYouJu;
 import com.android.systemui.gionee.cc.camera.GnBlindShootActivity;
 import com.android.systemui.gionee.cc.qs.GnQSTile;
 import com.android.systemui.gionee.cc.qs.policy.GnCameraController;
+import com.android.systemui.gionee.cc.util.GnVibrateUtil;
 
 public class GnCameraTile extends GnQSTile<GnQSTile.BooleanState> {
     

@@ -23,7 +23,7 @@ import static android.telephony.TelephonyManager.NETWORK_TYPE_UNKNOWN;
  */
 public enum GnNetworkType {
 
-    Type_G(0), Type_3G(1), Type_1X(2), Type_1X3G(3), Type_4G(4), Type_E(5), Type_H(6);
+    Type_G(0), Type_3G(1), Type_1X(2), Type_1X3G(3), Type_4G(4), Type_E(5), Type_H(6), Type_HP(7);
 
     private int mTypeId;
 

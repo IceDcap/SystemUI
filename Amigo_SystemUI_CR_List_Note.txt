@@ -1335,3 +1335,40 @@ Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.cg
 Code difference: svn diff -r 7402:7401 http://192.168.110.97/svn/Amigo_SystemUI/trunk
 
 ==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01532480      Opened     wangym     【工厂】声音和振动，来电与通知铃声设为自定义铃声后，删除该铃声，虚拟来电与通知铃声变钟声【必现】
+CR01535177      Coded      guozj      【工厂】卡1插移动2G、卡2插联通2G》开启卡2数据连接》信号棒显示0-3格》可正常使用》网络显示为H  T2#2/3
+CR01536773      Opened     hanjuan    手电筒相关log添加
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ci
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ch
+Code difference: svn diff -r 7419:7404 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01526575      Resolved   guozj      【CT official test】实验室00101卡无法注册FDD（B1和B3）
+CR01529091      Closed     panwenjuan 【工厂】故事锁屏界面，点击屏上方音乐图标播放，在进入音乐菜单播放暂停，进入极致省电，自动响起锁屏音乐【必现】
+CR01533198      Opened     lixian     SystemUI状态栏提交代码CR
+CR01535000      Resolved   lixian     联通3G网络下，状态栏信号条上显示H，且不会随着网络改变切换为3G或者H+
+CR01535169      Coded      gexiufeng  【品质压力】黑屏状态画C进入相机疾速拍照保存相片,返回键退出解锁,从任务键进入相机,自动疾速拍照【100%】附视频
+CR01539173      Opened     liushuang  systemUI代码提交
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ck
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ci
+Code difference: svn diff -r 7447:7428 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01408122      Opened     jiating    【NAVI锁屏2.0.0.y】打开小米锁屏后 ，从 navi桌面不能下拉上锁
+CR01533124      Resolved   lixian     状态栏：手机通话过程状态栏不显示当前的网络标识
+CR01533131      Resolved   liushuang  [FW12]【ROM】M-MISC：测试机无法连接游戏手柄（必现）[死机_g]
+CR01535830      Resolved   panwenjuan NAVI锁屏：播放锁屏音乐，进入铃音中播放在线铃音，可同时播放在线铃音与锁屏音乐【必现】
+CR01538451      Resolved   jiating    【品质压力】按power键灭屏亮屏,输5次错误密码提示"输入密码错误5次,请在59秒后再试"仍可以输密码,输正确密码后成功解锁
+CR01539173      Opened     liushuang  systemUI代码提交
+CR01540033      Closed     guozj      【CT Pre-test】插双卡或单卡开机，一直提示系统界面停止运行
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.cl
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ck
+Code difference: svn diff -r 7499:7460 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================

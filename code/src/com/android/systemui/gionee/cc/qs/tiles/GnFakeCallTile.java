@@ -6,6 +6,7 @@ import com.android.systemui.R;
 import com.android.systemui.gionee.GnYouJu;
 import com.android.systemui.gionee.cc.fakecall.GnFakeCallControllerImpl;
 import com.android.systemui.gionee.cc.qs.GnQSTile;
+import com.android.systemui.gionee.cc.util.GnVibrateUtil;
 
 public class GnFakeCallTile extends GnQSTile<GnQSTile.AnimBooleanState> {
 
@@ -43,7 +44,7 @@ public class GnFakeCallTile extends GnQSTile<GnQSTile.AnimBooleanState> {
 
     @Override
     protected void handleLongClick() {
-
+    	GnVibrateUtil.amigoVibrate(mContext, GnVibrateUtil.CONTROL_CENTER_LONG_PRESS, GnVibrateUtil.CONTROL_CENTER_LONG_PRESS_TIME);
     }
 
     @Override

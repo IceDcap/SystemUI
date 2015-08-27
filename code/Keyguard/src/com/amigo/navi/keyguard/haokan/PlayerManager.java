@@ -546,13 +546,20 @@ public class PlayerManager  implements ClickContinueCallback{
                     break;
                 case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
                 	DebugLog.d(TAG, "AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK");
+                	 if (getState() == State.PLAYER) {
+                	     pausedByAudiofocusLoss = true;
+                         pause();
+                     }
                 	
                     break;
                 case AudioManager.AUDIOFOCUS_GAIN:
                 	DebugLog.d(TAG, "AUDIOFOCUS_GAIN  isPausedByAudiofocusLoss = " + pausedByAudiofocusLoss);
                 	if (pausedByAudiofocusLoss) {
-                	    start();
-                	    pausedByAudiofocusLoss = false;
+                		boolean PowerSaver = Common.isPowerSaverMode();
+                	    if(!PowerSaver){
+                	    	  start();
+                      	    pausedByAudiofocusLoss = false;
+                	    }
                     }
                     break;
                 default:

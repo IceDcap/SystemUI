@@ -1,6 +1,9 @@
 package com.amigo.navi.keyguard;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -66,6 +69,8 @@ import com.android.keyguard.ViewMediatorCallback;
 import com.android.keyguard.KeyguardHostView.OnDismissAction;
 import com.android.internal.widget.LockPatternUtils;
 import com.gionee.fingerprint.IGnIdentifyCallback;
+
+import dalvik.system.PathClassLoader;
 import android.os.SystemProperties;
 import android.provider.Settings;
 
@@ -143,7 +148,7 @@ public class KeyguardViewHostManager {
         
          
         mKeyguardViewHost.setConfigChangeCallback(mConfigChangeCallback);
-        isSuppotFinger=SystemProperties.get("ro.gn.fingerprint.support").equals("FPC");
+        isSuppotFinger=isSupportFingerPrint();
         if(isSuppotFinger){
         	mFingerIdentifyManager=new FingerIdentifyManager(context);
         }
@@ -947,6 +952,30 @@ public class KeyguardViewHostManager {
 	    	}
 	    }
 	
- 
+	  
+	private static final String PACKAGE_NAME2 = "com.gionee.fingerprint";
+	private  final String CLASS_GNFPMANAGER = "com.gionee.fingerprint.GnFingerPrintManager"; 
+    private boolean isSupportFingerPrint(){
+
+    		boolean isSupportFinger = false;
+    		Object manager = null;
+    		try {
+
+    				Class<?> GnFingerPrintManager = (Class<?>) Class
+    						.forName(CLASS_GNFPMANAGER);
+    				Method isFingerPrintSupport = GnFingerPrintManager.getMethod("isFingerPrintSupport");
+
+    				isSupportFinger = (boolean) isFingerPrintSupport.invoke(null);
+
+    				DebugLog.d(LOG_TAG, "isSupportFingerPrint..isSupportFinger="+isSupportFinger);
+  
+    		} catch (Exception e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}
+
+    		return isSupportFinger;
+    	
+    }
 	    
 }

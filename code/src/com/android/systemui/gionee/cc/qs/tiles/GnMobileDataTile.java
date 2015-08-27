@@ -20,6 +20,7 @@ import com.android.systemui.R;
 import com.android.systemui.gionee.cc.qs.GnQSTile;
 import com.android.systemui.gionee.cc.qs.policy.GnMobileDataController;
 import com.android.systemui.gionee.cc.qs.policy.GnMobileDataController.MobileDataChangedCallback;
+import com.android.systemui.gionee.cc.util.GnVibrateUtil;
 import com.android.systemui.gionee.GnFeatureOption;
 //import com.android.systemui.gionee.statusbar.util.GnSIMHelper;
 import com.android.systemui.gionee.GnYouJu;
@@ -69,6 +70,7 @@ public class GnMobileDataTile extends GnQSTile<GnQSTile.BooleanState> {
     	int simCount = TelephonyManager.getDefault().getPhoneCount();
         Log.d(TAG, "handleLongClick " + simCount);
 		if (simCount > 1) {// dual sim
+			GnVibrateUtil.amigoVibrate(mContext, GnVibrateUtil.CONTROL_CENTER_LONG_PRESS, GnVibrateUtil.CONTROL_CENTER_LONG_PRESS_TIME);
 			Intent intent = new Intent("com.android.settings.sim.SIM_SUB_INFO_SETTINGS");
 			mHost.startSettingsActivity(intent);
 		}

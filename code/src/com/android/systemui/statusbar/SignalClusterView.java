@@ -481,7 +481,10 @@ public class SignalClusterView
             if (DEBUG) Log.d(TAG, String.format("mobile: %s sig=%d mIsAirPlaneMode=%s netType=%d mobileType=%d inout=%d mIsDataConnect =%s mSubId=%d",
                         (mMobileVisible ? "VISIBLE" : "GONE"), mMobileStrengthId, mIsAirplaneMode, mNetworkTypeId, mMobileTypeId, mMobileInOutId, mIsDataConnect, mSubId));
 
-            mMobileType.setVisibility(mMobileTypeId != 0 ? View.VISIBLE : View.GONE);
+            //Gionee <lixian> <2015-08-17> modify for CR01533124 begin
+            //mMobileType.setVisibility(mMobileTypeId != 0 ? View.VISIBLE : View.GONE);
+            //Gionee <lixian> <2015-08-17> modify for CR01533124 end
+            
             mNetworkTypeGroup.setVisibility(mWifiVisible ? View.GONE : View.VISIBLE);
 
             return mMobileVisible;
@@ -586,6 +589,8 @@ public class SignalClusterView
             return R.drawable.gn_stat_sys_mobile_type_3g;
         } else if (networkType == GnNetworkType.Type_H) {
 			return R.drawable.gn_stat_sys_mobile_type_h;
+		} else if (networkType == GnNetworkType.Type_HP) {
+			return R.drawable.gn_stat_sys_mobile_type_h_plus;
 		} else {
             return 0;
         }
@@ -625,7 +630,9 @@ public class SignalClusterView
             return R.drawable.gn_stat_sys_network_type_3g;
         } else if (networkType == GnNetworkType.Type_H) {
 			return R.drawable.gn_stat_sys_network_type_h;
-		} else {
+		} else if (networkType == GnNetworkType.Type_HP) {
+			return R.drawable.gn_stat_sys_network_type_h_plus;
+		}else {
             return 0;
         }
 	}

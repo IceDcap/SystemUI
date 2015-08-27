@@ -274,7 +274,7 @@ public class GnControlCenterView extends FrameLayout {
             
             @Override
             public void run() {
-                Log.d(TAG, "initQS() thread");
+                Log.d(TAG, "initQS() thread setListening true");
                 mGnMoreView.setTiles(mGnQSH.getTiles());
                 mGnQSPanel.setTiles(mGnQSH.getTiles());
                 mGnQSPanel.setListening(true);

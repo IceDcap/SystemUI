@@ -101,6 +101,7 @@ public class GnAirplaneModeTile extends GnQSTile<GnQSTile.BooleanState> {
     }
 
     public void setListening(boolean listening) {
+        Log.d(TAG, "mListening = "+ mListening +"; setListening = " + listening);
         if (mListening == listening) return;
         mListening = listening;
         if (listening) {

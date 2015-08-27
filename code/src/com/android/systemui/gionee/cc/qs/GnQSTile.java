@@ -183,7 +183,7 @@ public abstract class GnQSTile<TState extends State> implements Listenable {
     }
 
     protected void handleDestroy() {
-    	Log.d(TAG, "handleDestroy");
+    	Log.d(TAG, "handleDestroy setListening false");
         setListening(false);
         mCallback.clear();
     }
