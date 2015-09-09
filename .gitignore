@@ -1,0 +1,17 @@
+.idea/
+code/build.gradle
+code/gradle/
+code/gradlew
+code/gradlew.bat
+.svn
+.classpath
+.project
+bin/
+gen/
+project.property
+code/src/com/android/systemui/EventLogTags.java
+code/.settings/
+code/project.properties
+code/res/drawable/circle.xml
+code/src/com/gionee/featureoption/
+
