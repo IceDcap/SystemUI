@@ -14,4 +14,5 @@ code/.settings/
 code/project.properties
 code/res/drawable/circle.xml
 code/src/com/gionee/featureoption/
-
+*/.svn
+.svn/*
