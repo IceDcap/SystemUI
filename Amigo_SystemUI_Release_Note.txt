@@ -1,0 +1,63 @@
+==================
+Build Notes
+==================
+1.版本目的:
+r7499
+CR01408122 修改：判断是否支持指纹通过反射获取
+---------------------
+r7498
+CR01408122 修改：下载壁纸数据时判断是否需要解压通过请求获取的编码来判断
+---------------------
+r7492
+CR01540033 【CT Pre-test】插双卡或单卡开机，一直提示系统界面停止运行 
+---------------------
+r7486
+CR01533131 [FW12]【ROM】M-MISC：测试机无法连接游戏手柄（必现）[死机_g]
+---------------------
+r7482
+CR01533124 状态栏：手机通话过程状态栏不显示当前的网络标识 -->修改显示逻辑
+---------------------
+r7479
+CR01535830 解决了播放锁屏音乐，进入铃音中播放在线铃音，可同时播放在线铃音与锁屏音乐【必现】
+---------------------
+r7468
+CR01539173 为统计进入省电管理添加Extra
+---------------------
+r7464
+CR01538451 修改在简单密码界面快速输入错误后，冻结时还可以继续输入的问题
+---------------------
+r7462
+CR01539173 控制中心长按图标进入2级菜单时的震动效果
+---------------------
+2.功能变更:
+__
+3.重点测试的问题:
+__
+4.应用数据库是否改变:
+No
+
+==================
+Release Location
+==================
+/software_release/Applications/Amigo_SystemUI/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.cl.zip
+
+==================
+CR List
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01408122      Opened     jiating    【NAVI锁屏2.0.0.y】打开小米锁屏后 ，从 navi桌面不能下拉上锁
+CR01533124      Resolved   lixian     状态栏：手机通话过程状态栏不显示当前的网络标识
+CR01533131      Resolved   liushuang  [FW12]【ROM】M-MISC：测试机无法连接游戏手柄（必现）[死机_g]
+CR01535830      Resolved   panwenjuan NAVI锁屏：播放锁屏音乐，进入铃音中播放在线铃音，可同时播放在线铃音与锁屏音乐【必现】
+CR01538451      Resolved   jiating    【品质压力】按power键灭屏亮屏,输5次错误密码提示"输入密码错误5次,请在59秒后再试"仍可以输密码,输正确密码后成功解锁
+CR01539173      Opened     liushuang  systemUI代码提交
+CR01540033      Closed     guozj      【CT Pre-test】插双卡或单卡开机，一直提示系统界面停止运行
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.cl
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ck
+Code difference: svn diff -r 7499:7460 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+Make sonar target URL:
+http://ss.alm.gionee.com/sonar
+http://ss.alm.gionee.com/sonar/dashboard/index/gionee.app:Amigo_SystemUI
+==================

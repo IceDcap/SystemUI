@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/* //device/apps/common/assets/res/any/dimens.xml
+**
+** Copyright 2006, The Android Open Source Project
+**
+** Licensed under the Apache License, Version 2.0 (the "License");
+** you may not use this file except in compliance with the License.
+** You may obtain a copy of the License at
+**
+**     http://www.apache.org/licenses/LICENSE-2.0
+**
+** Unless required by applicable law or agreed to in writing, software
+** distributed under the License is distributed on an "AS IS" BASIS,
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+** See the License for the specific language governing permissions and
+** limitations under the License.
+*/
+-->
+<resources>	
+    <dimen name="haokan_caption_layout_title_textsize">14dp</dimen>
+	<dimen name="haokan_caption_layout_content_textsize">11dp</dimen>
+	<!-- infozone -->
+	<dimen name="keyguard_infozone_time_textsize">48dp</dimen>
+	<dimen name="keyguard_infozone_week_textsize">18dp</dimen>
+	<dimen name="keyguard_infozone_date_textsize">12dp</dimen>
+	
+	<dimen name="haokan_category_item_image_size">90dp</dimen>	
+	<dimen name="haokan_circle_imageview_radius">40dp</dimen>
+		
+	<dimen name="amigo_keyguard_sim_pin_view_num_marginleft">30dp</dimen>
+	<dimen name="amigo_keyguard_sim_pin_view_num_linegap">11dp</dimen>
+	<dimen name="amigo_keyguard_sim_pin_view_num_key_enter_width">60dp</dimen>
+	<dimen name="amigo_keyguard_sim_pin_view_num_simPinEntry_top">14dp</dimen>
+	<dimen name="amigo_keyguard_sim_pin_view_num_keyguard_bouncer_frame_padding_h">34dp</dimen>
+	<dimen name="amigo_keyguard_sim_pin_view_num_above_keyguard_bouncer_frame">10dp</dimen>
+	
+	<dimen name="amigo_keyguard_pin_view_num_marginleft">37dp</dimen>
+	<dimen name="amigo_keyguard_pin_view_num_bouncer_frame_padding_left_right">30dp</dimen>
+	<dimen name="amigo_keyguard_pin_view_num_row0_top">12dp</dimen>
+	<dimen name="amigo_keyguard_pin_view_num_linegap">11dp</dimen>
+	<dimen name="amigo_keyguard_pin_view_num_forget_paddingbottom">12dp</dimen>
+	<dimen name="amigo_keyguard_pin_view_num_padding">32dp</dimen>
+	<dimen name="amigo_keyguard_pin_view_num_above_keyguard_bouncer_frame">34dp</dimen>
+	
+	<dimen name="amigo_keyguard_pattern_view_row5_height">48dp</dimen>
+	
+	<dimen name="guide_long_press_view_margintop">130dp</dimen>
+	<dimen name="guide_long_press_hand_margintop">150dp</dimen>
+	<dimen name="guide_long_press_hand_marginbottom">180dp</dimen>
+	<dimen name="guide_long_press_closeview_marginbottom">40dp</dimen>
+	
+	
+	
+	
+	
+	
+</resources>

@@ -1,0 +1,35 @@
+<!--
+Copyright (C) 2014 The Android Open Source Project
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+        android:width="32.0dp"
+        android:height="32.0dp"
+        android:viewportWidth="48.0"
+        android:viewportHeight="48.0">
+    <path
+        android:fillColor="#FF828282"
+        android:pathData="M38.508,15.261c0.3-0.621,0.472-1.313,0.472-2.047c0-2.612-2.118-4.729-4.729-4.729c-0.734,0-1.427,0.172-2.047,0.472
+		C34.829,10.451,37.013,12.634,38.508,15.261z"/>
+    <path
+        android:fillColor="#FF828282"
+        android:pathData="M39.465,23.532c0-8.579-6.953-15.533-15.532-15.533c-3.748,0-7.186,1.328-9.869,3.539l-0.803-0.912
+		c0.75-0.621,1.549-1.186,2.401-1.67c-0.621-0.3-1.313-0.472-2.047-0.472c-0.672,0-1.31,0.145-1.889,0.397l-1.702-1.934L8.523,8.269
+		l1.583,1.799C9.355,10.905,8.885,12,8.885,13.213c0,0.734,0.173,1.427,0.472,2.047c0.678-1.191,1.503-2.285,2.441-3.271
+		l0.815,0.927C10.008,15.695,8.4,19.422,8.4,23.532c0,8.579,6.954,15.533,15.533,15.533c3.398,0,6.532-1.104,9.09-2.956l3.526,4.008
+		l1.502-1.32l-3.486-3.962C37.575,32.002,39.465,27.992,39.465,23.532z M23.933,10.069c7.423,0,13.461,6.039,13.461,13.462
+		c0,3.833-1.619,7.29-4.2,9.745l-6.753-7.674h5.746v-2.071h-7.218v-9.838h-2.072v7.882L15.438,13.1
+		C17.757,11.208,20.713,10.069,23.933,10.069z M23.933,36.993c-7.423,0-13.462-6.04-13.462-13.461c0-3.485,1.342-6.654,3.522-9.047
+		l8.904,10.118v1h0.88l7.871,8.943C29.46,36.083,26.803,36.993,23.933,36.993z"/>
+</vector>

@@ -1,0 +1,95 @@
+﻿{
+    "imgs": 
+	[
+        {
+            "ImageName": "1.jpg",
+            "ImageTitle": "太空游客",
+            "ImageContent": "从2001年开始，出现了自费太空旅行者，目前已有7名太空游客。夜深了，你打算在梦乡中漫步太空吗？",
+            "ImageSource": "好看",
+            "Background": "#074f89",
+            "ShowTimeBegin": "00:00",
+            "ShowTimeEnd": "05:00"            
+        },
+        {
+            "ImageName": "2.jpg",
+            "ImageTitle": "智享自在 随心而动",
+            "ImageContent": "只因你我都在路上，只因故事每天都在发生，屏幕点亮一刻，用新方式开启美好一天。",
+            "ImageSource": "好看",
+            "Background": "#9f8864",
+            "ShowTimeBegin": "05:00",
+            "ShowTimeEnd": "08:00"            
+        },
+        {
+            "ImageName": "3.jpg",
+            "ImageTitle": "智享自在 随心而动",
+            "ImageContent": "这里，有一些穿高跟鞋走不到的路，  有一些喷着香水闻不到的空气， 心越远，梦越近。",
+            "ImageSource": "好看",
+            "Background": "#4d5673",
+            "ShowTimeBegin": "08:00",
+            "ShowTimeEnd": "10:00"            
+        },
+        {
+            "ImageName": "4.jpg",
+            "ImageTitle": "小狗的爱",
+            "ImageContent": "我问一个小孩子：爱是什么？他回答说：爱就是小狗开心地舔你脸，即使你一天都没有理它。",
+            "ImageSource": "好看",
+            "Background": "#e27562",
+            "ShowTimeBegin": "10:00",
+            "ShowTimeEnd": "12:00"            
+        },
+		{
+            "ImageName": "5.jpg",
+            "ImageTitle": "Angelababy",
+            "ImageContent": "1989年，AngelaBaby出生在上海，因参加真人秀节目《奔跑吧兄弟》而人气不断攀升。",
+            "ImageSource": "好看",
+            "Background": "#c46663",
+            "ShowTimeBegin": "12:00",
+            "ShowTimeEnd": "14:00"            
+        },
+        {
+            "ImageName": "6.jpg",
+            "ImageTitle": "看懂国际时装周",
+            "ImageContent": "每个时装周都有自己偏重的风格：纽约时装周—商业休闲；伦敦时装周—先锋前卫；米兰时装周—本土时髦；巴黎时装周—高级定制。",
+            "ImageSource": "好看",
+            "Background": "#a32841",
+            "ShowTimeBegin": "14:00",
+            "ShowTimeEnd": "16:00"            
+        },
+        {
+            "ImageName": "7.jpg",
+            "ImageTitle": "向着自由，永不妥协",
+            "ImageContent": "执着，不懂隐藏锋芒；自由，永不妥协；向着远方，始终在路上。",
+            "ImageSource": "好看",
+            "Background": "#3c515a",
+            "ShowTimeBegin": "16:00",
+            "ShowTimeEnd": "18:00"            
+        },
+        {
+            "ImageName": "8.jpg",
+            "ImageTitle": "伦敦的标志",
+            "ImageContent": "大本钟，世界上著名的哥特式建筑之一 ,坐落在英国伦敦泰晤士河畔，现在已经成为伦敦的标志性建筑。",
+            "ImageSource": "好看",
+            "Background": "#eb4c5a",
+            "ShowTimeBegin": "18:00",
+            "ShowTimeEnd": "20:00"            
+        },
+        {
+            "ImageName": "9.jpg",
+            "ImageTitle": "范佩西",
+            "ImageContent": "罗宾·范·佩西，1983年8月6日生于荷兰鹿特丹。荷兰前锋，现在效力于曼彻斯特联足球俱乐部。",
+            "ImageSource": "好看",
+            "Background": "#c31d24",
+            "ShowTimeBegin": "20:00",
+            "ShowTimeEnd": "22:00"            
+        },
+        {
+            "ImageName": "10.jpg",
+            "ImageTitle": "心内的宁静",
+            "ImageContent": "若非心宽，哪得风平浪静。",
+            "ImageSource": "好看",
+            "Background": "#24446b",
+            "ShowTimeBegin": "23:00",
+            "ShowTimeEnd": "24:00"            
+        }
+    ]
+}

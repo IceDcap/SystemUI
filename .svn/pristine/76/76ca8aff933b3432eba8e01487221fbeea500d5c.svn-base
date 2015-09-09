@@ -1,0 +1,18 @@
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/notification_min_height"
+        android:paddingLeft="@dimen/kg_maincell_layout_padding_left_and_right"
+        android:paddingRight="@dimen/kg_maincell_layout_padding_left_and_right"
+        android:clipToPadding="false"
+        android:clipChildren="false"
+        >
+        <!-- android:background="@android:color/holo_orange_light" -->
+<com.amigo.navi.keyguard.notification.NotificationStackScrollLayout
+        android:id="@+id/notification_stack_scroller"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/kg_maincell_layout_notification_height"
+        />
+        <!-- android:background="@android:color/white" -->
+</LinearLayout>

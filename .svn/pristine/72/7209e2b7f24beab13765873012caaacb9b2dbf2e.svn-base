@@ -1,0 +1,1374 @@
+==================
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V5.1.5.am' non-existen[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+t in revision 3306
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '3306:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_6.0.0_V6.0.0.b' non-existent in revision 3355
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '3352:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.b' non-existent in revision 3357
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '3356:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01424275      Opened     guozj      Android L 状态栏代码上传
+CR01425226      Opened     huangwt    android L 新功能 控制中心
+CR01425613      Opened     wujj       合入Android 5.0通知中心代码
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.d
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.c
+Code difference: svn diff -r 3377:3359 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01424275      Opened     guozj      Android L 状态栏代码上传
+CR01425226      Opened     huangwt    android L 新功能 控制中心
+CR01425613      Opened     wujj       合入Android 5.0通知中心代码
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.e
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.d
+Code difference: svn diff -r 3385:3379 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+Can't locate XML/Simple.pm in @INC (@INC contains: /etc/perl /usr/local/lib/perl/5.14.2 /usr/local/share/perl/5.14.2 /usr/lib/perl5 /usr/share/perl5 /usr/lib/perl/5.14 /usr/share/perl/5.14 /usr/local/lib/site_perl .) at getAppChangeSet.pl line 3.
+BEGIN failed--compilation aborted at getAppChangeSet.pl line 3.
+
+==================
+==================
+Can't locate XML/Simple.pm in @INC (@INC contains: /etc/perl /usr/local/lib/perl/5.14.2 /usr/local/share/perl/5.14.2 /usr/lib/perl5 /usr/share/perl5 /usr/lib/perl/5.14 /usr/share/perl/5.14 /usr/local/lib/site_perl .) at getAppChangeSet.pl line 3.
+BEGIN failed--compilation aborted at getAppChangeSet.pl line 3.
+
+==================
+==================
+Can't locate XML/Simple.pm in @INC (@INC contains: /etc/perl /usr/local/lib/perl/5.14.2 /usr/local/share/perl/5.14.2 /usr/lib/perl5 /usr/share/perl5 /usr/lib/perl/5.14 /usr/share/perl/5.14 /usr/local/lib/site_perl .) at getAppChangeSet.pl line 3.
+BEGIN failed--compilation aborted at getAppChangeSet.pl line 3.
+
+==================
+==================
+Can't locate XML/Simple.pm in @INC (@INC contains: /etc/perl /usr/local/lib/perl/5.14.2 /usr/local/share/perl/5.14.2 /usr/lib/perl5 /usr/share/perl5 /usr/lib/perl/5.14 /usr/share/perl/5.14 /usr/local/lib/site_perl .) at getAppChangeSet.pl line 3.
+BEGIN failed--compilation aborted at getAppChangeSet.pl line 3.
+
+==================
+==================
+Can't locate XML/Simple.pm in @INC (@INC contains: /etc/perl /usr/local/lib/perl/5.14.2 /usr/local/share/perl/5.14.2 /usr/lib/perl5 /usr/share/perl5 /usr/lib/perl/5.14 /usr/share/perl/5.14 /usr/local/lib/site_perl .) at getAppChangeSet.pl line 3.
+BEGIN failed--compilation aborted at getAppChangeSet.pl line 3.
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01424275      Opened     guozj      Android L 状态栏代码上传
+CR01425226      Opened     huangwt    android L 新功能 控制中心
+CR01425613      Opened     wujj       合入Android 5.0通知中心代码
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.k
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.j
+Code difference: svn diff -r 3544:3507 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01424275      Opened     guozj      Android L 状态栏代码上传
+CR01425226      Opened     huangwt    android L 新功能 控制中心
+CR01425613      Opened     wujj       合入Android 5.0通知中心代码
+CR01435016      Opened     hanbj      android L 适配
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.l
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.k
+Code difference: svn diff -r 3591:3554 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+Can't locate XML/Simple.pm in @INC (@INC contains: /etc/perl /usr/local/lib/perl/5.14.2 /usr/local/share/perl/5.14.2 /usr/lib/perl5 /usr/share/perl5 /usr/lib/perl/5.14 /usr/share/perl/5.14 /usr/local/lib/site_perl .) at getAppChangeSet.pl line 3.
+BEGIN failed--compilation aborted at getAppChangeSet.pl line 3.
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01424275      Opened     guozj      Android L 状态栏代码上传
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.n
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.m
+Code difference: svn diff -r 3616:3614 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+Can't locate XML/Simple.pm in @INC (@INC contains: /etc/perl /usr/local/lib/perl/5.14.2 /usr/local/share/perl/5.14.2 /usr/lib/perl5 /usr/share/perl5 /usr/lib/perl/5.14 /usr/share/perl/5.14 /usr/local/lib/site_perl .) at getAppChangeSet.pl line 3.
+BEGIN failed--compilation aborted at getAppChangeSet.pl line 3.
+
+==================
+==================
+Can't locate XML/Simple.pm in @INC (@INC contains: /etc/perl /usr/local/lib/perl/5.14.2 /usr/local/share/perl/5.14.2 /usr/lib/perl5 /usr/share/perl5 /usr/lib/perl/5.14 /usr/share/perl/5.14 /usr/local/lib/site_perl .) at getAppChangeSet.pl line 3.
+BEGIN failed--compilation aborted at getAppChangeSet.pl line 3.
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01424275      Opened     guozj      Android L 状态栏代码上传
+CR01425226      Opened     huangwt    android L 新功能 控制中心
+CR01425613      Opened     wujj       合入Android 5.0通知中心代码
+CR01437976      Opened     hanbj      usb通知提醒重构
+CR01438294      Opened     hanbj      调整状态栏ticker布局
+CR01438694      Coded      huangwt    虚拟来电：系统铃声设置为铃声+振动，虚拟来电只有铃声，没有振动
+CR01438944      Coded      huangwt    【品质自测】设置：在Home键位置往上滑动，提示com.android.systemui已停止运行，点击关闭后恢复正常。【一次】
+CR01439059      Coded      huangwt    系统用户界面：待机时解锁进入查看QQ消息再后台运行，点击APP键弹出“进程com.android.systemui停止运行”（随机）2/20
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.q
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.p
+Code difference: svn diff -r 3678:3651 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+Can't locate XML/Simple.pm in @INC (@INC contains: /etc/perl /usr/local/lib/perl/5.14.2 /usr/local/share/perl/5.14.2 /usr/lib/perl5 /usr/share/perl5 /usr/lib/perl/5.14 /usr/share/perl/5.14 /usr/local/lib/site_perl .) at getAppChangeSet.pl line 3.
+BEGIN failed--compilation aborted at getAppChangeSet.pl line 3.
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01424275      Opened     guozj      Android L 状态栏代码上传
+CR01425226      Opened     huangwt    android L 新功能 控制中心
+CR01425613      Opened     wujj       合入Android 5.0通知中心代码
+CR01434586      Coded      wujj       【工厂】音乐播放完成后下拉任务栏》上滑屏幕时，无法收回任务栏【多次滑动恢复，附视频,keypad第31条】
+CR01436810      Coded      guozj      时钟：关机闹钟时间到，手机进入飞行模式
+CR01438002      Coded      guozj      状态栏：来新的b类信息，状态栏的“…”没有闪烁
+CR01438018      Coded      hanbj      【工厂】音乐：播放音乐或视频,插入耳机按音量＋提示“您已经%次错误的尝试解锁手机”,手机将恢复出厂默认设置【必现】
+CR01439907      Coded      wujj       状态栏：必现，后台录音时，屏幕上方的状态栏不显示录音的图标
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.s
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.r
+Code difference: svn diff -r 3732:3708 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+Can't locate XML/Simple.pm in @INC (@INC contains: /etc/perl /usr/local/lib/perl/5.14.2 /usr/local/share/perl/5.14.2 /usr/lib/perl5 /usr/share/perl5 /usr/lib/perl/5.14 /usr/share/perl/5.14 /usr/local/lib/site_perl .) at getAppChangeSet.pl line 3.
+BEGIN failed--compilation aborted at getAppChangeSet.pl line 3.
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01425613      Opened     wujj       合入Android 5.0通知中心代码
+CR01438140      Coded      huangwt    【工厂】铃音：任意界面向上滑出状态栏,点击虚拟来电,来电响铃时，再来一个电话，来电没铃声,挂断再来电也没铃声【必现】
+CR01439885      Coded      huangwt    【品质压力】连接USB拷5GB左右的文件，完成后拔掉USB，按电源键屏幕闪了一下，黑屏5S后手机自动重启，重启后恢复【1/10】
+CR01440775      Coded      huangwt    控制中心:手机机已连接wlan，控制中心wlan图标置灰
+CR01441001      Coded      wujj       状态栏：在软件商城下载最新版本“懒人听书”后台运行时，状态栏图标显示不完整，附对比图 单机必现
+CR01441070      Coded      huangwt    MISC：控制中心开启手电筒后开启相机，退出相机后查看控制中心，手电筒图标开启无手电筒亮起【必现】
+CR01441566      Coded      wujj       【工厂】主菜单下拉控制中心区域截屏成功后》进入博雅斗地主【5.1】游戏界面区域截屏》截屏后提示“com android systemu”报错重启
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.u
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.t
+Code difference: svn diff -r 3775:3766 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01425226      Opened     huangwt    android L 新功能 控制中心
+CR01440365      Coded      wujj       【BVT】系统用户界面：下拉状态栏和锁屏界面都没有显示运营商名称标记
+CR01440985      Coded      wujj       状态栏：必现，将字体改为汉仪乐喵体，手机截屏时，屏幕上方的提示语仍为默认字体
+CR01441474      Coded      huangwt    【工厂】相机：相机设置滤镜,拉下控制中心,点击“区域截图”,预览界面全黑【必现】
+CR01442384      Coded      huangwt    随机，重启手机，开机后，弹出com.android.systemui停止运行，界面定屏，点击关闭无作用，按power也无法点击重启手机
+CR01442569      Coded      hanbj      上传锁屏代码-显示虚拟按键
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.v
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.u
+Code difference: svn diff -r 3791:3777 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+Can't locate XML/Simple.pm in @INC (@INC contains: /etc/perl /usr/local/lib/perl/5.14.2 /usr/local/share/perl/5.14.2 /usr/lib/perl5 /usr/share/perl5 /usr/lib/perl/5.14 /usr/share/perl/5.14 /usr/local/lib/site_perl .) at getAppChangeSet.pl line 3.
+BEGIN failed--compilation aborted at getAppChangeSet.pl line 3.
+
+==================
+==================
+Can't locate XML/Simple.pm in @INC (@INC contains: /etc/perl /usr/local/lib/perl/5.14.2 /usr/local/share/perl/5.14.2 /usr/lib/perl5 /usr/share/perl5 /usr/lib/perl/5.14 /usr/share/perl/5.14 /usr/local/lib/site_perl .) at getAppChangeSet.pl line 3.
+BEGIN failed--compilation aborted at getAppChangeSet.pl line 3.
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01425613      Opened     wujj       合入Android 5.0通知中心代码
+CR01436939      Opened     hanbj      OTG:连接OTG和U盘后，状态栏不显示USB存储设备已连接和安全移除功能    【必现】
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.y
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.x
+Code difference: svn diff -r 3827:3825 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.z
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.y
+Code difference: svn diff -r 3828:3829 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01424275      Opened     guozj      Android L 状态栏代码上传
+CR01425613      Opened     wujj       合入Android 5.0通知中心代码
+CR01438261      Coded      hanbj      【工厂】随变主题，点击在线主题，下载随你IMX成功并应用，随变桌面查看，屏下方虚拟键灯半亮异常（重启恢复）【单机1次】
+CR01443497      Resolved   wujj       【BVT】状态栏：下拉状态栏只显示一个运营商，有时显示卡1有时显示卡2运营商
+CR01443793      Coded      hanbj      锁屏代码上传-锁屏显示隐藏虚拟按键
+CR01443916      Coded      hanbj      【内部试用反馈】状态栏图标间隙不一致   随机
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.aa
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.z
+Code difference: svn diff -r 3871:3832 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01424275      Opened     guozj      Android L 状态栏代码上传
+CR01425226      Opened     huangwt    android L 新功能 控制中心
+CR01438812      Coded      huangwt    MISC：虚拟来电挂后台，上滑打开控制中心长按相机暗拍，此时虚拟来电界面展开
+CR01442322      Coded      guozj      【新功能】天窗皮套：天窗锁屏界面，状态栏两边有黄色边框
+CR01442692      Coded      guozj      信号格显示：T1702版本在仅WCDMA网络时，强弱信号下都一直显示为满格，没有信号格跳变
+CR01444010      Coded      huangwt    【品质压力】上滑控制中心开飞行模式后关闭,信号棒恢复,再看控制中心显示开启,设置里显示关闭,回桌面再看控制中心恢复【5/200】
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.ab
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.aa
+Code difference: svn diff -r 3885:3873 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01425613      Opened     wujj       合入Android 5.0通知中心代码
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.ac
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.ab
+Code difference: svn diff -r 3890:3887 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.ad' non-existent in revision 3913
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '3913:'
+File does not exist:  at getAppChangeSet.pl line 48
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01424275      Opened     guozj      Android L 状态栏代码上传
+CR01425226      Opened     huangwt    android L 新功能 控制中心
+CR01425613      Opened     wujj       合入Android 5.0通知中心代码
+CR01435016      Opened     hanbj      android L 适配
+CR01442413      Coded      guozj      状态栏：wifi信号一格时，图标原点消失
+CR01443097      Opened     hanbj      usb弹出框变色
+CR01444102      Closed     wujj       设置：勾选自动旋转屏幕，进入设置，旋转手机，虚拟键处显示异常（虚拟按键跟底色一样，且多了一个框），附截图
+CR01445700      Opened     hanbj      sonar检查修改
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.ae
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.ab
+Code difference: svn diff -r 3949:3887 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01424275      Opened     guozj      Android L 状态栏代码上传
+CR01425226      Opened     huangwt    android L 新功能 控制中心
+CR01425613      Opened     wujj       合入Android 5.0通知中心代码
+CR01435016      Opened     hanbj      android L 适配
+CR01442413      Coded      guozj      状态栏：wifi信号一格时，图标原点消失
+CR01443097      Opened     hanbj      usb弹出框变色
+CR01444102      Closed     wujj       设置：勾选自动旋转屏幕，进入设置，旋转手机，虚拟键处显示异常（虚拟按键跟底色一样，且多了一个框），附截图
+CR01445700      Opened     hanbj      sonar检查修改
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.af
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.ac
+Code difference: svn diff -r 3956:3892 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01424275      Opened     guozj      Android L 状态栏代码上传
+CR01446261      Opened     guozj      android L新功能：卡片式多任务
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.ag
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.af
+Code difference: svn diff -r 3961:3958 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01424275      Opened     guozj      Android L 状态栏代码上传
+CR01425226      Opened     huangwt    android L 新功能 控制中心
+CR01425613      Opened     wujj       合入Android 5.0通知中心代码
+CR01435695      Resolved   hanbj      状态栏显示的网速有误
+CR01446569      Coded      huangwt    控制中心：控制中心的“超级省电”按钮没有同步手机状态，一直都是高亮显示
+CR01446908      Coded      huangwt    【品质压力】将来电音量减到最小，虚拟来电挂断，对方来电，来电音量又恢复到默认大小。【100%】
+CR01447067      Coded      huangwt    【品质压力】点击app键弹出很抱歉com.android.sytemui已停止运行，点击确定闪黑屏一次到解锁界面，再次操作恢复正常【1/10】
+CR01447165      Coded      huangwt    MISC：黑屏状态下通过划手势开启虚拟来电，上拉控制中心关闭虚拟来电后还会虚拟来电 必现
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.ah
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.ag
+Code difference: svn diff -r 4002:3963 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01424275      Opened     guozj      Android L 状态栏代码上传
+CR01425613      Opened     wujj       合入Android 5.0通知中心代码
+CR01435695      Resolved   hanbj      状态栏显示的网速有误
+CR01445725      Coded      huangwt    【工厂】随变桌面，长按power键重启手机，进入主菜单向上滑动调出控制中心，控制中心和主菜单重叠，按返回键恢复【单机10次出现4次】
+CR01446908      Coded      huangwt    【品质压力】将来电音量减到最小，虚拟来电挂断，对方来电，来电音量又恢复到默认大小。【100%】
+CR01446984      Coded      hanbj      【品质压力】来闹钟界面》按APP键、返回键无作用，按home键有作用》无法恢复【100%】
+CR01447067      Coded      huangwt    【品质压力】点击app键弹出很抱歉com.android.sytemui已停止运行，点击确定闪黑屏一次到解锁界面，再次操作恢复正常【1/10】
+CR01447920      Opened     hanbj      多任务模糊背景及布局调整
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.ai
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.ag
+Code difference: svn diff -r 4027:3963 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01425226      Opened     huangwt    android L 新功能 控制中心
+CR01446261      Opened     guozj      android L新功能：卡片式多任务
+CR01447702      Coded      guozj      【香港场测】插入深圳4G卡，手机在没有开启数据网络是不显示网络制式，只显示一个R
+CR01447920      Opened     hanbj      多任务模糊背景及布局调整
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.aj
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.ai
+Code difference: svn diff -r 4049:4030 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01446261      Opened     guozj      android L新功能：卡片式多任务
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.ak
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.aj
+Code difference: svn diff -r 4052:4051 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V5.1.0.2i' non-existent in revision 4081
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '4081:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01425226      Opened     huangwt    android L 新功能 控制中心
+CR01425613      Opened     wujj       合入Android 5.0通知中心代码
+CR01443097      Opened     hanbj      usb弹出框变色
+CR01445765      Coded      wujj       【工厂】设置通知中心，重要通知打开微信，来微信未接电话等，状态栏为重要通知，重要通知关微信，未接电话等切换到其他列【必现】
+CR01445891      Coded      wujj       【工厂】联系人》更多》导入/导出》从手机导入联系人到SIM卡》全选手机联系人导入完成》下拉状态栏向右滑动无法删除复制联系人完成框
+CR01448537      Coded      guozj      系统管家：随机，点击多任务列表界面清除进程按钮，提示已成功释放-7M内存 3/20
+CR01448745      Coded      wujj       状态栏：随机，手机插卡，下拉状态栏，运营商信息有遮挡，附截图，1/20
+CR01448857      Coded      guozj      【工厂】网易新闻【V.3.8.2】点击任意视频播放一分钟》屏灭屏亮后弹出抱歉进程“com android systemui停止运行后屏灭屏亮解锁无作用
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.am
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.al
+Code difference: svn diff -r 4103:4083 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V5.1.0.zzk' non-existent in revision 4125
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '4125:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01424275      Opened     guozj      Android L 状态栏代码上传
+CR01425226      Opened     huangwt    android L 新功能 控制中心
+CR01425613      Opened     wujj       合入Android 5.0通知中心代码
+CR01445888      Coded      wujj       锁屏:后台使用QQ音乐播放音乐,玩游戏过程中锁屏再解锁,锁屏界面异常     必现
+CR01449580      Coded      hanbj      多任务栏：一键结束所有进程后，弹出com.android.systemui停止运行。【随机】1/20
+CR01449586      Coded      hanbj      状态栏：控制中心，长按拍照图标，再开启极致省电，下拉通知栏，点击拍照成功，提示com.android.systemui停止运行  【必现】
+CR01449906      Coded      huangwt    状态栏 6.0.0 版本 最近任务一键清除按钮动画实现
+CR01449923      Coded      huangwt    状态栏 6.0.0版本  横屏 控制中心 弹出方式 修改
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.ao
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.an
+Code difference: svn diff -r 4148:4127 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01424275      Opened     guozj      Android L 状态栏代码上传
+CR01436097      Resolved   guozj      Modem：4G强信号下，插入4G卡，热插拔卡槽，注册网络时先显示4G网络，瞬间消失，几秒后再注册上4G网络
+CR01445888      Resolved   wujj       锁屏:后台使用QQ音乐播放音乐,玩游戏过程中锁屏再解锁,锁屏界面异常     必现
+CR01445912      Closed     wujj       状态栏：建立一路通话在通话界面按POWER键，再点亮屏幕下拉状态栏，状态栏下方的运营商信息显示不完整，附图
+CR01448537      Closed     guozj      系统管家：随机，点击多任务列表界面清除进程按钮，提示已成功释放-7M内存 3/20
+CR01448781      Closed     huangwt    【工厂】响铃模式下，屏下方上滑调出控制中心，关闭振动，虚拟键来电仍有振动【必现】
+CR01449861      Opened     guozj      状态栏：已关闭数据连接，却出现数据上下行的标识
+CR01449912      Resolved   wujj       【基础体验】通知中心：关闭数据连接后不显示运营商名称
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.ap
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.aj
+Code difference: svn diff -r 4161:4051 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01424275      Opened     guozj      Android L 状态栏代码上传
+CR01425226      Opened     huangwt    android L 新功能 控制中心
+CR01449667      Resolved   huangwt    【用户体验】多任务：单手操作向上滑动删除近期任务，体验不流畅
+CR01450145      Coded      hanbj      设置-声音和振动-直接滑动铃声音量为静音时，多媒体音量都会跳为静音
+CR01450243      Resolved   huangwt    【品质压力】上滑控制中心》点飞行模式图标开启，状态栏未显示飞行模式》再次操作恢复正常【1/100】
+CR01450409      Coded      huangwt    状态栏：虚拟来电挂后台之后，状态栏虚拟来电图标过小
+CR01450426      Coded      hanbj      usb弹出框MTP帮助按钮涟漪效果优化
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.aq
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.ap
+Code difference: svn diff -r 4177:4163 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01424275      Opened     guozj      Android L 状态栏代码上传
+CR01425226      Opened     huangwt    android L 新功能 控制中心
+CR01449667      Resolved   huangwt    【用户体验】多任务：单手操作向上滑动删除近期任务，体验不流畅
+CR01450145      Coded      hanbj      设置-声音和振动-直接滑动铃声音量为静音时，多媒体音量都会跳为静音
+CR01450243      Resolved   huangwt    【品质压力】上滑控制中心》点飞行模式图标开启，状态栏未显示飞行模式》再次操作恢复正常【1/100】
+CR01450409      Coded      huangwt    状态栏：虚拟来电挂后台之后，状态栏虚拟来电图标过小
+CR01450426      Coded      hanbj      usb弹出框MTP帮助按钮涟漪效果优化
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.ar
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.ap
+Code difference: svn diff -r 4178:4163 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01424275      Opened     guozj      Android L 状态栏代码上传
+CR01445888      Closed     wujj       锁屏:后台使用QQ音乐播放音乐,玩游戏过程中锁屏再解锁,锁屏界面异常     必现
+CR01445912      Closed     wujj       状态栏：建立一路通话在通话界面按POWER键，再点亮屏幕下拉状态栏，状态栏下方的运营商信息显示不完整，附图
+CR01448537      Closed     guozj      系统管家：随机，点击多任务列表界面清除进程按钮，提示已成功释放-7M内存 3/20
+CR01449861      Resolved   guozj      状态栏：已关闭数据连接，却出现数据上下行的标识
+CR01449912      Closed     wujj       【基础体验】通知中心：关闭数据连接后不显示运营商名称
+CR01450145      Coded      hanbj      设置-声音和振动-直接滑动铃声音量为静音时，多媒体音量都会跳为静音
+CR01450426      Resolved   hanbj      usb弹出框MTP帮助按钮涟漪效果优化
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.as
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.aj
+Code difference: svn diff -r 4191:4051 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01425226      Opened     huangwt    android L 新功能 控制中心
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.at
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.as
+Code difference: svn diff -r 4196:4194 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.au
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.ak
+Code difference: svn diff -r 4210:4054 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01450857      Resolved   hanbj      设置：开启极致模式，点击低电量提示中省电管理，点击耗电排行图标，硬件耗电，屏幕，显示，点击壁纸提示设置报错  【必现】
+CR01450976      Coded      hanbj      【内部试用反馈】连接OTG设备，通知栏显示正在准备USB存储设备，正在检查是否有错误，拔掉OTG 后，通知不消失
+CR01451327      Coded      guozj      设置16×16像素图片为桌面背景时报错问题
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.av
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.au
+Code difference: svn diff -r 4217:4212 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01425226      Opened     huangwt    android L 新功能 控制中心
+CR01425613      Opened     wujj       合入Android 5.0通知中心代码
+CR01447092      Coded      hanbj      MISC：开启日常省电模式，插入USB，开启USB调试，弹出的提示显示不清，附截图
+CR01451872      Resolved   hanbj      上划操作经过虚拟按键时避免误触按键事件
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.aw
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.av
+Code difference: svn diff -r 4226:4219 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01424275      Opened     guozj      Android L 状态栏代码上传
+CR01425226      Opened     huangwt    android L 新功能 控制中心
+CR01451591      Coded      wujj       状态栏：有短信和截屏等通知，切换语言，状态栏中的通知内容会再次显示一遍 必现
+CR01452514      Resolved   huangwt    控制中心：上滑调出控制中心的过程中，点击控制中心，控制中心闪一下
+CR01452708      Coded      wujj       设置：将QQ设置为B类消息-QQ收到消息的时候，状态栏的“…”没有闪烁而是显示出收到的消息（附LOG，视频）
+CR01452939      Coded      wujj       【联通规范】被测终端插双卡进入单待机的情况下，下拉状态栏运营商标识显示不符合要求
+CR01453379      Coded      wujj       【工厂】相机：进入相机,拉出控制中心,点击区域截图,上锁画C进入相机,按返回,点击保存,自动退到任意界面 100%
+CR01454087      Opened     hanbj      应用瘦身
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.ax
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.aw
+Code difference: svn diff -r 4286:4228 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01425613      Opened     wujj       合入Android 5.0通知中心代码
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.ay
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.ax
+Code difference: svn diff -r 4294:4289 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01454087      Opened     hanbj      应用瘦身
+CR01455623      Opened     hanbj      控制中心上划动画优化-增加弹动效果
+CR01455754      Opened     wujj       低电提醒：未插电时15%和4%才提醒；插电后拔掉，低于15%提醒一次，4%提醒一次。
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.az
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.ay
+Code difference: svn diff -r 4304:4296 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01424275      Opened     guozj      Android L 状态栏代码上传
+CR01425613      Opened     wujj       合入Android 5.0通知中心代码
+CR01456410      Opened     hanbj      音量调节框静音图标更新
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.ba
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.az
+Code difference: svn diff -r 4325:4306 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01456410      Opened     hanbj      音量调节框静音图标更新
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.bb
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.ba
+Code difference: svn diff -r 4328:4327 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01424275      Opened     guozj      Android L 状态栏代码上传
+CR01425613      Opened     wujj       合入Android 5.0通知中心代码
+CR01452898      Coded      wujj       【联通规范】手机不插卡开机，锁屏界面和状态栏应提示未插卡【必现】
+CR01454375      Coded      wujj       【品质自测】切换字体大小》下拉状态栏的字体无法切换回标准字体大小。必现
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.bc
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.bb
+Code difference: svn diff -r 4350:4330 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01424275      Opened     guozj      Android L 状态栏代码上传
+CR01425613      Opened     wujj       合入Android 5.0通知中心代码
+CR01452922      Coded      wujj       【联通规范】手机单插卡1或单插卡2，进入屏蔽房，状态栏中不显示无服务【必现】
+CR01453421      Resolved   guozj      【品质压力】进文件管理安装包,安装apk完成按APP键无反应,在安装包界面提示"com.android,systemui"进程无响应,点击确定恢复【1/10】
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.bd
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.bc
+Code difference: svn diff -r 4370:4352 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01425613      Opened     wujj       合入Android 5.0通知中心代码
+CR01451169      Resolved   guozj      【品质压力】清除log再开启，按home键退出，定屏5秒后出现com.android.systemui进程无响应，按确定后恢复正常【3/10】
+CR01455791      Coded      wujj       系统界面：连接USB，点击状态栏USB选项无作用【随机】1/10
+CR01456154      Coded      huangwt    控制中心：打开控制中心-点击虚拟来电-倒计时时间到，挂断（接听）来电，铃声响起，不会跟着挂断或接听而停止（附LOG，视频）
+CR01456654      Resolved   wujj       【monkey】：随机，system.ui error：java.lang.IndexOutOfBoundsException，一次
+CR01457650      Coded      wujj       设置：通知中心-通知分类，点击右上角的问号按钮进入通知分类说明界面，该界面右上角的问号按钮点击无作用，应该去掉 必现
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.0.0_V6.0.0.be
+Previous tag: Amigo_SystemUI_android5.0-6.0.0_V6.0.0.bd
+Code difference: svn diff -r 4397:4372 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.0.0_V6.0.0.a' non-existent[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+ in revision 4685
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '4685:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.br' non-existent in revision 4732
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '4731:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01296451      Opened     jingyn     解决rom锁屏bug
+CR01374919      Opened     guosb      4.4rom锁屏功能开发
+CR01425613      Opened     wujj       合入Android 5.0通知中心代码
+CR01466272      Opened     wujj       上传Android5.1 SystemUI原生代码
+CR01471815      Opened     guozj      android 5.1 SystemUI适配
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.b
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.a
+Code difference: svn diff -r 4742:4734 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.bu' non-existent in revision 4842
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '4842:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01459185      Opened     zhaowei    {Navi锁屏}提交Navi锁屏代码
+CR01476432      Opened     pengwei    【好看壁纸】代码合入SystemUI
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.d
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.c
+Code difference: svn diff -r 4847:4844 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.bw' non-existent in revision 4963
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '4963:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.g' non-existent in revision 4993
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '4991:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.aa' non-existent in revision 5123
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '5122:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.p' non-existent in revision 5196
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '5192:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.cc' non-existent in revision 5214
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '5214:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ac' non-existent in revision 5330
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '5329:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.bw' non-existent in revision 5337
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '5337:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.x' non-existent in revision 5388
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '5388:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.y' non-existent[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+ in revision 5435
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '5431:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ae' non-existent in revision 5502
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '5502:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V5.1.0.2v' non-existent in revision 5585
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '5583:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.af' non-existent in revision 5599
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '5599:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01451044      Resolved   hanbj      存储已用完的32G外置T卡插入读卡器，使用OTG连接手机，拔出时，概率性出现延时10秒左右后才提示“安全移除”(附log）
+CR01471815      Opened     guozj      android 5.1 SystemUI适配
+CR01478094      Resolved   jiating    【工厂】开启语音控制》任意号码来的接听不成功》锁屏界面显示有未接来的》再次来的提示报错 1次
+CR01481541      Opened     hanbj      低电量提醒用户设置
+CR01482838      Resolved   jingyn     【5.1MP】锁屏：手机安全密码设为数字密码锁，解锁界面输入5次错误密码冻结密码锁后，使用指纹能正常解锁进入(必现)
+CR01483666      Closed     hanbj      【5.1MP】系统界面：桌面调节音量-音量显示没覆盖全屏-对比M3、S7无此问题（必现附图）
+CR01487284      Resolved   jiating    【5.1MP】开启动作手势，打开隔空桌面，在桌面向下挥动手掌，无法锁屏【必现】
+CR01488389      Coded      hanbj      设置：开启静音后按音量键调节音量，再次关闭开启静音，“媒体音量”按钮位于音量条左侧，不会随静音的开启关闭调动。
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.r
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.b
+Code difference: svn diff -r 5641:4744 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V' non-existent in revision 5674
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '5674:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01296451      Opened     jingyn     解决rom锁屏bug
+CR01459185      Opened     zhaowei    {Navi锁屏}提交Navi锁屏代码
+CR01476621      Opened     hanjuan    好看壁纸代码合入（统计）
+CR01490826      Coded      huangwt    【5.1MP】工厂：后台运行多个程序,截屏保存,按APP键,点击一键清除,拉下通知栏,点击关闭,一键清除图标抖动,一直显示,按返回恢复
+CR01493413      Coded      jiating    时钟：屏幕锁定方式设置图案锁，休眠时间设置无限时，时钟，计时器，时间到点击确定，屏幕显示锁屏壁纸，屏幕锁定
+CR01494700      Coded      jiating    【5.1MP】品质压力:灭屏状态下翻转手机》自动亮屏后解锁界面右边的边缘显示为红色》1min后操作恢复正常 5/50
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.t
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.s
+Code difference: svn diff -r 5690:5676 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01425226      Opened     huangwt    android L 新功能 控制中心
+CR01459185      Opened     zhaowei    {Navi锁屏}提交Navi锁屏代码
+CR01476432      Opened     pengwei    【好看壁纸】代码合入SystemUI
+CR01490112      Coded      guozj      【5.1MP】Amigo桌面：点击APP键-灭屏亮屏解锁，桌面会显示多任务界面的清除应用进程按钮并且闪一下（必现）
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.u
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.t
+Code difference: svn diff -r 5707:5693 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.aj' non-existent in revision 5719
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '5715:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.am' non-existent in revision 5757
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '5756:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01495985      Coded      jiating    锁屏：手机插双卡，且SIM卡全设置PIN码锁，重启手机，分别输入卡1和卡2 PIN码，卡2输入时界面跳转到锁屏，再切换到输入PIN码2次
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.x
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.w
+Code difference: svn diff -r 5762:5759 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.c' non-existent in revision 5779
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '5779:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V5.1.0.2k' non-existent in revision 5807
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '5805:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.cd' non-existen[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+t in revision 5828
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '5826:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01459185      Opened     zhaowei    {Navi锁屏}提交Navi锁屏代码
+CR01476621      Opened     hanjuan    好看壁纸代码合入（统计）
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ab
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.aa
+Code difference: svn diff -r 5838:5830 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.1.0_V6.1.0.ab' non-existent in revision 5847
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '5847:'
+File does not exist:  at getAppChangeSet.pl line 48
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ac' non-existent in revision 5853
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '5853:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.ar' non-existent in revision 5865
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '5865:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.al' non-existent in revision 5934
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '5934:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01459185      Opened     zhaowei    {Navi锁屏}提交Navi锁屏代码
+CR01493359      Coded      huangwt    【5.1MP】天窗：控制中心更多界面合盖不显示天窗(必现)
+CR01500095      Resolved   huangwt    【5.1MP】系统界面：在桌面打开SCR屏幕录像，弹出系统界面已停止运行（必现）
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ag
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.af
+Code difference: svn diff -r 5945:5936 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.an' non-existent in revision 6021
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6019:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01408122      Opened     jiating    【NAVI锁屏2.0.0.y】打开小米锁屏后 ，从 navi桌面不能下拉上锁
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ai
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ah
+Code difference: svn diff -r 6024:6023 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01408122      Opened     jiating    【NAVI锁屏2.0.0.y】打开小米锁屏后 ，从 navi桌面不能下拉上锁
+CR01459185      Opened     zhaowei    {Navi锁屏}提交Navi锁屏代码
+CR01466272      Opened     wujj       上传Android5.1 SystemUI原生代码
+CR01476963      Coded      fangjian   【5.1MP】插入exFAT格式的T卡，通知栏没有提示
+CR01495082      Resolved   jiating    【5.1MP】品质压力：按power键灭屏，双击亮屏按音量键不显示音量小窗口，多次操作恢复【80/100】
+CR01497997      Coded      feihm      【5.1MP】锁屏：输入5次错误密码，冷冻倒计时过程中输入错误指纹，会有振动效果反馈(必现)
+CR01502964      Opened     hanjuan    好看壁纸bug修复
+CR01503404      Coded      wujj       【5.1MP】操作手机后出现触屏无反应（出现1次）
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.aj
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ai
+Code difference: svn diff -r 6078:6026 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.ax' non-existent in revision 6088
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6088:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01408122      Opened     jiating    【NAVI锁屏2.0.0.y】打开小米锁屏后 ，从 navi桌面不能下拉上锁
+CR01459185      Opened     zhaowei    {Navi锁屏}提交Navi锁屏代码
+CR01485997      Resolved   huangwt    【5.1MP】工厂:进入相机拉出控制中心,长按拍照图标会震动,但没有拍照 100%
+CR01487133      Coded      gexiufeng  【5.1MP】系统管家：开启极致省电，锁屏解锁，屏幕会闪两下(必现)
+CR01496657      Resolved   guozj      【5.1MP】品质压力:待机,状态栏SIM卡信号棒消失,待机5分钟后恢复正常（3/10）
+CR01497717      Opened     huangwt    【5.1MP】控制中心：上滑打开控制中心-进入更多设置-界面是透明的而不是毛玻璃效果（2/20附图log）
+CR01499577      Coded      feihm      【5.1MP工厂】设置中开启动作手势所有项》开启指纹》便捷解锁屏幕锁方式说及安全密码》待机界面隔空下滑锁屏》用指纹无法解锁100%
+CR01502964      Opened     hanjuan    好看壁纸bug修复
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.al
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ak
+Code difference: svn diff -r 6123:6090 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.bc' non-existen[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+t in revision 6149
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6149:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.aq' non-existent in revision 6198
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6193:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.as' non-existent in revision 6269
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6268:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01504165      Resolved   wujj       【5.1MP】品质压力:进文件管理，SD卡复制大于1G的文件夹到内部存储后删除，下拉菜单自动锁屏，解锁后定屏，五分钟后自动恢复【2/30】
+CR01506153      Resolved   fangjian   系统界面：后台运行优酷，进入照相机中录制一个30s左右的视频后播放，按App切换到优酷，弹出com.android.systemUI已停止运行（3/10）
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ap
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ao
+Code difference: svn diff -r 6275:6271 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.at' non-existent in revision 6329
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6329:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_6.1.0_V6.1.0.aq' non-existent in revision 6333
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6333:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01425226      Opened     huangwt    android L 新功能 控制中心
+CR01507276      Coded      hanbj      USB：非第一次连接电脑，仍显示高通端口
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.as
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.aq
+Code difference: svn diff -r 6334:6331 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.cu' non-existent in revision 6387
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6384:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.1.ac' non-existent in revision 6445
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6444:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.1.ae' non-existent in revision 6476
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6476:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.0.0_V6.1.0.av' non-existent in revision 6479
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6479:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.aw' non-existent in revision 6481
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6480:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01459185      Opened     zhaowei    {Navi锁屏}提交Navi锁屏代码
+CR01504157      Coded      hanbj      【5.1MP】MISC：开启USB调试弹窗界面，点击弹窗外空白处，界面亮度不会恢复(视频）
+CR01505839      Opened     jiating    【5.1MP】MISC：手表控开始匹配>点“下载并安装”下载过程中，灭屏待机，按power键亮屏，手机卡死在锁屏界面无法正常解锁(6/10)
+CR01513311      Coded      huangwt    【5.1MP】工厂：上拉控制中心长按相机图标拍照,保存的照片模糊100%
+CR01514498      Opened     hanjuan    壁纸下载后不清晰，用户选定图片做壁纸不够清晰
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ax
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.aw
+Code difference: svn diff -r 6499:6483 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ay' non-existent in revision 6528
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6528:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ba' non-existent in revision 6552
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6552:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ba
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.az
+Code difference: svn diff -r 6553:6554 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.bn' non-existent in revision 6572
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6566:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.db' non-existent in revision 6614
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6614:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.dc' non-existent in revision 6645
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6642:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01459185      Opened     zhaowei    {Navi锁屏}提交Navi锁屏代码
+CR01515932      Coded      wujj       【自动化测试_monkey】 MISC:进行Monkey72小时测试，com.android.systemui:screenshot出现空指针异常
+CR01518583      Coded      guozj      【5.1MP工厂】微信【6.2.2.】游戏龙界启示录运行时》按APP键退出系统界面停止运行且锁屏后无法使用指纹解锁【手势解锁恢复，附视频】
+CR01518794      Resolved   huangwt    【5.1MP】跑monkey出现系统界面停止运行
+CR01518869      Resolved   guozj      【5.1MP】NFC:开启NFC成功后，状态栏没有显示图标，NFC不能用，重启恢复，10台机器，一台出现。
+CR01519689      Coded      guozj      8609 SystemUI5.1适配
+CR01519710      Coded      guozj      修改获取IMEI逻辑
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bf
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.be
+Code difference: svn diff -r 6668:6653 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.1.ag' non-existent in revision 6685
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6685:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.1.ah' non-existent in revision 6732
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6731:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.1.ah' non-existent in revision 6735
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6733:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01516872      Opened     wujj       USB：通过USB连接PC，无法开启MTP存储模式（必现）
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bm
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bl
+Code difference: svn diff -r 6738:6737 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01408122      Opened     jiating    【NAVI锁屏2.0.0.y】打开小米锁屏后 ，从 navi桌面不能下拉上锁
+CR01466272      Opened     wujj       上传Android5.1 SystemUI原生代码
+CR01503887      Opened     jiating    系统界面:开机,提示输入sim卡pin码时等待灭屏,按power键亮屏输入pin码提示"系统界面"停止运行  29/30  随机
+CR01521508      Opened     hanjuan    7320长截屏适配
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bn
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bm
+Code difference: svn diff -r 6753:6740 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bq' non-existent in revision 6894
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6890:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.0-6.1.0_V6.0.0.bz' non-existent in revision 6949
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6949:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.0.0.bz' non-existent in revision 6955
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '6950:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.1.am' non-existent in revision 7001
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '7000:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01525194      Coded      wujj       驱动：必现 插入USB线设置为仅充电，PC端弹出QDSS DATA与QDSS CTRL驱动安装提示(无法安装)
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bv
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bu
+Code difference: svn diff -r 7011:7003 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01527721      Opened     jiating    MISC：锁屏界面低电提示背景为红色
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bw
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bv
+Code difference: svn diff -r 7014:7013 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01527721      Opened     jiating    MISC：锁屏界面低电提示背景为红色
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bx
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bw
+Code difference: svn diff -r 7019:7018 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01513574      Opened     lixian     手机重启后流量、电量 、时间 大小显示跟随系统显示变化,流量的显示还跟随字体的变化显示 必现
+CR01515157      Closed     jiating    NAVI锁屏：修改字体样式，锁屏界面，文本字体在文本框中偏上，应该居中【截图】
+CR01520887      Resolved   huangwt    【5.1MP】工厂：进入相机拍摄视频保存,上拉控制中心,长按相机图标,会拍照,重启手机恢复 3/10
+CR01522747      Opened     liushuang  MISC：随机 上下音量键调节通知音量无声  6/20
+CR01527355      Resolved   jiating    【品质压力】电量10%重启手机，重启后无图案锁界面，按power键亮屏点亮屏也无图案锁，重新设置图案锁也无显示，重启恢复 1/30
+CR01528195      Coded      liuwei     【5.1MP】数据开启卡2，更换一张卡到卡2，开机卡1数据为开启，无流量输出图标（卡1也是如此）卡1网络类型无法选择【必现】
+CR01528795      Opened     jiating    【工厂】故事锁屏界面，点锁屏设置，选择锁定的壁纸，进入图库选择系统自带的竖屏壁纸，无法设置成功【对比8611】【必现】
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.by
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bx
+Code difference: svn diff -r 7084:7021 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.1.ap' non-existent in revision 7122
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '7122:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01374919      Opened     guosb      4.4rom锁屏功能开发
+CR01408122      Opened     jiating    【NAVI锁屏2.0.0.y】打开小米锁屏后 ，从 navi桌面不能下拉上锁
+CR01523563      Opened     jiangxiao  [StoryKeyguard_ROM] 单张图片停留时间&网络访问统计
+CR01523732      Resolved   zhu_lin    状态栏：低电时，电量显示设为非默认值后再设为默认值，状态栏电量显示有误 必现
+CR01523804      Resolved   hanjuan    【工厂】：任意界面,拉出控制中心,超级截屏,截屏,多次操作提示“系统界面停止运行”点击确定恢复5/10
+CR01525128      Resolved   jiating    【ROM】NAVI锁屏：手机插入耳机，拨打电话，在屏幕自动灭屏的瞬间，通过耳机按键挂断电话后，屏幕亮起，出现壁纸透明。（100%）
+CR01526425      Opened     xiangw     【工厂】主题公园更换主题成功后》手机壁纸不变【无法恢复,附视频】
+CR01526578      Closed     jiating    【ROM】NAVI锁屏：锁屏界面不显示未接来电 必现
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ca
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.bz
+Code difference: svn diff -r 7150:7124 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.1.au' non-existen[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+t in revision 7203
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '7201:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.1.aw' non-existent in revision 7220
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '7218:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.1.ay' non-existent in revision 7263
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '7263:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01374919      Opened     guosb      4.4rom锁屏功能开发
+CR01459185      Opened     zhaowei    {Navi锁屏}提交Navi锁屏代码
+CR01519948      Resolved   zhaowei    视频：随机 播放视频时系统界面停止运行  1/20
+CR01528086      Resolved   liushuang  【自动化测试_monkey】系统界面：进行Monkey测试，系统界面出现运行时异常
+CR01528319      Coded      zhaowei    【品质压力】横屏播视频自动暂停,来电接听挂断,自动播壁纸音乐,下拉菜单点播放定屏5s,手机竖屏自动锁屏,解锁退出,再操作恢复【1/50】
+CR01533198      Opened     lixian     SystemUI状态栏提交代码CR
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ce
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.cd
+Code difference: svn diff -r 7310:7265 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01296451      Opened     jingyn     解决rom锁屏bug
+CR01374919      Opened     guosb      4.4rom锁屏功能开发
+CR01521180      Opened     liushuai   提交新代码
+CR01531489      Coded      liushuang  MISC：开启极致省电，插USB，开启USB调试，弹出USB鉴权确认后，退出极省电，插USB，USB框口背景色异常【必现】
+CR01533827      Opened     jiating    【CT Pre-test】插双卡，开机注册到网络后，锁屏界面显示中国电信/无服务（下拉状态栏显示正常）
+CR01535224      Coded      gexiufeng  【品质压力】运行游戏的过程中按APP键退出，再按APP键进入游戏，进入游戏时定屏3秒提示系统界面停止运行点击确定后恢复【1/10】
+CR01535318      Resolved   liushuang  【ROM】【CTS测试】测试GMS-CTSVerfier.apk中的USB Accessory Test项，系统界面停止运行
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.cf
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ce
+Code difference: svn diff -r 7380:7312 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+svn: warning: W170000: URL 'http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.1.bh' non-existent in revision 7399
+
+svn: E200009: Could not display info for all targets because some targets don't exist
+svn: E205000: Syntax error in revision argument '7399:'
+File does not exist:  at getAppChangeSet.pl line 48
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01533827      Opened     jiating    【CT Pre-test】插双卡，开机注册到网络后，锁屏界面显示中国电信/无服务（下拉状态栏显示正常）
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ch
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.cg
+Code difference: svn diff -r 7402:7401 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01532480      Opened     wangym     【工厂】声音和振动，来电与通知铃声设为自定义铃声后，删除该铃声，虚拟来电与通知铃声变钟声【必现】
+CR01535177      Coded      guozj      【工厂】卡1插移动2G、卡2插联通2G》开启卡2数据连接》信号棒显示0-3格》可正常使用》网络显示为H  T2#2/3
+CR01536773      Opened     hanjuan    手电筒相关log添加
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ci
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ch
+Code difference: svn diff -r 7419:7404 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01526575      Resolved   guozj      【CT official test】实验室00101卡无法注册FDD（B1和B3）
+CR01529091      Closed     panwenjuan 【工厂】故事锁屏界面，点击屏上方音乐图标播放，在进入音乐菜单播放暂停，进入极致省电，自动响起锁屏音乐【必现】
+CR01533198      Opened     lixian     SystemUI状态栏提交代码CR
+CR01535000      Resolved   lixian     联通3G网络下，状态栏信号条上显示H，且不会随着网络改变切换为3G或者H+
+CR01535169      Coded      gexiufeng  【品质压力】黑屏状态画C进入相机疾速拍照保存相片,返回键退出解锁,从任务键进入相机,自动疾速拍照【100%】附视频
+CR01539173      Opened     liushuang  systemUI代码提交
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ck
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ci
+Code difference: svn diff -r 7447:7428 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================
+==================
+[Repository Url]: http://192.168.110.97/svn/Amigo_SystemUI/trunk
+CR01408122      Opened     jiating    【NAVI锁屏2.0.0.y】打开小米锁屏后 ，从 navi桌面不能下拉上锁
+CR01533124      Resolved   lixian     状态栏：手机通话过程状态栏不显示当前的网络标识
+CR01533131      Resolved   liushuang  [FW12]【ROM】M-MISC：测试机无法连接游戏手柄（必现）[死机_g]
+CR01535830      Resolved   panwenjuan NAVI锁屏：播放锁屏音乐，进入铃音中播放在线铃音，可同时播放在线铃音与锁屏音乐【必现】
+CR01538451      Resolved   jiating    【品质压力】按power键灭屏亮屏,输5次错误密码提示"输入密码错误5次,请在59秒后再试"仍可以输密码,输正确密码后成功解锁
+CR01539173      Opened     liushuang  systemUI代码提交
+CR01540033      Closed     guozj      【CT Pre-test】插双卡或单卡开机，一直提示系统界面停止运行
+Tag url: http://192.168.110.97/svn/Amigo_SystemUI/tags/Amigo_SystemUI_android5.1-6.1.0_V6.1.0.cl
+Previous tag: Amigo_SystemUI_android5.1-6.1.0_V6.1.0.ck
+Code difference: svn diff -r 7499:7460 http://192.168.110.97/svn/Amigo_SystemUI/trunk
+
+==================

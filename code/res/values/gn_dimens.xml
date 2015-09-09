@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <!-- Width of nofitification label in notification sort page -->
+    <dimen name="notification_label_width">150dp</dimen>
+    <!-- Width of seperate in notification sort page -->
+    <dimen name="notification_seperate_width">30dp</dimen>
+    <!-- Padding for notification sort list -->
+    <dimen name="notification_item_padding">20dp</dimen>
+    
+     <!-- Height of the status bar header bar -->
+    <dimen name="gn_status_bar_header_height">48dp</dimen>
+    
+    <!-- Padding for notification sort button -->
+    <dimen name="gn_notification_sort_button_padding">13dp</dimen>
+    
+    <!-- Padding for notifcation header text -->
+    <dimen name="gn_notifcation_text_padding">10dp</dimen>
+    <!-- Text size for notifcation header -->
+    <dimen name="gn_notificaiton_text_size">16sp</dimen>
+    <!-- Height of notification header -->
+    <dimen name="gn_notification_header_height">48dp</dimen>
+    <!-- Height of notification drawner -->
+    <dimen name="gn_notification_drawner_height">20dp</dimen>
+    
+    <!-- Padding for notifcation clean button -->
+    <dimen name="gn_clear_button_padding">10dp</dimen>
+    <dimen name="gn_notification_area_width">76dp</dimen>
+    <dimen name="gn_network_speed_combo_margin_right">2dp</dimen>
+    <dimen name="gn_status_bar_icon_drawing_size">11dip</dimen>
+    <dimen name="gn_status_bar_icon_size">16dip</dimen>
+    <dimen name="gn_notification_area_height">16dip</dimen>
+    
+    <!-- Margin at the edge of the screen to ignore touch events for in the windowshade. -->
+    <dimen name="corner_touch_offset">50dp</dimen>
+    <dimen name="cornet_touch_length">50dp</dimen>
+    
+    <!-- Snap shot button field -->
+    <dimen name="gn_snapshot_button_width">124dp</dimen>
+    <dimen name="gn_snapshot_button_height">52dp</dimen>
+    <dimen name="gn_snapshot_button_padding_right">15dp</dimen>
+    <dimen name="gn_snapshot_button_padding_bottom">15dp</dimen>
+
+    <!-- Control center shotcut fake call -->
+    <dimen name="gn_fc_rippleStrokeWidth">2dp</dimen>
+    <dimen name="gn_fc_rippleRadius">64dp</dimen>
+    <dimen name="gn_fc_glowpadview_radius">112dp</dimen>
+    <dimen name="gn_fc_glowpadview_snap_margin">40dip</dimen>
+    <dimen name="gn_fc_multiwaveview_hit_radius">60dip</dimen>
+    <dimen name="gn_fc_bottom_sms_width">240dp</dimen>
+    <dimen name="gn_fc_bottom_sms_height">60dp</dimen>
+    <dimen name="gn_fc_prompt_text_size">16sp</dimen>
+    <dimen name="gn_fc_glowpadview_outerring_diameter">224dp</dimen>
+    <dimen name="gn_fc_sms_reject_size">15sp</dimen>
+    <dimen name="gn_fc_calling_text_margin_top">40dp</dimen>
+    
+    <!-- The font size for the clock -->
+    <dimen name="gn_status_bar_clock_size">13sp</dimen>
+    
+
+    <!-- Recents -->
+    <dimen name="gn_status_bar_recents_thumbnail_height">269dp</dimen>
+    <dimen name="gn_status_bar_recents_thumbnail_width">169dp</dimen>
+    <dimen name="gn_thumbnail_width">300dp</dimen>
+    <dimen name="gn_status_bar_recents_app_label_text_size">12sp</dimen>
+    <dimen name="gn_recent_app_memory_info_text_size">10sp</dimen>
+    <dimen name="gn_recent_app_notice_text_size">7sp</dimen>
+    <dimen name="gn_recent_app_label_text_size">12sp</dimen>
+    <dimen name="gn_recent_info_zone_height">67dip</dimen>
+    <dimen name="gn_recent_thumbnail_margin_top">135dp</dimen>
+    <dimen name="gn_recent_thumbnail_padding_left">4dp</dimen>
+    <dimen name="gn_recent_linear_panding_left">81dp</dimen>
+    <dimen name="gn_recent_scan_view_width">48dp</dimen>
+    <dimen name="gn_recents_lock_to_app_size">30dp</dimen>
+	
+    <!-- Control center -->
+    <dimen name="gn_cc_height">324dp</dimen>
+    <dimen name="gn_cc_height_land">294dp</dimen>
+    
+    <!-- Control center immerse mode -->
+    <dimen name="gn_cc_immerse_width">72dp</dimen>
+    <dimen name="gn_cc_immerse_height">20dp</dimen>
+    
+    <!-- Control center handle -->
+    <dimen name="gn_cc_handle_height">36dp</dimen>
+    <dimen name="gn_cc_handle_height_land">30dp</dimen>
+    
+    <!-- Control center qs panel -->
+    <dimen name="gn_qs_panel_padding_top">15dp</dimen>
+    <dimen name="gn_qs_panel_padding_top_land">20dp</dimen>
+    <dimen name="gn_qs_panel_padding_left">20dp</dimen>
+    <dimen name="gn_qs_panel_padding_left_land">56dp</dimen>
+    <dimen name="gn_qs_tile_height">74dp</dimen>
+    <dimen name="gn_qs_tile_width">54dp</dimen>
+    <dimen name="gn_qs_tile_icon_size">54dp</dimen>
+    <dimen name="gn_qs_tile_text_size">10sp</dimen>
+    <dimen name="gn_qs_tile_text_gap">8dp</dimen>
+    <dimen name="gn_qs_tile_padding_top">30dp</dimen>
+    <dimen name="gn_qs_tile_padding_top_land">12dp</dimen>
+    <dimen name="gn_qs_tile_padding_below_icon">12dp</dimen>
+    <dimen name="gn_qs_tile_padding_bottom">16dp</dimen>
+    <dimen name="gn_qs_tile_setting_padding_top">3dp</dimen>
+    <dimen name="gn_qs_brightness_tile_width">30dp</dimen>
+    <dimen name="gn_qs_brightness_tile_padding_left">32dp</dimen>
+    <dimen name="gn_qs_brightness_tile_padding_left_land">68dp</dimen>
+    <dimen name="gn_qs_brightness_tile_padding_right">12dp</dimen>
+    <dimen name="gn_qs_brightness_tile_padding_right_land">47dp</dimen>
+    <dimen name="gn_qs_brightness_padding_top">24dp</dimen>
+    <dimen name="gn_qs_brightness_padding_top_land">24dp</dimen>
+    <dimen name="gn_qs_brightness_padding_bottom">7dp</dimen>
+    <dimen name="gn_qs_brightness_padding_bottom_land">0dp</dimen>
+    <dimen name="gn_qs_brightness_padding_right">28dp</dimen>
+    <dimen name="gn_qs_brightness_padding_start">28dp</dimen>
+
+    <!-- QS More -->
+    <dimen name="gn_qs_more_title_text_size">12sp</dimen>
+    <dimen name="gn_qs_more_tile_padding_title">10dp</dimen>
+    <dimen name="gn_qs_more_tile_padding_title_land">0dp</dimen>
+    <dimen name="gn_qs_more_tile_padding_top">16dp</dimen>
+    <dimen name="gn_qs_more_tile_padding_top_land">10dp</dimen>
+    <dimen name="gn_qs_more_header_height">50dp</dimen>
+    <dimen name="gn_qs_more_header_height_land">40dp</dimen>
+    <dimen name="gn_qs_more_header_text_size">18sp</dimen>
+    <dimen name="gn_qs_more_header_text_size_land">16sp</dimen>
+    <dimen name="gn_qs_more_title_height">40dp</dimen>
+    <dimen name="gn_qs_more_title_height_land">30dp</dimen>
+</resources>

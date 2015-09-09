@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:orientation="vertical"
+    android:paddingRight="@dimen/settings_paddingright" >    
+    
+    <ImageView
+        android:id="@+id/haokan_setting_back"
+        android:layout_width="@dimen/settings_titlebar_height"
+        android:layout_height="@dimen/settings_titlebar_height"
+        android:clickable="true"
+        android:scaleType="centerInside"
+        android:src="@drawable/amigo_ic_ab_back_light" 
+        android:layout_alignParentLeft="true"/>
+
+    <TextView
+        android:paddingLeft="@dimen/settings_paddingleft"
+        android:layout_toRightOf="@id/haokan_setting_back"
+        android:id="@+id/setting_title"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/settings_titlebar_height"
+        android:gravity="center_vertical"
+        android:text="@string/settings"
+        android:textColor="@color/keyguard_setting_titlebar_color"
+        android:textSize="@dimen/settings_titlebar_textsize"
+        android:visibility="invisible" />
+
+    <TextView
+        
+        android:paddingLeft="@dimen/settings_paddingleft"
+        android:id="@+id/wallpaper_update_title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/settings_title_height"
+        android:layout_below="@id/setting_title"
+        android:gravity="bottom"
+        android:text="@string/preference_wallpaper_update_title"
+        android:textColor="@color/keyguard_setting_title_color"
+        android:textSize="@dimen/settings_title_textsize"
+        android:visibility="invisible" />
+
+    <LinearLayout
+        android:paddingLeft="@dimen/settings_paddingleft"
+        android:id="@+id/wallpaper_update_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/settings_body_height"
+        android:layout_below="@id/wallpaper_update_title"
+        android:clipChildren="false"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clipChildren="false"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/wallpaper_update_firstline"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/settings_body_firstline_height"
+                android:gravity="bottom"
+                android:text="@string/preference_wallpaper_update_small_title"
+                android:textColor="@color/keyguard_setting_firstline_color"
+                android:textSize="@dimen/settings_body_firstline_textsize"
+                android:visibility="invisible" />
+
+            <TextView
+                android:id="@+id/wallpaper_update_secondline"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/settings_body_secondline_height"
+                android:gravity="center_vertical"
+                android:text="@string/preference_wallpaper_update_summary"
+                android:textColor="@color/keyguard_setting_secondline_color"
+                android:textSize="@dimen/settings_body_secondline_textsize"
+                android:visibility="invisible" />
+        </LinearLayout>
+
+        <Switch
+            android:id="@+id/settings_switch_wallpaper_update"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical|right"
+            android:layout_marginRight="@dimen/settings_switch_marginright"
+            android:layout_weight="4"
+            android:visibility="invisible" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:paddingLeft="@dimen/settings_paddingleft"
+        android:id="@+id/only_wlan_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/wallpaper_update_layout"
+        android:clipChildren="false"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clipChildren="false"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/only_wlan_firstline"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/settings_body_firstline_height"
+                android:gravity="bottom"
+                android:text="@string/preference_only_wlan"
+                android:textColor="@color/keyguard_setting_secondline_color"
+                android:textSize="@dimen/settings_body_firstline_textsize"
+                android:visibility="invisible" />
+
+            <TextView
+                android:id="@+id/only_wlan_secondline"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/settings_body_secondline_height"
+                android:gravity="center_vertical"
+                android:textColor="@color/keyguard_setting_secondline_color"
+                android:textSize="@dimen/settings_body_secondline_textsize"
+                android:visibility="invisible" />
+        </LinearLayout>
+
+        <Switch
+            android:id="@+id/settings_switch_only_wlan"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical|right"
+            android:layout_marginRight="@dimen/settings_switch_marginright"
+            android:layout_weight="4"
+            android:visibility="invisible" />
+    </LinearLayout>
+    
+    <View
+        android:layout_marginLeft="@dimen/settings_paddingleft"
+        android:layout_below="@id/only_wlan_layout"
+        android:id="@+id/settings_divider_second"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/settings_line_height"
+        android:layout_gravity="right"
+        android:layout_marginTop="16dp"
+        android:background="@color/keyguard_setting_line_color"
+        android:visibility="invisible" />
+
+    <TextView
+        android:paddingLeft="@dimen/settings_paddingleft"
+        android:layout_below="@id/settings_divider_second"
+        android:id="@+id/set_keyguard_wallpaper_title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/settings_title_height"
+        android:gravity="bottom"
+        android:text="@string/preference_screenlock_wallpaper"
+        android:textColor="@color/keyguard_setting_title_color"
+        android:textSize="@dimen/settings_title_textsize"
+        android:visibility="invisible" />
+
+    <LinearLayout
+        android:paddingLeft="@dimen/settings_paddingleft"
+        android:layout_below="@id/set_keyguard_wallpaper_title"
+        android:id="@+id/set_keyguard_wallpaper_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/set_keyguard_wallpaper"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/settings_body_firstline_height"
+            android:gravity="bottom"
+            android:text="@string/preference_set_screenlock_wallpaper"
+            android:textColor="@color/keyguard_setting_firstline_color"
+            android:textSize="@dimen/settings_body_firstline_textsize"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/set_keyguard_wallpaper_text"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/settings_body_secondline_height"
+            android:gravity="center_vertical"
+            android:text="@string/preference_set_screenlock_wallpaper_text"
+            android:textColor="@color/keyguard_setting_secondline_color"
+            android:textSize="@dimen/settings_body_secondline_textsize"
+            android:visibility="invisible" />
+    </LinearLayout>
+    
+    <View
+        android:layout_marginLeft="@dimen/settings_paddingleft"
+        android:id="@+id/settings_divider_third"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/settings_line_height"
+        android:layout_below="@id/set_keyguard_wallpaper_layout"
+        android:layout_gravity="right"
+        android:layout_marginTop="16dp"
+        android:background="@color/keyguard_setting_line_color"
+        android:visibility="invisible" />
+    
+    
+    <TextView
+        android:paddingLeft="@dimen/settings_paddingleft"
+        android:id="@+id/keyguard_style_title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/settings_title_height"
+        android:layout_below="@id/settings_divider_third"
+        android:gravity="bottom"
+        android:text="@string/keyguard_style_title"
+        android:textColor="@color/keyguard_setting_title_color"
+        android:textSize="@dimen/settings_title_textsize"
+        android:visibility="invisible" />
+
+    <LinearLayout
+        android:paddingLeft="@dimen/settings_paddingleft"
+        android:id="@+id/keyguard_style_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/keyguard_style_title"
+        android:clipChildren="false"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clipChildren="false"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/keyguard_style_text"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/settings_body_firstline_height"
+                android:gravity="bottom"
+                android:text="@string/keyguard_style_small_title"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textColor="@color/keyguard_setting_firstline_color"
+                android:textSize="@dimen/settings_body_firstline_textsize"
+                android:visibility="invisible" />
+
+            <TextView
+                android:id="@+id/keyguard_style_describe"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/settings_body_secondline_height"
+                android:gravity="center_vertical"
+                android:textColor="@color/keyguard_setting_secondline_color"
+                android:textSize="@dimen/settings_body_secondline_textsize"
+                android:visibility="invisible" />
+        </LinearLayout>
+
+        <Switch
+            android:id="@+id/switch_keyguardstyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical|right"
+            android:layout_marginRight="@dimen/settings_switch_marginright"
+            android:layout_weight="4"
+            android:visibility="invisible" />
+    </LinearLayout>
+
+    <View
+        android:layout_marginLeft="@dimen/settings_paddingleft"
+        android:id="@+id/settings_divider"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/settings_line_height"
+        android:layout_below="@id/keyguard_style_layout"
+        android:layout_gravity="right"
+        android:layout_marginTop="16dp"
+        android:background="@color/keyguard_setting_line_color"
+        android:visibility="invisible" />
+    
+    
+    <TextView
+        android:paddingLeft="@dimen/settings_paddingleft"
+        android:id="@+id/double_desktop_lock_title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/settings_title_height"
+        android:layout_below="@id/settings_divider"
+        android:gravity="bottom"
+        android:text="@string/preference_double_desktop_lock_title"
+        android:textColor="@color/keyguard_setting_title_color"
+        android:textSize="@dimen/settings_title_textsize"
+        android:visibility="invisible" />
+
+    <LinearLayout
+        android:paddingLeft="@dimen/settings_paddingleft"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/double_desktop_lock_title"
+        android:clipChildren="false"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clipChildren="false"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/double_desktop_lock_firstline"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/settings_body_firstline_height"
+                android:gravity="bottom"
+                android:text="@string/preference_double_desktop_lock"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textColor="@color/keyguard_setting_firstline_color"
+                android:textSize="@dimen/settings_body_firstline_textsize"
+                android:visibility="invisible" />
+
+            <TextView
+                android:id="@+id/double_desktop_lock_secondline"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/settings_body_secondline_height"
+                android:gravity="center_vertical"
+                android:textColor="@color/keyguard_setting_secondline_color"
+                android:textSize="@dimen/settings_body_secondline_textsize"
+                android:visibility="invisible" />
+        </LinearLayout>
+
+        <Switch
+            android:id="@+id/settings_switch_double_desktop_lock"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical|right"
+            android:layout_marginRight="@dimen/settings_switch_marginright"
+            android:layout_weight="4"
+            android:visibility="invisible" />
+    </LinearLayout>
+
+    <TextView
+        
+        android:id="@+id/wallpaper_update_guide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/settings_guide_marginright"
+        android:layout_marginTop="@dimen/settings_guide_margintop"
+        android:background="@drawable/haokan_wallpaper_update_guide_bg"
+        android:paddingLeft="@dimen/settings_guide_text_padding_h"
+        android:paddingRight="@dimen/settings_guide_text_padding_h"
+        android:paddingTop="@dimen/settings_guide_text_padding_top"
+        android:shadowColor="#000000"
+        android:shadowDx="0"
+        android:shadowDy="1"
+        android:shadowRadius="1"
+        android:text="@string/haokan_wallpaper_update_guide_text"
+        android:textColor="@color/keyguard_setting_guide_textcolor"
+        android:textSize="@dimen/settings_guide_textsize"
+        android:visibility="invisible" />
+
+
+</RelativeLayout>

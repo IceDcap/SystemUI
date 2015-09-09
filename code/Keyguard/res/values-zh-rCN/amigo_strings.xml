@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <!-- NaviKeyguard begin -->
+
+
+    <!-- infozone start -->
+
+    <string name="sunday">星期天</string>
+    <string name="monday">星期一</string>
+    <string name="tuesday">星期二</string>
+    <string name="wednesday">星期三</string>
+    <string name="thursday">星期四</string>
+    <string name="friday">星期五</string>
+    <string name="saturday">星期六</string>
+
+    <!-- infozone end -->
+
+
+    <!-- keyguard strings begin -->
+
+    <string name="new_widget41_time_am">上\n午</string>
+    <string name="new_widget41_time_pm">下\n午</string>
+    <string name="new_widget41_nodata">无法获取天气信息</string>
+    <string name="message_unknow">未知</string>
+    <string name="skylight_sunday">星期天</string>
+    <string name="skylight_monday">星期一</string>
+    <string name="skylight_tuesday">星期二</string>
+    <string name="skylight_wednesday">星期三</string>
+    <string name="skylight_thursday">星期四</string>
+    <string name="skylignt_friday">星期五</string>
+    <string name="skylight_saturday">星期六</string>
+
+    <!-- keyguard strings end -->
+
+
+    <!-- charge start -->
+    <string name="amigo_keyguard_charged">"充电完毕"</string>
+    <string name="amigo_keyguard_indication_charging_time" msgid="1757251776872835768">"充电中 <xliff:g id="CHARGING_TIME_LEFT">%s</xliff:g>后充满"</string>
+    <string name="amigo_keyguard_plugged_in" msgid="8117572000639998388">"充电中"</string>
+    <string name="amigo_keyguard_plugged_in_percent">"充电中 <xliff:g id="number">%d</xliff:g><xliff:g id="percent">%%"</xliff:g></string>
+    <string name="amigo_keyguard_low_battery">"连接您的充电器"</string>
+    <!-- charge end -->
+
+
+    <!-- mobile operator strings -->
+    <string name="cucc">中国联通</string>
+    <string name="ctcc">中国电信</string>
+    <string name="cmcc">中国移动</string>
+    <string name="cmcc_3g">中国移动3G</string>
+    <string name="cmcc_4g">中国移动4G</string>
+    <string name="no_sim_card">未插卡</string>
+    <string name="no_service">无服务</string>
+    <string name="invalid_card">无效卡</string>
+    <!-- mobile operator strings -->
+
+
+    <!-- notification add start -->
+    <string name="status_bar_notification_inspect_item_title">"通知设置"</string>
+    <string name="accessibility_remove_notification">"清除通知"</string>
+    <string name="notification_hidden_text">"内容已隐藏"</string>
+    <string name="accessibility_notification_dismissed">"已关闭通知"</string>
+    <string name="notification_tap_again">"再次点击即可打开"</string>
+    <!-- notification add end -->
+
+    <string name="keyguard_simple_number_cancel">"取消"</string>
+    <string name="keyguard_simple_number_delete">"删除"</string>
+    <string name="save_password_label">"确认"</string>
+    <string name="ignore_password_label">"忽略"</string>
+    <!-- NaviKeyguard end -->
+
+    <string name="kg_wrong_password_onetime">"密码错误，还可以再输入<xliff:g id="NUMBER">%d</xliff:g>次"</string>
+
+    <!-- mobile operator strings -->
+    <string name="settings">锁屏设置</string>
+    <string name="preference_only_wlan">仅在WLAN下自动更新</string>
+    <string name="preference_wallpaper_update_title">壁纸更新</string>
+    <string name="preference_wallpaper_update_small_title">壁纸更新</string>
+    <string name="preference_wallpaper_update_summary">每天自动更新订阅的壁纸</string>
+    <string name="preference_double_desktop_lock">锁屏双击快捷熄屏</string>
+    <string name="preference_double_desktop_lock_title">快捷熄屏</string>
+    <string name="preference_desktop_lock_on">已开启</string>
+    <string name="preference_desktop_lock_off">已关闭</string>
+    <string name="preference_screenlock_wallpaper">锁定壁纸</string>
+    <string name="preference_set_screenlock_wallpaper">选择锁定壁纸</string>
+    <string name="preference_set_screenlock_wallpaper_text">从本地选择图片亮屏时固定显示</string>
+    
+    <string name="keyguard_style_title">锁屏样式</string>
+    <string name="keyguard_style_small_title">锁屏样式</string>
+    <string name="keyguard_style_on_describe">关闭后文案不显示</string>
+    <string name="keyguard_style_off_describe">打开后文案显示</string>
+    
+    <string name="dialog_ok">继续</string>
+    <string name="dialog_cancle">取消</string>
+    <string name="dialog_nopoint">下次不再提示</string>
+    <string name="dialog_information">系统提示</string>
+    <string name="dialog_information_point">欢迎使用锁屏壁纸。</string>
+    <string name="dialog_Allinformation">在使用过程中可能产生数据流量，具体资费请咨询运营商。是否继续建立数据连接？</string>
+    <string name="haokan_notification_settings_content">打开壁纸更新开关可获取最新壁纸</string>
+    <string name="haokan_wallpaper_update_guide_text">打开可获取最新壁纸哦</string>
+    
+    
+    
+    <string name="haokan_arc_menu_favorite">保存图片</string>
+    <string name="haokan_arc_menu_favorite_ok">已保存</string>
+   	
+   	<string name="haokan_arc_menu_lock">锁定壁纸</string>
+   	<string name="haokan_arc_menu_lock_ok">取消锁定</string>
+   	
+   	<string name="haokan_arc_menu_share">分享</string>
+   	<string name="haokan_arc_menu_subscribe">壁纸订阅</string>
+   	<string name="haokan_arc_menu_setting">锁屏设置</string>
+   	
+   	<string name="haokan_arc_menu_tip_no_locked">取消锁定</string>
+   	<string name="haokan_arc_menu_tip_no_favorite">取消保存</string>
+    <string name="haokan_category_life">生活</string>
+    <string name="haokan_category_traffic">交通</string>
+    <string name="haokan_category_star">明星</string>
+    <string name="haokan_category_scenery">风景</string>
+    <string name="haokan_category_sports">体育</string>
+    <string name="haokan_category_nextday">Nextday</string>
+    <string name="haokan_category_personal">个人</string>
+    <string name="haokan_category_favorite">收藏</string>
+    <string name="haokan_wallpaper_subscription">壁纸订阅</string>
+    <string name="haokan_tip_check_net">请检查网络设置</string>
+   	<string name="haokan_tip_favorite_error">保存失败</string>
+   	<string name="haokan_tip_save_gallery">已保存到 Amigo/ScreenLock/Favorite</string>
+   	<string name="haokan_tip_screen_on_show">每次亮屏时固定显示该壁纸</string>
+    <string name="haokan_tip_no_lock_show">该壁纸不再固定显示</string>
+   	
+   	<string name="haokan_detail">查看详情</string>
+   	<string name="cancel">取消</string>
+    <string name="apply">应用</string>
+    <string name="setting">设置中</string>
+    <string name="kg_wrong_password_time">"密码错误，还可以再输入<xliff:g id="NUMBER">%d</xliff:g>次"</string>
+    <string name="kg_wrong_pattern_time">"密码错误，还可以再输入<xliff:g id="NUMBER">%d</xliff:g>次"</string>
+    <string name="kg_wrong_pattern_onetime">"密码错误，还可以再输入<xliff:g id="NUMBER">%d</xliff:g>次"</string>
+    <string name="kg_wrong_point_num">"图案密码，至少需要四个点"</string>
+    <string name="kg_too_many_failed_simple_attempts_dialog_message" msgid="8276745642049502550">"您已经<xliff:g id="NUMBER_0">%d</xliff:g>次输错了密码。\n\n请在<xliff:g id="NUMBER_1">%d</xliff:g>秒后重试。"</string>
+    <string name="kg_too_many_failed_mixed_password_attempts_dialog_message" msgid="7813713389422226531">"您已经 <xliff:g id="NUMBER_0">%d</xliff:g> 次错误地输入了密码。\n\n请在 <xliff:g id="NUMBER_1">%d</xliff:g> 秒后重试。"</string>
+    <string name="finger_identify_fail_tip">指纹错误，请再试一次</string>
+    <string name="amigo_kg_too_many_failed_attempts_countdown">"输入错误<xliff:g id="NUMBER_0">%d</xliff:g>次，请在 <xliff:g id="NUMBER_1">%s</xliff:g>后重试。"</string>
+    <string name="keyguard_pattern_enter_code_finger">"请输入密码或使用指纹识别"</string>
+    <string name="keyguard_password_enter_code_finger">"请输入密码或使用指纹识别"</string>
+    <string name="keyguard_pattern_enter_code">"请输入密码"</string>
+    <string name="keyguard_password_enter_code">"请输入密码"</string>
+    <string name="forget_password">忘记密码</string>
+    <string name="forget_password_content">很遗憾，因为未绑定Amigo帐号，密码无法重置。若要继续使用手机，你可以通过以下步骤将手机恢复出厂设置：</string>
+    <string name="forget_password_first">1.关机</string>
+    <string name="forget_password_second">2.同时长按关机键和音量上键进入恢复出厂设置模式</string>
+    <string name="forget_password_third">3.恢复出厂设置</string>
+    <string name="forget_password_end">你的所有数据将被抹去！ </string>
+    <string name="kg_complex_number_notnull">密码为空，请输入密码</string>
+    <string name="hour">小时</string>
+    <string name="minute">分</string>
+    <string name="second">秒</string>
+    <string name="keyguard_sim_name">"SIM卡"</string>
+    <string name="keyguard_sim1_name">"SIM卡1"</string>
+    <string name="keyguard_sim2_name">"SIM卡2"</string>
+    <string name="keyguard_password_enter_pin_code_message">"<xliff:g id="card">%s</xliff:g>,输入 PIN码,剩余<xliff:g id="number">%d</xliff:g>次"</string>
+    <string name="keyguard_password_enter_puk_code_message">"<xliff:g id="card">%s</xliff:g>,请输入 PUK码,剩余<xliff:g id="number">%d</xliff:g>次"</string>
+    <string name="keyguard_password_enter_pin_code_message_minus">"<xliff:g id="card">%s</xliff:g>,输入 PIN码</string>
+    <string name="keyguard_password_enter_puk_code_message_minus">"<xliff:g id="card">%s</xliff:g>,输入 PUK码</string>
+
+   	<string name="lvyou">旅游</string>
+   	<string name="shijue">视觉</string>
+   	<string name="qiche">汽车</string>
+   	<string name="tiyu">体育</string>
+   	<string name="xinyu">心语</string>
+   	<string name="shenghuo">生活</string>
+   	<string name="yule">娱乐</string>
+   	<string name="jinxuan">amigo精选</string>
+   	<string name="nextday">NextDay</string>
+
+   	<string name="set_screenlock_wallpaper_fail">设置锁屏壁纸失败</string>
+   	<string name="insufficient_memory">存储空间不足，请释放空间</string>
+   	<string name="lockscreen_emergency_call">紧急呼叫</string>
+   	<string name="lockscreen_return_to_call">返回通话</string>
+   	<string name="lockscreen_plugged_in">"充电中 <xliff:g id="number">%d</xliff:g><xliff:g id="percent">%%"</xliff:g></string>
+   	
+   	<string name="network_dialog_Allinformation">播放锁屏音乐和访问详情过程中将会产生数据流量，流量费用请咨询当地运营商；</string>
+   	
+   	<!-- wallpaper update notification -->
+    <string name="wallpaper_update_notification_title">壁纸更新</string>
+    <string name="wallpaper_update_notification_content">锁屏有新的壁纸了</string>
+    <string name="wallpaper_update_notification_content_update">壁纸更新中...</string>
+    <string name="wallpaper_update_notification_content_pause">壁纸暂停更新</string>
+    <string name="wallpaper_update_notification_content_success">壁纸更新成功</string>
+    <string name="wallpaper_update_notification_content_fail">壁纸更新失败请重试</string>
+    <string name="set_wallpaper_success_toast_message">设置壁纸成功</string>
+
+  
+    <!-- 关闭锁屏反馈 -->
+    <string name="close_wallpaper_update_point">如果关闭故事锁屏，您的锁屏将不会再更新精美的图文</string>
+    <string name="close_wallpaper_update_reason">您想关闭故事锁屏的原因是？</string>
+    <string name="close_wallpaper_reason_hint">请您输入关闭故事锁屏的原因</string>
+    <string name="send_close_update_reason">发送</string>
+    <string name="dialog_title">提示</string>
+    <string name="friendly_point">您的反馈我们已经收到，很抱歉没能让您满意。请再给一次机会，让我们为您做的更好！</string>
+    <string name="close_update">残忍关闭</string>
+    <string name="try_onetime">再试试看</string>
+    <!-- wlan提示 -->
+    <string name="wlan_default_point">在WLAN连接时进行更新</string>
+    <string name="wlan_close_point">关闭WLAN后会使用您的数据流量</string>
+    
+    <!-- 详情加载 -->
+    <string name="loading_text">正在加载...</string>
+    <string name="fail_load_text">加载失败</string>
+    <string name="point_recharger">轻触屏幕重新加载</string>
+    <string name="guid_click">点击文案阅读更多</string>
+
+    <!--手动更新提示 -->
+    <string name="cancel_update">取消</string>
+    <string name="update_wallpaper">更新</string>
+    <string name="checkBox_text">下次WlAN自动更新</string>
+</resources>

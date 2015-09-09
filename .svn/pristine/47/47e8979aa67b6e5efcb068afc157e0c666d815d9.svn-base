@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+**
+** Copyright 2012, The Android Open Source Project
+**
+** Licensed under the Apache License, Version 2.0 (the "License")
+** you may not use this file except in compliance with the License.
+** You may obtain a copy of the License at
+**
+**     http://www.apache.org/licenses/LICENSE-2.0
+**
+** Unless required by applicable law or agreed to in writing, software
+** distributed under the License is distributed on an "AS IS" BASIS,
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+** See the License for the specific language governing permissions and
+** limitations under the License.
+*/
+-->
+<!-- This is the SIM Puk view that allows the user to enter a SIM Puk to unlock the device. -->
+<com.amigo.navi.keyguard.security.AmigoKeyguardSimPukView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:androidprv="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/amigo_keyguard_sim_puk_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical" >
+
+    <!-- androidprv:layout_maxHeight="@dimen/keyguard_security_max_height" -->
+
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/keyguard_message_area" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:layout_marginTop="@dimen/amigo_keyguard_sim_pin_view_num_simPinEntry_top"
+        android:orientation="horizontal"
+        android:paddingLeft="42dip"
+        android:paddingRight="42dip" >
+
+        <com.android.keyguard.PasswordTextView
+            android:id="@+id/simPukEntry"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:layout_gravity="center_horizontal"
+            android:contentDescription="@string/keyguard_accessibility_sim_puk_area"
+            android:gravity="center"
+            androidprv:scaledTextSize="18" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/amigo_keyguard_sim_pin_view_num_above_keyguard_bouncer_frame" />
+
+    <LinearLayout
+        android:id="@+id/keyguard_bouncer_frame"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/amigo_keyguard_sim_pin_view_num_keyguard_bouncer_frame_padding_h"
+        android:paddingRight="@dimen/amigo_keyguard_sim_pin_view_num_keyguard_bouncer_frame_padding_h" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal" >
+
+            <view
+                android:id="@+id/key1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                class="com.amigo.navi.keyguard.security.NumberPadKey"
+                android:background="@drawable/numpadkey_click_effect"
+                android:gravity="center"
+                android:textColor="#ccffffff"
+                android:textSize="32dp"
+                androidprv:digit="1"
+                androidprv:textView="@+id/simPukEntry" />
+
+            <view
+                android:id="@+id/key2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/amigo_keyguard_sim_pin_view_num_marginleft"
+                class="com.amigo.navi.keyguard.security.NumberPadKey"
+                android:background="@drawable/numpadkey_click_effect"
+                android:gravity="center"
+                android:textColor="#ccffffff"
+                android:textSize="32dp"
+                androidprv:digit="2"
+                androidprv:textView="@+id/simPukEntry" />
+
+            <view
+                android:id="@+id/key3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/amigo_keyguard_sim_pin_view_num_marginleft"
+                class="com.amigo.navi.keyguard.security.NumberPadKey"
+                android:background="@drawable/numpadkey_click_effect"
+                android:gravity="center"
+                android:textColor="#ccffffff"
+                android:textSize="32dp"
+                androidprv:digit="3"
+                androidprv:textView="@+id/simPukEntry" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/amigo_keyguard_sim_pin_view_num_linegap" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal" >
+
+            <view
+                android:id="@+id/key4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                class="com.amigo.navi.keyguard.security.NumberPadKey"
+                android:background="@drawable/numpadkey_click_effect"
+                android:gravity="center"
+                android:textColor="#ccffffff"
+                android:textSize="32dp"
+                androidprv:digit="4"
+                androidprv:textView="@+id/simPukEntry" />
+
+            <view
+                android:id="@+id/key5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/amigo_keyguard_sim_pin_view_num_marginleft"
+                class="com.amigo.navi.keyguard.security.NumberPadKey"
+                android:background="@drawable/numpadkey_click_effect"
+                android:gravity="center"
+                android:textColor="#ccffffff"
+                android:textSize="32dp"
+                androidprv:digit="5"
+                androidprv:textView="@+id/simPukEntry" />
+
+            <view
+                android:id="@+id/key6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/amigo_keyguard_sim_pin_view_num_marginleft"
+                class="com.amigo.navi.keyguard.security.NumberPadKey"
+                android:background="@drawable/numpadkey_click_effect"
+                android:gravity="center"
+                android:textColor="#ccffffff"
+                android:textSize="32dp"
+                androidprv:digit="6"
+                androidprv:textView="@+id/simPukEntry" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/amigo_keyguard_sim_pin_view_num_linegap" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal" >
+
+            <view
+                android:id="@+id/key7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                class="com.amigo.navi.keyguard.security.NumberPadKey"
+                android:background="@drawable/numpadkey_click_effect"
+                android:gravity="center"
+                android:textColor="#ccffffff"
+                android:textSize="32dp"
+                androidprv:digit="7"
+                androidprv:textView="@+id/simPukEntry" />
+
+            <view
+                android:id="@+id/key8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/amigo_keyguard_sim_pin_view_num_marginleft"
+                class="com.amigo.navi.keyguard.security.NumberPadKey"
+                android:background="@drawable/numpadkey_click_effect"
+                android:gravity="center"
+                android:textColor="#ccffffff"
+                android:textSize="32dp"
+                androidprv:digit="8"
+                androidprv:textView="@+id/simPukEntry" />
+
+            <view
+                android:id="@+id/key9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/amigo_keyguard_sim_pin_view_num_marginleft"
+                class="com.amigo.navi.keyguard.security.NumberPadKey"
+                android:background="@drawable/numpadkey_click_effect"
+                android:gravity="center"
+                android:textColor="#ccffffff"
+                android:textSize="32dp"
+                androidprv:digit="9"
+                androidprv:textView="@+id/simPukEntry" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/amigo_keyguard_sim_pin_view_num_linegap" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal" >
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:background="@drawable/numpadkey_click_effect"
+                android:gravity="center"
+                android:visibility="visible" >
+
+                <Button
+                    android:id="@+id/key_ignore"
+                    android:layout_width="@dimen/amigo_keyguard_sim_pin_view_num_key_enter_width"
+                    android:layout_height="wrap_content"
+                    android:background="#00000000"
+                    android:gravity="center"
+                    android:text="@string/ignore_password_label"
+                    android:textColor="#ccffffff"
+                    android:textSize="18dp" />
+            </RelativeLayout>
+
+            <view
+                android:id="@+id/key0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/amigo_keyguard_sim_pin_view_num_marginleft"
+                class="com.amigo.navi.keyguard.security.NumberPadKey"
+                android:background="@drawable/numpadkey_click_effect"
+                android:gravity="center"
+                android:textColor="#ccffffff"
+                android:textSize="32dp"
+                androidprv:digit="0"
+                androidprv:textView="@+id/simPukEntry" />
+
+            <RelativeLayout
+                android:id="@+id/key_enter_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/amigo_keyguard_sim_pin_view_num_marginleft"
+                android:background="@drawable/numpadkey_click_effect"
+                android:clickable="true"
+                android:gravity="center" >
+
+                <Button
+                    android:id="@+id/key_enter"
+                    android:layout_width="@dimen/amigo_keyguard_sim_pin_view_num_key_enter_width"
+                    android:layout_height="wrap_content"
+                    android:background="#00000000"
+                    android:clickable="false"
+                    android:contentDescription="@string/keyboardview_keycode_enter"
+                    android:gravity="center"
+                    android:text="@string/save_password_label"
+                    android:textColor="#ccffffff"
+                    android:textSize="18dp" />
+
+                <ProgressBar
+                    android:id="@+id/waiting_result_dialog"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:gravity="center"
+                    android:visibility="gone" />
+            </RelativeLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:paddingLeft="42dip"
+        android:paddingRight="42dip" >
+
+        <com.amigo.navi.keyguard.security.AmigoEmergencyButton
+            android:id="@+id/emergency_call_button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:background="@null"
+            android:gravity="bottom|left"
+            android:paddingBottom="20dp"
+            android:text="@string/kg_emergency_call_label"
+            android:textColor="#ccffffff"
+            android:textSize="14dp" />
+
+        <TextView
+            android:id="@+id/back_button"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:gravity="bottom|right"
+            android:paddingBottom="20dp"
+            android:text="@string/keyguard_simple_number_cancel"
+            android:textColor="#ccffffff"
+            android:textSize="14dp" />
+    </RelativeLayout>
+
+</com.amigo.navi.keyguard.security.AmigoKeyguardSimPukView>

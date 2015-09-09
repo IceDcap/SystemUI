@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.android.systemui.gionee.cc.qs.more.GnControlCenterMoreView 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <LinearLayout
+        android:id="@+id/moreview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:id="@+id/background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <RelativeLayout
+                android:id="@+id/header"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/gn_qs_more_header_height" >
+                
+                <ImageView 
+                    android:id="@+id/close"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="9dp"
+                    android:src="@drawable/gn_ic_qs_more_close" />
+
+                <TextView
+                    android:id="@+id/more"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_toRightOf="@id/close"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginLeft="30dp"
+                    android:gravity="center"
+                    android:text="@string/gn_qs_more_title"
+                    android:textSize="@dimen/gn_qs_more_header_text_size" />
+
+            </RelativeLayout>
+
+            <com.android.systemui.gionee.cc.qs.more.GnDragGridView
+                android:id="@+id/dragview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+
+    </LinearLayout>
+    
+    <RelativeLayout
+        android:id="@+id/tips_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#fd000000"
+        android:visibility="gone">
+        
+        <ImageView
+            android:id="@+id/tips_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="125dp"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/gn_ic_qs_more_tips" />
+        
+        <TextView 
+            android:id="@+id/tips_lable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="112dp"
+            android:layout_below="@id/tips_icon"
+            android:text="@string/gn_qs_more_tips"
+            android:textColor="#80ffffff"
+            android:textSize="14sp"/>
+        
+        <ImageView 
+            android:id="@+id/tips_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="68dp"
+            android:src="@drawable/gn_ic_qs_more_tips_close"/>
+        
+    </RelativeLayout>
+
+</com.android.systemui.gionee.cc.qs.more.GnControlCenterMoreView>

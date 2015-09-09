@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:amigo="http://schemas.android.com/apk/res/amigo"
+    android:id="@+id/content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        android:scrollbarStyle="outsideOverlay" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <amigo.widget.AmigoTextView
+                android:id="@+id/step1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/mtp_winxp_help_step1"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <amigo.widget.AmigoTextView
+                android:id="@+id/driver"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="30dp"
+                android:drawableLeft="@drawable/gn_ic_amigo"
+                android:gravity="center_vertical"
+                android:text="@string/mtp_driver_name"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <amigo.widget.AmigoTextView
+                android:id="@+id/step2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/mtp_winxp_help_step2"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <amigo.widget.AmigoTextView
+                android:id="@+id/download"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/mtp_driver_download_url"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <amigo.widget.AmigoTextView
+                android:id="@+id/website"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <amigo.widget.AmigoTextView
+                android:id="@+id/follow_hint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/mtp_winxp_help_step3"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:contentDescription="@string/mtp_driver_name"
+                android:src="@drawable/gn_ic_mtp_winxp_install" />
+
+            <amigo.widget.AmigoCheckBox
+                android:id="@+id/confirm"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/mtp_winxp_install_finish" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <declare-styleable name="GnToggleSlider">
+        <attr name="text" />
+    </declare-styleable>
+    
+    <declare-styleable name="GnMultiWaveView">
+
+        <!-- Reference to an array resource that be shown as targets around a circle. -->
+        <attr name="gnTargetDrawables" format="reference" />
+
+        <!-- Reference to an array resource that be used as description for the targets around the circle. -->
+        <attr name="gnTargetDescriptions" format="reference" />
+
+        <!-- Reference to an array resource that be used to announce the directions with targets around the circle. -->
+        <attr name="gnDirectionDescriptions" format="reference" />
+
+        <!-- Sets a drawable as the drag center. -->
+        <attr name="gnHandleDrawable" format="reference" />
+
+        <!-- Drawable to use for chevron animation on the left. May be null. -->
+        <attr name="gnLeftChevronDrawable" format="reference" />
+
+        <!-- Drawable to use for chevron animation on the right. May be null. -->
+        <attr name="gnRightChevronDrawable" format="reference" />
+
+        <!-- Drawable to use for chevron animation on the top. May be null. -->
+        <attr name="gnTopChevronDrawable" format="reference" />
+
+        <!-- Drawable to use for chevron animation on the bottom. May be null. -->
+        <attr name="gnBottomChevronDrawable" format="reference" />
+
+        <!-- Drawable to use for wave ripple animation. -->
+        <attr name="gnWaveDrawable" format="reference" />
+
+        <!-- Outer radius of target circle. Icons will be drawn on this circle. -->
+        <attr name="gnOuterRadius" format="dimension" />
+
+        <!-- Size of target radius. Points within this distance of target center is a "hit". -->
+        <attr name="gnHitRadius" format="dimension" />
+
+        <!-- Tactile feedback duration for actions. Set to '0' for no vibration. -->
+        <attr name="gnVibrationDuration" format="integer" />
+
+        <!-- How close we need to be before snapping to a target. -->
+        <attr name="gnSnapMargin" format="dimension" />
+
+        <!-- According to the ratio of the center -->
+        <attr name="gnCenterTap" format="integer" />
+
+        <!-- Used to shift center of pattern vertically. -->
+        <attr name="gnVerticalOffset" format="dimension" />
+
+        <!-- Used to shift center of pattern horizontally. -->
+        <attr name="gnHorizontalOffset" format="dimension" />
+        <attr name="gnBottomWidth" format="dimension" />
+        <attr name="gnBottomHeight" format="dimension" />
+        <attr name="gnHorizontal" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="GnRippleBackground">
+        <attr name="rb_color" format="color" />
+        <attr name="rb_strokeWidth" format="dimension" />
+        <attr name="rb_radius" format="dimension" />
+        <attr name="rb_duration" format="integer" />
+        <attr name="rb_rippleAmount" format="integer" />
+        <attr name="rb_scale" format="float" />
+        <attr name="rb_type" format="enum">
+            <enum name="fillRipple" value="0" />
+            <enum name="strokeRipple" value="1" />
+        </attr>
+    </declare-styleable>
+    
+</resources>
